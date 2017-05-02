@@ -1,0 +1,17 @@
+    <bean id="messageSource"
+          class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basename" value="classpath:interface"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
+
+    or
+
+        @Bean
+        MessageSource messageSource(){
+            ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource = new ReloadableResourceBundleMessageSource();
+            reloadableResourceBundleMessageSource.setBasename("classpath:interface");
+            reloadableResourceBundleMessageSource.setDefaultEncoding("UTF-8");
+            reloadableResourceBundleMessageSource.setFallbackToSystemLocale(false);
+            return reloadableResourceBundleMessageSource;
+    }

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>FileList</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="/res/css/bootstrap/bootstrap.min.css" rel="stylesheet"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div id="filemenu">
+    <button id="searchFilesButton" class="btn btn-primary"><th th:text="#{fileslistpage.searchbutton}"/></button>
+    <button id="sortByFilename" class="btn btn-primary"><th th:text="#{fileslistpage.sortfilenamebutton}"/></button>
+    <button id="sortByAuthor" class="btn btn-primary"><th th:text="#{fileslistpage.sortauthorbutton}"/></button>
+    <button id="sortByType" class="btn btn-primary"><th th:text="#{fileslistpage.sorttypebutton}"/></button>
+    <button id="sortByUploadedDate" class="btn btn-primary"><th th:text="#{fileslistpage.sortuploaddatebutton}"/></button>
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><th th:text="#{fileslistpage.changefilesquantity}"/>
+            <span class="caret"></span></button>
+        <ul class="dropdown-menu">
+            <li><a href="#">HTML</a></li>
+            <li><a href="#">CSS</a></li>
+            <li><a href="#">JavaScript</a></li>
+        </ul>
+    </div>
+</div>
+
+Session quantity: <p th:text="${session.filesQuantity}"></p>
+Parameter quantity(for): <p th:text="${T(Integer).parseInt(param.for)}"></p>
+******************************
+http://www.thymeleaf.org/doc/articles/springmvcaccessdata.html
+******************************
+
+<table th:each="fileitem : ${filesList}">
+    <tr>
+        <div id="fileContentSection">
+            <p th:text="#{fileslistpage.sortfilenamebutton}+': '+${fileitem.alternative}"/>
+            <p th:text="#{fileslistpage.sorttypebutton}+': '+${fileitem.extension}"/>
+            <p th:text="#{fileslistpage.sortuploaddatebutton}+': '+${#calendars.format(fileitem.uploadDate, 'dd MMM yyyy HH:mm')}"/>
+            <p th:text="#{fileslistpage.sortauthorbutton}+': '+${fileitem.author.fullname}"/>
+            <img th:src="${'/dynamic/'+fileitem.filename}" th:alt="${fileitem.alternative}"
+                 height="100"/>
+        </div>
+    </tr>
+</table>
+
+<div id="navsection">
+
+</div>
+</body>
+</html>

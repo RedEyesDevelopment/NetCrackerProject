@@ -1,0 +1,72 @@
+<!--ThyMeLeaf-->
+<dependency>
+<groupId>org.thymeleaf</groupId>
+<artifactId>thymeleaf-spring4</artifactId>
+</dependency>
+
+<dependency>
+<groupId>nz.net.ultraq.thymeleaf</groupId>
+<artifactId>thymeleaf-layout-dialect</artifactId>
+</dependency>
+
+        <!--Postgre-->
+<dependency>
+<groupId>org.postgresql</groupId>
+<artifactId>postgresql</artifactId>
+<version>9.4-1201-jdbc41</version>
+<scope>runtime</scope>
+</dependency>
+
+        <!--JDBC-->
+<dependency>
+<groupId>org.springframework</groupId>
+<artifactId>spring-jdbc</artifactId>
+</dependency>
+
+        <!--C3P0 for Hibernate-->
+<dependency>
+<groupId>org.hibernate</groupId>
+<artifactId>hibernate-c3p0</artifactId>
+</dependency>
+
+        <!--Hikari Connection Pool-->
+<dependency>
+<groupId>com.zaxxer</groupId>
+<artifactId>HikariCP</artifactId>
+</dependency>
+
+        <!--MySQL Connector and JDBC Driver-->
+<dependency>
+<groupId>mysql</groupId>
+<artifactId>mysql-connector-java</artifactId>
+<version>5.1.6</version>
+<scope>runtime</scope>
+</dependency>
+
+        <!--DBCP connection pool for JDBC -->
+<dependency>
+<groupId>org.apache.commons</groupId>
+<artifactId>commons-dbcp2</artifactId>
+<version>2.1.1</version>
+</dependency>
+
+        <!--Spring-Boot Spring-Data-MongoDB-->
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-data-mongodb</artifactId>
+</dependency>
+
+        <!--Google Guava for Immutable Collections-->
+<dependency>
+<groupId>com.google.guava</groupId>
+<artifactId>guava</artifactId>
+<version>21.0-rc1</version>
+</dependency>
+
+        <!--Lombok artifact for automatic data creation(Getters and Setters), Data verification and other things (@NonNull, @Data, ...)
+        For other info look: https://habrahabr.ru/post/142356/-->
+<dependency>
+<groupId>org.projectlombok</groupId>
+<artifactId>lombok</artifactId>
+<version>1.16.12</version>
+</dependency>
