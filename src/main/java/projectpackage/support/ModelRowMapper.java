@@ -1,8 +1,6 @@
 package projectpackage.support;
 
 import org.springframework.jdbc.core.RowMapper;
-import projectpackage.model.InnerObject;
-import projectpackage.model.Model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
