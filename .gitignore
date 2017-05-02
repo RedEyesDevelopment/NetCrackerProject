@@ -7,6 +7,5 @@
 *.iml
 out
 gen
+src/temp/
 
-#EXCLUDUING RUN CONFIGURATIONS
-!.idea/runConfigurations/
