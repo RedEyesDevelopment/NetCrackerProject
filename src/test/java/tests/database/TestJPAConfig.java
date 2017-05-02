@@ -11,10 +11,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
-import projectpackage.repository.ModelRepository;
-import projectpackage.repository.ModelRepositoryImpl;
-import projectpackage.service.ModelService;
-import projectpackage.service.ModelServiceImpl;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -105,13 +101,13 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         return new NamedParameterJdbcTemplate(dataSource());
     }
 
-    @Bean
-    ModelRepository modelRepository(){
-        return new ModelRepositoryImpl();
-    }
-
-    @Bean
-    ModelService modelService(){
-        return new ModelServiceImpl();
-    }
+//    @Bean
+//    ModelRepository modelRepository(){
+//        return new ModelRepositoryImpl();
+//    }
+//
+//    @Bean
+//    ModelService modelService(){
+//        return new ModelServiceImpl();
+//    }
 }

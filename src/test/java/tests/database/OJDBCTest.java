@@ -28,7 +28,7 @@ public class OJDBCTest {
 
         Connection connection = null;
         try {
-            connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "RestTest", "root");
+            connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "Hotel", "root");
         } catch (SQLException e){
             System.out.println("CONNECTION FAILED");
             e.printStackTrace();
