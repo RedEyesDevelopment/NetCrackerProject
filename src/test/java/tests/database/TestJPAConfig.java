@@ -11,6 +11,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
+import projectpackage.repository.PhoneDAO;
+import projectpackage.repository.PhoneDAOImpl;
+import projectpackage.repository.UserDAO;
+import projectpackage.repository.UserDAOImpl;
+import projectpackage.service.UserService;
+import projectpackage.service.UserServiceImpl;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -52,14 +58,14 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        driver=props.getProperty("dataSource.driverClassName");
-        url=props.getProperty("dataSource.url");
-        username=props.getProperty("dataSource.username");
-        password=props.getProperty("dataSource.password");
+        driver = props.getProperty("dataSource.driverClassName");
+        url = props.getProperty("dataSource.url");
+        username = props.getProperty("dataSource.username");
+        password = props.getProperty("dataSource.password");
     }
 
     @Bean
-    public DataSource dataSource(){
+    public DataSource dataSource() {
         Log4jdbcProxyDataSource dataSource = new Log4jdbcProxyDataSource(realDataSource());
         Log4JdbcCustomFormatter log4JdbcCustomFormatter = new Log4JdbcCustomFormatter();
         log4JdbcCustomFormatter.setLoggingType(LoggingType.SINGLE_LINE);
@@ -97,17 +103,22 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     }
 
     @Bean
-    NamedParameterJdbcTemplate jdbcTemplate(){
+    NamedParameterJdbcTemplate jdbcTemplate() {
         return new NamedParameterJdbcTemplate(dataSource());
     }
 
-//    @Bean
-//    ModelRepository modelRepository(){
-//        return new ModelRepositoryImpl();
-//    }
-//
-//    @Bean
-//    ModelService modelService(){
-//        return new ModelServiceImpl();
-//    }
+    @Bean
+    UserDAO userDAO() {
+        return new UserDAOImpl();
+    }
+
+    @Bean
+    PhoneDAO phoneDAO() {
+        return new PhoneDAOImpl();
+    }
+
+    @Bean
+    UserService userService() {
+        return new UserServiceImpl();
+    }
 }

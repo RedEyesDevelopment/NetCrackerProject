@@ -6,9 +6,10 @@ import java.util.Set;
 
 @Data
 public class User {
+    private int objectId;
     private String email;
     private String password;
-    private Role role;
+    private String role;
     private String firstName;
     private String lastName;
     private String additionalInfo;
