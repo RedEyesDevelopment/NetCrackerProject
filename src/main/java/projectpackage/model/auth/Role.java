@@ -1,23 +1,21 @@
 package projectpackage.model.auth;
 
-import com.google.common.collect.ImmutableMap;
 import lombok.Data;
 import projectpackage.repository.reacdao.models.ReacEntity;
+import projectpackage.repository.reacdao.support.EntityVariablesNode;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 @Data
 public class Role extends ReacEntity {
     private static final int OBJECT_TYPE=10;
-    private static final HashMap<String, String> objectProperties;
+    private static final LinkedHashMap<String, EntityVariablesNode> objectProperties;
     static
     {
-        objectProperties = new LinkedHashMap<>();
-        objectProperties.put("objectId","%OBJECT_ID");
-        objectProperties.put("roleName","ROLE_NAME");
-        objectProperties.put("userId","%PARENT_ID");
+        objectProperties = new LinkedHashMap<String, EntityVariablesNode>();
+        objectProperties.put("objectId",new EntityVariablesNode<Integer>( new Integer(0), "%OBJECT_ID"));
+        objectProperties.put("roleName",new EntityVariablesNode<String>( new String(), "ROLE_NAME"));
+        objectProperties.put("userId",new EntityVariablesNode<String>( new String(), "%PARENT_ID"));
 
     }
 
@@ -30,8 +28,8 @@ public class Role extends ReacEntity {
     }
 
     @Override
-    public Map<String, String> getEntityFields() {
-        return ImmutableMap.copyOf(objectProperties);
+    public LinkedHashMap<String, EntityVariablesNode> getEntityFields() {
+        return objectProperties;
     }
 
 }

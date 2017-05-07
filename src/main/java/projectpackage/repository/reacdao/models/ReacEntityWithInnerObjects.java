@@ -1,10 +1,12 @@
 package projectpackage.repository.reacdao.models;
 
-import java.util.Map;
+import projectpackage.repository.reacdao.support.EntityVariablesNode;
+
+import java.util.LinkedHashMap;
 
 /**
  * Created by Gvozd on 06.05.2017.
  */
 public abstract class ReacEntityWithInnerObjects extends ReacEntity {
-    public abstract Map<String,String> getEntityInnerObjects();
+    public abstract LinkedHashMap<String, EntityVariablesNode> getEntityInnerObjects();
 }

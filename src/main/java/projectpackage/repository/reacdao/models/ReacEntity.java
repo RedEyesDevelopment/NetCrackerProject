@@ -1,6 +1,8 @@
 package projectpackage.repository.reacdao.models;
 
-import java.util.Map;
+import projectpackage.repository.reacdao.support.EntityVariablesNode;
+
+import java.util.LinkedHashMap;
 
 /**
  * Created by Gvozd on 06.05.2017.
@@ -8,5 +10,5 @@ import java.util.Map;
 public abstract class ReacEntity {
     public abstract int getEntityObjectTypeForEav();
     public abstract int getObjectId();
-    public abstract Map<String, String> getEntityFields();
+    public abstract LinkedHashMap<String, EntityVariablesNode> getEntityFields();
 }

@@ -7,14 +7,15 @@ import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ReactEntityRowMapper implements RowMapper<ReacEntity> {
     Class<? extends ReacEntity> clazz;
-    Map<String, String> parameters;
+    LinkedHashMap<String, EntityVariablesNode> parameters;
     String dataStringPrefix;
 
-    public ReactEntityRowMapper(Class entityClass, Map<String, String> parameters, String dataStringPrefix) {
+    public ReactEntityRowMapper(Class entityClass, LinkedHashMap<String, EntityVariablesNode> parameters, String dataStringPrefix) {
         clazz = entityClass;
         this.parameters = parameters;
         this.dataStringPrefix = dataStringPrefix;
@@ -22,11 +23,6 @@ public class ReactEntityRowMapper implements RowMapper<ReacEntity> {
 
     @Override
     public ReacEntity mapRow(ResultSet resultSet, int i) throws SQLException {
-
-        for (int j=0; j<500; j++){
-            System.out.println("i="+j+" result="+resultSet.getObject(j));
-        }
-
         ReacEntity reacEntity = null;
         try {
             reacEntity = (ReacEntity) clazz.newInstance();
@@ -35,37 +31,38 @@ public class ReactEntityRowMapper implements RowMapper<ReacEntity> {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+        for (Map.Entry<String, EntityVariablesNode> entry : parameters.entrySet()) {
             String objectParameterKey = entry.getKey();
-            String databaseColumnValue = entry.getValue();
-            if (null != databaseColumnValue) {
-                Field field = null;
+            Object object = entry.getValue().getObject();
+            Field field = null;
                 try {
                     field = reacEntity.getClass().getDeclaredField(objectParameterKey);
                 } catch (NoSuchFieldException e) {
                     e.printStackTrace();
                 }
-                Class fieldClass = field.getType();
+                field.setAccessible(true);
                 try {
-                    if (fieldClass.equals(String.class)) {
-                        field.set(reacEntity, resultSet.getString(databaseColumnValue));
+                    if (object.getClass().equals(Integer.class)) {
+                        System.out.println("INTEGER="+resultSet.getInt(objectParameterKey));
+                        field.set(reacEntity, resultSet.getInt(objectParameterKey));
                     }
-                    if (fieldClass.equals(Integer.class)) {
-                        field.set(reacEntity, resultSet.getInt(databaseColumnValue));
+                    if (object.getClass().equals(String.class)) {
+                        System.out.println("STRING="+resultSet.getString(objectParameterKey));
+                        field.set(reacEntity, resultSet.getString(objectParameterKey));
                     }
-                    if (fieldClass.equals(Long.class)) {
-                        field.set(reacEntity, resultSet.getLong(databaseColumnValue));
+                    if (object.getClass().equals(Long.class)) {
+                        System.out.println("LONG"+resultSet.getLong(objectParameterKey));
+                        field.set(reacEntity, resultSet.getLong(objectParameterKey));
                     }
-                    if (fieldClass.equals(Date.class)) {
-                        Date date = resultSet.getDate(databaseColumnValue);
+                    if (object.getClass().equals(java.sql.Date.class)) {
+                        System.out.println("Date="+resultSet.getDate(objectParameterKey));
+                        Date date = resultSet.getDate(objectParameterKey);
                         field.set(reacEntity, date);
                     }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
             }
-
-        }
         return reacEntity;
     }
 }

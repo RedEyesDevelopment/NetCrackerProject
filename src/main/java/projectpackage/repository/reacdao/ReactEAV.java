@@ -5,10 +5,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import projectpackage.repository.reacdao.models.ReacEntity;
-import projectpackage.repository.reacdao.support.ObjectTableNameGenerator;
-import projectpackage.repository.reacdao.support.ReactConstantConfiguration;
-import projectpackage.repository.reacdao.support.ReactResultQuantityType;
-import projectpackage.repository.reacdao.support.ReactEntityRowMapper;
+import projectpackage.repository.reacdao.support.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -108,7 +105,7 @@ public class ReactEAV {
     private String getQueryForEntity(FetchNode currentNode) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
         StringBuilder queryBuilder = new StringBuilder();
         ObjectTableNameGenerator attributesTablesNameGenerator = new ObjectTableNameGenerator(config.getAttributesPermanentTableName());
-        Map<String, String> currentNodeVariables;
+        LinkedHashMap<String, EntityVariablesNode> currentNodeVariables;
 //        Кастуем класс
         Class currentNodeObjectClass = currentNode.getObjectClass();
         ReacEntity reacEntity = (ReacEntity) currentNodeObjectClass.newInstance();
@@ -116,17 +113,17 @@ public class ReactEAV {
         int currentEntityObjectType=reacEntity.getEntityObjectTypeForEav();
         //Получаем метод getEntityFields
         Method currentNodeObjectClassMethod = currentNodeObjectClass.getMethod("getEntityFields");
-        currentNodeVariables = (Map<String, String>) currentNodeObjectClassMethod.invoke(reacEntity);
-        currentNode.setCurrentEntityParameters(new LinkedHashMap<>(currentNodeVariables));
+        currentNodeVariables = (LinkedHashMap<String, EntityVariablesNode>) currentNodeObjectClassMethod.invoke(reacEntity);
+        currentNode.setCurrentEntityParameters(new LinkedHashMap<String, EntityVariablesNode>(currentNodeVariables));
         Iterator currentNodeVariablesMapIterator = currentNodeVariables.entrySet().iterator();
         LinkedHashMap<String, String> currentNodeAttributesMap = new LinkedHashMap<>();
         queryBuilder.append("SELECT");
         boolean firstKeyFlag=false;
         //Пробегаемся по мапе параметров, аппендим их и удаляем те, которые прямо в таблице OBJECTS находятся
         while (currentNodeVariablesMapIterator.hasNext()) {
-                Map.Entry<String, String> objectPropertiesMapIteratorEntry = (Map.Entry) currentNodeVariablesMapIterator.next();
+                Map.Entry<String, EntityVariablesNode> objectPropertiesMapIteratorEntry = (Map.Entry) currentNodeVariablesMapIterator.next();
             String objectParameterKey = objectPropertiesMapIteratorEntry.getKey();
-            String databaseColumnValue = objectPropertiesMapIteratorEntry.getValue();
+            String databaseColumnValue = objectPropertiesMapIteratorEntry.getValue().getDatabaseColumnValue();
             if (!firstKeyFlag) {
                 firstKeyFlag = true;
             } else queryBuilder.append(", ");
@@ -152,8 +149,8 @@ public class ReactEAV {
             queryBuilder.append("\nAND "+config.getRootTableName()+"."+config.getOid()+"="+config.getAttributesPermanentTableName()+i+"."+config.getOid());
             queryBuilder.append("\nAND "+config.getRootTableName()+"."+config.getOtid()+"="+config.getAttrTypesPermanentTableName()+i+"."+config.getOtid());
             queryBuilder.append("\nAND "+config.getAttributesPermanentTableName()+i+"."+config.getAid()+"="+config.getAttrTypesPermanentTableName()+i+"."+config.getAid());
-            Map.Entry<String, String> objectPropertiesMapIteratorEntry = (Map.Entry) currentNodeVariablesMapIterator.next();
-            String databaseColumnValue = objectPropertiesMapIteratorEntry.getValue();
+            Map.Entry<String, EntityVariablesNode> objectPropertiesMapIteratorEntry = (Map.Entry) currentNodeVariablesMapIterator.next();
+            String databaseColumnValue = objectPropertiesMapIteratorEntry.getValue().getDatabaseColumnValue();
             if (databaseColumnValue.startsWith("%")){
                 queryBuilder.append("\nAND "+config.getAttrTypesPermanentTableName()+i+"."+config.getCd()+"='"+databaseColumnValue.substring(1)+"'");
             } else {

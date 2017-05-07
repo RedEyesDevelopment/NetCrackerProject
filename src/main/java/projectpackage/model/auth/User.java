@@ -2,29 +2,29 @@ package projectpackage.model.auth;
 
 import lombok.Data;
 import projectpackage.repository.reacdao.models.ReacEntityWithInnerObjects;
+import projectpackage.repository.reacdao.support.EntityVariablesNode;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 
 @Data
 public class User extends ReacEntityWithInnerObjects {
     private static final int OBJECT_TYPE=3;
-    private static final LinkedHashMap<String, String> objectProperties;
-    private static final LinkedHashMap<String, String> objectInnerEntities;
+    private static final LinkedHashMap<String, EntityVariablesNode> objectProperties;
+    private static final LinkedHashMap<String, EntityVariablesNode> objectInnerEntities;
     static
     {
         objectProperties = new LinkedHashMap<>();
-        objectProperties.put("objectId","%OBJECT_ID");
-        objectProperties.put("email","Email");
-        objectProperties.put("password","Password");
+        objectProperties.put("objectId",new EntityVariablesNode<Integer>( new Integer(0), "%OBJECT_ID"));
+        objectProperties.put("email",new EntityVariablesNode<String>( new String(), "Email"));
+        objectProperties.put("password",new EntityVariablesNode<String>( new String(), "Password"));
 //        objectProperties.put("role","HAS_ROLE");
-        objectProperties.put("firstName","First_name");
-        objectProperties.put("lastName","Last_name");
-        objectProperties.put("additionalInfo","Additional_info");
+        objectProperties.put("firstName",new EntityVariablesNode<String>( new String(), "First_name"));
+        objectProperties.put("lastName",new EntityVariablesNode<String>( new String(), "Last_name"));
+        objectProperties.put("additionalInfo",new EntityVariablesNode<String>( new String(), "Additional_info"));
 
         objectInnerEntities = new LinkedHashMap<>();
-        objectInnerEntities.put("role","HAS_ROLE");
+//        objectInnerEntities.put("role","HAS_ROLE");
     }
 
     private int objectId;
@@ -42,14 +42,12 @@ public class User extends ReacEntityWithInnerObjects {
     }
 
     @Override
-    public Map<String, String> getEntityFields() {
-        LinkedHashMap<String, String> fields = new LinkedHashMap<>(objectProperties);
-        return fields;
+    public LinkedHashMap<String, EntityVariablesNode> getEntityFields() {
+        return objectProperties;
     }
 
     @Override
-    public Map<String, String> getEntityInnerObjects() {
-        LinkedHashMap<String, String> inner = new LinkedHashMap<>(objectInnerEntities);
-        return inner;
+    public LinkedHashMap<String, EntityVariablesNode> getEntityInnerObjects() {
+        return objectInnerEntities;
     }
 }

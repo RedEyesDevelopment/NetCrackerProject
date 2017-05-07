@@ -1,10 +1,11 @@
 package projectpackage.repository.reacdao;
 
 import projectpackage.repository.reacdao.models.ReacEntity;
+import projectpackage.repository.reacdao.support.EntityVariablesNode;
 import projectpackage.repository.reacdao.support.ReactResultQuantityType;
 
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Gvozd on 06.05.2017.
@@ -17,7 +18,7 @@ public class FetchNode {
     private List<FetchNode> nodesList;
     private ReactResultQuantityType container;
     private ReacEntity entity;
-    private Map<String, String> currentEntityParameters;
+    private LinkedHashMap<String, EntityVariablesNode> currentEntityParameters;
 
     FetchNode(ReactEAV reactEAV, ReactResultQuantityType containerType) {
         this.reactEAV = reactEAV;
@@ -52,11 +53,11 @@ public class FetchNode {
         this.entity = entity;
     }
 
-    public Map<String, String> getCurrentEntityParameters() {
+    public LinkedHashMap<String, EntityVariablesNode> getCurrentEntityParameters() {
         return currentEntityParameters;
     }
 
-    public void setCurrentEntityParameters(Map<String, String> currentEntityParameters) {
+    public void setCurrentEntityParameters(LinkedHashMap<String, EntityVariablesNode> currentEntityParameters) {
         this.currentEntityParameters = currentEntityParameters;
     }
 
