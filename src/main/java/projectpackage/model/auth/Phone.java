@@ -14,8 +14,8 @@ public class Phone extends ReacEntity {
     {
         objectProperties = new LinkedHashMap<String, EntityVariablesNode>();
         objectProperties.put("objectId",new EntityVariablesNode<Integer>( new Integer(0), "%OBJECT_ID"));
-        objectProperties.put("phoneNumber",new EntityVariablesNode<String>( new String(), "PHONE_NUMBER"));
-        objectProperties.put("userId",new EntityVariablesNode<String>( new String(), "%PARENT_ID"));
+        objectProperties.put("phoneNumber",new EntityVariablesNode<String>( new String(), "Phone_number"));
+        objectProperties.put("userId",new EntityVariablesNode<Integer>( new Integer(0), "%PARENT_ID"));
     }
     private int objectId;
     private int userId;

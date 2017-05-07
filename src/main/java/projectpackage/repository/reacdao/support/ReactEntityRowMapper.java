@@ -1,6 +1,7 @@
 package projectpackage.repository.reacdao.support;
 
 import org.springframework.jdbc.core.RowMapper;
+import projectpackage.repository.reacdao.exceptions.WrongTypeClassException;
 import projectpackage.repository.reacdao.models.ReacEntity;
 
 import java.lang.reflect.Field;
@@ -41,26 +42,31 @@ public class ReactEntityRowMapper implements RowMapper<ReacEntity> {
                     e.printStackTrace();
                 }
                 field.setAccessible(true);
+                Class throwedClass=null;
                 try {
                     if (object.getClass().equals(Integer.class)) {
+                        throwedClass=Integer.class;
                         System.out.println("INTEGER="+resultSet.getInt(objectParameterKey));
                         field.set(reacEntity, resultSet.getInt(objectParameterKey));
                     }
                     if (object.getClass().equals(String.class)) {
+                        throwedClass=String.class;
                         System.out.println("STRING="+resultSet.getString(objectParameterKey));
                         field.set(reacEntity, resultSet.getString(objectParameterKey));
                     }
                     if (object.getClass().equals(Long.class)) {
+                        throwedClass=Long.class;
                         System.out.println("LONG"+resultSet.getLong(objectParameterKey));
                         field.set(reacEntity, resultSet.getLong(objectParameterKey));
                     }
                     if (object.getClass().equals(java.sql.Date.class)) {
+                        throwedClass=java.sql.Date.class;
                         System.out.println("Date="+resultSet.getDate(objectParameterKey));
                         Date date = resultSet.getDate(objectParameterKey);
                         field.set(reacEntity, date);
                     }
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    throw new WrongTypeClassException(field.getDeclaringClass(), throwedClass);
                 }
             }
         return reacEntity;
