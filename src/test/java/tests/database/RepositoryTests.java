@@ -31,5 +31,4 @@ public class RepositoryTests extends AbstractDatabaseTest {
         System.out.println(SEPARATOR);
     }
 
-
 }

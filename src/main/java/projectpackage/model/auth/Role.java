@@ -2,7 +2,7 @@ package projectpackage.model.auth;
 
 import com.google.common.collect.ImmutableMap;
 import lombok.Data;
-import projectpackage.model.ReacEntity;
+import projectpackage.repository.reacdao.models.ReacEntity;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

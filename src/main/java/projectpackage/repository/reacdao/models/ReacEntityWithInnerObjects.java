@@ -1,4 +1,4 @@
-package projectpackage.model;
+package projectpackage.repository.reacdao.models;
 
 import java.util.Map;
 

@@ -15,6 +15,8 @@ import projectpackage.repository.PhoneDAO;
 import projectpackage.repository.PhoneDAOImpl;
 import projectpackage.repository.UserDAO;
 import projectpackage.repository.UserDAOImpl;
+import projectpackage.repository.reacdao.ReactEAVManager;
+import projectpackage.repository.reacdao.support.ReactConstantConfiguration;
 import projectpackage.service.UserService;
 import projectpackage.service.UserServiceImpl;
 
@@ -120,5 +122,10 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     @Bean
     UserService userService() {
         return new UserServiceImpl();
+    }
+
+    @Bean
+    ReactEAVManager reactEAVManager(){
+        return new ReactEAVManager(jdbcTemplate(), new ReactConstantConfiguration());
     }
 }

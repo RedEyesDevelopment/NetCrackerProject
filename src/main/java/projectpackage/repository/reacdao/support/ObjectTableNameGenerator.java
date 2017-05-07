@@ -1,4 +1,4 @@
-package projectpackage.repository.reacdao;
+package projectpackage.repository.reacdao.support;
 
 /**
  * Created by Gvozd on 06.05.2017.

@@ -21,6 +21,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     PhoneDAO phoneDAO;
 
+
     @Override
     public List<User> getAllUsers(String orderingParameter) {
         Map<Integer,User> users = userDAO.getAllUsers(orderingParameter);
@@ -36,4 +37,5 @@ public class UserServiceImpl implements UserService {
         }
         return ImmutableList.copyOf(users.values());
     }
+
 }

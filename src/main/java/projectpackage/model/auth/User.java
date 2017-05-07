@@ -1,10 +1,8 @@
 package projectpackage.model.auth;
 
-import com.google.common.collect.ImmutableMap;
 import lombok.Data;
-import projectpackage.model.ReacEntityWithInnerObjects;
+import projectpackage.repository.reacdao.models.ReacEntityWithInnerObjects;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -12,20 +10,20 @@ import java.util.Set;
 @Data
 public class User extends ReacEntityWithInnerObjects {
     private static final int OBJECT_TYPE=3;
-    private static final HashMap<String, String> objectProperties;
-    private static final HashMap<String, String> objectInnerEntities;
+    private static final LinkedHashMap<String, String> objectProperties;
+    private static final LinkedHashMap<String, String> objectInnerEntities;
     static
     {
         objectProperties = new LinkedHashMap<>();
         objectProperties.put("objectId","%OBJECT_ID");
-        objectProperties.put("email","EMAIL");
-        objectProperties.put("password","PASSWORD");
+        objectProperties.put("email","Email");
+        objectProperties.put("password","Password");
 //        objectProperties.put("role","HAS_ROLE");
-        objectProperties.put("firstName","FIRST_NAME");
-        objectProperties.put("lastName","LAST_NAME");
-        objectProperties.put("additionalInfo","ADDITIONAL_INFO");
+        objectProperties.put("firstName","First_name");
+        objectProperties.put("lastName","Last_name");
+        objectProperties.put("additionalInfo","Additional_info");
 
-        objectInnerEntities = new HashMap<>();
+        objectInnerEntities = new LinkedHashMap<>();
         objectInnerEntities.put("role","HAS_ROLE");
     }
 
@@ -45,11 +43,13 @@ public class User extends ReacEntityWithInnerObjects {
 
     @Override
     public Map<String, String> getEntityFields() {
-        return ImmutableMap.copyOf(objectProperties);
+        LinkedHashMap<String, String> fields = new LinkedHashMap<>(objectProperties);
+        return fields;
     }
 
     @Override
     public Map<String, String> getEntityInnerObjects() {
-        return ImmutableMap.copyOf(objectInnerEntities);
+        LinkedHashMap<String, String> inner = new LinkedHashMap<>(objectInnerEntities);
+        return inner;
     }
 }
