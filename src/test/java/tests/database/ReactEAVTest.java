@@ -71,4 +71,13 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         }
         System.out.println(SEPARATOR);
     }
+
+    @Test
+    public void queryTestOfUsersFetchPhones(){
+        List<User> list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().getEntityCollection();
+        for (User user:list){
+            System.out.println(user);
+        }
+        System.out.println(SEPARATOR);
+    }
 }

@@ -9,6 +9,7 @@ import projectpackage.repository.reacdao.models.ReacEntity;
 import projectpackage.repository.reacdao.querying.ReactQueryBuilder;
 import projectpackage.repository.reacdao.querying.ReactQueryTaskHolder;
 import projectpackage.repository.reacdao.support.ObjectTableNameGenerator;
+import projectpackage.repository.reacdao.support.ReacResultDataConnector;
 import projectpackage.repository.reacdao.support.ReactConstantConfiguration;
 import projectpackage.repository.reacdao.support.ReactEntityRowMapper;
 
@@ -159,7 +160,8 @@ public class ReactEAV {
         if (reactQueryTaskHolders.size()==1){
             return reactQueryTaskHolders.get(0).getNode().getResultList();
         }
-        return null;
+        ReacResultDataConnector dataConnector = new ReacResultDataConnector(rootNode);
+        return  dataConnector.connectEntitiesAndReturn();
     }
 
 

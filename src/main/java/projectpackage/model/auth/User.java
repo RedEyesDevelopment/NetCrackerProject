@@ -31,7 +31,7 @@ public class User extends ReacEntity {
     private int objectId;
     private String email;
     private String password;
-    private String role;
+    private Role role;
     private String firstName;
     private String lastName;
     private String additionalInfo;

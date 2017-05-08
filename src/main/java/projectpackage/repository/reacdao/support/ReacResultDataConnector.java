@@ -15,7 +15,22 @@ public class ReacResultDataConnector {
         this.rootTask = rootTask;
     }
 
-    public List<ReacEntity> connectEntitiesAndReturn(){
-        return null;
+    public List<ReacEntity> connectEntitiesAndReturn() {
+        for (ReacTask reacTask : rootTask.getInnerObjects()) {
+            recursiveConnecting(rootTask, reacTask);
+        }
+        return rootTask.getResultList();
     }
+
+    private void recursiveConnecting(ReacTask outer, ReacTask inner) {
+        if (!inner.getInnerObjects().isEmpty()) {
+            for (ReacTask reacTask : inner.getInnerObjects()) {
+                recursiveConnecting(inner, reacTask);
+            }
+        }
+        DataInsertor connector = new DataInsertor(outer, inner);
+        connector.connectBy();
+    }
+
+
 }

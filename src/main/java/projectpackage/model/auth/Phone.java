@@ -5,18 +5,23 @@ import projectpackage.repository.reacdao.fetch.EntityOuterRelationshipsData;
 import projectpackage.repository.reacdao.models.ReacEntity;
 import projectpackage.repository.reacdao.fetch.EntityVariablesData;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 @Data
 public class Phone extends ReacEntity {
     private static final String OBJECT_TYPE="Phone";
     private static final LinkedHashMap<String, EntityVariablesData> objectProperties;
+    private static final HashMap<String, EntityOuterRelationshipsData> objectOuterConnections;
     static
     {
         objectProperties = new LinkedHashMap<String, EntityVariablesData>();
         objectProperties.put("objectId",new EntityVariablesData(Integer.class, "%OBJECT_ID"));
         objectProperties.put("phoneNumber",new EntityVariablesData(String.class, "Phone_number"));
         objectProperties.put("userId",new EntityVariablesData(Integer.class, "%PARENT_ID"));
+
+        objectOuterConnections=new HashMap<>();
+        objectOuterConnections.put("phonesForUser", new EntityOuterRelationshipsData(User.class, "phones","userId", "objectId"));
     }
     private int objectId;
     private int userId;
@@ -33,7 +38,8 @@ public class Phone extends ReacEntity {
     }
 
     @Override
-    public LinkedHashMap<String, EntityOuterRelationshipsData> getEntityInnerObjects() {
-        return null;
+    public HashMap<String, EntityOuterRelationshipsData> getEntityOuterConnections() {
+        return objectOuterConnections;
     }
+
 }

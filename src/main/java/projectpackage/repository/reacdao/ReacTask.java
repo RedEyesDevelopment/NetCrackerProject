@@ -27,7 +27,7 @@ public class ReacTask {
     ReacTask(ReactEAV reactEAV, Class objectClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend) {
         this.reactEAV = reactEAV;
         this.objectClass = objectClass;
-        this.innerObjects = new ArrayList<>();
+        this.innerObjects = new LinkedList<>();
         this.resultList = new ArrayList<>();
         this.forSingleObject = forSingleObject;
         this.targetId = targetId;
@@ -77,7 +77,7 @@ public class ReacTask {
         return entity;
     }
 
-    Class getObjectClass() {
+    public Class getObjectClass() {
         return objectClass;
     }
 
@@ -89,7 +89,7 @@ public class ReacTask {
         return currentEntityParameters;
     }
 
-    List<ReacEntity> getResultList() {
+    public List<ReacEntity> getResultList() {
         return resultList;
     }
 
@@ -101,11 +101,11 @@ public class ReacTask {
         this.resultList.add(result);
     }
 
-    HashMap<String, EntityOuterRelationshipsData> getCurrentEntityOuterLinks() {
+    public HashMap<String, EntityOuterRelationshipsData> getCurrentEntityOuterLinks() {
         return currentEntityOuterLinks;
     }
 
-    List<ReacTask> getInnerObjects() {
+    public List<ReacTask> getInnerObjects() {
         return innerObjects;
     }
 
@@ -144,6 +144,8 @@ public class ReacTask {
     public void setAscend(boolean ascend) {
         this.ascend = ascend;
     }
+
+
 
     public ReacTask fetchSingleInnerEntityForInnerObject(Class<? extends ReacEntity> innerEntityClass){
         return fetchingOrderCreation(innerEntityClass,true,null,null,false);
