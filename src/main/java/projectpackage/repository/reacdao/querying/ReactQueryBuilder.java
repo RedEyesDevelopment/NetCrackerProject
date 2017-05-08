@@ -1,4 +1,6 @@
-package projectpackage.repository.reacdao.support;
+package projectpackage.repository.reacdao.querying;
+
+import projectpackage.repository.reacdao.support.ReactConstantConfiguration;
 
 /**
  * Created by Gvozd on 08.05.2017.

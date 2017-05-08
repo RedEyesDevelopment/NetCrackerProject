@@ -2,6 +2,7 @@ package projectpackage.repository.reacdao.support;
 
 import org.springframework.jdbc.core.RowMapper;
 import projectpackage.repository.reacdao.exceptions.WrongTypeClassException;
+import projectpackage.repository.reacdao.fetch.EntityVariablesNode;
 import projectpackage.repository.reacdao.models.ReacEntity;
 
 import java.lang.reflect.Field;

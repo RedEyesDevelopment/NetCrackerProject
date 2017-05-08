@@ -1,8 +1,9 @@
 package projectpackage.model.auth;
 
 import lombok.Data;
+import projectpackage.repository.reacdao.fetch.EntityInnerObjectNode;
 import projectpackage.repository.reacdao.models.ReacEntity;
-import projectpackage.repository.reacdao.support.EntityVariablesNode;
+import projectpackage.repository.reacdao.fetch.EntityVariablesNode;
 
 import java.util.LinkedHashMap;
 
@@ -29,5 +30,10 @@ public class Phone extends ReacEntity {
     @Override
     public LinkedHashMap<String, EntityVariablesNode> getEntityFields() {
         return objectProperties;
+    }
+
+    @Override
+    public LinkedHashMap<String, EntityInnerObjectNode> getEntityInnerObjects() {
+        return null;
     }
 }
