@@ -1,13 +1,13 @@
 package projectpackage.repository.reacdao.fetch;
 
 /**
- * Created by Lenovo on 08.05.2017.
+ * Created by Lenovo on 07.05.2017.
  */
-public class EntityInnerObjectNode {
+public class EntityVariablesData {
     private Class parameterClass;
     private String databaseAttrtypeCodeValue;
 
-    public EntityInnerObjectNode(Class parameterClass, String databaseAttrtypeCodeValue) {
+    public EntityVariablesData(Class parameterClass, String databaseAttrtypeCodeValue) {
         this.parameterClass = parameterClass;
         this.databaseAttrtypeCodeValue = databaseAttrtypeCodeValue;
     }

@@ -1,8 +1,9 @@
 package projectpackage.repository.reacdao.models;
 
-import projectpackage.repository.reacdao.fetch.EntityInnerObjectNode;
-import projectpackage.repository.reacdao.fetch.EntityVariablesNode;
+import projectpackage.repository.reacdao.fetch.EntityOuterRelationshipsData;
+import projectpackage.repository.reacdao.fetch.EntityVariablesData;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**
@@ -11,6 +12,6 @@ import java.util.LinkedHashMap;
 public abstract class ReacEntity {
     public abstract String getEntityObjectTypeForEav();
     public abstract int getObjectId();
-    public abstract LinkedHashMap<String, EntityVariablesNode> getEntityFields();
-    public abstract LinkedHashMap<String, EntityInnerObjectNode> getEntityInnerObjects();
+    public abstract LinkedHashMap<String, EntityVariablesData> getEntityFields();
+    public abstract HashMap<String, EntityOuterRelationshipsData> getEntityOuterConnections();
 }

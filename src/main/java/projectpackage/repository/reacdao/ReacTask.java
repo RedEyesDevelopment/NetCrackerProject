@@ -1,8 +1,8 @@
 package projectpackage.repository.reacdao;
 
-import projectpackage.repository.reacdao.fetch.EntityInnerObjectNode;
+import projectpackage.repository.reacdao.fetch.EntityOuterRelationshipsData;
 import projectpackage.repository.reacdao.models.ReacEntity;
-import projectpackage.repository.reacdao.fetch.EntityVariablesNode;
+import projectpackage.repository.reacdao.fetch.EntityVariablesData;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -21,8 +21,8 @@ public class ReacTask {
     private boolean ascend;
     private List<ReacTask> innerObjects;
     private ReacEntity entity;
-    private LinkedHashMap<String, EntityVariablesNode> currentEntityParameters;
-    private LinkedHashMap<String, EntityInnerObjectNode> currentEntityInnerObjects;
+    private LinkedHashMap<String, EntityVariablesData> currentEntityParameters;
+    private HashMap<String, EntityOuterRelationshipsData> currentEntityOuterLinks;
 
     ReacTask(ReactEAV reactEAV, Class objectClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend) {
         this.reactEAV = reactEAV;
@@ -34,7 +34,7 @@ public class ReacTask {
         this.orderingParameter = orderingParameter;
         this.ascend = ascend;
 
-        LinkedHashMap<String, EntityVariablesNode> currentNodeVariables;
+        LinkedHashMap<String, EntityVariablesData> currentNodeVariables;
 //        Кастуем класс
         entity = null;
         try {
@@ -52,19 +52,19 @@ public class ReacTask {
             e.printStackTrace();
         }
         try {
-            this.currentEntityParameters = (LinkedHashMap<String, EntityVariablesNode>) currentObjectClassMethod.invoke(entity);
+            this.currentEntityParameters = (LinkedHashMap<String, EntityVariablesData>) currentObjectClassMethod.invoke(entity);
 
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }try {
-            currentObjectClassMethod = objectClass.getMethod("getEntityInnerObjects");
+            currentObjectClassMethod = objectClass.getMethod("getEntityOuterConnections");
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
         try {
-            this.currentEntityInnerObjects = (LinkedHashMap<String, EntityInnerObjectNode>) currentObjectClassMethod.invoke(entity);
+            this.currentEntityOuterLinks = (HashMap<String, EntityOuterRelationshipsData>) currentObjectClassMethod.invoke(entity);
 
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -85,7 +85,7 @@ public class ReacTask {
         this.objectClass = objectClass;
     }
 
-    LinkedHashMap<String, EntityVariablesNode> getCurrentEntityParameters() {
+    LinkedHashMap<String, EntityVariablesData> getCurrentEntityParameters() {
         return currentEntityParameters;
     }
 
@@ -101,8 +101,8 @@ public class ReacTask {
         this.resultList.add(result);
     }
 
-    LinkedHashMap<String, EntityInnerObjectNode> getCurrentEntityInnerObjects() {
-        return currentEntityInnerObjects;
+    HashMap<String, EntityOuterRelationshipsData> getCurrentEntityOuterLinks() {
+        return currentEntityOuterLinks;
     }
 
     List<ReacTask> getInnerObjects() {

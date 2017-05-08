@@ -1,30 +1,31 @@
 package projectpackage.model.auth;
 
 import lombok.Data;
-import projectpackage.repository.reacdao.fetch.EntityInnerObjectNode;
-import projectpackage.repository.reacdao.fetch.EntityVariablesNode;
+import projectpackage.repository.reacdao.fetch.EntityOuterRelationshipsData;
+import projectpackage.repository.reacdao.fetch.EntityVariablesData;
 import projectpackage.repository.reacdao.models.ReacEntity;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
 @Data
 public class User extends ReacEntity {
     private static final String OBJECT_TYPE="User";
-    private static final LinkedHashMap<String, EntityVariablesNode> objectProperties;
-    private static final LinkedHashMap<String, EntityInnerObjectNode> objectInnerEntities;
+    private static final LinkedHashMap<String, EntityVariablesData> objectProperties;
+    private static final HashMap<String, EntityOuterRelationshipsData> objectOuterConnections;
+
     static
     {
         objectProperties = new LinkedHashMap<>();
-        objectProperties.put("objectId",new EntityVariablesNode(Integer.class, "%OBJECT_ID"));
-        objectProperties.put("email",new EntityVariablesNode(String.class, "Email"));
-        objectProperties.put("password",new EntityVariablesNode(String.class, "Password"));
-        objectProperties.put("firstName",new EntityVariablesNode(String.class, "First_name"));
-        objectProperties.put("lastName",new EntityVariablesNode(String.class, "Last_name"));
-        objectProperties.put("additionalInfo",new EntityVariablesNode(String.class, "Additional_info"));
+        objectProperties.put("objectId",new EntityVariablesData(Integer.class, "%OBJECT_ID"));
+        objectProperties.put("email",new EntityVariablesData(String.class, "Email"));
+        objectProperties.put("password",new EntityVariablesData(String.class, "Password"));
+        objectProperties.put("firstName",new EntityVariablesData(String.class, "First_name"));
+        objectProperties.put("lastName",new EntityVariablesData(String.class, "Last_name"));
+        objectProperties.put("additionalInfo",new EntityVariablesData(String.class, "Additional_info"));
 
-        objectInnerEntities = new LinkedHashMap<>();
-        objectInnerEntities.put("role",new EntityInnerObjectNode(Role.class, "HAS_ROLE"));
+        objectOuterConnections=new HashMap<>();
     }
 
     private int objectId;
@@ -42,12 +43,13 @@ public class User extends ReacEntity {
     }
 
     @Override
-    public LinkedHashMap<String, EntityVariablesNode> getEntityFields() {
+    public LinkedHashMap<String, EntityVariablesData> getEntityFields() {
         return objectProperties;
     }
 
     @Override
-    public LinkedHashMap<String, EntityInnerObjectNode> getEntityInnerObjects() {
-        return objectInnerEntities;
+    public HashMap<String, EntityOuterRelationshipsData> getEntityOuterConnections() {
+        return objectOuterConnections;
     }
+
 }

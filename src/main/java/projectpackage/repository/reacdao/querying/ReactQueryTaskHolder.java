@@ -6,12 +6,12 @@ import projectpackage.repository.reacdao.ReacTask;
 /**
  * Created by Lenovo on 08.05.2017.
  */
-public class ReactQueryHolder {
+public class ReactQueryTaskHolder {
     private ReacTask node;
     private String query;
     private SqlParameterSource source;
 
-    public ReactQueryHolder(ReacTask node, String query, SqlParameterSource source) {
+    public ReactQueryTaskHolder(ReacTask node, String query, SqlParameterSource source) {
         this.node = node;
         this.query = query;
         this.source = source;

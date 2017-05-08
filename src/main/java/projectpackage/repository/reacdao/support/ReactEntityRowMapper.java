@@ -2,7 +2,7 @@ package projectpackage.repository.reacdao.support;
 
 import org.springframework.jdbc.core.RowMapper;
 import projectpackage.repository.reacdao.exceptions.WrongTypeClassException;
-import projectpackage.repository.reacdao.fetch.EntityVariablesNode;
+import projectpackage.repository.reacdao.fetch.EntityVariablesData;
 import projectpackage.repository.reacdao.models.ReacEntity;
 
 import java.lang.reflect.Field;
@@ -14,10 +14,10 @@ import java.util.Map;
 
 public class ReactEntityRowMapper implements RowMapper<ReacEntity> {
     Class<? extends ReacEntity> clazz;
-    LinkedHashMap<String, EntityVariablesNode> parameters;
+    LinkedHashMap<String, EntityVariablesData> parameters;
     String dataStringPrefix;
 
-    public ReactEntityRowMapper(Class entityClass, LinkedHashMap<String, EntityVariablesNode> parameters, String dataStringPrefix) {
+    public ReactEntityRowMapper(Class entityClass, LinkedHashMap<String, EntityVariablesData> parameters, String dataStringPrefix) {
         clazz = entityClass;
         this.parameters = parameters;
         this.dataStringPrefix = dataStringPrefix;
@@ -33,7 +33,7 @@ public class ReactEntityRowMapper implements RowMapper<ReacEntity> {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        for (Map.Entry<String, EntityVariablesNode> entry : parameters.entrySet()) {
+        for (Map.Entry<String, EntityVariablesData> entry : parameters.entrySet()) {
             String objectParameterKey = entry.getKey();
             Class newObjectClass = entry.getValue().getParameterClass();
             System.out.println("FIELDCLASS="+newObjectClass.getName());

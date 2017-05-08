@@ -62,4 +62,13 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         }
         System.out.println(SEPARATOR);
     }
+
+    @Test
+    public void queryTestOfRolesOrderBy(){
+        List<Role> roles = (List<Role>) manager.createReactEAV(Role.class).getEntityCollectionOrderByParameter("objectId", true);
+        for (Role role:roles){
+            System.out.println(role);
+        }
+        System.out.println(SEPARATOR);
+    }
 }
