@@ -43,7 +43,7 @@ public class ReactEAV {
         rootNode.setContainer(ReactResultQuantityType.SINGLE_OBJECT);
         String query=null;
         try {
-            query = getQueryForEntity(rootNode);
+            query = generateInformationForBuildingQuery(rootNode);
             System.out.println(query);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -68,7 +68,7 @@ public class ReactEAV {
         rootNode.setContainer(ReactResultQuantityType.OBJECTS_LIST);
         String query=null;
         try {
-            query = getQueryForEntity(rootNode);
+            query = generateInformationForBuildingQuery(rootNode);
             System.out.println(query);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -101,65 +101,85 @@ public class ReactEAV {
         return null;
     }
 
-    //Метод создания ссылки в билдере
-    private String getQueryForEntity(FetchNode currentNode) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
-        StringBuilder queryBuilder = new StringBuilder();
-        ObjectTableNameGenerator attributesTablesNameGenerator = new ObjectTableNameGenerator(config.getAttributesPermanentTableName());
+    private String generateInformationForBuildingQuery(FetchNode currentNode) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
         LinkedHashMap<String, EntityVariablesNode> currentNodeVariables;
 //        Кастуем класс
         Class currentNodeObjectClass = currentNode.getObjectClass();
         ReacEntity reacEntity = (ReacEntity) currentNodeObjectClass.newInstance();
         currentNode.setEntity(reacEntity);
-        String currentEntityObjectType=reacEntity.getEntityObjectTypeForEav();
         //Получаем метод getEntityFields
         Method currentNodeObjectClassMethod = currentNodeObjectClass.getMethod("getEntityFields");
         currentNodeVariables = (LinkedHashMap<String, EntityVariablesNode>) currentNodeObjectClassMethod.invoke(reacEntity);
         currentNode.setCurrentEntityParameters(new LinkedHashMap<String, EntityVariablesNode>(currentNodeVariables));
-        Iterator currentNodeVariablesMapIterator = currentNodeVariables.entrySet().iterator();
-        LinkedHashMap<String, String> currentNodeAttributesMap = new LinkedHashMap<>();
-        queryBuilder.append("SELECT");
-        boolean firstKeyFlag=false;
+        return getQueryForEntity(currentNodeVariables);
+    }
+
+    //Метод создания ссылки в билдере
+    private String getQueryForEntity( LinkedHashMap<String, EntityVariablesNode> currentNodeVariables) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
+        //Создаём стрингбилдер и ReactQueryBuilder, нацеленный на стрингбилдер.
+        StringBuilder queryBuilder = new StringBuilder();
+        ReactQueryBuilder builder = new ReactQueryBuilder(queryBuilder, config);
+
+        //Создаём генератор имён для аттрибутов.
+        ObjectTableNameGenerator attributesTablesNameGenerator = new ObjectTableNameGenerator(config.getAttributesPermanentTableName());
+
+        // Создаём ссылку через билдер
+        builder.appendSelectWord();
+
         //Пробегаемся по мапе параметров, аппендим их и удаляем те, которые прямо в таблице OBJECTS находятся
+        Iterator currentNodeVariablesMapIterator = currentNodeVariables.entrySet().iterator();
         while (currentNodeVariablesMapIterator.hasNext()) {
                 Map.Entry<String, EntityVariablesNode> objectPropertiesMapIteratorEntry = (Map.Entry) currentNodeVariablesMapIterator.next();
             String objectParameterKey = objectPropertiesMapIteratorEntry.getKey();
             String databaseColumnValue = objectPropertiesMapIteratorEntry.getValue().getDatabaseColumnValue();
-            if (!firstKeyFlag) {
-                firstKeyFlag = true;
-            } else queryBuilder.append(", ");
+
             if (databaseColumnValue.startsWith("%")){
-                queryBuilder.append(" "+config.getRootTableName()+"."+databaseColumnValue.substring(1)+" \""+objectParameterKey+"\"");
+                //Этот объект прямо из таблицы объектов, поэтому очищаем мапу от него.
+                builder.appendSelectColumnWithNaming(config.getRootTableName(), databaseColumnValue.substring(1), objectParameterKey);
                 currentNodeVariablesMapIterator.remove();
             } else {
-                queryBuilder.append(attributesTablesNameGenerator.getNextTableName()+"."+config.getV()+" \""+objectParameterKey+"\", ");
-                queryBuilder.append(attributesTablesNameGenerator.getCurrentTableName()+"."+config.getDv()+" \""+objectParameterKey+config.getDateAppender()+"\"");
-//                currentNodeAttributesMap.put(objectParameterKey,databaseColumnValue);
+                // Мы заранее не знаем где находятся данные - в VALUE или DATE_VALUE, поэтому выбираем и то и то.
+                builder.appendSelectColumnWithValueAndNaming(attributesTablesNameGenerator.getNextTableName(), objectParameterKey);
+                builder.appendSelectColumnWithDataValueAndNaming(attributesTablesNameGenerator.getCurrentTableName(), objectParameterKey);
             }
         }
-        queryBuilder.append("\nFROM "+config.getObjectsTableName()+ " "+config.getRootTableName());
-        queryBuilder.append(", "+config.getObjTypesTableName()+" "+config.getRootTypesTableName());
+
+        //Начинаем аппендить раздел FROM
+        builder.appendFromWord();
+        builder.appendFromTableWithNaming(config.getObjectsTableName(), config.getRootTableName());
+        builder.appendFromTableWithNaming(config.getObjTypesTableName(), config.getRootTypesTableName());
+
+        //Аппендим таблицы ATTRIBUTES и ATTRTYPES, сколько есть аттрибутов, столько раз и аппендим, прибавляя к имени таблиц по единице
         for (int i=1;i<=attributesTablesNameGenerator.getTablesCounter();i++){
-            queryBuilder.append(", "+config.getAttributesTableName()+" "+config.getAttributesPermanentTableName()+i);
-            queryBuilder.append(", "+config.getAttrTypesTableName()+" "+config.getAttrTypesPermanentTableName()+i);
+            builder.appendFromTableWithNaming(config.getAttributesTableName(), config.getAttributesPermanentTableName()+i);
+            builder.appendFromTableWithNaming(config.getAttrTypesTableName(), config.getAttrTypesPermanentTableName()+i);
         }
-        queryBuilder.append("\nWHERE ");
-        queryBuilder.append(config.getRootTypesTableName()+"."+config.getCd()+"=:"+config.getEntityTypeIdConstant());
-        queryBuilder.append("\nAND "+config.getRootTableName()+"."+config.getOtid()+"="+config.getRootTypesTableName()+"."+config.getOtid());
-//        currentNodeVariablesMapIterator = currentNodeAttributesMap.entrySet().iterator();
+
+        //Аппендим раздел WHERE
+        //OB_TY_ID = OBJECT_TYPE_ID
+        builder.appendWhereWord();
+        builder.appendWhereConditionWithTableCodeEqualsToConstant(config.getRootTypesTableName(), config.getEntityTypeIdConstant());
+        builder.appendWhereConditionWithTwoTablesEqualsByOB_TY_ID(config.getRootTableName(), config.getRootTypesTableName());
+
+        //Аппендим аттрибуты
         currentNodeVariablesMapIterator = currentNodeVariables.entrySet().iterator();
         for (int i=1;i<=attributesTablesNameGenerator.getTablesCounter();i++){
-            queryBuilder.append("\nAND "+config.getRootTableName()+"."+config.getOid()+"="+config.getAttributesPermanentTableName()+i+"."+config.getOid());
-            queryBuilder.append("\nAND "+config.getRootTableName()+"."+config.getOtid()+"="+config.getAttrTypesPermanentTableName()+i+"."+config.getOtid());
-            queryBuilder.append("\nAND "+config.getAttributesPermanentTableName()+i+"."+config.getAid()+"="+config.getAttrTypesPermanentTableName()+i+"."+config.getAid());
+            // WHERE OBJECTS.OBJECT_ID=ATTRIBUTES.OBJECT_ID
+            builder.appendWhereConditionWithTwoTablesEqualsByOB_ID(config.getRootTableName(), config.getAttributesPermanentTableName()+i);
+            // WHERE OBJECTS.OBJECT_TYPE_ID=ATTRTYPES.OBJECT_TYPE_ID
+            builder.appendWhereConditionWithTwoTablesEqualsByOB_TY_ID(config.getRootTableName(), config.getAttrTypesPermanentTableName()+i);
+            //WHERE ATTRIBUTES.ATTR_ID=ATTRTYPES.ATTR_ID
+            builder.appendWhereConditionWithTwoTablesEqualsByAT_ID(config.getAttributesPermanentTableName()+i, config.getAttrTypesPermanentTableName()+i);
+
             Map.Entry<String, EntityVariablesNode> objectPropertiesMapIteratorEntry = (Map.Entry) currentNodeVariablesMapIterator.next();
             String databaseColumnValue = objectPropertiesMapIteratorEntry.getValue().getDatabaseColumnValue();
+            //WHERE ATTRTYPE.CODE=Код из таблицы кодов полйе объекта
             if (databaseColumnValue.startsWith("%")){
-                queryBuilder.append("\nAND "+config.getAttrTypesPermanentTableName()+i+"."+config.getCd()+"='"+databaseColumnValue.substring(1)+"'");
+                builder.appendWhereConditionWithTableCodeEqualsToValue(config.getAttrTypesPermanentTableName()+i, databaseColumnValue.substring(1));
             } else {
-                queryBuilder.append("\nAND "+config.getAttrTypesPermanentTableName()+i+"."+config.getCd()+"='"+databaseColumnValue+"'");
+                builder.appendWhereConditionWithTableCodeEqualsToValue(config.getAttrTypesPermanentTableName()+i, databaseColumnValue);
             }
         }
-//        queryBuilder.append(";");
         return queryBuilder.toString();
     }
 

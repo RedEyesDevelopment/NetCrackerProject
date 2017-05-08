@@ -113,7 +113,7 @@ public class ReactQueryBuilder {
     public boolean appendWhereConditionWithTableCodeEqualsToValue(String tableName, String value){
         if (queryHasBeenFinished) return false;
         if (!firstWordInWhereQueryFlag) appendAnd();
-        queryBuilder.append(tableName+"."+config.getCd()+"="+value);
+        queryBuilder.append(tableName+"."+config.getCd()+"='"+value+"'");
         firstWordInWhereQueryFlag = false;
         return true;
     }
