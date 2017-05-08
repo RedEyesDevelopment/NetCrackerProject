@@ -24,9 +24,9 @@ public class ReactEntityRowMapper implements RowMapper<ReacEntity> {
 
     @Override
     public ReacEntity mapRow(ResultSet resultSet, int i) throws SQLException {
-        ReacEntity reacEntity = null;
+        ReacEntity targetReacEntityObject = null;
         try {
-            reacEntity = (ReacEntity) clazz.newInstance();
+            targetReacEntityObject = (ReacEntity) clazz.newInstance();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -34,41 +34,47 @@ public class ReactEntityRowMapper implements RowMapper<ReacEntity> {
         }
         for (Map.Entry<String, EntityVariablesNode> entry : parameters.entrySet()) {
             String objectParameterKey = entry.getKey();
-            Object object = entry.getValue().getObject();
+            Class newObjectClass = entry.getValue().getParameterClass();
+            System.out.println("FIELDCLASS="+newObjectClass.getName());
             Field field = null;
                 try {
-                    field = reacEntity.getClass().getDeclaredField(objectParameterKey);
+                    field = targetReacEntityObject.getClass().getDeclaredField(objectParameterKey);
                 } catch (NoSuchFieldException e) {
                     e.printStackTrace();
                 }
-                field.setAccessible(true);
+                boolean fieldWasPrivate = false;
+                        if (!field.isAccessible()){
+                            field.setAccessible(true);
+                            fieldWasPrivate = true;
+                        }
                 Class throwedClass=null;
                 try {
-                    if (object.getClass().equals(Integer.class)) {
+                    if (newObjectClass.equals(Integer.class)) {
                         throwedClass=Integer.class;
                         System.out.println("INTEGER="+resultSet.getInt(objectParameterKey));
-                        field.set(reacEntity, resultSet.getInt(objectParameterKey));
+                        field.set(targetReacEntityObject, resultSet.getInt(objectParameterKey));
                     }
-                    if (object.getClass().equals(String.class)) {
+                    if (newObjectClass.equals(String.class)) {
                         throwedClass=String.class;
                         System.out.println("STRING="+resultSet.getString(objectParameterKey));
-                        field.set(reacEntity, resultSet.getString(objectParameterKey));
+                        field.set(targetReacEntityObject, resultSet.getString(objectParameterKey));
                     }
-                    if (object.getClass().equals(Long.class)) {
+                    if (newObjectClass.equals(Long.class)) {
                         throwedClass=Long.class;
                         System.out.println("LONG"+resultSet.getLong(objectParameterKey));
-                        field.set(reacEntity, resultSet.getLong(objectParameterKey));
+                        field.set(targetReacEntityObject, resultSet.getLong(objectParameterKey));
                     }
-                    if (object.getClass().equals(java.sql.Date.class)) {
+                    if (newObjectClass.equals(java.sql.Date.class)) {
                         throwedClass=java.sql.Date.class;
                         System.out.println("Date="+resultSet.getDate(objectParameterKey));
                         Date date = resultSet.getDate(objectParameterKey);
-                        field.set(reacEntity, date);
+                        field.set(targetReacEntityObject, date);
                     }
                 } catch (IllegalAccessException e) {
                     throw new WrongTypeClassException(field.getDeclaringClass(), throwedClass);
                 }
+                if (fieldWasPrivate) field.setAccessible(false);
             }
-        return reacEntity;
+        return targetReacEntityObject;
     }
 }

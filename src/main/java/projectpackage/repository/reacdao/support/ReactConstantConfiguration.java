@@ -37,7 +37,11 @@ public class ReactConstantConfiguration {
     //DATE COLUMN NAME APPENDER
     private String dateAppender;
     //CONSTANT NAME FOR OBJECT_TYPE_ID VALUE
+     private String entityOrderConstant;
+    //CONSTANT NAME FOR OBJECT_TYPE_ID VALUE
     private String entityTypeIdConstant;
+    //CONSTANT NAME FOR OBJECT_TYPE_ID VALUE
+    private String entityIdConstant;
 
     public ReactConstantConfiguration() {
         objectsTableName = "OBJECTS";
@@ -55,7 +59,9 @@ public class ReactConstantConfiguration {
         v = "VALUE";
         dv="DATE_VALUE";
         dateAppender="_date";
-        entityTypeIdConstant="target";
+        entityTypeIdConstant="targetTypeId";
+        entityIdConstant="targetId";
+        entityOrderConstant="enorder";
         rootTypesTableName = "ROOTYPES";
     }
 
@@ -193,5 +199,21 @@ public class ReactConstantConfiguration {
 
     public void setRootTypesTableName(String rootTypesTableName) {
         this.rootTypesTableName = rootTypesTableName;
+    }
+
+    public String getEntityOrderConstant() {
+        return entityOrderConstant;
+    }
+
+    public void setEntityOrderConstant(String entityOrderConstant) {
+        this.entityOrderConstant = entityOrderConstant;
+    }
+
+    public String getEntityIdConstant() {
+        return entityIdConstant;
+    }
+
+    public void setEntityIdConstant(String entityIdConstant) {
+        this.entityIdConstant = entityIdConstant;
     }
 }

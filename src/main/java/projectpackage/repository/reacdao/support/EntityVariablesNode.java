@@ -3,25 +3,21 @@ package projectpackage.repository.reacdao.support;
 /**
  * Created by Lenovo on 07.05.2017.
  */
-public class EntityVariablesNode<T> {
-    private T object;
+public class EntityVariablesNode {
+    private Class parameterClass;
     private String databaseColumnValue;
 
-    public EntityVariablesNode(T object, String databaseColumnValue) {
-        this.object = object;
+    public EntityVariablesNode(Class parameterClass, String databaseColumnValue) {
+        this.parameterClass = parameterClass;
         this.databaseColumnValue = databaseColumnValue;
     }
 
-    public T getObject() {
-        return object;
+    public Class getParameterClass() {
+        return parameterClass;
     }
 
     public String getDatabaseColumnValue() {
         return databaseColumnValue;
-    }
-
-    public T getEntityVariable(){
-        return object;
     }
 
 }

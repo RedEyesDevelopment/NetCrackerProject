@@ -126,10 +126,22 @@ public class ReactQueryBuilder {
         return true;
     }
 
-    public boolean appendOrderByClause(String orderingColumn){
+    public boolean appendWhereConditionWithRootTableObjectIdSearching(){
         if (queryHasBeenFinished) return false;
-        queryBuilder.append("\nORDER BY "+orderingColumn);
+        if (!firstWordInWhereQueryFlag) appendAnd();
+        queryBuilder.append(config.getRootTableName()+"."+config.getOid()+"= :"+config.getEntityIdConstant());
+        firstWordInWhereQueryFlag = false;
+        return true;
+    }
+
+    public boolean appendOrderBy(String orderingParameter, boolean ascend){
+        if (queryHasBeenFinished) return false;
+        queryBuilder.append("\nORDER BY "+orderingParameter);
+        if (ascend){
+            queryBuilder.append(" ASC");
+        } else queryBuilder.append(" DESC");
         queryHasBeenFinished =true;
+        closeQueryBuilder();
         return true;
     }
 

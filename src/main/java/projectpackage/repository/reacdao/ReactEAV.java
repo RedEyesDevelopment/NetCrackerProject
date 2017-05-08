@@ -25,25 +25,24 @@ public class ReactEAV {
     }
 
     public FetchNode fetchInnerEntity(Class<? extends ReacEntity> innerEntityClass){
-       return fetchingOrderCreation(innerEntityClass, ReactResultQuantityType.SINGLE_OBJECT);
+       return fetchingOrderCreation(innerEntityClass);
     }
 
     public FetchNode fetchInnerEntityCollectionClass(Class<? extends ReacEntity> innerEntityClass){
-        return fetchingOrderCreation(innerEntityClass, ReactResultQuantityType.OBJECTS_LIST);
+        return fetchingOrderCreation(innerEntityClass);
     }
 
-    private FetchNode fetchingOrderCreation(Class<? extends ReacEntity> innerEntityClass, ReactResultQuantityType entityContainer){
-        FetchNode childNode = new FetchNode(this,entityContainer);
+    private FetchNode fetchingOrderCreation(Class<? extends ReacEntity> innerEntityClass){
+        FetchNode childNode = new FetchNode(this);
         childNode.setObjectClass(innerEntityClass);
         rootNode.addFetchedNode(childNode);
         return childNode;
     }
 
-    public ReacEntity getSingleEntity(){
-        rootNode.setContainer(ReactResultQuantityType.SINGLE_OBJECT);
+    public ReacEntity getSingleEntityWithId(int targetId){
         String query=null;
         try {
-            query = generateInformationForBuildingQuery(rootNode);
+            query = generateInformationForBuildingQuery(rootNode, true ,null, false);
             System.out.println(query);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -54,21 +53,17 @@ public class ReactEAV {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
-        SqlParameterSource namedParameters = new MapSqlParameterSource(config.getEntityTypeIdConstant(), rootNode.getEntity().getEntityObjectTypeForEav());
+        SqlParameterSource namedParameters = new MapSqlParameterSource().addValue(config.getEntityTypeIdConstant(), rootNode.getEntity().getEntityObjectTypeForEav()).addValue(config.getEntityIdConstant(), targetId);
+
         ReacEntity result = (ReacEntity) namedParameterJdbcTemplate.queryForObject(query, namedParameters, new ReactEntityRowMapper(rootNode.getObjectClass(),rootNode.getCurrentEntityParameters(),config.getDateAppender()));
         return result;
     }
 
-    public ReacEntity getSingleEntityWithId(int id){
-        rootNode.setContainer(ReactResultQuantityType.SINGLE_OBJECT);
-        return null;
-    }
 
     public List<? extends ReacEntity> getEntityCollection(){
-        rootNode.setContainer(ReactResultQuantityType.OBJECTS_LIST);
         String query=null;
         try {
-            query = generateInformationForBuildingQuery(rootNode);
+            query = generateInformationForBuildingQuery(rootNode,false, null, false);
             System.out.println(query);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -84,24 +79,27 @@ public class ReactEAV {
         return result;
     }
 
-    public List<? extends ReacEntity> getEntityCollectionOrderByColumn(String orderingColumn) {
-        rootNode.setContainer(ReactResultQuantityType.OBJECTS_LIST);
-        rootNode.returnOrderedByColumn(orderingColumn);
-        return null;
+    public List<? extends ReacEntity> getEntityCollectionOrderByParameter(String orderingParameter, boolean ascend) {
+        String query=null;
+        try {
+            query = generateInformationForBuildingQuery(rootNode,false, orderingParameter, ascend);
+            System.out.println(query);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        SqlParameterSource namedParameters = new MapSqlParameterSource().addValue(config.getEntityTypeIdConstant(), rootNode.getEntity().getEntityObjectTypeForEav());
+
+        List<ReacEntity> result = (List<ReacEntity>) namedParameterJdbcTemplate.query(query, namedParameters,  new RowMapperResultSetExtractor<ReacEntity>(new ReactEntityRowMapper(rootNode.getObjectClass(),rootNode.getCurrentEntityParameters(),config.getDateAppender())));
+        return result;
     }
 
-    public List<? extends ReacEntity> getEntityCollectionOrderByParameter(String orderingParameter) {
-        rootNode.setContainer(ReactResultQuantityType.OBJECTS_LIST);
-        rootNode.returnOrderedByParameter(orderingParameter);
-        return null;
-    }
-
-    public List<? extends ReacEntity> getEntityCollectionOrderByComparator(Comparator<? extends ReacEntity> entityComparator){
-        rootNode.setContainer(ReactResultQuantityType.OBJECTS_LIST);
-        return null;
-    }
-
-    private String generateInformationForBuildingQuery(FetchNode currentNode) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    private String generateInformationForBuildingQuery(FetchNode currentNode, boolean isSearchById, String orderingParameter, boolean ascend) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
         LinkedHashMap<String, EntityVariablesNode> currentNodeVariables;
 //        Кастуем класс
         Class currentNodeObjectClass = currentNode.getObjectClass();
@@ -111,17 +109,18 @@ public class ReactEAV {
         Method currentNodeObjectClassMethod = currentNodeObjectClass.getMethod("getEntityFields");
         currentNodeVariables = (LinkedHashMap<String, EntityVariablesNode>) currentNodeObjectClassMethod.invoke(reacEntity);
         currentNode.setCurrentEntityParameters(new LinkedHashMap<String, EntityVariablesNode>(currentNodeVariables));
-        return getQueryForEntity(currentNodeVariables);
+        return getQueryForEntity(currentNodeVariables, currentNode, isSearchById, orderingParameter, ascend);
     }
 
     //Метод создания ссылки в билдере
-    private String getQueryForEntity( LinkedHashMap<String, EntityVariablesNode> currentNodeVariables) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    private String getQueryForEntity( LinkedHashMap<String, EntityVariablesNode> currentNodeVariables, FetchNode currentNode, boolean isSearchById, String orderingParameter, boolean ascend) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
         //Создаём стрингбилдер и ReactQueryBuilder, нацеленный на стрингбилдер.
         StringBuilder queryBuilder = new StringBuilder();
         ReactQueryBuilder builder = new ReactQueryBuilder(queryBuilder, config);
 
         //Создаём генератор имён для аттрибутов.
         ObjectTableNameGenerator attributesTablesNameGenerator = new ObjectTableNameGenerator(config.getAttributesPermanentTableName());
+        Map<String, String> attributesNameMap = currentNode.getTableObjectsMap();
 
         // Создаём ссылку через билдер
         builder.appendSelectWord();
@@ -139,8 +138,10 @@ public class ReactEAV {
                 currentNodeVariablesMapIterator.remove();
             } else {
                 // Мы заранее не знаем где находятся данные - в VALUE или DATE_VALUE, поэтому выбираем и то и то.
-                builder.appendSelectColumnWithValueAndNaming(attributesTablesNameGenerator.getNextTableName(), objectParameterKey);
-                builder.appendSelectColumnWithDataValueAndNaming(attributesTablesNameGenerator.getCurrentTableName(), objectParameterKey);
+                String nextAttributeName = attributesTablesNameGenerator.getNextTableName();
+                attributesNameMap.put(objectParameterKey,nextAttributeName+".VALUE");
+                builder.appendSelectColumnWithValueAndNaming(nextAttributeName, objectParameterKey);
+                builder.appendSelectColumnWithDataValueAndNaming(nextAttributeName, objectParameterKey);
             }
         }
 
@@ -157,6 +158,8 @@ public class ReactEAV {
 
         //Аппендим раздел WHERE
         //OB_TY_ID = OBJECT_TYPE_ID
+        //OB_ID = OBJECT_ID
+        //AT_ID = ATTR_ID
         builder.appendWhereWord();
         builder.appendWhereConditionWithTableCodeEqualsToConstant(config.getRootTypesTableName(), config.getEntityTypeIdConstant());
         builder.appendWhereConditionWithTwoTablesEqualsByOB_TY_ID(config.getRootTableName(), config.getRootTypesTableName());
@@ -180,6 +183,14 @@ public class ReactEAV {
                 builder.appendWhereConditionWithTableCodeEqualsToValue(config.getAttrTypesPermanentTableName()+i, databaseColumnValue);
             }
         }
+        //Добавляем кляузу WHERE OBJECTS.OBJECT_ID=...
+        if (isSearchById) builder.appendWhereConditionWithRootTableObjectIdSearching();
+
+        //Сортируем по колонке
+        if (null!=orderingParameter) {
+            builder.appendOrderBy(attributesNameMap.get(orderingParameter), ascend);
+        } else builder.closeQueryBuilder();
+
         return queryBuilder.toString();
     }
 

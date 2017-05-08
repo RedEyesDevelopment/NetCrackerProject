@@ -13,8 +13,8 @@ public class Role extends ReacEntity {
     static
     {
         objectProperties = new LinkedHashMap<String, EntityVariablesNode>();
-        objectProperties.put("objectId",new EntityVariablesNode<Integer>( new Integer(0), "%OBJECT_ID"));
-        objectProperties.put("roleName",new EntityVariablesNode<String>( new String(), "Role_name"));
+        objectProperties.put("objectId",new EntityVariablesNode( Integer.class, "%OBJECT_ID"));
+        objectProperties.put("roleName",new EntityVariablesNode( String.class, "Role_name"));
     }
 
     private int objectId;

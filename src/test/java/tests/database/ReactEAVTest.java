@@ -29,6 +29,23 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void queryTestOfUsersOrderBy(){
+        List<User> list = (List<User>) manager.createReactEAV(User.class).getEntityCollectionOrderByParameter("firstName", true);
+        for (User user:list){
+            System.out.println(user);
+        }
+        System.out.println(SEPARATOR);
+    }
+
+    @Test
+    public void queryTestOfSingleUser(){
+        int userId=901;
+        User user = (User) manager.createReactEAV(User.class).getSingleEntityWithId(userId);
+        System.out.println(user);
+        System.out.println(SEPARATOR);
+    }
+
+    @Test
     public void queryTestOfPhones(){
         List<Phone> phones = (List<Phone>) manager.createReactEAV(Phone.class).getEntityCollection();
         for (Phone phone:phones){

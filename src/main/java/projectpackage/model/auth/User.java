@@ -15,13 +15,13 @@ public class User extends ReacEntityWithInnerObjects {
     static
     {
         objectProperties = new LinkedHashMap<>();
-        objectProperties.put("objectId",new EntityVariablesNode<Integer>( new Integer(0), "%OBJECT_ID"));
-        objectProperties.put("email",new EntityVariablesNode<String>( new String(), "Email"));
-        objectProperties.put("password",new EntityVariablesNode<String>( new String(), "Password"));
+        objectProperties.put("objectId",new EntityVariablesNode(Integer.class, "%OBJECT_ID"));
+        objectProperties.put("email",new EntityVariablesNode(String.class, "Email"));
+        objectProperties.put("password",new EntityVariablesNode(String.class, "Password"));
 //        objectProperties.put("role","HAS_ROLE");
-        objectProperties.put("firstName",new EntityVariablesNode<String>( new String(), "First_name"));
-        objectProperties.put("lastName",new EntityVariablesNode<String>( new String(), "Last_name"));
-        objectProperties.put("additionalInfo",new EntityVariablesNode<String>( new String(), "Additional_info"));
+        objectProperties.put("firstName",new EntityVariablesNode(String.class, "First_name"));
+        objectProperties.put("lastName",new EntityVariablesNode(String.class, "Last_name"));
+        objectProperties.put("additionalInfo",new EntityVariablesNode(String.class, "Additional_info"));
 
         objectInnerEntities = new LinkedHashMap<>();
 //        objectInnerEntities.put("role","HAS_ROLE");
