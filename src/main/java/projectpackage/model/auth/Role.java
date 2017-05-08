@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 
 @Data
 public class Role extends ReacEntity {
-    private static final int OBJECT_TYPE=10;
+    private static final String OBJECT_TYPE="Role";
     private static final LinkedHashMap<String, EntityVariablesNode> objectProperties;
     static
     {
@@ -21,7 +21,7 @@ public class Role extends ReacEntity {
     private String roleName;
 
     @Override
-    public int getEntityObjectTypeForEav() {
+    public String getEntityObjectTypeForEav() {
         return OBJECT_TYPE;
     }
 

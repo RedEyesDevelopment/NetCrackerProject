@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Data
 public class User extends ReacEntityWithInnerObjects {
-    private static final int OBJECT_TYPE=3;
+    private static final String OBJECT_TYPE="User";
     private static final LinkedHashMap<String, EntityVariablesNode> objectProperties;
     private static final LinkedHashMap<String, EntityVariablesNode> objectInnerEntities;
     static
@@ -37,7 +37,7 @@ public class User extends ReacEntityWithInnerObjects {
     private Set<Phone> phones;
 
     @Override
-    public int getEntityObjectTypeForEav() {
+    public String getEntityObjectTypeForEav() {
         return OBJECT_TYPE;
     }
 

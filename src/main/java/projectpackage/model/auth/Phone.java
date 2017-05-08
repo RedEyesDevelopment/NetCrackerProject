@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 
 @Data
 public class Phone extends ReacEntity {
-    private static final int OBJECT_TYPE=9;
+    private static final String OBJECT_TYPE="Phone";
     private static final LinkedHashMap<String, EntityVariablesNode> objectProperties;
     static
     {
@@ -22,7 +22,7 @@ public class Phone extends ReacEntity {
     private String phoneNumber;
 
     @Override
-    public int getEntityObjectTypeForEav() {
+    public String getEntityObjectTypeForEav() {
         return OBJECT_TYPE;
     }
 

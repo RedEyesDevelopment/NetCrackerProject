@@ -18,6 +18,8 @@ public class ReactConstantConfiguration {
     private String attributesPermanentTableName;
     //STRING FOR ROOT OBJECT TABLE NAME
     private String rootTableName;
+    //STRING FOR OBJTYPE OF ROOT ENTITY
+    private String rootTypesTableName;
     //PERMANENT STRING FOR GENERATING ATTRTYPES TABLE NAME
     private String attrTypesPermanentTableName;
     //OBJECT_TYPE_ID
@@ -54,6 +56,7 @@ public class ReactConstantConfiguration {
         dv="DATE_VALUE";
         dateAppender="_date";
         entityTypeIdConstant="target";
+        rootTypesTableName = "ROOTYPES";
     }
 
     public String getObjectsTableName() {
@@ -182,5 +185,13 @@ public class ReactConstantConfiguration {
 
     public void setEntityTypeIdConstant(String entityTypeIdConstant) {
         this.entityTypeIdConstant = entityTypeIdConstant;
+    }
+
+    public String getRootTypesTableName() {
+        return rootTypesTableName;
+    }
+
+    public void setRootTypesTableName(String rootTypesTableName) {
+        this.rootTypesTableName = rootTypesTableName;
     }
 }

@@ -110,7 +110,7 @@ public class ReactEAV {
         Class currentNodeObjectClass = currentNode.getObjectClass();
         ReacEntity reacEntity = (ReacEntity) currentNodeObjectClass.newInstance();
         currentNode.setEntity(reacEntity);
-        int currentEntityObjectType=reacEntity.getEntityObjectTypeForEav();
+        String currentEntityObjectType=reacEntity.getEntityObjectTypeForEav();
         //Получаем метод getEntityFields
         Method currentNodeObjectClassMethod = currentNodeObjectClass.getMethod("getEntityFields");
         currentNodeVariables = (LinkedHashMap<String, EntityVariablesNode>) currentNodeObjectClassMethod.invoke(reacEntity);
@@ -137,12 +137,14 @@ public class ReactEAV {
             }
         }
         queryBuilder.append("\nFROM "+config.getObjectsTableName()+ " "+config.getRootTableName());
+        queryBuilder.append(", "+config.getObjTypesTableName()+" "+config.getRootTypesTableName());
         for (int i=1;i<=attributesTablesNameGenerator.getTablesCounter();i++){
             queryBuilder.append(", "+config.getAttributesTableName()+" "+config.getAttributesPermanentTableName()+i);
             queryBuilder.append(", "+config.getAttrTypesTableName()+" "+config.getAttrTypesPermanentTableName()+i);
         }
         queryBuilder.append("\nWHERE ");
-        queryBuilder.append(config.getRootTableName()+"."+config.getOtid()+"=:"+config.getEntityTypeIdConstant());
+        queryBuilder.append(config.getRootTypesTableName()+"."+config.getCd()+"=:"+config.getEntityTypeIdConstant());
+        queryBuilder.append("\nAND "+config.getRootTableName()+"."+config.getOtid()+"="+config.getRootTypesTableName()+"."+config.getOtid());
 //        currentNodeVariablesMapIterator = currentNodeAttributesMap.entrySet().iterator();
         currentNodeVariablesMapIterator = currentNodeVariables.entrySet().iterator();
         for (int i=1;i<=attributesTablesNameGenerator.getTablesCounter();i++){
