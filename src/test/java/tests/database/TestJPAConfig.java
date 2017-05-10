@@ -5,16 +5,14 @@ import net.sf.log4jdbc.Log4jdbcProxyDataSource;
 import net.sf.log4jdbc.tools.Log4JdbcCustomFormatter;
 import net.sf.log4jdbc.tools.LoggingType;
 import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
-import projectpackage.repository.PhoneDAO;
-import projectpackage.repository.PhoneDAOImpl;
-import projectpackage.repository.UserDAO;
-import projectpackage.repository.UserDAOImpl;
+import projectpackage.repository.*;
 import projectpackage.repository.reacdao.ReactEAVManager;
 import projectpackage.repository.reacdao.support.ReactConstantConfiguration;
 import projectpackage.service.UserService;
@@ -92,6 +90,7 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         comboPooledDataSource.setJdbcUrl(url);
         comboPooledDataSource.setUser(username);
         comboPooledDataSource.setPassword(password);
+        comboPooledDataSource.setAutoCommitOnClose(false);
 
         return comboPooledDataSource;
     }
@@ -105,13 +104,21 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     }
 
     @Bean
-    NamedParameterJdbcTemplate jdbcTemplate() {
+    NamedParameterJdbcTemplate namedParameteJdbcTemplate() {
         return new NamedParameterJdbcTemplate(dataSource());
     }
 
     @Bean
+    JdbcTemplate jdbcTemplate () { return new JdbcTemplate(dataSource()); }
+
+    @Bean
     UserDAO userDAO() {
         return new UserDAOImpl();
+    }
+
+    @Bean
+    DeleteDAO deleteDAO() {
+        return new DeleteDAOImpl();
     }
 
     @Bean
@@ -126,6 +133,6 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
 
     @Bean
     ReactEAVManager reactEAVManager(){
-        return new ReactEAVManager(jdbcTemplate(), new ReactConstantConfiguration());
+        return new ReactEAVManager(namedParameteJdbcTemplate(), new ReactConstantConfiguration());
     }
 }

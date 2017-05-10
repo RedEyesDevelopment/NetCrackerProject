@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.User;
+import projectpackage.repository.DeleteDAO;
 import projectpackage.repository.PhoneDAO;
 import projectpackage.repository.UserDAO;
 
@@ -20,6 +21,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     PhoneDAO phoneDAO;
+
+    @Autowired
+    DeleteDAO deleteDAO;
 
 
     @Override
@@ -37,5 +41,11 @@ public class UserServiceImpl implements UserService {
         }
         return ImmutableList.copyOf(users.values());
     }
+
+    @Override
+    public int deleteUserById(int id) {
+        return deleteDAO.deleteSingleEntityById(id);
+    }
+
 
 }
