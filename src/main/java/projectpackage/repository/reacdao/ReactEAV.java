@@ -251,8 +251,9 @@ public class ReactEAV {
         Boolean trigger;
         for (ReactQueryTaskHolder holder: reactQueryTaskHolders){
             trigger = classes.add(holder.getNode().getObjectClass());
-            if (trigger = false) {
-                throw new CyclicEntityQueryException(holder.getNode().getObjectClass());
+            if (trigger.equals(false)) {
+                CyclicEntityQueryException exception = new CyclicEntityQueryException(holder.getNode().getObjectClass());
+                throw exception;
             }
         }
     }

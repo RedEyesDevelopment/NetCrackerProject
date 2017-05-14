@@ -8,6 +8,7 @@ import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.repository.reacdao.ReactEAVManager;
+import projectpackage.repository.reacdao.exceptions.CyclicEntityQueryException;
 import projectpackage.repository.reacdao.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -161,6 +162,32 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         List<User> list = null;
         try {
             list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Role.class).closeFetch().fetchInnerEntityCollection(Phone.class).closeFetch().getEntityCollection();
+        } catch (ResultEntityNullException e) {
+        }
+        for (User user:list){
+            System.out.println(user);
+        }
+        System.out.println(SEPARATOR);
+    }
+
+    @Test
+    public void queryTestOfUsersFetchRolesAndPhonesBackwards(){
+        List<User> list = null;
+        try {
+            list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getEntityCollection();
+        } catch (ResultEntityNullException e) {
+        }
+        for (User user:list){
+            System.out.println(user);
+        }
+        System.out.println(SEPARATOR);
+    }
+
+    @Test(expected = CyclicEntityQueryException.class)
+    public void errorWithCyclicGraphs(){
+        List<User> list = null;
+        try {
+            list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Role.class).closeFetch().fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getEntityCollection();
         } catch (ResultEntityNullException e) {
         }
         for (User user:list){
