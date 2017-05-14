@@ -43,7 +43,7 @@ public class ReactConstantConfiguration {
     //DATE COLUMN NAME APPENDER
     private String dateAppender;
     //CONSTANT NAME FOR OBJECT_TYPE_ID VALUE
-     private String entityOrderConstant;
+    private String entityOrderConstant;
     //CONSTANT NAME FOR OBJECT_TYPE_ID VALUE
     private String entityTypeIdConstant;
     //CONSTANT NAME FOR OBJECT_TYPE_ID VALUE
@@ -66,11 +66,11 @@ public class ReactConstantConfiguration {
         aid = "ATTR_ID";
         cd = "CODE";
         v = "VALUE";
-        dv="DATE_VALUE";
-        dateAppender="_date";
-        entityTypeIdConstant="targetTypeId";
-        entityIdConstant="targetId";
-        entityOrderConstant="enorder";
+        dv = "DATE_VALUE";
+        dateAppender = "_date";
+        entityTypeIdConstant = "targetTypeId";
+        entityIdConstant = "targetId";
+        entityOrderConstant = "enorder";
         rootTypesTableName = "ROOTYPES";
     }
 

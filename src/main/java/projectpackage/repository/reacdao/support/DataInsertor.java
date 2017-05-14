@@ -23,16 +23,14 @@ public class DataInsertor {
     }
 
     void connectBy() {
-        System.out.println(outerEntity.getClass());
-        System.out.println(innerEntity.getClass());
 
-        if (outerEntity.hasReferencedObjects()){
-            for (Map.Entry<Integer, EntityReferenceIdRelation> entry:outerEntity.getReferenceIdRelations().entrySet()){
+        if (outerEntity.hasReferencedObjects()) {
+            for (Map.Entry<Integer, EntityReferenceIdRelation> entry : outerEntity.getReferenceIdRelations().entrySet()) {
                 Class targetClass = entry.getValue().getInnerClass();
-                Field parentToInputField=null;
-                String fieldName =null;
+                Field parentToInputField = null;
+                String fieldName = null;
 
-                for (EntityReferenceTaskData taskdata:outerEntity.getCurrentEntityReferenceTasks().values()){
+                for (EntityReferenceTaskData taskdata : outerEntity.getCurrentEntityReferenceTasks().values()) {
                     if (taskdata.getInnerClass().equals(targetClass)) {
                         fieldName = taskdata.getThisFieldName();
                     }
@@ -44,15 +42,15 @@ public class DataInsertor {
                 }
                 parentToInputField.setAccessible(true);
 
-                for (ReacEntity outerObject:outerEntity.getResultList()){
+                for (ReacEntity outerObject : outerEntity.getResultList()) {
                     boolean doNotModifyTheField = false;
-                        for (ReacEntity innerObject:innerEntity.getResultList()){
-                            if (entry.getKey().equals(outerObject.getObjectId()) && entry.getValue().getInnerId()==innerObject.getObjectId()){
-                                insertInnerEntity(outerObject, innerObject, parentToInputField, doNotModifyTheField);
-                                doNotModifyTheField = true;
-                                outerEntity.getInnerObjects().remove(innerObject);
-                            }
+                    for (ReacEntity innerObject : innerEntity.getResultList()) {
+                        if (entry.getKey().equals(outerObject.getObjectId()) && entry.getValue().getInnerId() == innerObject.getObjectId()) {
+                            insertInnerEntity(outerObject, innerObject, parentToInputField, doNotModifyTheField);
+                            doNotModifyTheField = true;
+                            outerEntity.getInnerObjects().remove(innerObject);
                         }
+                    }
                 }
             }
         }

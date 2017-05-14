@@ -14,7 +14,7 @@ public class EntityReferenceRelationshipsData {
     private String outerIdKey;
 
 
-    public EntityReferenceRelationshipsData(Class<? extends ReacEntity> outerClass,String thisClassObjectTypeName, String outerFieldName, String innerIdKey, String outerIdKey) {
+    public EntityReferenceRelationshipsData(Class<? extends ReacEntity> outerClass, String thisClassObjectTypeName, String outerFieldName, String innerIdKey, String outerIdKey) {
         this.outerClass = outerClass;
         this.thisClassObjectTypeName = thisClassObjectTypeName;
         this.outerFieldName = outerFieldName;

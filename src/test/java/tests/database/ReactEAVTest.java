@@ -21,6 +21,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     @Autowired
     ReactEAVManager manager;
 
+    //Получить список юзеров
     @Test
     public void queryTestOfUsers(){
         List<User> list = null;
@@ -35,6 +36,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         System.out.println(SEPARATOR);
     }
 
+    //Получить сортированный список юзеров
     @Test
     public void queryTestOfUsersOrderBy(){
         List<User> list = null;
@@ -49,6 +51,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         System.out.println(SEPARATOR);
     }
 
+    //Получить одного юзера, ошибка в айди - словить ResultEntityNullException
     @Test
     public void errorQueryTestOfSingleUser(){
         int userId=127;
@@ -62,6 +65,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         System.out.println(SEPARATOR);
     }
 
+    //Получить одного юзера с вставленной ролью
     @Test
     public void querySingleUserFetchRole(){
         int userId=901;
@@ -75,13 +79,13 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         System.out.println(SEPARATOR);
     }
 
+    //Получить список телефонов
     @Test
     public void queryTestOfPhones(){
         List<Phone> phones = null;
         try {
             phones = (List<Phone>) manager.createReactEAV(Phone.class).getEntityCollection();
         } catch (ResultEntityNullException e) {
-            System.out.println("RESULT IS NULL");
         }
         for (Phone phone:phones){
             System.out.println(phone);
@@ -89,13 +93,13 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         System.out.println(SEPARATOR);
     }
 
+    //Получить список ролей
     @Test
     public void queryTestOfRoles(){
         List<Role> roles = null;
         try {
             roles = (List<Role>) manager.createReactEAV(Role.class).getEntityCollection();
         } catch (ResultEntityNullException e) {
-            System.out.println("RESULT IS NULL");
         }
         for (Role role:roles){
             System.out.println(role);
@@ -103,13 +107,13 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         System.out.println(SEPARATOR);
     }
 
+    //Получить сортированный список ролей
     @Test
     public void queryTestOfRolesOrderBy(){
         List<Role> roles = null;
         try {
             roles = (List<Role>) manager.createReactEAV(Role.class).getEntityCollectionOrderByParameter("objectId", true);
         } catch (ResultEntityNullException e) {
-            System.out.println("RESULT IS NULL");
         }
         for (Role role:roles){
             System.out.println(role);
@@ -117,20 +121,19 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         System.out.println(SEPARATOR);
     }
 
+    //Получить одного юзера с вставленным телефоном и ролью
     @Test
-    public void queryTestOfSingeUserFetchPhones(){
-        List<User> list = null;
+    public void queryTestOfSingeUserFetchPhonesFetchRoles(){
+        User user = null;
         try {
-            list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().getEntityCollection();
+            user = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(901);
         } catch (ResultEntityNullException e) {
         }
-        System.out.println("RESULT LIST QUANTITY="+list.size());
-        for (User user:list){
-            System.out.println(user);
-        }
+        System.out.println(user.toString());
         System.out.println(SEPARATOR);
     }
 
+    //Получить список юзеров со вставленными телефонами
     @Test
     public void queryTestOfUsersFetchPhones(){
         List<User> list = null;
@@ -144,6 +147,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         System.out.println(SEPARATOR);
     }
 
+    //Получить список юзеров со вставленными ролями
     @Test
     public void queryTestOfUsersFetchRoles(){
         List<User> list = null;
@@ -157,6 +161,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         System.out.println(SEPARATOR);
     }
 
+    //Получить список юзеров с ролями и телефонами
     @Test
     public void queryTestOfUsersFetchRolesAndPhones(){
         List<User> list = null;
@@ -170,6 +175,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         System.out.println(SEPARATOR);
     }
 
+    //Получить список юзеров с ролями и телефонами(порядок фетча наоборот)
     @Test
     public void queryTestOfUsersFetchRolesAndPhonesBackwards(){
         List<User> list = null;
@@ -183,6 +189,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         System.out.println(SEPARATOR);
     }
 
+    //Получить ошибку по циклическому графу
     @Test(expected = CyclicEntityQueryException.class)
     public void errorWithCyclicGraphs(){
         List<User> list = null;

@@ -14,8 +14,8 @@ public class RecursiveConnector {
         this.inner = inner;
     }
 
-    void doConnect(){
-        recursiveConnecting(outer,inner);
+    void doConnect() {
+        recursiveConnecting(outer, inner);
     }
 
     void recursiveConnecting(ReacTask outer, ReacTask inner) {

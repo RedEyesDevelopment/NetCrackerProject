@@ -10,7 +10,7 @@ import java.util.Map;
 public class ReactQueryTaskHolder {
     private ReacTask node;
     private String query;
-    private Map<String,Object> source;
+    private Map<String, Object> source;
 
     public ReactQueryTaskHolder(ReacTask node, String query, Map<String, Object> source) {
         this.node = node;

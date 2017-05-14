@@ -12,8 +12,12 @@ import java.util.LinkedHashMap;
  */
 public abstract class ReacEntity {
     public abstract String getEntityObjectTypeForEav();
+
     public abstract int getObjectId();
+
     public abstract LinkedHashMap<String, EntityVariablesData> getEntityFields();
+
     public abstract HashMap<String, EntityOuterRelationshipsData> getEntityOuterConnections();
+
     public abstract HashMap<String, EntityReferenceRelationshipsData> getEntityReferenceConnections();
 }

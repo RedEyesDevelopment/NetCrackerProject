@@ -66,8 +66,8 @@ public class ReactEAV {
         reactQueryTaskHolders = reacTaskPreparator();
         ReacEntity result;
         try {
-             result = launchProcess().get(0);
-        } catch (NullPointerException e){
+            result = launchProcess().get(0);
+        } catch (NullPointerException e) {
             throw new ResultEntityNullException();
         }
         return result;
@@ -81,7 +81,7 @@ public class ReactEAV {
         reactQueryTaskHolders = reacTaskPreparator();
         List<ReacEntity> result;
         result = launchProcess();
-        if (null==result) {
+        if (null == result) {
             throw new ResultEntityNullException();
         }
         return result;
@@ -95,7 +95,7 @@ public class ReactEAV {
         reactQueryTaskHolders = reacTaskPreparator();
         List<ReacEntity> result;
         result = launchProcess();
-        if (null==result) {
+        if (null == result) {
             throw new ResultEntityNullException();
         }
         return result;
@@ -134,8 +134,8 @@ public class ReactEAV {
             }
             sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getEntity().getEntityObjectTypeForEav());
             sqlParameterSource.put(config.getEntityIdConstant(), currentNode.getTargetId());
-            if (currentNode.hasReferencedObjects()){
-                for (EntityReferenceTaskData data:currentNode.getCurrentEntityReferenceTasks().values()){
+            if (currentNode.hasReferencedObjects()) {
+                for (EntityReferenceTaskData data : currentNode.getCurrentEntityReferenceTasks().values()) {
                     sqlParameterSource.put(data.getInnerClassObjectTypeName(), data.getInnerClassObjectTypeName());
                 }
             }
@@ -143,7 +143,6 @@ public class ReactEAV {
             if (null != currentNode.getOrderingParameter()) {
                 try {
                     query = getQueryForEntity(currentNode.getCurrentEntityParameters(), currentNode, false, currentNode.getOrderingParameter(), currentNode.isAscend());
-                    System.out.println(query);
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
@@ -154,15 +153,14 @@ public class ReactEAV {
                     e.printStackTrace();
                 }
                 sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getEntity().getEntityObjectTypeForEav());
-                if (currentNode.hasReferencedObjects()){
-                    for (EntityReferenceTaskData data:currentNode.getCurrentEntityReferenceTasks().values()){
+                if (currentNode.hasReferencedObjects()) {
+                    for (EntityReferenceTaskData data : currentNode.getCurrentEntityReferenceTasks().values()) {
                         sqlParameterSource.put(data.getInnerClassObjectTypeName(), data.getInnerClassObjectTypeName());
                     }
                 }
             } else {
                 try {
                     query = getQueryForEntity(currentNode.getCurrentEntityParameters(), currentNode, false, null, false);
-                    System.out.println(query);
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
@@ -173,8 +171,8 @@ public class ReactEAV {
                     e.printStackTrace();
                 }
                 sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getEntity().getEntityObjectTypeForEav());
-                if (currentNode.hasReferencedObjects()){
-                    for (EntityReferenceTaskData data:currentNode.getCurrentEntityReferenceTasks().values()){
+                if (currentNode.hasReferencedObjects()) {
+                    for (EntityReferenceTaskData data : currentNode.getCurrentEntityReferenceTasks().values()) {
                         sqlParameterSource.put(data.getInnerClassObjectTypeName(), data.getInnerClassObjectTypeName());
                     }
                 }
@@ -184,12 +182,12 @@ public class ReactEAV {
     }
 
     //Добавляем в задание ссылки и маркера на reference-объекты
-    private void addReferenceLinks(ReacTask currentTask){
-        for (ReacTask task:currentTask.getInnerObjects()){
-            for (EntityReferenceRelationshipsData outerData:task.getCurrentEntityReferenceRelations().values()){
-                if (outerData.getOuterClass().equals(currentTask.getObjectClass())){
+    private void addReferenceLinks(ReacTask currentTask) {
+        for (ReacTask task : currentTask.getInnerObjects()) {
+            for (EntityReferenceRelationshipsData outerData : task.getCurrentEntityReferenceRelations().values()) {
+                if (outerData.getOuterClass().equals(currentTask.getObjectClass())) {
                     outerData.setThisClass(task.getObjectClass());
-                    EntityReferenceTaskData newReferenceTask = new EntityReferenceTaskData(outerData.getOuterClass(), outerData.getThisClass(), outerData.getThisClassObjectTypeName(),outerData.getOuterFieldName(),outerData.getInnerIdKey(),outerData.getOuterIdKey());
+                    EntityReferenceTaskData newReferenceTask = new EntityReferenceTaskData(outerData.getOuterClass(), outerData.getThisClass(), outerData.getThisClassObjectTypeName(), outerData.getOuterFieldName(), outerData.getInnerIdKey(), outerData.getOuterIdKey());
                     currentTask.addCurrentEntityReferenceTasks(newReferenceTask);
                 }
             }
@@ -246,10 +244,10 @@ public class ReactEAV {
     }
 
     //Нвхождение повторных запросов одной и той же entity в одном запросе
-    private void findCyclicGraphs(){
+    private void findCyclicGraphs() {
         HashSet<Class> classes = new HashSet<>();
         Boolean trigger;
-        for (ReactQueryTaskHolder holder: reactQueryTaskHolders){
+        for (ReactQueryTaskHolder holder : reactQueryTaskHolders) {
             trigger = classes.add(holder.getNode().getObjectClass());
             if (trigger.equals(false)) {
                 CyclicEntityQueryException exception = new CyclicEntityQueryException(holder.getNode().getObjectClass());
@@ -270,7 +268,7 @@ public class ReactEAV {
         //Создаём объекты для связей типа reference
         HashMap<String, String> objReferenceConnections = new HashMap<>();
         ObjectTableNameGenerator referenceNameGenerator = null;
-        if (currentNode.hasReferencedObjects()){
+        if (currentNode.hasReferencedObjects()) {
             referenceNameGenerator = new ObjectTableNameGenerator(config.getReferenceTypePermanentTableName());
         }
 
@@ -304,12 +302,12 @@ public class ReactEAV {
 
         //добавляем в selec-кляузу OBJREFERENCE.REFERENCE(т.е. айди объекта который вставляется в референс)
 
-        if (currentNode.hasReferencedObjects()){
-            int i=1;
-            for (EntityReferenceTaskData reference:currentNode.getCurrentEntityReferenceTasks().values()){
+        if (currentNode.hasReferencedObjects()) {
+            int i = 1;
+            for (EntityReferenceTaskData reference : currentNode.getCurrentEntityReferenceTasks().values()) {
                 String nextReferenceName = referenceNameGenerator.getNextTableName();
-                String targetName = "R_"+nextReferenceName;
-                builder.appendSelectColumnWithNaming(targetName,config.getOref(), targetName);
+                String targetName = "R_" + nextReferenceName;
+                builder.appendSelectColumnWithNaming(targetName, config.getOref(), targetName);
                 objReferenceConnections.put(targetName, reference.getInnerClass().getName());
                 i++;
             }
@@ -326,11 +324,11 @@ public class ReactEAV {
             builder.appendFromTableWithNaming(config.getAttrTypesTableName(), config.getAttrTypesPermanentTableName() + i);
         }
 
-        if (currentNode.hasReferencedObjects()){
+        if (currentNode.hasReferencedObjects()) {
             for (int i = 1; i <= referenceNameGenerator.getTablesCounter(); i++) {
-                builder.appendFromTableWithNaming(config.getAttrTypesTableName(), "AT_" + config.getReferenceTypePermanentTableName()+i);
-                builder.appendFromTableWithNaming(config.getObjTypesTableName(), "OT_" + config.getReferenceTypePermanentTableName()+i);
-                builder.appendFromTableWithNaming(config.getObjRefsTableName(), "R_" + config.getReferenceTypePermanentTableName()+i);
+                builder.appendFromTableWithNaming(config.getAttrTypesTableName(), "AT_" + config.getReferenceTypePermanentTableName() + i);
+                builder.appendFromTableWithNaming(config.getObjTypesTableName(), "OT_" + config.getReferenceTypePermanentTableName() + i);
+                builder.appendFromTableWithNaming(config.getObjRefsTableName(), "R_" + config.getReferenceTypePermanentTableName() + i);
             }
         }
 
@@ -363,28 +361,28 @@ public class ReactEAV {
         }
 
         //Аппендим reference
-        if (currentNode.hasReferencedObjects()){
+        if (currentNode.hasReferencedObjects()) {
             List<String> objTypelist = new LinkedList<>();
-            for (EntityReferenceTaskData reference:currentNode.getCurrentEntityReferenceTasks().values()) {
+            for (EntityReferenceTaskData reference : currentNode.getCurrentEntityReferenceTasks().values()) {
                 objTypelist.add(reference.getInnerClassObjectTypeName());
             }
-            int j=0;
+            int j = 0;
             for (int i = 1; i <= referenceNameGenerator.getTablesCounter(); i++) {
-                String attrTypeName = "AT_" + config.getReferenceTypePermanentTableName()+i;
-                String objTypeName = "OT_"+config.getReferenceTypePermanentTableName()+i;
-                String objReferenceName = "R_"+config.getReferenceTypePermanentTableName()+i;
+                String attrTypeName = "AT_" + config.getReferenceTypePermanentTableName() + i;
+                String objTypeName = "OT_" + config.getReferenceTypePermanentTableName() + i;
+                String objReferenceName = "R_" + config.getReferenceTypePermanentTableName() + i;
                 builder.appendWhereConditionWithTwoTablesEqualsByOB_TY_ID(config.getRootTableName(), attrTypeName);
                 builder.appendWhereConditionWithAttrTypeRefEqualsOB_TY_ID(attrTypeName, objTypeName);
                 builder.appendWhereConditionWithTwoTablesEqualsByAT_ID(attrTypeName, objReferenceName);
-                builder.appendWhereConditionWithTableCodeEqualsToConstant(objTypeName,objTypelist.remove(j));
+                builder.appendWhereConditionWithTableCodeEqualsToConstant(objTypeName, objTypelist.remove(j));
                 j++;
-                builder.appendWhereConditionWithTwoTablesEqualsByOB_ID(config.getRootTableName(),objReferenceName);
+                builder.appendWhereConditionWithTwoTablesEqualsByOB_ID(config.getRootTableName(), objReferenceName);
             }
         }
 
-        for (EntityReferenceTaskData taskData:currentNode.getCurrentEntityReferenceTasks().values()){
-            for (Map.Entry<String, String> tgtReference:objReferenceConnections.entrySet()){
-                if (tgtReference.getValue().equals(taskData.getInnerClass().getName())){
+        for (EntityReferenceTaskData taskData : currentNode.getCurrentEntityReferenceTasks().values()) {
+            for (Map.Entry<String, String> tgtReference : objReferenceConnections.entrySet()) {
+                if (tgtReference.getValue().equals(taskData.getInnerClass().getName())) {
                     taskData.setInnerIdParameterNameForQueryParametersMap(tgtReference.getKey());
                 }
             }

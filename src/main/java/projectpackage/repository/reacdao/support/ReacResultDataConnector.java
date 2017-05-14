@@ -22,7 +22,7 @@ public class ReacResultDataConnector {
             RecursiveConnector connector = new RecursiveConnector(rootTask, reacTask);
             connectors.add(connector);
         }
-        for (RecursiveConnector connector:connectors) connector.doConnect();
+        for (RecursiveConnector connector : connectors) connector.doConnect();
 
         return rootTask.getResultList();
     }

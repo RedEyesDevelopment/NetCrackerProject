@@ -22,15 +22,17 @@ public class ReactEAVManager {
         this.reactConstantConfiguration = reactConstantConfiguration;
     }
 
-    public ReactEAV createReactEAV(Class<? extends ReacEntity> entityClass){
-        if (null!=entityClass && ReacEntity.class.isAssignableFrom(entityClass)) {
-            return new ReactEAV(entityClass,namedParameterJdbcTemplate,reactConstantConfiguration);
+    public ReactEAV createReactEAV(Class<? extends ReacEntity> entityClass) {
+        if (null != entityClass && ReacEntity.class.isAssignableFrom(entityClass)) {
+            return new ReactEAV(entityClass, namedParameterJdbcTemplate, reactConstantConfiguration);
         } else {
             WrongEntityClassException exception;
-            if (null==entityClass){
+            if (null == entityClass) {
                 exception = new WrongEntityClassException("Null is not a valid object");
             } else exception = new WrongEntityClassException(null, entityClass);
             throw exception;
         }
-    };
+    }
+
+    ;
 }

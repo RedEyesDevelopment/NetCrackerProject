@@ -9,19 +9,19 @@ public class ObjectTableNameGenerator {
 
     public ObjectTableNameGenerator(String tableName) {
         this.tableName = tableName;
-        this.counter=0;
+        this.counter = 0;
     }
 
-    public String getNextTableName(){
+    public String getNextTableName() {
         counter++;
         return getCurrentTableName();
     }
 
-    public String getCurrentTableName(){
+    public String getCurrentTableName() {
         return new StringBuilder(tableName).append(counter).toString();
     }
 
-    public int getTablesCounter(){
+    public int getTablesCounter() {
         return counter;
     }
 }
