@@ -1,6 +1,7 @@
 package projectpackage.model.auth;
 
 import lombok.Data;
+import projectpackage.repository.reacdao.annotations.ReactEntity;
 import projectpackage.repository.reacdao.fetch.EntityOuterRelationshipsData;
 import projectpackage.repository.reacdao.fetch.EntityReferenceRelationshipsData;
 import projectpackage.repository.reacdao.models.ReacEntity;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 @Data
+@ReactEntity(entityTypeName = "Role")
 public class Role extends ReacEntity {
     private static final String OBJECT_TYPE="Role";
     private static final LinkedHashMap<String, EntityVariablesData> objectProperties;
