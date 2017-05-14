@@ -93,6 +93,31 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         comboPooledDataSource.setUser(username);
         comboPooledDataSource.setPassword(password);
 
+        //минимальный размер пула
+        comboPooledDataSource.setMinPoolSize(5);
+        //максимальный размер пула
+        comboPooledDataSource.setMaxPoolSize(40);
+        //начальный размер пула
+        comboPooledDataSource.setInitialPoolSize(10);
+        //сколько пулов разрешено взять поверх максимального числа
+        comboPooledDataSource.setAcquireIncrement(10);
+        //максимальное время получения содеинения под запрос
+        comboPooledDataSource.setMaxIdleTime(300);
+        //максимальное время жизни запроса
+        comboPooledDataSource.setMaxConnectionAge(1200);
+        //время простоя соединения, после которого оно уничтожается, пул сжимается до минимума
+        comboPooledDataSource.setMaxIdleTimeExcessConnections(120);
+        //время между повторами запроса на соединение
+        comboPooledDataSource.setAcquireRetryDelay(1500);
+        //размер кэша под preparestatements
+        comboPooledDataSource.setMaxStatements(500);
+        //размер кэша для одного соединения под preparestatements
+        comboPooledDataSource.setMaxStatementsPerConnection(14);
+        //время через которое проверяется соединение на состояние
+        comboPooledDataSource.setIdleConnectionTestPeriod(300);
+        //имя специальной таблицы для тестирования соединения с БД
+        comboPooledDataSource.setAutomaticTestTable("c3p0DatabaseTestTable");
+
         return comboPooledDataSource;
     }
 

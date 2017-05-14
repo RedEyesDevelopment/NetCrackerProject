@@ -1,7 +1,8 @@
 package projectpackage.repository.reacdao.querying;
 
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import projectpackage.repository.reacdao.ReacTask;
+
+import java.util.Map;
 
 /**
  * Created by Lenovo on 08.05.2017.
@@ -9,9 +10,9 @@ import projectpackage.repository.reacdao.ReacTask;
 public class ReactQueryTaskHolder {
     private ReacTask node;
     private String query;
-    private SqlParameterSource source;
+    private Map<String,Object> source;
 
-    public ReactQueryTaskHolder(ReacTask node, String query, SqlParameterSource source) {
+    public ReactQueryTaskHolder(ReacTask node, String query, Map<String, Object> source) {
         this.node = node;
         this.query = query;
         this.source = source;
@@ -25,7 +26,7 @@ public class ReactQueryTaskHolder {
         return query;
     }
 
-    public SqlParameterSource getSource() {
+    public Map<String, Object> getSource() {
         return source;
     }
 

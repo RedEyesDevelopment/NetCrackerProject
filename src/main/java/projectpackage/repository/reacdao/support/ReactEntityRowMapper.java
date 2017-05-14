@@ -2,6 +2,8 @@ package projectpackage.repository.reacdao.support;
 
 import org.springframework.jdbc.core.RowMapper;
 import projectpackage.repository.reacdao.exceptions.WrongTypeClassException;
+import projectpackage.repository.reacdao.fetch.EntityReferenceIdRelation;
+import projectpackage.repository.reacdao.fetch.EntityReferenceTaskData;
 import projectpackage.repository.reacdao.fetch.EntityVariablesData;
 import projectpackage.repository.reacdao.models.ReacEntity;
 
@@ -9,17 +11,22 @@ import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ReactEntityRowMapper implements RowMapper<ReacEntity> {
     Class<? extends ReacEntity> clazz;
     LinkedHashMap<String, EntityVariablesData> parameters;
+    HashMap<String, EntityReferenceTaskData> referenceData;
+    HashMap<Integer,EntityReferenceIdRelation> objectReferenceTable;
     String dataStringPrefix;
 
-    public ReactEntityRowMapper(Class entityClass, LinkedHashMap<String, EntityVariablesData> parameters, String dataStringPrefix) {
+    public ReactEntityRowMapper(Class entityClass, LinkedHashMap<String, EntityVariablesData> parameters, HashMap<String, EntityReferenceTaskData> referenceData, HashMap<Integer,EntityReferenceIdRelation> objectReferenceTable, String dataStringPrefix) {
         clazz = entityClass;
         this.parameters = parameters;
+        this.referenceData = referenceData;
+        this.objectReferenceTable=objectReferenceTable;
         this.dataStringPrefix = dataStringPrefix;
     }
 
@@ -33,6 +40,9 @@ public class ReactEntityRowMapper implements RowMapper<ReacEntity> {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+
+
+
         for (Map.Entry<String, EntityVariablesData> entry : parameters.entrySet()) {
             String objectParameterKey = entry.getKey();
             Class newObjectClass = entry.getValue().getParameterClass();
@@ -50,6 +60,18 @@ public class ReactEntityRowMapper implements RowMapper<ReacEntity> {
                         }
                 Class throwedClass=null;
                 try {
+
+                    if (objectParameterKey.equals("objectId")){
+
+                            for (EntityReferenceTaskData data:referenceData.values()){
+                                Integer referenceLinkName = resultSet.getInt(data.getInnerIdParameterNameForQueryParametersMap());
+                                Integer objectId = resultSet.getInt(objectParameterKey);
+                                EntityReferenceIdRelation relation = new EntityReferenceIdRelation(referenceLinkName, data.getInnerClass());
+                                objectReferenceTable.put(objectId,relation);
+                            }
+
+                    }
+
                     if (newObjectClass.equals(Integer.class)) {
                         throwedClass=Integer.class;
                         System.out.println("INTEGER="+resultSet.getInt(objectParameterKey));
@@ -78,4 +100,5 @@ public class ReactEntityRowMapper implements RowMapper<ReacEntity> {
             }
         return targetReacEntityObject;
     }
+
 }

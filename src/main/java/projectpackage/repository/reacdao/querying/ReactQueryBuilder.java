@@ -96,6 +96,14 @@ public class ReactQueryBuilder {
         return true;
     }
 
+    public boolean appendWhereConditionWithAttrTypeRefEqualsOB_TY_ID(String attrTypeTable, String ObjectTypeTable){
+        if (queryHasBeenFinished) return false;
+        if (!firstWordInWhereQueryFlag) appendAnd();
+        queryBuilder.append(attrTypeTable+"."+config.getOtidref()+"="+ObjectTypeTable+"."+config.getOtid());
+        firstWordInWhereQueryFlag = false;
+        return true;
+    }
+
     public boolean appendWhereConditionWithTwoTablesEqualsByOB_ID(String firstTable, String secondTable){
         if (queryHasBeenFinished) return false;
         if (!firstWordInWhereQueryFlag) appendAnd();

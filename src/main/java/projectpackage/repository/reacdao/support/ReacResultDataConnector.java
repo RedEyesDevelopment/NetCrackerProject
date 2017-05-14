@@ -3,6 +3,7 @@ package projectpackage.repository.reacdao.support;
 import projectpackage.repository.reacdao.ReacTask;
 import projectpackage.repository.reacdao.models.ReacEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,21 +17,15 @@ public class ReacResultDataConnector {
     }
 
     public List<ReacEntity> connectEntitiesAndReturn() {
+        List<RecursiveConnector> connectors = new ArrayList<>();
         for (ReacTask reacTask : rootTask.getInnerObjects()) {
-            recursiveConnecting(rootTask, reacTask);
+            RecursiveConnector connector = new RecursiveConnector(rootTask, reacTask);
+            connectors.add(connector);
         }
+        for (RecursiveConnector connector:connectors) connector.doConnect();
+
         return rootTask.getResultList();
     }
 
-    private void recursiveConnecting(ReacTask outer, ReacTask inner) {
-        if (!inner.getInnerObjects().isEmpty()) {
-            for (ReacTask reacTask : inner.getInnerObjects()) {
-                recursiveConnecting(inner, reacTask);
-            }
-        }
-        DataInsertor connector = new DataInsertor(outer, inner);
-        connector.connectBy();
-    }
-
-
 }
+

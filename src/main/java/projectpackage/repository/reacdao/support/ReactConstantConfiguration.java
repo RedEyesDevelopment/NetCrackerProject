@@ -22,8 +22,14 @@ public class ReactConstantConfiguration {
     private String rootTypesTableName;
     //PERMANENT STRING FOR GENERATING ATTRTYPES TABLE NAME
     private String attrTypesPermanentTableName;
+    //REFERENCE OBJECTS GENERATOR
+    private String referenceTypePermanentTableName;
     //OBJECT_TYPE_ID
     private String otid;
+    //OBJECT_TYPE_ID_REF
+    private String otidref;
+    //REFERENCE
+    private String oref;
     //OBJECT_ID
     private String oid;
     //ATTR_ID
@@ -52,7 +58,10 @@ public class ReactConstantConfiguration {
         attributesPermanentTableName = "ATTRS";
         rootTableName = "ROOTABLE";
         attrTypesPermanentTableName = "ATTYPES";
+        referenceTypePermanentTableName = "REFOB";
         otid = "OBJECT_TYPE_ID";
+        otidref = "OBJECT_TYPE_ID_REF";
+        oref = "REFERENCE";
         oid = "OBJECT_ID";
         aid = "ATTR_ID";
         cd = "CODE";
@@ -193,6 +202,14 @@ public class ReactConstantConfiguration {
         this.entityTypeIdConstant = entityTypeIdConstant;
     }
 
+    public void setOref(String oref) {
+        this.oref = oref;
+    }
+
+    public String getOref() {
+        return oref;
+    }
+
     public String getRootTypesTableName() {
         return rootTypesTableName;
     }
@@ -215,5 +232,21 @@ public class ReactConstantConfiguration {
 
     public void setEntityIdConstant(String entityIdConstant) {
         this.entityIdConstant = entityIdConstant;
+    }
+
+    public String getReferenceTypePermanentTableName() {
+        return referenceTypePermanentTableName;
+    }
+
+    public void setReferenceTypePermanentTableName(String referenceTypePermanentTableName) {
+        this.referenceTypePermanentTableName = referenceTypePermanentTableName;
+    }
+
+    public String getOtidref() {
+        return otidref;
+    }
+
+    public void setOtidref(String otidref) {
+        this.otidref = otidref;
     }
 }

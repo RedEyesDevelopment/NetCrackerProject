@@ -1,9 +1,14 @@
 package projectpackage.repository.reacdao;
 
+import lombok.extern.log4j.Log4j;
+import org.apache.log4j.Level;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import projectpackage.repository.reacdao.exceptions.CyclicEntityQueryException;
+import projectpackage.repository.reacdao.exceptions.ResultEntityNullException;
+import projectpackage.repository.reacdao.fetch.EntityReferenceRelationshipsData;
+import projectpackage.repository.reacdao.fetch.EntityReferenceTaskData;
 import projectpackage.repository.reacdao.fetch.EntityVariablesData;
 import projectpackage.repository.reacdao.models.ReacEntity;
 import projectpackage.repository.reacdao.querying.ReactQueryBuilder;
@@ -16,6 +21,7 @@ import projectpackage.repository.reacdao.support.ReactEntityRowMapper;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+@Log4j
 public class ReactEAV {
     ReactConstantConfiguration config;
     private ReacTask rootNode;
@@ -29,11 +35,11 @@ public class ReactEAV {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.config = config;
     }
-
-    public ReacTask fetchSingleInnerEntity(Class<? extends ReacEntity> innerEntityClass) {
-        ReacTask newReacTask = fetchingOrderCreation(innerEntityClass, true, null, null, false);
-        return newReacTask;
-    }
+//
+//    public ReacTask fetchSingleInnerEntity(Class<? extends ReacEntity> innerEntityClass) {
+//        ReacTask newReacTask = fetchingOrderCreation(innerEntityClass, true, null, null, false);
+//        return newReacTask;
+//    }
 
     public ReacTask fetchInnerEntityCollection(Class<? extends ReacEntity> innerEntityClass) {
         ReacTask newReacTask = fetchingOrderCreation(innerEntityClass, false, null, null, false);
@@ -52,32 +58,47 @@ public class ReactEAV {
         return childNode;
     }
 
-    public ReacEntity getSingleEntityWithId(int targetId) {
+    public ReacEntity getSingleEntityWithId(int targetId) throws ResultEntityNullException {
         rootNode.setForSingleObject(true);
         rootNode.setTargetId(targetId);
         rootNode.setAscend(false);
         rootNode.setOrderingParameter(null);
         reactQueryTaskHolders = reacTaskPreparator();
-        return launchProcess().get(0);
+        ReacEntity result;
+        try {
+             result = launchProcess().get(0);
+        } catch (NullPointerException e){
+            throw new ResultEntityNullException();
+        }
+        return result;
     }
 
-
-    public List<? extends ReacEntity> getEntityCollection() {
+    public List<? extends ReacEntity> getEntityCollection() throws ResultEntityNullException {
         rootNode.setForSingleObject(false);
         rootNode.setTargetId(null);
         rootNode.setAscend(false);
         rootNode.setOrderingParameter(null);
         reactQueryTaskHolders = reacTaskPreparator();
-        return launchProcess();
+        List<ReacEntity> result;
+        result = launchProcess();
+        if (null==result) {
+            throw new ResultEntityNullException();
+        }
+        return result;
     }
 
-    public List<? extends ReacEntity> getEntityCollectionOrderByParameter(String orderingParameter, boolean ascend) {
+    public List<? extends ReacEntity> getEntityCollectionOrderByParameter(String orderingParameter, boolean ascend) throws ResultEntityNullException {
         rootNode.setForSingleObject(false);
         rootNode.setTargetId(null);
         rootNode.setAscend(ascend);
         rootNode.setOrderingParameter(orderingParameter);
         reactQueryTaskHolders = reacTaskPreparator();
-        return  launchProcess();
+        List<ReacEntity> result;
+        result = launchProcess();
+        if (null==result) {
+            throw new ResultEntityNullException();
+        }
+        return result;
     }
 
     private List<ReactQueryTaskHolder> reacTaskPreparator() {
@@ -87,6 +108,7 @@ public class ReactEAV {
     }
 
     private void creatingReacTaskTree(List<ReactQueryTaskHolder> taskList, ReacTask task) {
+        addReferenceLinks(task);
         if (!task.getInnerObjects().isEmpty()) {
             for (ReacTask reacTask : task.getInnerObjects()) {
                 creatingReacTaskTree(taskList, reacTask);
@@ -95,10 +117,9 @@ public class ReactEAV {
         taskList.add(prepareReacTask(task));
     }
 
-
     private ReactQueryTaskHolder prepareReacTask(ReacTask currentNode) {
         String query = null;
-        SqlParameterSource sqlParameterSource = null;
+        Map<String, Object> sqlParameterSource = new HashMap<>();
         if (currentNode.isForSingleObject()) {
             try {
                 query = getQueryForEntity(currentNode.getCurrentEntityParameters(), currentNode, true, null, false);
@@ -111,8 +132,13 @@ public class ReactEAV {
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
-                sqlParameterSource = new MapSqlParameterSource().addValue(config.getEntityTypeIdConstant(), currentNode.getEntity().getEntityObjectTypeForEav()).addValue(config.getEntityIdConstant(), currentNode.getTargetId());
-
+            sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getEntity().getEntityObjectTypeForEav());
+            sqlParameterSource.put(config.getEntityIdConstant(), currentNode.getTargetId());
+            if (currentNode.hasReferencedObjects()){
+                for (EntityReferenceTaskData data:currentNode.getCurrentEntityReferenceTasks().values()){
+                    sqlParameterSource.put(data.getInnerClassObjectTypeName(), data.getInnerClassObjectTypeName());
+                }
+            }
         } else {
             if (null != currentNode.getOrderingParameter()) {
                 try {
@@ -127,7 +153,12 @@ public class ReactEAV {
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
-                    sqlParameterSource = new MapSqlParameterSource().addValue(config.getEntityTypeIdConstant(), currentNode.getEntity().getEntityObjectTypeForEav());
+                sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getEntity().getEntityObjectTypeForEav());
+                if (currentNode.hasReferencedObjects()){
+                    for (EntityReferenceTaskData data:currentNode.getCurrentEntityReferenceTasks().values()){
+                        sqlParameterSource.put(data.getInnerClassObjectTypeName(), data.getInnerClassObjectTypeName());
+                    }
+                }
             } else {
                 try {
                     query = getQueryForEntity(currentNode.getCurrentEntityParameters(), currentNode, false, null, false);
@@ -141,29 +172,90 @@ public class ReactEAV {
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
-                    sqlParameterSource = new MapSqlParameterSource(config.getEntityTypeIdConstant(), currentNode.getEntity().getEntityObjectTypeForEav());
+                sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getEntity().getEntityObjectTypeForEav());
+                if (currentNode.hasReferencedObjects()){
+                    for (EntityReferenceTaskData data:currentNode.getCurrentEntityReferenceTasks().values()){
+                        sqlParameterSource.put(data.getInnerClassObjectTypeName(), data.getInnerClassObjectTypeName());
+                    }
+                }
             }
         }
         return new ReactQueryTaskHolder(currentNode, query, sqlParameterSource);
     }
 
-    private List<ReacEntity> launchProcess() {
-        for (ReactQueryTaskHolder holder : reactQueryTaskHolders) {
-            if (holder.getNode().isForSingleObject()) {
-                ReacEntity result = (ReacEntity) namedParameterJdbcTemplate.queryForObject(holder.getQuery(), holder.getSource(), new ReactEntityRowMapper(holder.getNode().getObjectClass(), holder.getNode().getCurrentEntityParameters(), config.getDateAppender()));
-                holder.getNode().getResultList().add(result);
-            } else {
-                List<ReacEntity> result = (List<ReacEntity>) namedParameterJdbcTemplate.query(holder.getQuery(), holder.getSource(), new RowMapperResultSetExtractor<ReacEntity>(new ReactEntityRowMapper(holder.getNode().getObjectClass(), holder.getNode().getCurrentEntityParameters(), config.getDateAppender())));
-                holder.getNode().setResultList(result);
+    //Добавляем в задание ссылки и маркера на reference-объекты
+    private void addReferenceLinks(ReacTask currentTask){
+        for (ReacTask task:currentTask.getInnerObjects()){
+            for (EntityReferenceRelationshipsData outerData:task.getCurrentEntityReferenceRelations().values()){
+                if (outerData.getOuterClass().equals(currentTask.getObjectClass())){
+                    outerData.setThisClass(task.getObjectClass());
+                    EntityReferenceTaskData newReferenceTask = new EntityReferenceTaskData(outerData.getOuterClass(), outerData.getThisClass(), outerData.getThisClassObjectTypeName(),outerData.getOuterFieldName(),outerData.getInnerIdKey(),outerData.getOuterIdKey());
+                    currentTask.addCurrentEntityReferenceTasks(newReferenceTask);
+                }
             }
         }
-        if (reactQueryTaskHolders.size()==1){
+    }
+
+    private List<ReacEntity> launchProcess() {
+        findCyclicGraphs();
+
+        for (ReactQueryTaskHolder holder : reactQueryTaskHolders) {
+            if (holder.getNode().isForSingleObject()) {
+                ReacEntity result = null;
+                try {
+                    result = (ReacEntity) namedParameterJdbcTemplate.queryForObject(holder.getQuery(), holder.getSource(), new ReactEntityRowMapper(holder.getNode().getObjectClass(), holder.getNode().getCurrentEntityParameters(), holder.getNode().getCurrentEntityReferenceTasks(), holder.getNode().getReferenceIdRelations(), config.getDateAppender()));
+                    holder.getNode().getResultList().add(result);
+                } catch (EmptyResultDataAccessException empty) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("ReactEAV failed to get single object from database, DB returned null. This may be because there is no entity objects in database.");
+                    sb.append("Root entity class=" + rootNode.getObjectClass());
+                    sb.append("Entity-that-returned-null-class=" + holder.getNode().getObjectClass());
+                    sb.append("Target entity id=" + holder.getNode().getTargetId());
+                    sb.append("Query=" + holder.getQuery());
+                    sb.append("isForSibleObject? :" + holder.getNode().isForSingleObject());
+                    log.log(Level.WARN, sb.toString(), empty);
+                    if (holder.getNode().equals(rootNode)) {
+                        return null;
+                    }
+                }
+            } else {
+                List<ReacEntity> result = null;
+                try {
+                    result = (List<ReacEntity>) namedParameterJdbcTemplate.query(holder.getQuery(), holder.getSource(), new RowMapperResultSetExtractor<ReacEntity>(new ReactEntityRowMapper(holder.getNode().getObjectClass(), holder.getNode().getCurrentEntityParameters(), holder.getNode().getCurrentEntityReferenceTasks(), holder.getNode().getReferenceIdRelations(), config.getDateAppender())));
+                    holder.getNode().setResultList(result);
+                } catch (EmptyResultDataAccessException empty) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("ReactEAV failed to get object collection from database, DB returned null. This may be because there is no entity objects in database.");
+                    sb.append("Root entity class=" + rootNode.getObjectClass());
+                    sb.append("Entity-that-returned-null-class=" + holder.getNode().getObjectClass());
+                    sb.append("Query=" + holder.getQuery());
+                    sb.append("Sorting parameter=" + holder.getNode().getOrderingParameter());
+                    log.log(Level.WARN, sb.toString(), empty);
+                    if (holder.getNode().equals(rootNode)) {
+                        return null;
+                    }
+                }
+            }
+        }
+
+        if (reactQueryTaskHolders.size() == 1) {
             return reactQueryTaskHolders.get(0).getNode().getResultList();
         }
         ReacResultDataConnector dataConnector = new ReacResultDataConnector(rootNode);
-        return  dataConnector.connectEntitiesAndReturn();
+        return dataConnector.connectEntitiesAndReturn();
     }
 
+    //Нвхождение повторных запросов одной и той же entity в одном запросе
+    private void findCyclicGraphs(){
+        HashSet<Class> classes = new HashSet<>();
+        Boolean trigger;
+        for (ReactQueryTaskHolder holder: reactQueryTaskHolders){
+            trigger = classes.add(holder.getNode().getObjectClass());
+            if (trigger = false) {
+                throw new CyclicEntityQueryException(holder.getNode().getObjectClass());
+            }
+        }
+    }
 
     //Метод создания ссылки в билдере
     private String getQueryForEntity(LinkedHashMap<String, EntityVariablesData> currentNodeVariables, ReacTask currentNode, boolean isSearchById, String orderingParameter, boolean ascend) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
@@ -173,6 +265,14 @@ public class ReactEAV {
 
         //Создаём генератор имён для аттрибутов.
         ObjectTableNameGenerator attributesTablesNameGenerator = new ObjectTableNameGenerator(config.getAttributesPermanentTableName());
+
+        //Создаём объекты для связей типа reference
+        HashMap<String, String> objReferenceConnections = new HashMap<>();
+        ObjectTableNameGenerator referenceNameGenerator = null;
+        if (currentNode.hasReferencedObjects()){
+            referenceNameGenerator = new ObjectTableNameGenerator(config.getReferenceTypePermanentTableName());
+        }
+
         //В этой мапе мы будем хранить значения (поле объекта-название в таблице вместе с именем таблицы) для последующей сортировки ORDER BY
         Map<String, String> attributesNameMap = new HashMap<>();
 
@@ -190,7 +290,7 @@ public class ReactEAV {
             if (databaseColumnValue.startsWith("%")) {
                 //Этот объект прямо из таблицы объектов, поэтому очищаем мапу от него.
                 builder.appendSelectColumnWithNaming(config.getRootTableName(), databaseColumnValue.substring(1), objectParameterKey);
-                attributesNameMap.put(objectParameterKey, config.getRootTableName() +"."+ databaseColumnValue.substring(1));
+                attributesNameMap.put(objectParameterKey, config.getRootTableName() + "." + databaseColumnValue.substring(1));
                 currentNodeVariablesMapIterator.remove();
             } else {
                 // Мы заранее не знаем где находятся данные - в VALUE или DATE_VALUE, поэтому выбираем и то и то.
@@ -198,6 +298,19 @@ public class ReactEAV {
                 attributesNameMap.put(objectParameterKey, nextAttributeName + ".VALUE");
                 builder.appendSelectColumnWithValueAndNaming(nextAttributeName, objectParameterKey);
                 builder.appendSelectColumnWithDataValueAndNaming(nextAttributeName, objectParameterKey);
+            }
+        }
+
+        //добавляем в selec-кляузу OBJREFERENCE.REFERENCE(т.е. айди объекта который вставляется в референс)
+
+        if (currentNode.hasReferencedObjects()){
+            int i=1;
+            for (EntityReferenceTaskData reference:currentNode.getCurrentEntityReferenceTasks().values()){
+                String nextReferenceName = referenceNameGenerator.getNextTableName();
+                String targetName = "R_"+nextReferenceName;
+                builder.appendSelectColumnWithNaming(targetName,config.getOref(), targetName);
+                objReferenceConnections.put(targetName, reference.getInnerClass().getName());
+                i++;
             }
         }
 
@@ -210,6 +323,14 @@ public class ReactEAV {
         for (int i = 1; i <= attributesTablesNameGenerator.getTablesCounter(); i++) {
             builder.appendFromTableWithNaming(config.getAttributesTableName(), config.getAttributesPermanentTableName() + i);
             builder.appendFromTableWithNaming(config.getAttrTypesTableName(), config.getAttrTypesPermanentTableName() + i);
+        }
+
+        if (currentNode.hasReferencedObjects()){
+            for (int i = 1; i <= referenceNameGenerator.getTablesCounter(); i++) {
+                builder.appendFromTableWithNaming(config.getAttrTypesTableName(), "AT_" + config.getReferenceTypePermanentTableName()+i);
+                builder.appendFromTableWithNaming(config.getObjTypesTableName(), "OT_" + config.getReferenceTypePermanentTableName()+i);
+                builder.appendFromTableWithNaming(config.getObjRefsTableName(), "R_" + config.getReferenceTypePermanentTableName()+i);
+            }
         }
 
         //Аппендим раздел WHERE
@@ -239,6 +360,35 @@ public class ReactEAV {
                 builder.appendWhereConditionWithTableCodeEqualsToValue(config.getAttrTypesPermanentTableName() + i, databaseColumnValue);
             }
         }
+
+        //Аппендим reference
+        if (currentNode.hasReferencedObjects()){
+            List<String> objTypelist = new LinkedList<>();
+            for (EntityReferenceTaskData reference:currentNode.getCurrentEntityReferenceTasks().values()) {
+                objTypelist.add(reference.getInnerClassObjectTypeName());
+            }
+            int j=0;
+            for (int i = 1; i <= referenceNameGenerator.getTablesCounter(); i++) {
+                String attrTypeName = "AT_" + config.getReferenceTypePermanentTableName()+i;
+                String objTypeName = "OT_"+config.getReferenceTypePermanentTableName()+i;
+                String objReferenceName = "R_"+config.getReferenceTypePermanentTableName()+i;
+                builder.appendWhereConditionWithTwoTablesEqualsByOB_TY_ID(config.getRootTableName(), attrTypeName);
+                builder.appendWhereConditionWithAttrTypeRefEqualsOB_TY_ID(attrTypeName, objTypeName);
+                builder.appendWhereConditionWithTwoTablesEqualsByAT_ID(attrTypeName, objReferenceName);
+                builder.appendWhereConditionWithTableCodeEqualsToConstant(objTypeName,objTypelist.remove(j));
+                j++;
+                builder.appendWhereConditionWithTwoTablesEqualsByOB_ID(config.getRootTableName(),objReferenceName);
+            }
+        }
+
+        for (EntityReferenceTaskData taskData:currentNode.getCurrentEntityReferenceTasks().values()){
+            for (Map.Entry<String, String> tgtReference:objReferenceConnections.entrySet()){
+                if (tgtReference.getValue().equals(taskData.getInnerClass().getName())){
+                    taskData.setInnerIdParameterNameForQueryParametersMap(tgtReference.getKey());
+                }
+            }
+        }
+
         //Добавляем кляузу WHERE OBJECTS.OBJECT_ID=...
         if (isSearchById) builder.appendWhereConditionWithRootTableObjectIdSearching();
 
@@ -249,5 +399,6 @@ public class ReactEAV {
 
         return queryBuilder.toString();
     }
+
 
 }

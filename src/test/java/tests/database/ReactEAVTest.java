@@ -8,6 +8,7 @@ import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.repository.reacdao.ReactEAVManager;
+import projectpackage.repository.reacdao.exceptions.ResultEntityNullException;
 
 import java.util.List;
 
@@ -21,7 +22,12 @@ public class ReactEAVTest extends AbstractDatabaseTest {
 
     @Test
     public void queryTestOfUsers(){
-        List<User> list = (List<User>) manager.createReactEAV(User.class).getEntityCollection();
+        List<User> list = null;
+        try {
+            list = (List<User>) manager.createReactEAV(User.class).getEntityCollection();
+        } catch (ResultEntityNullException e) {
+            System.out.println("RESULT IS NULL");
+        }
         for (User user:list){
             System.out.println(user);
         }
@@ -30,7 +36,12 @@ public class ReactEAVTest extends AbstractDatabaseTest {
 
     @Test
     public void queryTestOfUsersOrderBy(){
-        List<User> list = (List<User>) manager.createReactEAV(User.class).getEntityCollectionOrderByParameter("firstName", true);
+        List<User> list = null;
+        try {
+            list = (List<User>) manager.createReactEAV(User.class).getEntityCollectionOrderByParameter("firstName", true);
+        } catch (ResultEntityNullException e) {
+            System.out.println("RESULT IS NULL");
+        }
         for (User user:list){
             System.out.println(user);
         }
@@ -38,16 +49,39 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void queryTestOfSingleUser(){
+    public void errorQueryTestOfSingleUser(){
+        int userId=127;
+        User user = null;
+        try {
+            user = (User) manager.createReactEAV(User.class).getSingleEntityWithId(userId);
+        } catch (ResultEntityNullException e) {
+            e.printStackTrace();
+        }
+        System.out.println("ENTITY IS NULL(expected yes)? - "+user);
+        System.out.println(SEPARATOR);
+    }
+
+    @Test
+    public void querySingleUserFetchRole(){
         int userId=901;
-        User user = (User) manager.createReactEAV(User.class).getSingleEntityWithId(userId);
+        User user = null;
+        try {
+            user = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(userId);
+        } catch (ResultEntityNullException e) {
+            e.printStackTrace();
+        }
         System.out.println(user);
         System.out.println(SEPARATOR);
     }
 
     @Test
     public void queryTestOfPhones(){
-        List<Phone> phones = (List<Phone>) manager.createReactEAV(Phone.class).getEntityCollection();
+        List<Phone> phones = null;
+        try {
+            phones = (List<Phone>) manager.createReactEAV(Phone.class).getEntityCollection();
+        } catch (ResultEntityNullException e) {
+            System.out.println("RESULT IS NULL");
+        }
         for (Phone phone:phones){
             System.out.println(phone);
         }
@@ -56,7 +90,12 @@ public class ReactEAVTest extends AbstractDatabaseTest {
 
     @Test
     public void queryTestOfRoles(){
-        List<Role> roles = (List<Role>) manager.createReactEAV(Role.class).getEntityCollection();
+        List<Role> roles = null;
+        try {
+            roles = (List<Role>) manager.createReactEAV(Role.class).getEntityCollection();
+        } catch (ResultEntityNullException e) {
+            System.out.println("RESULT IS NULL");
+        }
         for (Role role:roles){
             System.out.println(role);
         }
@@ -65,7 +104,12 @@ public class ReactEAVTest extends AbstractDatabaseTest {
 
     @Test
     public void queryTestOfRolesOrderBy(){
-        List<Role> roles = (List<Role>) manager.createReactEAV(Role.class).getEntityCollectionOrderByParameter("objectId", true);
+        List<Role> roles = null;
+        try {
+            roles = (List<Role>) manager.createReactEAV(Role.class).getEntityCollectionOrderByParameter("objectId", true);
+        } catch (ResultEntityNullException e) {
+            System.out.println("RESULT IS NULL");
+        }
         for (Role role:roles){
             System.out.println(role);
         }
@@ -73,8 +117,52 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void queryTestOfSingeUserFetchPhones(){
+        List<User> list = null;
+        try {
+            list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().getEntityCollection();
+        } catch (ResultEntityNullException e) {
+        }
+        System.out.println("RESULT LIST QUANTITY="+list.size());
+        for (User user:list){
+            System.out.println(user);
+        }
+        System.out.println(SEPARATOR);
+    }
+
+    @Test
     public void queryTestOfUsersFetchPhones(){
-        List<User> list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().getEntityCollection();
+        List<User> list = null;
+        try {
+            list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().getEntityCollection();
+        } catch (ResultEntityNullException e) {
+        }
+        for (User user:list){
+            System.out.println(user);
+        }
+        System.out.println(SEPARATOR);
+    }
+
+    @Test
+    public void queryTestOfUsersFetchRoles(){
+        List<User> list = null;
+        try {
+            list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Role.class).closeFetch().getEntityCollection();
+        } catch (ResultEntityNullException e) {
+        }
+        for (User user:list){
+            System.out.println(user);
+        }
+        System.out.println(SEPARATOR);
+    }
+
+    @Test
+    public void queryTestOfUsersFetchRolesAndPhones(){
+        List<User> list = null;
+        try {
+            list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Role.class).closeFetch().fetchInnerEntityCollection(Phone.class).closeFetch().getEntityCollection();
+        } catch (ResultEntityNullException e) {
+        }
         for (User user:list){
             System.out.println(user);
         }

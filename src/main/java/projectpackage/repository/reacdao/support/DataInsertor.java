@@ -3,13 +3,12 @@ package projectpackage.repository.reacdao.support;
 import projectpackage.repository.reacdao.ReacTask;
 import projectpackage.repository.reacdao.exceptions.WrongFieldNameException;
 import projectpackage.repository.reacdao.fetch.EntityOuterRelationshipsData;
+import projectpackage.repository.reacdao.fetch.EntityReferenceIdRelation;
+import projectpackage.repository.reacdao.fetch.EntityReferenceTaskData;
 import projectpackage.repository.reacdao.models.ReacEntity;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Lenovo on 08.05.2017.
@@ -24,6 +23,41 @@ public class DataInsertor {
     }
 
     void connectBy() {
+        System.out.println(outerEntity.getClass());
+        System.out.println(innerEntity.getClass());
+
+        if (outerEntity.hasReferencedObjects()){
+            for (Map.Entry<Integer, EntityReferenceIdRelation> entry:outerEntity.getReferenceIdRelations().entrySet()){
+                Class targetClass = entry.getValue().getInnerClass();
+                Field parentToInputField=null;
+                String fieldName =null;
+
+                for (EntityReferenceTaskData taskdata:outerEntity.getCurrentEntityReferenceTasks().values()){
+                    if (taskdata.getInnerClass().equals(targetClass)) {
+                        fieldName = taskdata.getThisFieldName();
+                    }
+                }
+                try {
+                    parentToInputField = outerEntity.getObjectClass().getDeclaredField(fieldName);
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                }
+                parentToInputField.setAccessible(true);
+
+                for (ReacEntity outerObject:outerEntity.getResultList()){
+                    boolean doNotModifyTheField = false;
+                        for (ReacEntity innerObject:innerEntity.getResultList()){
+                            if (entry.getKey().equals(outerObject.getObjectId()) && entry.getValue().getInnerId()==innerObject.getObjectId()){
+                                insertInnerEntity(outerObject, innerObject, parentToInputField, doNotModifyTheField);
+                                doNotModifyTheField = true;
+                                outerEntity.getInnerObjects().remove(innerObject);
+                            }
+                        }
+                }
+            }
+        }
+
+
         for (EntityOuterRelationshipsData entry : innerEntity.getCurrentEntityOuterLinks().values()) {
             if (entry.getOuterClass().equals(outerEntity.getObjectClass())) {
                 Field parentToInputField;
@@ -71,7 +105,7 @@ public class DataInsertor {
                 } else {
                     HashSet<ReacEntity> set = new HashSet<>();
                     set.add(inner);
-                    outerField.set(outer,set);
+                    outerField.set(outer, set);
                 }
             } else if (outerField.getType().equals(List.class)) {
                 if (doNotModifyTheField) {
@@ -80,10 +114,10 @@ public class DataInsertor {
                 } else {
                     List<ReacEntity> list = new ArrayList<>();
                     list.add(inner);
-                    outerField.set(outer,list);
+                    outerField.set(outer, list);
                 }
             } else {
-                outerField.set(outer,inner);
+                outerField.set(outer, inner);
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();

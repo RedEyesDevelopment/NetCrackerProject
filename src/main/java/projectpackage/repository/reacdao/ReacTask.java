@@ -1,8 +1,7 @@
 package projectpackage.repository.reacdao;
 
-import projectpackage.repository.reacdao.fetch.EntityOuterRelationshipsData;
+import projectpackage.repository.reacdao.fetch.*;
 import projectpackage.repository.reacdao.models.ReacEntity;
-import projectpackage.repository.reacdao.fetch.EntityVariablesData;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,6 +22,9 @@ public class ReacTask {
     private ReacEntity entity;
     private LinkedHashMap<String, EntityVariablesData> currentEntityParameters;
     private HashMap<String, EntityOuterRelationshipsData> currentEntityOuterLinks;
+    private HashMap<String, EntityReferenceRelationshipsData> currentEntityReferenceRelations;
+    private HashMap<String, EntityReferenceTaskData> currentEntityReferenceTasks;
+    private HashMap<Integer, EntityReferenceIdRelation> referenceIdRelations;
 
     ReacTask(ReactEAV reactEAV, Class objectClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend) {
         this.reactEAV = reactEAV;
@@ -33,9 +35,12 @@ public class ReacTask {
         this.targetId = targetId;
         this.orderingParameter = orderingParameter;
         this.ascend = ascend;
+        this.referenceIdRelations = new HashMap<>();
+        this.currentEntityReferenceTasks = new HashMap<>();
+        this.referenceIdRelations = new HashMap<>();
 
         LinkedHashMap<String, EntityVariablesData> currentNodeVariables;
-//        Кастуем класс
+        //Кастуем класс
         entity = null;
         try {
             entity = (ReacEntity) objectClass.newInstance();
@@ -58,7 +63,9 @@ public class ReacTask {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
-        }try {
+
+        }
+        try {
             currentObjectClassMethod = objectClass.getMethod("getEntityOuterConnections");
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -71,6 +78,47 @@ public class ReacTask {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
+
+        try {
+            currentObjectClassMethod = objectClass.getMethod("getEntityReferenceConnections");
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        try {
+            this.currentEntityReferenceRelations = (HashMap<String, EntityReferenceRelationshipsData>) currentObjectClassMethod.invoke(entity);
+
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public HashMap<String, EntityReferenceRelationshipsData> getCurrentEntityReferenceRelations() {
+        return currentEntityReferenceRelations;
+    }
+
+    public void addCurrentEntityReferenceTasks(EntityReferenceTaskData currentEntityReferenceRelation) {
+        if (null != currentEntityReferenceRelation) {
+            String data = objectClass.getName() + "to" + currentEntityReferenceRelation.getInnerClass();
+            this.currentEntityReferenceTasks.put(data, currentEntityReferenceRelation);
+        }
+    }
+
+    public HashMap<Integer, EntityReferenceIdRelation> getReferenceIdRelations() {
+        return referenceIdRelations;
+    }
+
+    public void addReferenceIdRelations(int thisId, EntityReferenceIdRelation relation) {
+        this.referenceIdRelations.put(thisId,relation);
+    }
+
+    public HashMap<String, EntityReferenceTaskData> getCurrentEntityReferenceTasks() {
+        return currentEntityReferenceTasks;
+    }
+
+    public boolean hasReferencedObjects() {
+        return !currentEntityReferenceTasks.isEmpty();
     }
 
     public ReacEntity getEntity() {
@@ -97,7 +145,7 @@ public class ReacTask {
         this.resultList = resultList;
     }
 
-    void addResulttoResultList(ReacEntity result){
+    void addResulttoResultList(ReacEntity result) {
         this.resultList.add(result);
     }
 
@@ -145,22 +193,21 @@ public class ReacTask {
         this.ascend = ascend;
     }
 
+//
+//    public ReacTask fetchSingleInnerEntityForInnerObject(Class<? extends ReacEntity> innerEntityClass) {
+//        return fetchingOrderCreation(innerEntityClass, true, null, null, false);
+//    }
 
-
-    public ReacTask fetchSingleInnerEntityForInnerObject(Class<? extends ReacEntity> innerEntityClass){
-        return fetchingOrderCreation(innerEntityClass,true,null,null,false);
+    public ReacTask fetchInnerEntityCollectionForInnerObject(Class<? extends ReacEntity> innerEntityClass) {
+        return fetchingOrderCreation(innerEntityClass, false, null, null, false);
     }
 
-    public ReacTask fetchInnerEntityCollectionForInnerObject(Class<? extends ReacEntity> innerEntityClass){
-        return fetchingOrderCreation(innerEntityClass,false,null,null,false);
+    public ReacTask fetchInnerEntityCollectionOrderByForInnerObject(Class<? extends ReacEntity> innerEntityClass, String orderingParameter, boolean ascend) {
+        return fetchingOrderCreation(innerEntityClass, false, null, orderingParameter, ascend);
     }
 
-    public ReacTask fetchInnerEntityCollectionOrderByForInnerObject(Class<? extends ReacEntity> innerEntityClass, String orderingParameter, boolean ascend){
-        return fetchingOrderCreation(innerEntityClass,false,null,orderingParameter,ascend);
-}
-
-    private ReacTask fetchingOrderCreation(Class<? extends ReacEntity> innerEntityClass,boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend){
-        ReacTask childNode = new ReacTask(reactEAV, innerEntityClass, forSingleObject, targetId,orderingParameter,ascend);
+    private ReacTask fetchingOrderCreation(Class<? extends ReacEntity> innerEntityClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend) {
+        ReacTask childNode = new ReacTask(reactEAV, innerEntityClass, forSingleObject, targetId, orderingParameter, ascend);
         childNode.setObjectClass(innerEntityClass);
         this.addInnerObject(childNode);
         return childNode;

@@ -2,6 +2,7 @@ package projectpackage.model.auth;
 
 import lombok.Data;
 import projectpackage.repository.reacdao.fetch.EntityOuterRelationshipsData;
+import projectpackage.repository.reacdao.fetch.EntityReferenceRelationshipsData;
 import projectpackage.repository.reacdao.fetch.EntityVariablesData;
 import projectpackage.repository.reacdao.models.ReacEntity;
 
@@ -14,6 +15,7 @@ public class User extends ReacEntity {
     private static final String OBJECT_TYPE="User";
     private static final LinkedHashMap<String, EntityVariablesData> objectProperties;
     private static final HashMap<String, EntityOuterRelationshipsData> objectOuterConnections;
+    private static final HashMap<String, EntityReferenceRelationshipsData> objectReferenceConnections;
 
     static
     {
@@ -26,6 +28,7 @@ public class User extends ReacEntity {
         objectProperties.put("additionalInfo",new EntityVariablesData(String.class, "Additional_info"));
 
         objectOuterConnections=new HashMap<>();
+        objectReferenceConnections=new HashMap<>();
     }
 
     private int objectId;
@@ -52,4 +55,8 @@ public class User extends ReacEntity {
         return objectOuterConnections;
     }
 
+    @Override
+    public HashMap<String, EntityReferenceRelationshipsData> getEntityReferenceConnections() {
+        return objectReferenceConnections;
+    }
 }
