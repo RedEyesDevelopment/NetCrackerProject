@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface UserService {
     public List<User> getAllUsers(String orderingParameter);
+    public int deleteUserById(int id);
 }
