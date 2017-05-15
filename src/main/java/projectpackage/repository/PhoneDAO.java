@@ -2,13 +2,10 @@ package projectpackage.repository;
 
 import projectpackage.model.auth.Phone;
 
-import java.util.List;
-
 /**
  * Created by Lenovo on 04.05.2017.
  */
 public interface PhoneDAO {
-    public List<Phone> getPhonesList();
     public void insertPhone(Phone phone);
-    public void updatePhone(Phone phone);
+    public void updatePhone(Phone newPhone, Phone oldPhone);
 }
