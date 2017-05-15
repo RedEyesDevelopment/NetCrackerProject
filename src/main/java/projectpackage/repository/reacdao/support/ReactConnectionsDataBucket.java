@@ -1,0 +1,43 @@
+package projectpackage.repository.reacdao.support;
+
+import com.google.common.collect.ImmutableMap;
+import projectpackage.repository.reacdao.fetch.EntityOuterRelationshipsData;
+import projectpackage.repository.reacdao.fetch.EntityReferenceRelationshipsData;
+import projectpackage.repository.reacdao.fetch.EntityVariablesData;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * Created by Lenovo on 16.05.2017.
+ */
+public class ReactConnectionsDataBucket {
+    Map<Class, String> classesMap;
+    Map<Class, LinkedHashMap<String, EntityVariablesData>> entityVariablesMap;
+    Map<Class, HashMap<Class, EntityOuterRelationshipsData>> outerRelationsMap;
+    Map<Class, HashMap<Class, EntityReferenceRelationshipsData>> entityReferenceRelationsMap;
+
+    public ReactConnectionsDataBucket(Map<Class, String> classesMap, Map<Class, LinkedHashMap<String, EntityVariablesData>> entityVariablesMap, Map<Class, HashMap<Class, EntityOuterRelationshipsData>> outerRelationsMap, Map<Class, HashMap<Class, EntityReferenceRelationshipsData>> entityReferenceRelationsMap) {
+        this.classesMap = classesMap;
+        this.entityVariablesMap = entityVariablesMap;
+        this.outerRelationsMap = outerRelationsMap;
+        this.entityReferenceRelationsMap = entityReferenceRelationsMap;
+    }
+
+    public Map<Class, String> getClassesMap() {
+        return ImmutableMap.copyOf(classesMap);
+    }
+
+    public Map<Class, LinkedHashMap<String, EntityVariablesData>> getEntityVariablesMap() {
+        return ImmutableMap.copyOf(entityVariablesMap);
+    }
+
+    public Map<Class, HashMap<Class, EntityOuterRelationshipsData>> getOuterRelationsMap() {
+        return ImmutableMap.copyOf(outerRelationsMap);
+    }
+
+    public Map<Class, HashMap<Class, EntityReferenceRelationshipsData>> getEntityReferenceRelationsMap() {
+        return ImmutableMap.copyOf(entityReferenceRelationsMap);
+    }
+}

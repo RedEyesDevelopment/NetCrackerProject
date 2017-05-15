@@ -8,10 +8,7 @@ import projectpackage.repository.reacdao.fetch.EntityVariablesData;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Gvozd on 15.05.2017.
@@ -48,11 +45,11 @@ public class ReactAnnDefinitionReader {
         return makeClassesMap;
     }
 
-    public Map<Class, Map<Class, EntityOuterRelationshipsData>> makeOuterRelationshipsMap() {
-        Map<Class, Map<Class, EntityOuterRelationshipsData>> entityRelationsMap = new HashMap<>();
+    public Map<Class, HashMap<Class, EntityOuterRelationshipsData>> makeOuterRelationshipsMap() {
+        Map<Class, HashMap<Class, EntityOuterRelationshipsData>> entityRelationsMap = new HashMap<>();
         for (Class clazz : classList) {
             if (clazz.isAnnotationPresent(CHILDANNOTATION)) {
-                Map<Class, EntityOuterRelationshipsData> thisClassOuterRelations = new HashMap<>();
+                HashMap<Class, EntityOuterRelationshipsData> thisClassOuterRelations = new HashMap<>();
                 for (Annotation annot : clazz.getAnnotationsByType(CHILDANNOTATION)) {
                     ReactChild annotation = (ReactChild) annot;
                     String outerFieldName = annotation.outerFieldName();
@@ -68,37 +65,33 @@ public class ReactAnnDefinitionReader {
         return entityRelationsMap;
     }
 
-    public Map<Class, Map<String, EntityVariablesData>> makeObjectsVariablesMap() {
-        Map<Class, Map<String, EntityVariablesData>> entitysVariables = new HashMap<>();
+    public Map<Class, LinkedHashMap<String, EntityVariablesData>> makeObjectsVariablesMap() {
+        Map<Class, LinkedHashMap<String, EntityVariablesData>> entitysVariables = new HashMap<>();
         for (Class clazz : classList) {
-            Map<String, EntityVariablesData> thisClassData = new HashMap<>();
-            if (clazz.isAnnotationPresent(FIELDANNOTATION)) {
+            LinkedHashMap<String, EntityVariablesData> thisClassData = new LinkedHashMap<>();
                 for (Field field : clazz.getDeclaredFields()) {
                     if (field.isAnnotationPresent(FIELDANNOTATION)) {
-                        System.out.println("ANNOTATIONPRESENT");
                         Annotation[] annotations = field.getAnnotations();
                         for (Annotation annotation : annotations) {
                             ReactField reactField = (ReactField) annotation;
                             String fieldName = field.getName();
                             String fieldDatabaseName = reactField.databaseAttrtypeCodeValue();
                             Class objectType = reactField.valueObjectClass();
-                            System.out.println("fieldName="+fieldName+" fieldDatabaseName="+fieldDatabaseName+" objectType="+objectType);
                             EntityVariablesData data = new EntityVariablesData(objectType, fieldDatabaseName);
                             thisClassData.put(fieldName, data);
                         }
                     }
                 }
-            }
             entitysVariables.put(clazz, thisClassData);
         }
         return entitysVariables;
     }
 
-    public Map<Class, Map<Class, EntityReferenceRelationshipsData>> makeObjectsReferenceRelationsMap(){
-        Map<Class, Map<Class, EntityReferenceRelationshipsData>> objectReferenceRelations = new HashMap<>();
+    public Map<Class, HashMap<Class, EntityReferenceRelationshipsData>> makeObjectsReferenceRelationsMap(){
+        Map<Class, HashMap<Class, EntityReferenceRelationshipsData>> objectReferenceRelations = new HashMap<>();
         for (Class clazz:classList){
             if (clazz.isAnnotationPresent(REFERENCEANNOTATION)) {
-                Map<Class, EntityReferenceRelationshipsData> thisClassMap = new HashMap<>();
+                HashMap<Class, EntityReferenceRelationshipsData> thisClassMap = new HashMap<>();
                 for (Annotation annot : clazz.getAnnotationsByType(REFERENCEANNOTATION)) {
                     ReactReference reactReference = (ReactReference) annot;
                     String outerFieldName = reactReference.outerFieldName();
@@ -113,7 +106,6 @@ public class ReactAnnDefinitionReader {
         }
         return objectReferenceRelations;
     }
-
 
     public void printPackageName() {
         System.out.println(packageName);

@@ -1,13 +1,11 @@
 package projectpackage.repository.reacdao.fetch;
 
-import projectpackage.repository.reacdao.models.ReacEntity;
-
 /**
  * Created by Lenovo on 14.05.2017.
  */
 public class EntityReferenceTaskData {
-    private Class<? extends ReacEntity> thisClass;
-    private Class<? extends ReacEntity> innerClass;
+    private Class thisClass;
+    private Class innerClass;
     private String innerClassObjectTypeName;
     private String thisFieldName;
     private String innerIdKey;
@@ -15,7 +13,7 @@ public class EntityReferenceTaskData {
     private String innerIdParameterNameForQueryParametersMap;
     private int innerObjectIdForInsertion;
 
-    public EntityReferenceTaskData(Class<? extends ReacEntity> thisClass, Class<? extends ReacEntity> innerClass, String innerClassObjectTypeName, String thisFieldName, String innerIdKey, String thisIdKey) {
+    public EntityReferenceTaskData(Class thisClass, Class innerClass, String innerClassObjectTypeName, String thisFieldName, String innerIdKey, String thisIdKey) {
         this.thisClass = thisClass;
         this.innerClass = innerClass;
         this.innerClassObjectTypeName = innerClassObjectTypeName;
@@ -24,11 +22,11 @@ public class EntityReferenceTaskData {
         this.thisIdKey = thisIdKey;
     }
 
-    public Class<? extends ReacEntity> getThisClass() {
+    public Class getThisClass() {
         return thisClass;
     }
 
-    public Class<? extends ReacEntity> getInnerClass() {
+    public Class getInnerClass() {
         return innerClass;
     }
 
@@ -47,7 +45,6 @@ public class EntityReferenceTaskData {
     public String getThisIdKey() {
         return thisIdKey;
     }
-
 
     public int getInnerObjectIdForInsertion() {
         return innerObjectIdForInsertion;

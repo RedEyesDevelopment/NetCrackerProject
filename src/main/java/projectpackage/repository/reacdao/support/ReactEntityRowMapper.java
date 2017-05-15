@@ -5,7 +5,6 @@ import projectpackage.repository.reacdao.exceptions.WrongTypeClassException;
 import projectpackage.repository.reacdao.fetch.EntityReferenceIdRelation;
 import projectpackage.repository.reacdao.fetch.EntityReferenceTaskData;
 import projectpackage.repository.reacdao.fetch.EntityVariablesData;
-import projectpackage.repository.reacdao.models.ReacEntity;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
@@ -15,8 +14,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class ReactEntityRowMapper implements RowMapper<ReacEntity> {
-    Class<? extends ReacEntity> clazz;
+public class ReactEntityRowMapper implements RowMapper {
+    Class clazz;
     LinkedHashMap<String, EntityVariablesData> parameters;
     HashMap<String, EntityReferenceTaskData> referenceData;
     HashMap<Integer, EntityReferenceIdRelation> objectReferenceTable;
@@ -31,10 +30,10 @@ public class ReactEntityRowMapper implements RowMapper<ReacEntity> {
     }
 
     @Override
-    public ReacEntity mapRow(ResultSet resultSet, int i) throws SQLException {
-        ReacEntity targetReacEntityObject = null;
+    public Object mapRow(ResultSet resultSet, int i) throws SQLException {
+        Object targetReacEntityObject = null;
         try {
-            targetReacEntityObject = (ReacEntity) clazz.newInstance();
+            targetReacEntityObject = clazz.newInstance();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {

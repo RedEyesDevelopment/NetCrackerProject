@@ -10,6 +10,8 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
+import projectpackage.repository.reacdao.ReactEAVManager;
+import projectpackage.repository.reacdao.annotations.ReactAnnDefinitionReader;
 import projectpackage.repository.reacdao.support.ReactConstantConfiguration;
 
 import javax.sql.DataSource;
@@ -97,4 +99,15 @@ public class JDBCConfiguration implements TransactionManagementConfigurer {
 
     @Bean
     ReactConstantConfiguration reactConstantConfiguration () { return new ReactConstantConfiguration(); }
+
+    @Bean
+    ReactAnnDefinitionReader reactAnnDefinitionReader(){
+        ReactAnnDefinitionReader reactAnnDefinitionReader = new ReactAnnDefinitionReader("projectpackage/model");
+        return reactAnnDefinitionReader;
+    }
+
+    @Bean
+    ReactEAVManager reactEAVManager(){
+        return new ReactEAVManager(new ReactConstantConfiguration(),reactAnnDefinitionReader());
+    }
 }
