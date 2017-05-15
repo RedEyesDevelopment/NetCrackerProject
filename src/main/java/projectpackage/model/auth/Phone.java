@@ -29,6 +29,7 @@ public class Phone extends ReacEntity {
 
         objectReferenceConnections=new HashMap<>();
     }
+
     private int objectId;
     private int userId;
     private String phoneNumber;

@@ -9,4 +9,6 @@ import java.util.List;
  */
 public interface PhoneDAO {
     public List<Phone> getPhonesList();
+    public void insertPhone(Phone phone);
+    public void updatePhone(Phone phone);
 }

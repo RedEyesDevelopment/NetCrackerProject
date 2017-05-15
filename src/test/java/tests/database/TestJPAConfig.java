@@ -90,7 +90,6 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         comboPooledDataSource.setJdbcUrl(url);
         comboPooledDataSource.setUser(username);
         comboPooledDataSource.setPassword(password);
-        comboPooledDataSource.setAutoCommitOnClose(false);
 
         //минимальный размер пула
         comboPooledDataSource.setMinPoolSize(5);
@@ -116,7 +115,7 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         comboPooledDataSource.setIdleConnectionTestPeriod(300);
         //имя специальной таблицы для тестирования соединения с БД
         comboPooledDataSource.setAutomaticTestTable("c3p0DatabaseTestTable");
-
+        //отключение автокоммита по окончанию запроса
         return comboPooledDataSource;
     }
 
