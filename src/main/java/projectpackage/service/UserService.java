@@ -5,6 +5,9 @@ import projectpackage.model.auth.User;
 import java.util.List;
 
 public interface UserService {
-    public List<User> getAllUsers(String orderingParameter);
+    public List<User> getAllUsers(String orderingParameter, boolean ascend);
+    public User getSingleUserById(int id);
     public int deleteUserById(int id);
+    public void insertUser(User user);
+    public boolean updateUser(User newUser, int oldUserId);
 }

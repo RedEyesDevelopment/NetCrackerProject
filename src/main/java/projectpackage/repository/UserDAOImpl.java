@@ -1,63 +1,15 @@
 package projectpackage.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
-import projectpackage.repository.reacdao.ReactEAVManager;
-import projectpackage.repository.reacdao.exceptions.ResultEntityNullException;
-
-import java.util.*;
 
 @Repository
 public class UserDAOImpl implements UserDAO {
 
     @Autowired
-    NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-    @Autowired
     JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    ReactEAVManager manager;
-
-    @Override
-    public Map<Integer,User> getAllUsers(String orderParameter) {
-        String sqlQuery = "SELECT USERS.OBJECT_ID \"objectId\", USERLOG.VALUE \"email\", USERPASS.VALUE \"password\",\n" +
-                "USERFIN.VALUE \"firstName\", USERLAN.VALUE \"lastName\", USERAD.VALUE \"additionalInfo\",\n" +
-                "USEROLE.VALUE \"role\"\n" +
-                "FROM OBJECTS USERS, ATTRIBUTES USERLOG, ATTRIBUTES USERPASS,\n" +
-                "ATTRIBUTES USERFIN, ATTRIBUTES USERLAN, ATTRIBUTES USERAD, ATTRIBUTES USEROLE,\n" +
-                "OBJREFERENCE ROLEREF\n" +
-                "WHERE USERS.OBJECT_TYPE_ID=3 AND\n" +
-                "    USERLOG.ATTR_ID=15 AND\n" +
-                "    USERPASS.ATTR_ID=16 AND\n" +
-                "    USERFIN.ATTR_ID=17 AND\n" +
-                "    USERLAN.ATTR_ID=18 AND\n" +
-                "    USERAD.ATTR_ID=19 AND\n" +
-                "    USEROLE.ATTR_ID=39 AND\n" +
-                "    ROLEREF.ATTR_ID=20 AND\n" +
-                "    ROLEREF.OBJECT_ID=USERS.OBJECT_ID AND\n" +
-                "    ROLEREF.REFERENCE=USEROLE.OBJECT_ID AND\n" +
-                "    USERS.OBJECT_ID=USERLOG.OBJECT_ID AND\n" +
-                "    USERS.OBJECT_ID=USERPASS.OBJECT_ID AND\n" +
-                "    USERS.OBJECT_ID=USERFIN.OBJECT_ID AND\n" +
-                "    USERS.OBJECT_ID=USERLAN.OBJECT_ID AND\n" +
-                "    USERS.OBJECT_ID=USERAD.OBJECT_ID\n" +
-                "    ORDER BY :orderParameter";
-        SqlParameterSource namedParameters = new MapSqlParameterSource("orderParameter", orderParameter);
-        List<User> list = namedParameterJdbcTemplate.query(sqlQuery,namedParameters, new BeanPropertyRowMapper<User>(User.class));
-        TreeMap<Integer,User> map = new TreeMap<>();
-        for (User user: list){
-            map.put(user.getObjectId(), user);
-        }
-    return map;
-    }
 
     @Override
     public void insertUser(User user) {
@@ -86,41 +38,26 @@ public class UserDAOImpl implements UserDAO {
      * Метод получает нового юзера и вытаскивает старого, затем сравнивает их поля и выполняет запросы
      */
     @Override
-    public void updateUser(User user) {
-        User oldUser = getOldUser(user.getObjectId());
+    public void updateUser(User newUser, User oldUser) {
         String queryTemplate = "UPDATE ATTRIBUTES SET VALUE = '%s' WHERE OBJECT_ID = %d AND ATTR_ID = %d";
-        if (!oldUser.getEmail().equals(user.getEmail())) {
-            jdbcTemplate.execute(String.format(queryTemplate, user.getEmail(), user.getObjectId(), 15));
+        if (!oldUser.getEmail().equals(newUser.getEmail())) {
+            jdbcTemplate.execute(String.format(queryTemplate, newUser.getEmail(), newUser.getObjectId(), 15));
         }
-        if (!oldUser.getPassword().equals(user.getPassword())) {
-            jdbcTemplate.execute(String.format(queryTemplate, user.getPassword(), user.getObjectId(), 16));
+        if (!oldUser.getPassword().equals(newUser.getPassword())) {
+            jdbcTemplate.execute(String.format(queryTemplate, newUser.getPassword(), newUser.getObjectId(), 16));
         }
-        if (!oldUser.getFirstName().equals(user.getFirstName())) {
-            jdbcTemplate.execute(String.format(queryTemplate, user.getFirstName(), user.getObjectId(), 17));
+        if (!oldUser.getFirstName().equals(newUser.getFirstName())) {
+            jdbcTemplate.execute(String.format(queryTemplate, newUser.getFirstName(), newUser.getObjectId(), 17));
         }
-        if (!oldUser.getLastName().equals(user.getLastName())) {
-            jdbcTemplate.execute(String.format(queryTemplate, user.getLastName(), user.getObjectId(), 18));
+        if (!oldUser.getLastName().equals(newUser.getLastName())) {
+            jdbcTemplate.execute(String.format(queryTemplate, newUser.getLastName(), newUser.getObjectId(), 18));
         }
-        if (!oldUser.getLastName().equals(user.getLastName())) {
-            jdbcTemplate.execute(String.format(queryTemplate, user.getLastName(), user.getObjectId(), 19));
+        if (!oldUser.getLastName().equals(newUser.getLastName())) {
+            jdbcTemplate.execute(String.format(queryTemplate, newUser.getLastName(), newUser.getObjectId(), 19));
         }
-        if (oldUser.getRole().getObjectId() != user.getRole().getObjectId())
+        if (oldUser.getRole().getObjectId() != newUser.getRole().getObjectId())
         jdbcTemplate.execute(String.format("UPDATE ATTRIBUTES SET REFERENCE = %d WHERE OBJECT_ID = %d AND ATTR_ID = %d",
-                user.getRole().getObjectId(), user.getObjectId(), 20));
-    }
-
-    /**
-     * Метод который возвращает старого юзера, который хранится в бд
-     */
-    private User getOldUser(int objectId) {
-        User oldUser = null;
-        try {
-            oldUser = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(objectId);
-        } catch (ResultEntityNullException e) {
-            e.printStackTrace();
-        }
-
-        return oldUser;
+                newUser.getRole().getObjectId(), newUser.getObjectId(), 20));
     }
 
 }
