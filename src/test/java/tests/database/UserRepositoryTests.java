@@ -4,21 +4,25 @@ import lombok.extern.log4j.Log4j;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.service.UserService;
 
-import java.sql.SQLException;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by Gvozd on 06.01.2017.
  */
 @Log4j
-@Transactional(value = "annotationDrivenTransactionManager")
 public class UserRepositoryTests extends AbstractDatabaseTest {
     private final String SEPARATOR = "**********************************************************";
+
+    @Autowired
+    PlatformTransactionManager annotationDrivenTransactionManager;
 
     @Autowired
     UserService userService;
@@ -29,6 +33,7 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         List<User> list = userService.getAllUsers("email", true);
         for (User user:list){
             System.out.println(user);
+            assertNotNull(user);
         }
         System.out.println(SEPARATOR);
     }
@@ -37,8 +42,9 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
     @Rollback(true)
     public void getSingleUserById(){
         User user = null;
-        int userId = 1402;
+        int userId = 900;
         user = userService.getSingleUserById(userId);
+        assertNotNull(user);
         System.out.println(user);
         System.out.println(SEPARATOR);
     }
@@ -47,7 +53,7 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
     @Test
     @Rollback(true)
     public void deleteUser(){
-        int userId = 1402;
+        int userId = 900;
         int deletedRows = userService.deleteUserById(userId);
         System.out.println("DeletedRows="+deletedRows);
         System.out.println(SEPARATOR);
@@ -69,6 +75,7 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         user.setAdditionalInfo("nothing");
         user.setRole(role);
         boolean result = userService.insertUser(user);
+        assertEquals(true ,result);
         System.out.println(result);
     }
 
@@ -88,6 +95,7 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         newUser.setAdditionalInfo("My new INFO");
         newUser.setRole(newRole);
         boolean result = userService.updateUser(newUser);
+        assertEquals(true ,result);
         System.out.println(result);
     }
 

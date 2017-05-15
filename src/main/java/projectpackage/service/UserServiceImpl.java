@@ -3,7 +3,7 @@ package projectpackage.service;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import projectpackage.repository.reacdao.exceptions.TransactionException;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
@@ -11,6 +11,7 @@ import projectpackage.repository.DeleteDAO;
 import projectpackage.repository.UserDAO;
 import projectpackage.repository.reacdao.ReactEAVManager;
 import projectpackage.repository.reacdao.exceptions.ResultEntityNullException;
+import projectpackage.repository.reacdao.exceptions.TransactionException;
 
 import java.util.List;
 
@@ -50,6 +51,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(transactionManager = "annotationDrivenTransactionManager")
     public int deleteUserById(int id) {
         return deleteDAO.deleteSingleEntityById(id);
     }

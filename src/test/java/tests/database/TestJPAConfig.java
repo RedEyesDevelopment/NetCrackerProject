@@ -118,6 +118,7 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         //имя специальной таблицы для тестирования соединения с БД
         comboPooledDataSource.setAutomaticTestTable("c3p0DatabaseTestTable");
         //отключение автокоммита по окончанию запроса
+        comboPooledDataSource.setAutoCommitOnClose(false);
         return comboPooledDataSource;
     }
 
