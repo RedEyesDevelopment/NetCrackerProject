@@ -61,20 +61,15 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public void insertUser(User user) {
-        String intoObjects = String.format("INSERT INTO OBJECTS (OBJECT_ID, PARENT_ID, OBJECT_TYPE_ID, NAME, DESCRIPTION) " +
-                "VALUES (%d, NULL, 3, '%s', NULL)", user.getObjectId(), user.getLastName());
-        String intoAttributes1 = String.format("INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) " +
-                "VALUES (15,%d,'%s',NULL)", user.getObjectId(), user.getEmail());
-        String intoAttributes2 = String.format("INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) " +
-                "VALUES (16,%d,'%s',NULL)", user.getObjectId(), user.getPassword());
-        String intoAttributes3 = String.format("INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) " +
-                "VALUES (17,%d,'%s',NULL)", user.getObjectId(), user.getFirstName());
-        String intoAttributes4 = String.format("INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) " +
-                "VALUES (18,%d,'%s',NULL)", user.getObjectId(), user.getLastName());
-        String intoAttributes5 = String.format("INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) " +
-                "VALUES (19,%d,'%s',NULL)", user.getObjectId(), user.getAdditionalInfo());
-        String intoReferences = String.format("INSERT INTO OBJREFERENCE (ATTR_ID, OBJECT_ID, REFERENCE) " +
-                "VALUES (20,%d,%d)", user.getObjectId(), user.getRole().getObjectId());
+        String insertObjectTemplate = "INSERT INTO OBJECTS (OBJECT_ID, PARENT_ID, OBJECT_TYPE_ID, NAME, DESCRIPTION) VALUES (%d, NULL, 3, '%s', NULL)";
+        String insertAttributeTemplate = "INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (%d,%d,'%s',NULL)";
+        String intoObjects = String.format(insertObjectTemplate, user.getObjectId(), user.getLastName());
+        String intoAttributes1 = String.format(insertAttributeTemplate, 15, user.getObjectId(), user.getEmail());
+        String intoAttributes2 = String.format(insertAttributeTemplate, 15, user.getObjectId(), user.getPassword());
+        String intoAttributes3 = String.format(insertAttributeTemplate, 15, user.getObjectId(), user.getFirstName());
+        String intoAttributes4 = String.format(insertAttributeTemplate, 15, user.getObjectId(), user.getLastName());
+        String intoAttributes5 = String.format(insertAttributeTemplate, 15, user.getObjectId(), user.getAdditionalInfo());
+        String intoReferences = String.format(insertAttributeTemplate, 15, user.getObjectId(), user.getRole().getObjectId());
         //оставлю комменты чтобы не забыть по поводу автокоммитов когда/если будем переделывать
         //здесь по идее начинаем транзакцию
         jdbcTemplate.execute(intoObjects);

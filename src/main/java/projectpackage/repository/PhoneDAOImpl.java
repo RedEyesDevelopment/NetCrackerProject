@@ -36,11 +36,10 @@ public class PhoneDAOImpl implements PhoneDAO {
 
     @Override
     public void insertPhone(Phone phone) {
-        String intoObjects = String.format("INSERT INTO OBJECTS (OBJECT_ID, PARENT_ID, OBJECT_TYPE_ID, NAME, DESCRIPTION) " +
-                "VALUES (%d, %d, 9, '%s', NULL)", phone.getObjectId(), phone.getUserId(), phone.getPhoneNumber());
-        String intoAttributes = String.format("INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) " +
-                "VALUES (38,%d,'08001234516',NULL)", phone.getObjectId());
-
+        String insertObjectTemplate = "INSERT INTO OBJECTS (OBJECT_ID, PARENT_ID, OBJECT_TYPE_ID, NAME, DESCRIPTION) VALUES (%d, %d, 9, '%s', NULL)";
+        String insertAttributeTemplate = "INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (%d,%d,'08001234516',NULL)";
+        String intoObjects = String.format(insertObjectTemplate, phone.getObjectId(), phone.getUserId(), phone.getPhoneNumber());
+        String intoAttributes = String.format(insertAttributeTemplate, 38, phone.getObjectId());
         jdbcTemplate.execute(intoObjects);
         jdbcTemplate.execute(intoAttributes);
     }
