@@ -12,6 +12,6 @@ public interface RoleService {
     public Role getSingleRoleById(int id);
     public Role getSingleRoleByRolename(String rolename);
     public int deleteRoleById(int id);
-    public void insertRole(Role role);
-    public boolean updateRole(Role newRole, int oldRoleId);
+    public boolean insertRole(Role role);
+    public boolean updateRole(Role newRole);
 }

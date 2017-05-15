@@ -3,6 +3,7 @@ package projectpackage.service;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import projectpackage.repository.reacdao.exceptions.TransactionException;
 import projectpackage.model.auth.Phone;
 import projectpackage.repository.DeleteDAO;
 import projectpackage.repository.PhoneDAO;
@@ -55,16 +56,23 @@ public class PhoneServiceImpl implements PhoneService{
     }
 
     @Override
-    public void insertPhone(Phone phone) {
-        phoneDAO.insertPhone(phone);
+    public boolean insertPhone(Phone phone) {
+        try {
+            phoneDAO.insertPhone(phone);
+        } catch (TransactionException e) {
+            return false;
+        }
+        return true;
     }
 
     @Override
-    public boolean updatePhone(Phone newPhone, int oldPhoneId) {
+    public boolean updatePhone(Phone newPhone) {
         try {
-            Phone phone = (Phone) manager.createReactEAV(Phone.class).getSingleEntityWithId(oldPhoneId);
+            Phone phone = (Phone) manager.createReactEAV(Phone.class).getSingleEntityWithId(newPhone.getObjectId());
             phoneDAO.updatePhone(newPhone, phone);
         } catch (ResultEntityNullException e) {
+            return false;
+        } catch (TransactionException e) {
             return false;
         }
         return true;

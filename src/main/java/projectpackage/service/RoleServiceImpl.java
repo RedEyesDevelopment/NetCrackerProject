@@ -3,6 +3,7 @@ package projectpackage.service;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import projectpackage.repository.reacdao.exceptions.TransactionException;
 import projectpackage.model.auth.Role;
 import projectpackage.repository.DeleteDAO;
 import projectpackage.repository.RoleDAO;
@@ -67,16 +68,23 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void insertRole(Role role) {
-        roleDAO.insertRole(role);
+    public boolean insertRole(Role role) {
+        try {
+            roleDAO.insertRole(role);
+        } catch (TransactionException e) {
+            return false;
+        }
+        return true;
     }
 
     @Override
-    public boolean updateRole(Role newRole, int oldRoleId) {
+    public boolean updateRole(Role newRole) {
         try {
-            Role oldRole = (Role) manager.createReactEAV(Role.class).getSingleEntityWithId(oldRoleId);
+            Role oldRole = (Role) manager.createReactEAV(Role.class).getSingleEntityWithId(newRole.getObjectId());
             roleDAO.updateRole(newRole,oldRole);
         } catch (ResultEntityNullException e) {
+            return false;
+        } catch (TransactionException e) {
             return false;
         }
         return true;

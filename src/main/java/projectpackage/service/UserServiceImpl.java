@@ -3,6 +3,7 @@ package projectpackage.service;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import projectpackage.repository.reacdao.exceptions.TransactionException;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
@@ -54,16 +55,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void insertUser(User user) {
-        userDAO.insertUser(user);
+    public boolean insertUser(User user) {
+        try {
+            userDAO.insertUser(user);
+        } catch (TransactionException e) {
+            return false;
+        }
+        return true;
     }
 
     @Override
-    public boolean updateUser(User newUser, int oldUserId) {
+    public boolean updateUser(User newUser) {
         try {
-            User oldUser = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(oldUserId);
+            User oldUser = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(newUser.getObjectId());
             userDAO.updateUser(newUser,oldUser);
         } catch (ResultEntityNullException e) {
+            return false;
+        } catch (TransactionException e) {
             return false;
         }
         return true;

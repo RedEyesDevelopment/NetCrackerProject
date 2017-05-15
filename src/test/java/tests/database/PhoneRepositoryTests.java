@@ -54,13 +54,23 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
     @Test
     @Rollback(true)
     public void createPhone(){
-
+        Phone phone = new Phone();
+        phone.setObjectId(1407);
+        phone.setPhoneNumber("7583475543");
+        phone.setUserId(1404);
+        boolean result = phoneService.insertPhone(phone);
+        System.out.println(result);
     }
 
     @Test
     @Rollback(true)
     public void updatePhone(){
-
+        Phone phone = new Phone();
+        phone.setObjectId(1407);
+        phone.setUserId(1406);
+        phone.setPhoneNumber("0638509180");
+        boolean result = phoneService.updatePhone(phone);
+        System.out.println(result);
     }
 
 }

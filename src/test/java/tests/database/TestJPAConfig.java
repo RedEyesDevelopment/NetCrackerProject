@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.TransactionManagementConfigure
 import projectpackage.repository.*;
 import projectpackage.repository.reacdao.ReactEAVManager;
 import projectpackage.repository.reacdao.support.ReactConstantConfiguration;
+import projectpackage.service.PhoneService;
+import projectpackage.service.PhoneServiceImpl;
 import projectpackage.service.UserService;
 import projectpackage.service.UserServiceImpl;
 
@@ -153,6 +155,11 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     @Bean
     UserService userService() {
         return new UserServiceImpl();
+    }
+
+    @Bean
+    PhoneService phoneService() {
+        return new PhoneServiceImpl();
     }
 
     @Bean

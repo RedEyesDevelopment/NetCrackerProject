@@ -11,6 +11,6 @@ public interface PhoneService {
     public List<Phone> getAllPhones(String orderingParameter, boolean ascend);
     public Phone getSinglePhoneById(int id);
     public int deletePhoneById(int id);
-    public void insertPhone(Phone phone);
-    public boolean updatePhone(Phone newPhone, int oldPhoneId);
+    public boolean insertPhone(Phone phone);
+    public boolean updatePhone(Phone newPhone);
 }
