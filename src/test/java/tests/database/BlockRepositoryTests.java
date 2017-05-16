@@ -23,6 +23,7 @@ public class BlockRepositoryTests extends AbstractDatabaseTest{
     @Rollback(true)
     public void getAllBlocks() {
 
+
     }
 
     @Test
