@@ -83,7 +83,7 @@ public class UserController {
             return new ResponseEntity<Boolean>(false, HttpStatus.NOT_ACCEPTABLE);
         }
         //Creating RESPONSEENTITY - special class for responsing with object and HttpStatusCode
-        Boolean result = userService.updateUser(changedUser);
+        Boolean result = userService.updateUser(id, changedUser);
         //Making status object for result boolean
         HttpStatus status;
         if (result) {
