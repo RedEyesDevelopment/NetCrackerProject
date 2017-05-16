@@ -75,7 +75,7 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
         phone.setObjectId(1407);
         phone.setUserId(1406);
         phone.setPhoneNumber("0638509180");
-        boolean result = phoneService.updatePhone(phone);
+        boolean result = phoneService.updatePhone(1407, phone);
         assertTrue(result);
         System.out.println("Update phone result = " + result);
         System.out.println(SEPARATOR);

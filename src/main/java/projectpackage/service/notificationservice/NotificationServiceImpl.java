@@ -68,7 +68,7 @@ public class NotificationServiceImpl implements NotificationService{
     }
 
     @Override
-    public boolean updateNotification(Notification newNotification) {
+    public boolean updateNotification(int id, Notification newNotification) {
         return false;
     }
 }

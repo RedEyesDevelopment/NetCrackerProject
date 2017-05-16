@@ -79,8 +79,9 @@ public class PhoneServiceImpl implements PhoneService{
     }
 
     @Override
-    public boolean updatePhone(Phone newPhone) {
+    public boolean updatePhone(int id, Phone newPhone) {
         try {
+            newPhone.setObjectId(id);
             Phone phone = (Phone) manager.createReactEAV(Phone.class).getSingleEntityWithId(newPhone.getObjectId());
             phoneDAO.updatePhone(newPhone, phone);
         } catch (ResultEntityNullException e) {

@@ -40,7 +40,7 @@ public class NotificationTypeServiceImpl implements NotificationTypeService{
     }
 
     @Override
-    public boolean updateNotificationType(NotificationType newNotificationType) {
+    public boolean updateNotificationType(int id, NotificationType newNotificationType) {
         return false;
     }
 }

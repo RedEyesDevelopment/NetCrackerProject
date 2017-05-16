@@ -13,5 +13,5 @@ public interface RateService {
     public Rate getSingleRateById(int id);//TODO Pacanu
     public boolean deleteRate(int id);//TODO Pacanu
     public boolean insertRate(Rate rate);//TODO Pacanu
-    public boolean updateRate(Rate newRate);//TODO Pacanu
+    public boolean updateRate(int id, Rate newRate);//TODO Pacanu
 }

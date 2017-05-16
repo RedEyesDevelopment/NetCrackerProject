@@ -61,7 +61,7 @@ public class BlockServiceImpl implements BlockService{
     }
 
     @Override
-    public boolean updateBlock(Block newBlock) {
+    public boolean updateBlock(int id, Block newBlock) {
         return false;
     }
 }

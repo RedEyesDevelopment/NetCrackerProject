@@ -16,5 +16,5 @@ public interface PhoneService {
     public Phone getSinglePhoneById(int id);
     public boolean deletePhone(int id);
     public boolean insertPhone(Phone phone);
-    public boolean updatePhone(Phone newPhone);
+    public boolean updatePhone(int id, Phone newPhone);
 }

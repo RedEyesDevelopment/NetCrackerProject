@@ -28,5 +28,5 @@ public interface OrderService {
     public Order getSingleOrderById(int id);//TODO Pacanu
     public boolean deleteOrder(int id);//TODO Pacanu
     public boolean insertOrder(Order order);//TODO Pacanu
-    public boolean updateOrder(Order newOrder);//TODO Pacanu
+    public boolean updateOrder(int id, Order newOrder);//TODO Pacanu
 }

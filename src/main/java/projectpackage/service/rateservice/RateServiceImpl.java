@@ -34,7 +34,7 @@ public class RateServiceImpl implements RateService{
     }
 
     @Override
-    public boolean updateRate(Rate newRate) {
+    public boolean updateRate(int id, Rate newRate) {
         return false;
     }
 }
