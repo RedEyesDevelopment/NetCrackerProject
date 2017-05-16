@@ -12,13 +12,18 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
-import projectpackage.repository.*;
+import projectpackage.repository.authdao.PhoneDAO;
+import projectpackage.repository.authdao.PhoneDAOImpl;
+import projectpackage.repository.authdao.UserDAO;
+import projectpackage.repository.authdao.UserDAOImpl;
+import projectpackage.repository.deletedao.DeleteDAO;
+import projectpackage.repository.deletedao.DeleteDAOImpl;
 import projectpackage.repository.reacdao.ReactEAVManager;
 import projectpackage.repository.reacdao.support.ReactConstantConfiguration;
-import projectpackage.service.PhoneService;
-import projectpackage.service.PhoneServiceImpl;
-import projectpackage.service.UserService;
-import projectpackage.service.UserServiceImpl;
+import projectpackage.service.authservice.PhoneService;
+import projectpackage.service.authservice.PhoneServiceImpl;
+import projectpackage.service.authservice.UserService;
+import projectpackage.service.authservice.UserServiceImpl;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -131,7 +136,7 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     }
 
     @Bean
-    NamedParameterJdbcTemplate namedParameteJdbcTemplate() {
+    NamedParameterJdbcTemplate namedParameterJdbcTemplate() {
         return new NamedParameterJdbcTemplate(dataSource());
     }
 
@@ -165,6 +170,6 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
 
     @Bean
     ReactEAVManager reactEAVManager(){
-        return new ReactEAVManager(namedParameteJdbcTemplate(), new ReactConstantConfiguration());
+        return new ReactEAVManager(namedParameterJdbcTemplate(), new ReactConstantConfiguration());
     }
 }

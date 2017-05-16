@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.Role;
-import projectpackage.service.RoleService;
+import projectpackage.service.authservice.RoleService;
 
 import java.util.List;
 

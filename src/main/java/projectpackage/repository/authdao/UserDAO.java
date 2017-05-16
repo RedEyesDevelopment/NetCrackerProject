@@ -1,4 +1,4 @@
-package projectpackage.repository;
+package projectpackage.repository.authdao;
 
 import projectpackage.repository.reacdao.exceptions.TransactionException;
 import projectpackage.model.auth.User;

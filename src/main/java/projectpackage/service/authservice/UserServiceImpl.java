@@ -1,14 +1,14 @@
-package projectpackage.service;
+package projectpackage.service.authservice;
 
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
-import projectpackage.repository.DeleteDAO;
-import projectpackage.repository.UserDAO;
+import projectpackage.repository.deletedao.DeleteDAO;
+import projectpackage.repository.authdao.PhoneDAO;
+import projectpackage.repository.authdao.UserDAO;
 import projectpackage.repository.reacdao.ReactEAVManager;
 import projectpackage.repository.reacdao.exceptions.ResultEntityNullException;
 import projectpackage.repository.reacdao.exceptions.TransactionException;
@@ -26,7 +26,20 @@ public class UserServiceImpl implements UserService {
     DeleteDAO deleteDAO;
 
     @Autowired
+    PhoneDAO phoneDAO;
+
+    @Autowired
     ReactEAVManager manager;
+
+    @Override
+    public List<User> getUsersByRole(Role role) {
+        return null;
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return null;
+    }
 
     @Override
     public List<User> getAllUsers(String orderingParameter, boolean ascend) {
@@ -51,9 +64,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(transactionManager = "annotationDrivenTransactionManager")
-    public int deleteUserById(int id) {
-        return deleteDAO.deleteSingleEntityById(id);
+    public boolean deleteUser(User user) {
+        int count = 0;
+        for (Phone phone : user.getPhones()) {
+            count = count + deleteDAO.deleteSingleEntityById(phone.getObjectId());
+        }
+        count = count + deleteDAO.deleteSingleEntityById(user.getObjectId());
+        if (count == 0) return false;
+        else return true;
     }
 
     @Override

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.Phone;
-import projectpackage.service.PhoneService;
+import projectpackage.service.authservice.PhoneService;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
     @Rollback(true)
     public void deletePhone(){
         int phoneId = 1102;
-        int deletedRows = phoneService.deletePhoneById(phoneId);
+        int deletedRows = phoneService.deletePhone(phoneId);
         System.out.println("DeletedRows="+deletedRows);
         System.out.println(SEPARATOR);
     }

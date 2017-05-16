@@ -7,7 +7,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.PlatformTransactionManager;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
-import projectpackage.service.UserService;
+import projectpackage.service.authservice.UserService;
 
 import java.util.List;
 
@@ -53,8 +53,13 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
     @Test
     @Rollback(true)
     public void deleteUser(){
+<<<<<<< Updated upstream
         int userId = 900;
         int deletedRows = userService.deleteUserById(userId);
+=======
+        int userId = 1402;
+        int deletedRows = userService.deleteUser(userId);
+>>>>>>> Stashed changes
         System.out.println("DeletedRows="+deletedRows);
         System.out.println(SEPARATOR);
     }

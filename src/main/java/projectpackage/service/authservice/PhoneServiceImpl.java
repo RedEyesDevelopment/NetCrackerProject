@@ -1,12 +1,13 @@
-package projectpackage.service;
+package projectpackage.service.authservice;
 
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import projectpackage.model.auth.User;
 import projectpackage.repository.reacdao.exceptions.TransactionException;
 import projectpackage.model.auth.Phone;
-import projectpackage.repository.DeleteDAO;
-import projectpackage.repository.PhoneDAO;
+import projectpackage.repository.deletedao.DeleteDAO;
+import projectpackage.repository.authdao.PhoneDAO;
 import projectpackage.repository.reacdao.ReactEAVManager;
 import projectpackage.repository.reacdao.exceptions.ResultEntityNullException;
 
@@ -27,6 +28,16 @@ public class PhoneServiceImpl implements PhoneService{
 
     @Autowired
     ReactEAVManager manager;
+
+    @Override
+    public List<Phone> getAllPhones() {
+        return null;
+    }
+
+    @Override
+    public List<Phone> getAllPhonesByUser(User user) {
+        return null;
+    }
 
     @Override
     public List<Phone> getAllPhones(String orderingParameter, boolean ascend) {
@@ -51,8 +62,10 @@ public class PhoneServiceImpl implements PhoneService{
     }
 
     @Override
-    public int deletePhoneById(int id) {
-        return deleteDAO.deleteSingleEntityById(id);
+    public boolean deletePhone(Phone phone) {
+        int count = deleteDAO.deleteSingleEntityById(phone.getObjectId());
+        if (count == 0) return false;
+        return true;
     }
 
     @Override

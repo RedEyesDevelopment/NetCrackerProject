@@ -1,12 +1,9 @@
-package projectpackage.service;
+package projectpackage.service.authservice;
 
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import projectpackage.repository.reacdao.exceptions.TransactionException;
 import projectpackage.model.auth.Role;
-import projectpackage.repository.DeleteDAO;
-import projectpackage.repository.RoleDAO;
 import projectpackage.repository.reacdao.ReactEAVManager;
 import projectpackage.repository.reacdao.exceptions.ResultEntityNullException;
 
@@ -20,13 +17,12 @@ import java.util.List;
 public class RoleServiceImpl implements RoleService {
 
     @Autowired
-    RoleDAO roleDAO;
-
-    @Autowired
-    DeleteDAO deleteDAO;
-
-    @Autowired
     ReactEAVManager manager;
+
+    @Override
+    public List<Role> getAllRoles() {
+        return null;
+    }
 
     @Override
     public List<Role> getAllRoles(String orderingParameter, boolean ascend) {
@@ -62,31 +58,4 @@ public class RoleServiceImpl implements RoleService {
         return null;
     }
 
-    @Override
-    public int deleteRoleById(int id) {
-        return deleteDAO.deleteSingleEntityById(id);
-    }
-
-    @Override
-    public boolean insertRole(Role role) {
-        try {
-            roleDAO.insertRole(role);
-        } catch (TransactionException e) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean updateRole(Role newRole) {
-        try {
-            Role oldRole = (Role) manager.createReactEAV(Role.class).getSingleEntityWithId(newRole.getObjectId());
-            roleDAO.updateRole(newRole,oldRole);
-        } catch (ResultEntityNullException e) {
-            return false;
-        } catch (TransactionException e) {
-            return false;
-        }
-        return true;
-    }
 }
