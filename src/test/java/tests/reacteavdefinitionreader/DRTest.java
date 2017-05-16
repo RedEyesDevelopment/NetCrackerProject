@@ -1,6 +1,7 @@
 package tests.reacteavdefinitionreader;
 
 import org.junit.Test;
+import projectpackage.Application;
 import projectpackage.repository.reacdao.annotations.ReactAnnDefinitionReader;
 import projectpackage.repository.reacdao.fetch.EntityOuterRelationshipsData;
 import projectpackage.repository.reacdao.fetch.EntityReferenceRelationshipsData;
@@ -18,7 +19,6 @@ public class DRTest {
     @Test
     public void doTestReader(){
         ReactAnnDefinitionReader reader = new ReactAnnDefinitionReader("projectpackage/model");
-        reader.getClasses();
         Map<Class, LinkedHashMap<String, EntityVariablesData>> objectVariables = reader.makeObjectsVariablesMap();
         Map<Class, HashMap<Class, EntityOuterRelationshipsData>> outerRelations = reader.makeOuterRelationshipsMap();
         Map<Class, HashMap<Class, EntityReferenceRelationshipsData>> referenceRelations = reader.makeObjectsReferenceRelationsMap();
@@ -57,5 +57,11 @@ public class DRTest {
                 System.out.println("        INNER ID KEY="+entry1.getValue().getInnerIdKey());
             }
         }
+    }
+
+    @Test
+    public void doTestPath(){
+        String location = Application.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        System.out.println("location="+location);
     }
 }

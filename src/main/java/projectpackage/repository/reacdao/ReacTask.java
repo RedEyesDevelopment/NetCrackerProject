@@ -22,7 +22,7 @@ public class ReacTask {
     private String orderingParameter;
     private boolean ascend;
     private List<ReacTask> innerObjects;
-    private Object entity;
+    private Object entity = null;
     private LinkedHashMap<String, EntityVariablesData> currentEntityParameters;
     private HashMap<Class, EntityOuterRelationshipsData> currentEntityOuterLinks;
     private HashMap<Class, EntityReferenceRelationshipsData> currentEntityReferenceRelations;
@@ -42,9 +42,7 @@ public class ReacTask {
         this.currentEntityReferenceTasks = new HashMap<>();
         this.referenceIdRelations = new HashMap<>();
 
-        LinkedHashMap<String, EntityVariablesData> currentNodeVariables;
         //Кастуем класс
-        entity = null;
         try {
             entity = objectClass.newInstance();
         } catch (InstantiationException e) {
@@ -172,7 +170,6 @@ public class ReacTask {
     private ReacTask fetchingOrderCreation(Class innerEntityClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend) {
         validator.isTargetClassAReactEntity(innerEntityClass);
         ReacTask childNode = new ReacTask(reactEAV, innerEntityClass, forSingleObject, targetId, orderingParameter, ascend);
-        childNode.setObjectClass(innerEntityClass);
         this.addInnerObject(childNode);
         return childNode;
     }

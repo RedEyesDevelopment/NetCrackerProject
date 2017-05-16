@@ -1,7 +1,6 @@
 package projectpackage.repository.reacdao.annotations;
 
 import org.reflections.Reflections;
-import org.springframework.stereotype.Component;
 import projectpackage.repository.reacdao.fetch.EntityOuterRelationshipsData;
 import projectpackage.repository.reacdao.fetch.EntityReferenceRelationshipsData;
 import projectpackage.repository.reacdao.fetch.EntityVariablesData;
@@ -10,10 +9,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
 
-/**
- * Created by Gvozd on 15.05.2017.
- */
-@Component
 public class ReactAnnDefinitionReader {
     private String packageName;
     private Set<Class> classList;
@@ -25,9 +20,7 @@ public class ReactAnnDefinitionReader {
     public ReactAnnDefinitionReader(String packageName) {
         this.packageName = packageName;
         this.classList = new HashSet<>();
-    }
 
-    public void getClasses() {
         Reflections reflections = new Reflections(packageName);
         Set<Class> allClasses = reflections.getTypesAnnotatedWith(ENTITYANNOTATION);
         classList = allClasses;

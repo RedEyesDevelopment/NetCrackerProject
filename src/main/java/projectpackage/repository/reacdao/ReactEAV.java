@@ -30,13 +30,13 @@ public class ReactEAV {
 
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    ReactEAV(Class entityClass, NamedParameterJdbcTemplate namedParameterJdbcTemplate, ReactConstantConfiguration config, ReactConnectionsDataBucket bucket) {
+    ReactEAV(Class entityClass, NamedParameterJdbcTemplate namedParameterJdbcTemplate, ReactConstantConfiguration config, ReactConnectionsDataBucket dataBucket) {
         validator.isTargetClassAReactEntity(entityClass);
-        this.rootNode = new ReacTask(this, entityClass, true, null, null, false);
-        this.rootNode.setObjectClass(entityClass);
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.config = config;
-        this.dataBucket = bucket;
+        this.dataBucket = dataBucket;
+        this.rootNode = new ReacTask(this, entityClass, true, null, null, false);
+        this.rootNode.setObjectClass(entityClass);
     }
 
     public ReactConnectionsDataBucket getDataBucket() {
@@ -56,7 +56,6 @@ public class ReactEAV {
     private ReacTask fetchingOrderCreation(Class innerEntityClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend) {
         validator.isTargetClassAReactEntity(innerEntityClass);
         ReacTask childNode = new ReacTask(this, innerEntityClass, forSingleObject, targetId, orderingParameter, ascend);
-        childNode.setObjectClass(innerEntityClass);
         rootNode.addInnerObject(childNode);
         return childNode;
     }

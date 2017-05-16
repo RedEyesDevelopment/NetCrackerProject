@@ -18,20 +18,13 @@ public class ReactEAVManager {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private ReactConstantConfiguration reactConstantConfiguration;
-    ReactConnectionsDataBucket dataBucket;
+    private ReactConnectionsDataBucket dataBucket;
 
     public ReactEAVManager(ReactConstantConfiguration reactConstantConfiguration, ReactAnnDefinitionReader definitionReader) {
         this.reactConstantConfiguration = reactConstantConfiguration;
-        dataBucket = createDataBucket(definitionReader);
-    }
 
-    private ReactConnectionsDataBucket createDataBucket(ReactAnnDefinitionReader reader) {
-        System.out.println("***************************************************************************************************");
-        reader.printClassesList();
-        System.out.println("***************************************************************************************************");
-
-        ReactConnectionsDataBucket bucket = new ReactConnectionsDataBucket(reader.makeClassesMap(), reader.makeObjectsVariablesMap(), reader.makeOuterRelationshipsMap(), reader.makeObjectsReferenceRelationsMap());
-        return bucket;
+        this.dataBucket =  new ReactConnectionsDataBucket(definitionReader.makeClassesMap(), definitionReader.makeObjectsVariablesMap(), definitionReader.makeOuterRelationshipsMap(), definitionReader.makeObjectsReferenceRelationsMap());
+        System.out.println("");
     }
 
     public ReactEAV createReactEAV(Class entityClass) {
