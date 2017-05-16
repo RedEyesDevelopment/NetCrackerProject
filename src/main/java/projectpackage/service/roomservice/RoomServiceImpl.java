@@ -35,7 +35,7 @@ public class RoomServiceImpl implements RoomService{
     }
 
     @Override
-    public boolean deleteRoom(Room room) {
+    public boolean deleteRoom(int id) {
         return false;
     }
 

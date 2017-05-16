@@ -11,7 +11,7 @@ public interface PriceService {
     public List<Price> getAllPrices();//TODO Pacanu
     public List<Price> getAllPrices(String orderingParameter, boolean ascend);//TODO Pacanu
     public Price getSinglePriceById(int id);//TODO Pacanu
-    public boolean deletePrice(Price price);//TODO Pacanu
+    public boolean deletePrice(int id);//TODO Pacanu
     public boolean insertPrice(Price price);//TODO Pacanu
     public boolean updatePrice(Price newPrice);//TODO Pacanu
 }

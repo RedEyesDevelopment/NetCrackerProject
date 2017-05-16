@@ -24,7 +24,7 @@ public class RateServiceImpl implements RateService{
     }
 
     @Override
-    public boolean deleteRate(Rate rate) {
+    public boolean deleteRate(int id) {
         return false;
     }
 

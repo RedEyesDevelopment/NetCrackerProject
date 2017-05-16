@@ -11,7 +11,7 @@ public interface UserService {
     public List<User> getAllUsers();//TODO Merlyan
     public List<User> getAllUsers(String orderingParameter, boolean ascend);
     public User getSingleUserById(int id);
-    public boolean deleteUser(User user);
+    public boolean deleteUser(int id);
     public boolean insertUser(User user);
     public boolean updateUser(User newUser);
 }

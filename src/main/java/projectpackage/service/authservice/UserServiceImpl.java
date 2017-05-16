@@ -64,12 +64,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteUser(User user) {
+    public boolean deleteUser(int id) {
+        User user = null;
+        try {
+            user = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(id);
+        } catch (ResultEntityNullException e) {
+            return false;
+        }
         int count = 0;
         for (Phone phone : user.getPhones()) {
             count = count + deleteDAO.deleteSingleEntityById(phone.getObjectId());
         }
-        count = count + deleteDAO.deleteSingleEntityById(user.getObjectId());
+        count = count + deleteDAO.deleteSingleEntityById(id);
         if (count == 0) return false;
         else return true;
     }

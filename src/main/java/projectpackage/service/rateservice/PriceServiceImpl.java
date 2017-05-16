@@ -24,7 +24,7 @@ public class PriceServiceImpl implements PriceService{
     }
 
     @Override
-    public boolean deletePrice(Price price) {
+    public boolean deletePrice(int id) {
         return false;
     }
 

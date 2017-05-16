@@ -58,7 +58,7 @@ public class NotificationServiceImpl implements NotificationService{
     }
 
     @Override
-    public boolean deleteNotification(Notification notification) {
+    public boolean deleteNotification(int id) {
         return false;
     }
 

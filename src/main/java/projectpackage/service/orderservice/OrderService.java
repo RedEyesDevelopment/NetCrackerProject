@@ -26,7 +26,7 @@ public interface OrderService {
     public List<Order> getAllOrders();//TODO Pacanu
     public List<Order> getAllOrders(String orderingParameter, boolean ascend);//TODO Pacanu
     public Order getSingleOrderById(int id);//TODO Pacanu
-    public boolean deleteOrder(Order order);//TODO Pacanu
+    public boolean deleteOrder(int id);//TODO Pacanu
     public boolean insertOrder(Order order);//TODO Pacanu
     public boolean updateOrder(Order newOrder);//TODO Pacanu
 }

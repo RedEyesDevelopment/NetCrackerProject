@@ -62,8 +62,8 @@ public class PhoneServiceImpl implements PhoneService{
     }
 
     @Override
-    public boolean deletePhone(Phone phone) {
-        int count = deleteDAO.deleteSingleEntityById(phone.getObjectId());
+    public boolean deletePhone(int id) {
+        int count = deleteDAO.deleteSingleEntityById(id);
         if (count == 0) return false;
         return true;
     }

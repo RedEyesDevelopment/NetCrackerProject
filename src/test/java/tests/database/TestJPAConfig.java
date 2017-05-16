@@ -233,7 +233,6 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         return new BlockDAOImpl();
     }
 
-
     @Bean
     UserService userService() {
         return new UserServiceImpl();

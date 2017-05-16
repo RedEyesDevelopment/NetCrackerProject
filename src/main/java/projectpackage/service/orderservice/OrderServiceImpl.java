@@ -82,7 +82,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public boolean deleteOrder(Order order) {
+    public boolean deleteOrder(int id) {
         return false;
     }
 

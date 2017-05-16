@@ -11,8 +11,8 @@ import projectpackage.service.authservice.UserService;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Gvozd on 06.01.2017.
@@ -50,14 +50,15 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
     }
 
 
-//    @Test
-//    @Rollback(true)
-//    public void deleteUser(){
-//        int userId = 901;
-//        int deletedRows = userService.deleteUserById(userId);
-//        System.out.println("DeletedRows="+deletedRows);
-//        System.out.println(SEPARATOR);
-//    }
+    @Test
+    @Rollback(true)
+    public void deleteUser(){
+        int userId = 901;
+        boolean result = userService.deleteUser(userId);
+        assertTrue(result);
+        System.out.println("Delete user result = " + result);
+        System.out.println(SEPARATOR);
+    }
 
     @Test
     @Rollback(true)
@@ -65,7 +66,6 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         //TODO пока предполагается, что null и empty вообще не будет, потом надо переделать все тесты так чтобы инсерт падал!
         Role role = new Role();
         role.setRoleName("Admin");
-        role.setObjectId(1);
         User user = new User();
         user.setObjectId(1406);
         user.setEmail("random@mail.ru");
@@ -75,8 +75,9 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         user.setAdditionalInfo("nothing");
         user.setRole(role);
         boolean result = userService.insertUser(user);
-        assertEquals(true ,result);
-        System.out.println(result);
+        assertTrue(result);
+        System.out.println("Create user result = " + result);
+        System.out.println(SEPARATOR);
     }
 
     @Test
@@ -95,8 +96,9 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         newUser.setAdditionalInfo("My new INFO");
         newUser.setRole(newRole);
         boolean result = userService.updateUser(newUser);
-        assertEquals(true ,result);
-        System.out.println(result);
+        assertTrue(result);
+        System.out.println("Update user result = " + result);
+        System.out.println(SEPARATOR);
     }
 
 }

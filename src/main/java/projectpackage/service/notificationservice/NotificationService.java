@@ -22,7 +22,7 @@ public interface NotificationService {
     public List<Notification> getAllNotifications();//TODO Pacanu
     public List<Notification> getAllNotifications(String orderingParameter, boolean ascend);//TODO Pacanu
     public Notification getSingleNotificationById(int id);//TODO Pacanu
-    public boolean deleteNotification(Notification notification);//TODO Pacanu
+    public boolean deleteNotification(int id);//TODO Pacanu
     public boolean insertNotification(Notification notification);//TODO Pacanu
     public boolean updateNotification(Notification newNotification);//TODO Pacanu
 }

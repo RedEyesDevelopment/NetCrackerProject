@@ -14,7 +14,7 @@ public interface NotificationTypeService {
     public List<NotificationType> getAllNotificationTypes();//TODO Pacanu
     public List<NotificationType> getAllNotificationTypes(String orderingParameter, boolean ascend);//TODO Pacanu
     public NotificationType getSingleNotificationTypeById(int id);//TODO Pacanu
-    public boolean deleteNotificationType(NotificationType notificationType);//TODO Pacanu
+    public boolean deleteNotificationType(int id);//TODO Pacanu
     public boolean insertNotificationType(NotificationType notificationType);//TODO Pacanu
     public boolean updateNotificationType(NotificationType newNotificationType);//TODO Pacanu
 }

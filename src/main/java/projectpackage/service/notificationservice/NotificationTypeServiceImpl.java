@@ -30,7 +30,7 @@ public class NotificationTypeServiceImpl implements NotificationTypeService{
     }
 
     @Override
-    public boolean deleteNotificationType(NotificationType notificationType) {
+    public boolean deleteNotificationType(int id) {
         return false;
     }
 

@@ -51,7 +51,7 @@ public class BlockServiceImpl implements BlockService{
     }
 
     @Override
-    public boolean deleteBlock(Block block) {
+    public boolean deleteBlock(int id) {
         return false;
     }
 

@@ -14,7 +14,7 @@ public interface PhoneService {
     public List<Phone> getAllPhones();//TODO Merlyan
     public List<Phone> getAllPhones(String orderingParameter, boolean ascend);
     public Phone getSinglePhoneById(int id);
-    public boolean deletePhone(Phone phone);
+    public boolean deletePhone(int id);
     public boolean insertPhone(Phone phone);
     public boolean updatePhone(Phone newPhone);
 }
