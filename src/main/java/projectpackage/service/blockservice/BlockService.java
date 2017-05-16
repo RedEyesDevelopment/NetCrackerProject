@@ -21,5 +21,5 @@ public interface BlockService {
     public Block getSingleBlockById(int id);//TODO Pacanu
     public boolean deleteBlock(int id);//TODO Pacanu
     public boolean insertBlock(Block block);//TODO Pacanu
-    public boolean updateBlock(Block newBlock);//TODO Pacanu
+    public boolean updateBlock(int id, Block newBlock);//TODO Pacanu
 }

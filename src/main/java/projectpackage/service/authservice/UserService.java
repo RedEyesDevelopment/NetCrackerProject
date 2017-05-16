@@ -13,5 +13,5 @@ public interface UserService {
     public User getSingleUserById(int id);
     public boolean deleteUser(int id);
     public boolean insertUser(User user);
-    public boolean updateUser(User newUser);
+    public boolean updateUser(int id, User newUser);
 }

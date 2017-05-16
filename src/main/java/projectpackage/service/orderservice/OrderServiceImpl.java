@@ -92,7 +92,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public boolean updateOrder(Order newOrder) {
+    public boolean updateOrder(int id, Order newOrder) {
         return false;
     }
 }

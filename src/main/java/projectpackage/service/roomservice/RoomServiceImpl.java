@@ -45,7 +45,7 @@ public class RoomServiceImpl implements RoomService{
     }
 
     @Override
-    public boolean updateRoom(Room newRoom) {
+    public boolean updateRoom(int id, Room newRoom) {
         return false;
     }
 }

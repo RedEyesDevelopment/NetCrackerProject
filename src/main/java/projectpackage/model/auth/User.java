@@ -1,14 +1,18 @@
 package projectpackage.model.auth;
 
 import lombok.Data;
+import projectpackage.model.notifications.Notification;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
 import projectpackage.repository.reacteav.annotations.ReactField;
+import projectpackage.repository.reacteav.annotations.ReactReference;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 import java.util.Set;
 
 @Data
 @ReactEntity(entityTypeName = "User")
+@ReactReference(outerEntityClass = Notification.class, outerFieldName = "author", outerFieldKey = "objectId", innerFieldKey = "objectId")
+//@ReactReference(outerEntityClass = Notification.class, outerFieldName = "", outerFieldKey = "objectId", innerFieldKey = "objectId")
 public class User implements ReactEntityWithId {
 
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")

@@ -34,7 +34,7 @@ public class PriceServiceImpl implements PriceService{
     }
 
     @Override
-    public boolean updatePrice(Price newPrice) {
+    public boolean updatePrice(int id, Price newPrice) {
         return false;
     }
 }

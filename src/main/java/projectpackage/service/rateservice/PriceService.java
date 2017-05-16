@@ -13,5 +13,5 @@ public interface PriceService {
     public Price getSinglePriceById(int id);//TODO Pacanu
     public boolean deletePrice(int id);//TODO Pacanu
     public boolean insertPrice(Price price);//TODO Pacanu
-    public boolean updatePrice(Price newPrice);//TODO Pacanu
+    public boolean updatePrice(int id, Price newPrice);//TODO Pacanu
 }

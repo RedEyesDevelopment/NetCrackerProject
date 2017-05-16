@@ -91,8 +91,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean updateUser(User newUser) {
+    public boolean updateUser(int id, User newUser) {
         try {
+            newUser.setObjectId(id);
             User oldUser = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(newUser.getObjectId());
             userDAO.updateUser(newUser,oldUser);
         } catch (ResultEntityNullException e) {

@@ -55,7 +55,7 @@ public class RoomTypeServiceImpl implements RoomTypeService{
     }
 
     @Override
-    public boolean updateRoomType(RoomType newRoomType) {
+    public boolean updateRoomType(int id, RoomType newRoomType) {
         return false;
     }
 }

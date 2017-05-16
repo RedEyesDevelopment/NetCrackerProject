@@ -85,7 +85,6 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
     public void updateUser(){
         //TODO пока предполагается, что null и empty вообще не будет, потом надо переделать все тесты так чтобы апдейт падал!
         Role newRole = new Role();
-        newRole.setObjectId(2);
         newRole.setRoleName("Reception");
         User newUser = new User();
         newUser.setObjectId(1404);
@@ -95,7 +94,7 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         newUser.setLastName("Merl");
         newUser.setAdditionalInfo("My new INFO");
         newUser.setRole(newRole);
-        boolean result = userService.updateUser(newUser);
+        boolean result = userService.updateUser(2, newUser);
         assertTrue(result);
         System.out.println("Update user result = " + result);
         System.out.println(SEPARATOR);

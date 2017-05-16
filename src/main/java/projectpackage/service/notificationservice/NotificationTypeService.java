@@ -16,5 +16,5 @@ public interface NotificationTypeService {
     public NotificationType getSingleNotificationTypeById(int id);//TODO Pacanu
     public boolean deleteNotificationType(int id);//TODO Pacanu
     public boolean insertNotificationType(NotificationType notificationType);//TODO Pacanu
-    public boolean updateNotificationType(NotificationType newNotificationType);//TODO Pacanu
+    public boolean updateNotificationType(int id, NotificationType newNotificationType);//TODO Pacanu
 }
