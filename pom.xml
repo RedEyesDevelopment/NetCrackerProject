@@ -105,6 +105,13 @@
 
         <!--Custom deps-->
 
+        <!-- REFLECTIONS for searching files in packages-->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.11</version>
+        </dependency>
+
         <!-- GUAVA -->
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -126,6 +133,14 @@
             <version>5.1.6</version>
             <scope>runtime</scope>
         </dependency>
+
+
+        <dependency>
+            <groupId>oracle</groupId>
+            <artifactId>ojdbc</artifactId>
+            <version>1.4</version>
+        </dependency>
+
 
         <!--Oracle driver for jdbc -->
         <dependency>

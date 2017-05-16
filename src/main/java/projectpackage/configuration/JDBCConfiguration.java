@@ -10,7 +10,10 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
-import projectpackage.repository.reacdao.support.ReactConstantConfiguration;
+import projectpackage.repository.reacteav.ReactEAVManager;
+import projectpackage.repository.reacteav.support.ReactAnnDefinitionReader;
+import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
+import projectpackage.repository.reacteav.support.ReactEntityValidator;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -28,6 +31,8 @@ public class JDBCConfiguration implements TransactionManagementConfigurer {
     private String username;
     @Value("${dataSource.password}")
     private String password;
+    @Value("${model.package.path}")
+    private String modelPackage;
 
     public JDBCConfiguration() {
         Locale.setDefault(Locale.ENGLISH);
@@ -76,6 +81,7 @@ public class JDBCConfiguration implements TransactionManagementConfigurer {
         comboPooledDataSource.setIdleConnectionTestPeriod(300);
         //имя специальной таблицы для тестирования соединения с БД
         comboPooledDataSource.setAutomaticTestTable("c3p0DatabaseTestTable");
+
         return comboPooledDataSource;
     }
 
@@ -96,5 +102,20 @@ public class JDBCConfiguration implements TransactionManagementConfigurer {
     JdbcTemplate jdbcTemplate () { return new JdbcTemplate(dataSource()); }
 
     @Bean
-    ReactConstantConfiguration reactConstantConfiguration () { return new ReactConstantConfiguration(); }
+    ReactConstantConfiguration reactConstantConfiguration() { return new ReactConstantConfiguration(); }
+
+    @Bean
+    ReactAnnDefinitionReader reactAnnDefinitionReader(){
+        return new ReactAnnDefinitionReader(modelPackage);
+    }
+
+    @Bean
+    ReactEAVManager reactEAVManager(){
+        return new ReactEAVManager(reactConstantConfiguration(),reactAnnDefinitionReader());
+    }
+
+    @Bean
+    ReactEntityValidator reactEntityValidator(){
+        return new ReactEntityValidator();
+    }
 }

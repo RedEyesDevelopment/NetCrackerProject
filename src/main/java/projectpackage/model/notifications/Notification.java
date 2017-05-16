@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 public class Notification {
     private User author;
-    private NoficationType noficationType;
+    private NotificationType notificationType;
     private String message;
     private Order order;
     private Date sendDate;

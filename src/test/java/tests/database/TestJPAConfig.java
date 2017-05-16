@@ -12,11 +12,51 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
-import projectpackage.repository.*;
-import projectpackage.repository.reacdao.ReactEAVManager;
-import projectpackage.repository.reacdao.support.ReactConstantConfiguration;
-import projectpackage.service.UserService;
-import projectpackage.service.UserServiceImpl;
+import projectpackage.repository.authdao.PhoneDAO;
+import projectpackage.repository.authdao.PhoneDAOImpl;
+import projectpackage.repository.authdao.UserDAO;
+import projectpackage.repository.authdao.UserDAOImpl;
+import projectpackage.repository.blocksdao.BlockDAO;
+import projectpackage.repository.blocksdao.BlockDAOImpl;
+import projectpackage.repository.deletedao.DeleteDAO;
+import projectpackage.repository.deletedao.DeleteDAOImpl;
+import projectpackage.repository.notificationsdao.NotificationDAO;
+import projectpackage.repository.notificationsdao.NotificationDAOImpl;
+import projectpackage.repository.notificationsdao.NotificationTypeDAO;
+import projectpackage.repository.notificationsdao.NotificationTypeDAOImpl;
+import projectpackage.repository.ordersdao.OrderDAO;
+import projectpackage.repository.ordersdao.OrderDAOImpl;
+import projectpackage.repository.ratesdao.PriceDAO;
+import projectpackage.repository.ratesdao.PriceDAOImpl;
+import projectpackage.repository.ratesdao.RateDAO;
+import projectpackage.repository.ratesdao.RateDAOImpl;
+import projectpackage.repository.reacteav.ReactEAVManager;
+import projectpackage.repository.reacteav.support.ReactAnnDefinitionReader;
+import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
+import projectpackage.repository.reacteav.support.ReactEntityValidator;
+import projectpackage.repository.roomsdao.RoomDAO;
+import projectpackage.repository.roomsdao.RoomDAOImpl;
+import projectpackage.repository.roomsdao.RoomTypeDAO;
+import projectpackage.repository.roomsdao.RoomTypeDAOImpl;
+import projectpackage.service.authservice.*;
+import projectpackage.service.blockservice.BlockService;
+import projectpackage.service.blockservice.BlockServiceImpl;
+import projectpackage.service.notificationservice.NotificationService;
+import projectpackage.service.notificationservice.NotificationServiceImpl;
+import projectpackage.service.notificationservice.NotificationTypeService;
+import projectpackage.service.notificationservice.NotificationTypeServiceImpl;
+import projectpackage.service.orderservice.ModificationHistoryService;
+import projectpackage.service.orderservice.ModificationHistoryServiceImpl;
+import projectpackage.service.orderservice.OrderService;
+import projectpackage.service.orderservice.OrderServiceImpl;
+import projectpackage.service.rateservice.PriceService;
+import projectpackage.service.rateservice.PriceServiceImpl;
+import projectpackage.service.rateservice.RateService;
+import projectpackage.service.rateservice.RateServiceImpl;
+import projectpackage.service.roomservice.RoomService;
+import projectpackage.service.roomservice.RoomServiceImpl;
+import projectpackage.service.roomservice.RoomTypeService;
+import projectpackage.service.roomservice.RoomTypeServiceImpl;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -38,6 +78,7 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     private String url;
     private String username;
     private String password;
+    private String modelPackage;
 
     public TestJPAConfig() {
         Locale.setDefault(Locale.ENGLISH);
@@ -62,6 +103,7 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         url = props.getProperty("dataSource.url");
         username = props.getProperty("dataSource.username");
         password = props.getProperty("dataSource.password");
+        modelPackage = props.getProperty("model.package.path");
     }
 
     @Bean
@@ -152,12 +194,121 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     }
 
     @Bean
+    NotificationDAO notificationDAO(){
+        return new NotificationDAOImpl();
+    }
+
+    @Bean
+    NotificationTypeDAO notificationTypeDAO(){
+        return new NotificationTypeDAOImpl();
+    }
+
+    @Bean
+    RoomDAO roomDAO(){
+        return new RoomDAOImpl();
+    }
+
+    @Bean
+    RoomTypeDAO roomTypeDAO(){
+        return new RoomTypeDAOImpl();
+    }
+
+    @Bean
+    PriceDAO priceDAO(){
+        return new PriceDAOImpl();
+    }
+
+    @Bean
+    RateDAO rateDAO(){
+        return new RateDAOImpl();
+    }
+
+    @Bean
+    OrderDAO orderDAO(){
+        return new OrderDAOImpl();
+    }
+
+    @Bean
+    BlockDAO blockDAO(){
+        return new BlockDAOImpl();
+    }
+
+
+    @Bean
     UserService userService() {
         return new UserServiceImpl();
     }
 
     @Bean
+    RoleService roleService() {
+        return new RoleServiceImpl();
+    }
+
+    @Bean
+    PhoneService phoneService() {
+        return new PhoneServiceImpl();
+    }
+
+    @Bean
+    BlockService blockService() {
+        return new BlockServiceImpl();
+    }
+
+    @Bean
+    NotificationService notificationService() {
+        return new NotificationServiceImpl();
+    }
+
+    @Bean
+    NotificationTypeService notificationTypeService() {
+        return new NotificationTypeServiceImpl();
+    }
+
+    @Bean
+    OrderService orderService() {
+        return new OrderServiceImpl();
+    }
+
+    @Bean
+    ModificationHistoryService modificationHistoryService() {
+        return new ModificationHistoryServiceImpl();
+    }
+
+    @Bean
+    RoomService roomService() {
+        return new RoomServiceImpl();
+    }
+
+    @Bean
+    RoomTypeService roomTypeService() {
+        return new RoomTypeServiceImpl();
+    }
+
+    @Bean
+    PriceService priceService() {
+        return new PriceServiceImpl();
+    }
+
+    @Bean
+    RateService rateService() {
+        return new RateServiceImpl();
+    }
+
+    @Bean
+    ReactConstantConfiguration reactConstantConfiguration() { return new ReactConstantConfiguration(); }
+
+    @Bean
+    ReactAnnDefinitionReader reactAnnDefinitionReader(){
+        return new ReactAnnDefinitionReader(modelPackage);
+    }
+
+    @Bean
     ReactEAVManager reactEAVManager(){
-        return new ReactEAVManager(namedParameteJdbcTemplate(), new ReactConstantConfiguration());
+        return new ReactEAVManager(reactConstantConfiguration(),reactAnnDefinitionReader());
+    }
+
+    @Bean
+    ReactEntityValidator reactEntityValidator(){
+        return new ReactEntityValidator();
     }
 }
