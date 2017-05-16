@@ -81,6 +81,7 @@ public class JDBCConfiguration implements TransactionManagementConfigurer {
         comboPooledDataSource.setIdleConnectionTestPeriod(300);
         //имя специальной таблицы для тестирования соединения с БД
         comboPooledDataSource.setAutomaticTestTable("c3p0DatabaseTestTable");
+
         return comboPooledDataSource;
     }
 

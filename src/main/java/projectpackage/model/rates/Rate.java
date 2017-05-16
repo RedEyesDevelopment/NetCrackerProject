@@ -1,13 +1,13 @@
 package projectpackage.model.rates;
 
 import lombok.Data;
-import projectpackage.model.rooms.RoomType;
 
 import java.util.Date;
+import java.util.Set;
 
 @Data
 public class Rate {
     private Date rateFromDate;
     private Date rateToDate;
-    private RoomType roomType;
+    private Set<Price> prices;
 }

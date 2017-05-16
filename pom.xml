@@ -134,6 +134,14 @@
             <scope>runtime</scope>
         </dependency>
 
+
+        <dependency>
+            <groupId>oracle</groupId>
+            <artifactId>ojdbc</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+
         <!--Oracle driver for jdbc -->
         <dependency>
             <groupId>oracle</groupId>
