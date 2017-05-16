@@ -3,7 +3,6 @@ package tests.database;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
-import projectpackage.model.auth.Phone;
 import projectpackage.model.blocks.Block;
 import projectpackage.service.blockservice.BlockService;
 
@@ -15,6 +14,7 @@ import static org.junit.Assert.assertNotNull;
  * Created by Arizel on 16.05.2017.
  */
 public class BlockRepositoryTests extends AbstractDatabaseTest{
+    private final String SEPARATOR = "**********************************************************";
 
     @Autowired
     BlockService blockService;

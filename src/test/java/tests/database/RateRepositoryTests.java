@@ -3,14 +3,19 @@ package tests.database;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
-import projectpackage.service.rateservice.RateService;
+import projectpackage.model.rates.Rate;
+
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Arizel on 16.05.2017.
  */
 public class RateRepositoryTests extends AbstractDatabaseTest{
+
     @Autowired
-    RateService rateService;
+    Rate rate;
 
     @Test
     @Rollback(true)
