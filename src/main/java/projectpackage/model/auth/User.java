@@ -1,9 +1,9 @@
 package projectpackage.model.auth;
 
 import lombok.Data;
-import projectpackage.repository.reacdao.annotations.ReactEntity;
-import projectpackage.repository.reacdao.annotations.ReactField;
-import projectpackage.repository.reacdao.model.ReactEntityWithId;
+import projectpackage.repository.reacteav.annotations.ReactEntity;
+import projectpackage.repository.reacteav.annotations.ReactField;
+import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 import java.util.Set;
 
@@ -24,7 +24,7 @@ public class User implements ReactEntityWithId {
     @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Additional_info")
     private String additionalInfo;
 
-    private Set<Phone> phones;
     private Role role;
+    private Set<Phone> phones;
 
 }

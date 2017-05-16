@@ -1,10 +1,10 @@
 package projectpackage.model.auth;
 
 import lombok.Data;
-import projectpackage.repository.reacdao.annotations.ReactEntity;
-import projectpackage.repository.reacdao.annotations.ReactField;
-import projectpackage.repository.reacdao.annotations.ReactReference;
-import projectpackage.repository.reacdao.model.ReactEntityWithId;
+import projectpackage.repository.reacteav.annotations.ReactEntity;
+import projectpackage.repository.reacteav.annotations.ReactField;
+import projectpackage.repository.reacteav.annotations.ReactReference;
+import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 @Data
 @ReactEntity(entityTypeName = "Role")

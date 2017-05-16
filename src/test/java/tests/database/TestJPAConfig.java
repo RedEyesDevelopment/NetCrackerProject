@@ -13,10 +13,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 import projectpackage.repository.*;
-import projectpackage.repository.reacdao.ReactEAVManager;
-import projectpackage.repository.reacdao.annotations.ReactAnnDefinitionReader;
-import projectpackage.repository.reacdao.support.ReactConstantConfiguration;
-import projectpackage.repository.reacdao.support.ReactEntityValidator;
+import projectpackage.repository.reacteav.ReactEAVManager;
+import projectpackage.repository.reacteav.support.ReactAnnDefinitionReader;
+import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
+import projectpackage.repository.reacteav.support.ReactEntityValidator;
 import projectpackage.service.UserService;
 import projectpackage.service.UserServiceImpl;
 
@@ -40,6 +40,7 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     private String url;
     private String username;
     private String password;
+    private String modelPackage;
 
     public TestJPAConfig() {
         Locale.setDefault(Locale.ENGLISH);
@@ -64,6 +65,7 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         url = props.getProperty("dataSource.url");
         username = props.getProperty("dataSource.username");
         password = props.getProperty("dataSource.password");
+        modelPackage = props.getProperty("model.package.path");
     }
 
     @Bean
@@ -159,14 +161,16 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     }
 
     @Bean
+    ReactConstantConfiguration reactConstantConfiguration() { return new ReactConstantConfiguration(); }
+
+    @Bean
     ReactAnnDefinitionReader reactAnnDefinitionReader(){
-        ReactAnnDefinitionReader reactAnnDefinitionReader = new ReactAnnDefinitionReader("projectpackage/model");
-        return reactAnnDefinitionReader;
+        return new ReactAnnDefinitionReader(modelPackage);
     }
 
     @Bean
     ReactEAVManager reactEAVManager(){
-        return new ReactEAVManager(new ReactConstantConfiguration(),reactAnnDefinitionReader());
+        return new ReactEAVManager(reactConstantConfiguration(),reactAnnDefinitionReader());
     }
 
     @Bean

@@ -2,10 +2,10 @@ package tests.reacteavdefinitionreader;
 
 import org.junit.Test;
 import projectpackage.Application;
-import projectpackage.repository.reacdao.annotations.ReactAnnDefinitionReader;
-import projectpackage.repository.reacdao.fetch.EntityOuterRelationshipsData;
-import projectpackage.repository.reacdao.fetch.EntityReferenceRelationshipsData;
-import projectpackage.repository.reacdao.fetch.EntityVariablesData;
+import projectpackage.repository.reacteav.support.ReactAnnDefinitionReader;
+import projectpackage.repository.reacteav.relationsdata.EntityOuterRelationshipsData;
+import projectpackage.repository.reacteav.relationsdata.EntityReferenceRelationshipsData;
+import projectpackage.repository.reacteav.relationsdata.EntityVariablesData;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

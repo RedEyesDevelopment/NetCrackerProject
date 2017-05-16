@@ -1,1 +1,0 @@
-http://cs-fundamentals.com/java-programming/java-annotations.php#custom-java-annotations-types-parser

@@ -3,18 +3,17 @@ package tests.database;
 import lombok.extern.log4j.Log4j;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
-import projectpackage.repository.reacdao.ReactEAVManager;
-import projectpackage.repository.reacdao.exceptions.CyclicEntityQueryException;
-import projectpackage.repository.reacdao.exceptions.ResultEntityNullException;
+import projectpackage.repository.reacteav.ReactEAVManager;
+import projectpackage.repository.reacteav.exceptions.CyclicEntityQueryException;
+import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
+import static org.junit.Assert.*;
 
 @Log4j
-@Transactional
 public class ReactEAVTest extends AbstractDatabaseTest {
     private final String SEPARATOR = "**********************************************************";
 
@@ -28,10 +27,10 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         try {
             list = (List<User>) manager.createReactEAV(User.class).getEntityCollection();
         } catch (ResultEntityNullException e) {
-            System.out.println("RESULT IS NULL");
         }
         for (User user:list){
             System.out.println(user);
+            assertNotNull(user);
         }
         System.out.println(SEPARATOR);
     }
@@ -43,10 +42,10 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         try {
             list = (List<User>) manager.createReactEAV(User.class).getEntityCollectionOrderByParameter("firstName", true);
         } catch (ResultEntityNullException e) {
-            System.out.println("RESULT IS NULL");
         }
         for (User user:list){
             System.out.println(user);
+            assertNotNull(user);
         }
         System.out.println(SEPARATOR);
     }
@@ -61,7 +60,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         } catch (ResultEntityNullException e) {
             e.printStackTrace();
         }
-        System.out.println("ENTITY IS NULL(expected yes)? - "+user);
+        assertNull(user);
         System.out.println(SEPARATOR);
     }
 
@@ -75,6 +74,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         } catch (ResultEntityNullException e) {
             e.printStackTrace();
         }
+        assertNotNull(user);
         System.out.println(user);
         System.out.println(SEPARATOR);
     }
@@ -89,6 +89,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         }
         for (Phone phone:phones){
             System.out.println(phone);
+            assertNotNull(phone);
         }
         System.out.println(SEPARATOR);
     }
@@ -103,6 +104,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         }
         for (Role role:roles){
             System.out.println(role);
+            assertNotNull(role);
         }
         System.out.println(SEPARATOR);
     }
@@ -117,6 +119,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         }
         for (Role role:roles){
             System.out.println(role);
+            assertNotNull(role);
         }
         System.out.println(SEPARATOR);
     }
@@ -129,6 +132,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
             user = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(901);
         } catch (ResultEntityNullException e) {
         }
+        assertNotNull(user);
         System.out.println(user.toString());
         System.out.println(SEPARATOR);
     }
@@ -143,6 +147,10 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         }
         for (User user:list){
             System.out.println(user);
+            assertNotNull(user);
+                for (Phone phone:user.getPhones()){
+                    assertNotNull(phone);
+                }
         }
         System.out.println(SEPARATOR);
     }
@@ -157,6 +165,9 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         }
         for (User user:list){
             System.out.println(user);
+            assertNotNull(user);
+            Role role = user.getRole();
+            assertNotNull(role);
         }
         System.out.println(SEPARATOR);
     }
@@ -171,6 +182,12 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         }
         for (User user:list){
             System.out.println(user);
+            assertNotNull(user);
+            for (Phone phone:user.getPhones()){
+                assertNotNull(phone);
+            }
+            Role role = user.getRole();
+            assertNotNull(role);
         }
         System.out.println(SEPARATOR);
     }
@@ -185,6 +202,12 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         }
         for (User user:list){
             System.out.println(user);
+            assertNotNull(user);
+            for (Phone phone:user.getPhones()){
+                assertNotNull(phone);
+            }
+            Role role = user.getRole();
+            assertNotNull(role);
         }
         System.out.println(SEPARATOR);
     }
