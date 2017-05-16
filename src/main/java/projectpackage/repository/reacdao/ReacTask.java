@@ -40,7 +40,6 @@ public class ReacTask {
         this.ascend = ascend;
         this.referenceIdRelations = new HashMap<>();
         this.currentEntityReferenceTasks = new HashMap<>();
-        this.referenceIdRelations = new HashMap<>();
 
         //Кастуем класс
         try {
@@ -51,8 +50,11 @@ public class ReacTask {
             e.printStackTrace();
         }
         this.currentEntityParameters = reactEAV.getDataBucket().getEntityVariablesMap().get(objectClass);
+        if (null==currentEntityParameters) currentEntityParameters = new LinkedHashMap<>();
         this.currentEntityOuterLinks = reactEAV.getDataBucket().getOuterRelationsMap().get(objectClass);
+        if (null==currentEntityOuterLinks) currentEntityOuterLinks = new HashMap<>();
         this.currentEntityReferenceRelations = reactEAV.getDataBucket().getEntityReferenceRelationsMap().get(objectClass);
+        if (null==currentEntityReferenceRelations) currentEntityReferenceRelations = new LinkedHashMap<>();
         this.thisClassObjectTypeName = reactEAV.getDataBucket().getClassesMap().get(objectClass);
     }
 

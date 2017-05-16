@@ -134,7 +134,7 @@ public class ReactEAV {
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
-            sqlParameterSource.put(config.getEntityTypeIdConstant(), dataBucket.getClassesMap().get(currentNode.getEntity()));
+            sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getThisClassObjectTypeName());
             sqlParameterSource.put(config.getEntityIdConstant(), currentNode.getTargetId());
             if (currentNode.hasReferencedObjects()) {
                 for (EntityReferenceTaskData data : currentNode.getCurrentEntityReferenceTasks().values()) {
@@ -154,7 +154,7 @@ public class ReactEAV {
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
-                sqlParameterSource.put(config.getEntityTypeIdConstant(), dataBucket.getClassesMap().get(currentNode.getEntity()));
+                sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getThisClassObjectTypeName());
                 if (currentNode.hasReferencedObjects()) {
                     for (EntityReferenceTaskData data : currentNode.getCurrentEntityReferenceTasks().values()) {
                         sqlParameterSource.put(data.getInnerClassObjectTypeName(), data.getInnerClassObjectTypeName());
@@ -172,7 +172,7 @@ public class ReactEAV {
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
-                sqlParameterSource.put(config.getEntityTypeIdConstant(), dataBucket.getClassesMap().get(currentNode.getEntity()));
+                sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getThisClassObjectTypeName());
                 if (currentNode.hasReferencedObjects()) {
                     for (EntityReferenceTaskData data : currentNode.getCurrentEntityReferenceTasks().values()) {
                         sqlParameterSource.put(data.getInnerClassObjectTypeName(), data.getInnerClassObjectTypeName());
