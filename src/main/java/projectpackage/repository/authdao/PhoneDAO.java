@@ -1,6 +1,6 @@
 package projectpackage.repository.authdao;
 
-import projectpackage.repository.reacdao.exceptions.TransactionException;
+import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.model.auth.Phone;
 
 /**

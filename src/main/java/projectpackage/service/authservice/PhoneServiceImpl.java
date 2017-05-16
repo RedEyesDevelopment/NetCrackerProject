@@ -3,13 +3,13 @@ package projectpackage.service.authservice;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import projectpackage.model.auth.User;
-import projectpackage.repository.reacdao.exceptions.TransactionException;
 import projectpackage.model.auth.Phone;
-import projectpackage.repository.deletedao.DeleteDAO;
+import projectpackage.model.auth.User;
 import projectpackage.repository.authdao.PhoneDAO;
-import projectpackage.repository.reacdao.ReactEAVManager;
-import projectpackage.repository.reacdao.exceptions.ResultEntityNullException;
+import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.deletedao.DeleteDAO;
+import projectpackage.repository.reacteav.ReactEAVManager;
+import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 

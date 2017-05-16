@@ -42,14 +42,14 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
     }
 
 
-    @Test
-    @Rollback(true)
-    public void deletePhone(){
-        int phoneId = 1102;
-        int deletedRows = phoneService.deletePhone(phoneId);
-        System.out.println("DeletedRows="+deletedRows);
-        System.out.println(SEPARATOR);
-    }
+//    @Test
+//    @Rollback(true)
+//    public void deletePhone(){
+//        int phoneId = 1102;
+//        int deletedRows = phoneService.deletePhone(phoneId);
+//        System.out.println("DeletedRows="+deletedRows);
+//        System.out.println(SEPARATOR);
+//    }
 
     @Test
     @Rollback(true)

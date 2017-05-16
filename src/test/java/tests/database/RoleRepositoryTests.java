@@ -42,14 +42,14 @@ public class RoleRepositoryTests extends AbstractDatabaseTest {
     }
 
 
-    @Test
-    @Rollback(true)
-    public void deleteRole(){
-        int roleId = 2;
-        int deletedRows = roleService.deleteRoleById(roleId);
-        System.out.println("DeletedRows="+deletedRows);
-        System.out.println(SEPARATOR);
-    }
+//    @Test
+//    @Rollback(true)
+//    public void deleteRole(){
+//        int roleId = 2;
+//        int deletedRows = roleService.deleteRoleById(roleId);
+//        System.out.println("DeletedRows="+deletedRows);
+//        System.out.println(SEPARATOR);
+//    }
 
     @Test
     @Rollback(true)

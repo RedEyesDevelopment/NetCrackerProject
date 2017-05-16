@@ -1,7 +1,7 @@
 package projectpackage.repository.roomsdao;
 
 import projectpackage.model.rooms.Room;
-import projectpackage.repository.reacdao.exceptions.TransactionException;
+import projectpackage.repository.daoexceptions.TransactionException;
 
 /**
  * Created by Arizel on 16.05.2017.

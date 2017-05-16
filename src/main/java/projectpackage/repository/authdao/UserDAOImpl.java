@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.User;
-import projectpackage.repository.reacdao.exceptions.TransactionException;
+import projectpackage.repository.daoexceptions.TransactionException;
 
 @Repository
 public class UserDAOImpl implements UserDAO {

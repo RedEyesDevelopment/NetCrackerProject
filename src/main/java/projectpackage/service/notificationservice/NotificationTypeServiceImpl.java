@@ -1,5 +1,6 @@
 package projectpackage.service.notificationservice;
 
+import projectpackage.model.auth.Role;
 import projectpackage.model.notifications.NotificationType;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public class NotificationTypeServiceImpl implements NotificationTypeService{
     }
 
     @Override
-    public List<NotificationType> getNotificationTypeByRole() {
+    public List<NotificationType> getNotificationTypeByRole(Role role) {
         return null;
     }
 

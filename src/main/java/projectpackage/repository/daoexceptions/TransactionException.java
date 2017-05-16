@@ -1,6 +1,4 @@
-package projectpackage.repository.reacdao.exceptions;
-
-import projectpackage.repository.reacdao.models.ReacEntity;
+package projectpackage.repository.daoexceptions;
 
 import java.io.IOException;
 
@@ -10,7 +8,7 @@ import java.io.IOException;
 public class TransactionException extends IOException{
     private static final String DEFAULT_MESSAGE = "Not completed DML operation with entity: ";
 
-    public TransactionException(ReacEntity reacEntity) {
+    public TransactionException(Object reacEntity) {
         super(DEFAULT_MESSAGE + reacEntity.getClass().getName());
     }
 }

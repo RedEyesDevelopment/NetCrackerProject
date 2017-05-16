@@ -4,8 +4,8 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.auth.Role;
-import projectpackage.repository.reacdao.ReactEAVManager;
-import projectpackage.repository.reacdao.exceptions.ResultEntityNullException;
+import projectpackage.repository.reacteav.ReactEAVManager;
+import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 

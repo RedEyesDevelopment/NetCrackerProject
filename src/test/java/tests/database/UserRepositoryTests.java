@@ -50,19 +50,14 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
     }
 
 
-    @Test
-    @Rollback(true)
-    public void deleteUser(){
-<<<<<<< Updated upstream
-        int userId = 900;
-        int deletedRows = userService.deleteUserById(userId);
-=======
-        int userId = 1402;
-        int deletedRows = userService.deleteUser(userId);
->>>>>>> Stashed changes
-        System.out.println("DeletedRows="+deletedRows);
-        System.out.println(SEPARATOR);
-    }
+//    @Test
+//    @Rollback(true)
+//    public void deleteUser(){
+//        int userId = 901;
+//        int deletedRows = userService.deleteUserById(userId);
+//        System.out.println("DeletedRows="+deletedRows);
+//        System.out.println(SEPARATOR);
+//    }
 
     @Test
     @Rollback(true)
