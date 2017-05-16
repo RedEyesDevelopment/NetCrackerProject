@@ -142,7 +142,7 @@
         </dependency>
 
 
-        Oracle driver for jdbc
+        <!--Oracle driver for jdbc-->
         <dependency>
             <groupId>oracle</groupId>
             <artifactId>ojdbc</artifactId>
