@@ -101,4 +101,15 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         System.out.println(SEPARATOR);
     }
 
+    @Test
+    @Rollback(true)
+    public void getUsersByRole(Role role){
+
+    }
+
+    @Test
+    @Rollback(true)
+    public void getAllUsers(String orderingParameter, boolean ascend){
+
+    }
 }

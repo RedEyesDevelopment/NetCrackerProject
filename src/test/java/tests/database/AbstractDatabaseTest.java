@@ -15,4 +15,5 @@ import tests.AbstractTest;
         TransactionalTestExecutionListener.class,
         DbUnitTestExecutionListener.class })
 public abstract class AbstractDatabaseTest extends AbstractTest {
+    protected final String SEPARATOR = "**********************************************************";
 }

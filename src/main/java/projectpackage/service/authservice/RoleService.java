@@ -11,5 +11,5 @@ public interface RoleService {
     public List<Role> getAllRoles();//TODO Merlyan
     public List<Role> getAllRoles(String orderingParameter, boolean ascend);
     public Role getSingleRoleById(int id);
-    public Role getSingleRoleByRolename(String rolename);
+    public Role getSingleRoleByRoleName(String rolename);
 }

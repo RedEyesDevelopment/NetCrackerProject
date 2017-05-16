@@ -15,7 +15,6 @@ import static org.junit.Assert.assertNotNull;
  * Created by Arizel on 16.05.2017.
  */
 public class BlockRepositoryTests extends AbstractDatabaseTest{
-    private final String SEPARATOR = "**********************************************************";
 
     @Autowired
     BlockService blockService;

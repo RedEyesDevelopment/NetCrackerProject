@@ -47,7 +47,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Role getSingleRoleByRolename(String rolename) {
+    public Role getSingleRoleByRoleName(String rolename) {
         if (null==rolename) return null;
         List<Role> roles = getAllRoles("objectId", true);
         for (Role role:roles){

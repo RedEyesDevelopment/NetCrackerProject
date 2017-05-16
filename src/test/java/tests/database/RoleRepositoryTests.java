@@ -23,6 +23,12 @@ public class RoleRepositoryTests extends AbstractDatabaseTest {
 
     @Test
     @Rollback(true)
+    public void getSingleRoleByRoleName(String rolename) {
+
+    }
+
+    @Test
+    @Rollback(true)
     public void getAllRoles() {
         List<Role> list = roleService.getAllRoles("roleName", true);
         for (Role role:list){
@@ -33,34 +39,18 @@ public class RoleRepositoryTests extends AbstractDatabaseTest {
 
     @Test
     @Rollback(true)
+    public void getAllRoles(String orderingParameter, boolean ascend) {
+
+    }
+
+    @Test
+    @Rollback(true)
     public void getSingleRoleById(){
         Role role = null;
         int roleId = 3;
         role = roleService.getSingleRoleById(roleId);
         System.out.println(role);
         System.out.println(SEPARATOR);
-    }
-
-
-//    @Test
-//    @Rollback(true)
-//    public void deleteRole(){
-//        int roleId = 2;
-//        int deletedRows = roleService.deleteRoleById(roleId);
-//        System.out.println("DeletedRows="+deletedRows);
-//        System.out.println(SEPARATOR);
-//    }
-
-    @Test
-    @Rollback(true)
-    public void createRole(){
-
-    }
-
-    @Test
-    @Rollback(true)
-    public void updateRole(){
-
     }
 
 }
