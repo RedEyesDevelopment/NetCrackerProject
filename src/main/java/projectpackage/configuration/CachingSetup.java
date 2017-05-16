@@ -15,6 +15,6 @@ import java.util.concurrent.TimeUnit;
 public class CachingSetup implements JCacheManagerCustomizer {
     @Override
     public void customize(javax.cache.CacheManager cacheManager) {
-        cacheManager.createCache("rooms", new MutableConfiguration<>().setExpiryPolicyFactory(TouchedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS, 10))).setStoreByValue(false).setStatisticsEnabled(false));
+        cacheManager.createCache("userList", new MutableConfiguration<>().setExpiryPolicyFactory(TouchedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS, 20))).setStoreByValue(false).setStatisticsEnabled(false));
     }
 }
