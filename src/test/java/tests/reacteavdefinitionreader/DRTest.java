@@ -1,15 +1,16 @@
 package tests.reacteavdefinitionreader;
 
 import org.junit.Test;
-import projectpackage.Application;
-import projectpackage.repository.reacteav.support.ReactAnnDefinitionReader;
 import projectpackage.repository.reacteav.relationsdata.EntityOuterRelationshipsData;
 import projectpackage.repository.reacteav.relationsdata.EntityReferenceRelationshipsData;
 import projectpackage.repository.reacteav.relationsdata.EntityVariablesData;
+import projectpackage.repository.reacteav.support.ReactAnnDefinitionReader;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static org.junit.Assert.*;
 
 /**
  * Created by Gvozd on 15.05.2017.
@@ -57,11 +58,9 @@ public class DRTest {
                 System.out.println("        INNER ID KEY="+entry1.getValue().getInnerIdKey());
             }
         }
+        assertEquals(12, objectVariables.keySet().size());
+        assertEquals(4, outerRelations.keySet().size());
+        assertEquals(10, objectVariables.keySet().size());
     }
 
-    @Test
-    public void doTestPath(){
-        String location = Application.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        System.out.println("location="+location);
-    }
 }

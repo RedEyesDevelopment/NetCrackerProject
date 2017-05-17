@@ -2,10 +2,7 @@ package projectpackage.repository.reacteav.support;
 
 import org.reflections.Reflections;
 import org.springframework.stereotype.Component;
-import projectpackage.repository.reacteav.annotations.ReactChild;
-import projectpackage.repository.reacteav.annotations.ReactEntity;
-import projectpackage.repository.reacteav.annotations.ReactField;
-import projectpackage.repository.reacteav.annotations.ReactReference;
+import projectpackage.repository.reacteav.annotations.*;
 import projectpackage.repository.reacteav.relationsdata.EntityOuterRelationshipsData;
 import projectpackage.repository.reacteav.relationsdata.EntityReferenceRelationshipsData;
 import projectpackage.repository.reacteav.relationsdata.EntityVariablesData;
@@ -20,6 +17,7 @@ public class ReactAnnDefinitionReader {
     private Set<Class> classList;
     private static final Class ENTITYANNOTATION = ReactEntity.class;
     private static final Class REFERENCEANNOTATION = ReactReference.class;
+    private static final Class REFERENCEBUCKETANNOTATION = References.class;
     private static final Class CHILDANNOTATION = ReactChild.class;
     private static final Class FIELDANNOTATION = ReactField.class;
 
@@ -100,6 +98,18 @@ public class ReactAnnDefinitionReader {
                     EntityReferenceRelationshipsData data = new EntityReferenceRelationshipsData(outerFieldName, innerFieldKey, outerFieldKey);
                     thisClassMap.put(outerClass, data);
                 }
+                objectReferenceRelations.put(clazz,thisClassMap);
+            } else if (clazz.isAnnotationPresent(REFERENCEBUCKETANNOTATION)) {
+                HashMap<Class, EntityReferenceRelationshipsData> thisClassMap = new HashMap<>();
+                References references = (References) clazz.getAnnotation(REFERENCEBUCKETANNOTATION);
+                for (ReactReference reactReference : references.value()) {
+                        String outerFieldName = reactReference.outerFieldName();
+                        String outerFieldKey = reactReference.outerFieldKey();
+                        String innerFieldKey = reactReference.innerFieldKey();
+                        Class outerClass = reactReference.outerEntityClass();
+                        EntityReferenceRelationshipsData data = new EntityReferenceRelationshipsData(outerFieldName, innerFieldKey, outerFieldKey);
+                        thisClassMap.put(outerClass, data);
+                    }
                 objectReferenceRelations.put(clazz,thisClassMap);
             }
         }

@@ -13,11 +13,12 @@ import java.util.Date;
 public class Block implements ReactEntityWithId {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
-    private Room room;
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Block_start_date")
     private Date blockStartDate;
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Block_finish_date")
     private Date blockFinishDate;
     @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Reason")
     private String reason;
+
+    private Room room;
 }

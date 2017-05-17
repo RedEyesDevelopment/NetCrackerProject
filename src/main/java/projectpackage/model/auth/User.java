@@ -2,6 +2,8 @@ package projectpackage.model.auth;
 
 import lombok.Data;
 import projectpackage.model.notifications.Notification;
+import projectpackage.model.orders.ModificationHistory;
+import projectpackage.model.orders.Order;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
 import projectpackage.repository.reacteav.annotations.ReactField;
 import projectpackage.repository.reacteav.annotations.ReactReference;
@@ -12,7 +14,9 @@ import java.util.Set;
 @Data
 @ReactEntity(entityTypeName = "User")
 @ReactReference(outerEntityClass = Notification.class, outerFieldName = "author", outerFieldKey = "objectId", innerFieldKey = "objectId")
-//@ReactReference(outerEntityClass = Notification.class, outerFieldName = "", outerFieldKey = "objectId", innerFieldKey = "objectId")
+//@ReactReference(outerEntityClass = Notification.class, outerFieldName = "executedBy", outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactReference(outerEntityClass = ModificationHistory.class, outerFieldName = "modifAuthor", outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactReference(outerEntityClass = Order.class, outerFieldName = "client", outerFieldKey = "objectId", innerFieldKey = "objectId")
 public class User implements ReactEntityWithId {
 
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")

@@ -10,7 +10,7 @@
           </option>
           <option name="goals">
             <list>
-              <option value="jetty:run" />
+              <option value="spring-boot:run" />
             </list>
           </option>
           <option name="profilesMap">

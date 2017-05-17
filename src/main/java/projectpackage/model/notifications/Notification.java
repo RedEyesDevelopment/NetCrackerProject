@@ -14,14 +14,15 @@ import java.util.Date;
 public class Notification implements ReactEntityWithId {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
-    private User author;
-    private NotificationType notificationType;
     @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Message")
     private String message;
-    private Order order;
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Send_date")
     private Date sendDate;
-    private User executedBy;
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Executed_date")
     private Date executedDate;
+
+    private User author;
+    private Order order;
+    private User executedBy;
+    private NotificationType notificationType;
 }
