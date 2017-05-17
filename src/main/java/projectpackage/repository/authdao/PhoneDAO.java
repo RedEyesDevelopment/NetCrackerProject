@@ -7,6 +7,7 @@ import projectpackage.model.auth.Phone;
  * Created by Lenovo on 04.05.2017.
  */
 public interface PhoneDAO {
-    public void insertPhone(Phone phone) throws TransactionException;
+    public int insertPhone(Phone phone) throws TransactionException;
     public void updatePhone(Phone newPhone, Phone oldPhone) throws TransactionException;
+    public int deletePhone(int id);
 }

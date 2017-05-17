@@ -32,10 +32,10 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
     public void getAllUsers() {
         List<User> list = userService.getAllUsers("email", true);
         for (User user:list){
-            System.out.println(user);
+            log.info(user);
             assertNotNull(user);
         }
-        System.out.println(SEPARATOR);
+        log.info(SEPARATOR);
     }
 
     @Test
@@ -45,19 +45,19 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         int userId = 900;
         user = userService.getSingleUserById(userId);
         assertNotNull(user);
-        System.out.println(user);
-        System.out.println(SEPARATOR);
+        log.info(user);
+        log.info(SEPARATOR);
     }
 
 
     @Test
     @Rollback(true)
     public void deleteUser(){
-        int userId = 901;
+        int userId = 2006;
         boolean result = userService.deleteUser(userId);
         assertTrue(result);
-        System.out.println("Delete user result = " + result);
-        System.out.println(SEPARATOR);
+        log.info("Delete user result = " + result);
+        log.info(SEPARATOR);
     }
 
     @Test
@@ -66,8 +66,8 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         //TODO пока предполагается, что null и empty вообще не будет, потом надо переделать все тесты так чтобы инсерт падал!
         Role role = new Role();
         role.setRoleName("Admin");
+        role.setObjectId(1);
         User user = new User();
-        user.setObjectId(1406);
         user.setEmail("random@mail.ru");
         user.setPassword("4324325fa");
         user.setFirstName("Alex");
@@ -76,8 +76,8 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         user.setRole(role);
         boolean result = userService.insertUser(user);
         assertTrue(result);
-        System.out.println("Create user result = " + result);
-        System.out.println(SEPARATOR);
+        log.info("Create user result = " + result);
+        log.info(SEPARATOR);
     }
 
     @Test
@@ -88,28 +88,28 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         newRole.setObjectId(2);
         newRole.setRoleName("Reception");
         User newUser = new User();
-        newUser.setObjectId(1404);
+        newUser.setObjectId(2003);
         newUser.setEmail("fsdf@gmail.com");
         newUser.setPassword("4324668");
         newUser.setFirstName("Alexander");
         newUser.setLastName("Merl");
         newUser.setAdditionalInfo("My new INFO");
         newUser.setRole(newRole);
-        boolean result = userService.updateUser(2, newUser);
+        boolean result = userService.updateUser(newUser.getObjectId(), newUser);
         assertTrue(result);
-        System.out.println("Update user result = " + result);
-        System.out.println(SEPARATOR);
+        log.info("Update user result = " + result);
+        log.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
-    public void getUsersByRole(Role role){
-
+    public void getUsersByRole(){
+        log.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
-    public void getAllUsers(String orderingParameter, boolean ascend){
-
+    public void getAllUsersWithParameters(){
+        log.info(SEPARATOR);
     }
 }

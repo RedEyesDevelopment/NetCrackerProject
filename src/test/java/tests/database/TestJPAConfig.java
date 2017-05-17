@@ -18,8 +18,6 @@ import projectpackage.repository.authdao.UserDAO;
 import projectpackage.repository.authdao.UserDAOImpl;
 import projectpackage.repository.blocksdao.BlockDAO;
 import projectpackage.repository.blocksdao.BlockDAOImpl;
-import projectpackage.repository.deletedao.DeleteDAO;
-import projectpackage.repository.deletedao.DeleteDAOImpl;
 import projectpackage.repository.notificationsdao.NotificationDAO;
 import projectpackage.repository.notificationsdao.NotificationDAOImpl;
 import projectpackage.repository.notificationsdao.NotificationTypeDAO;
@@ -181,11 +179,6 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     @Bean
     UserDAO userDAO() {
         return new UserDAOImpl();
-    }
-
-    @Bean
-    DeleteDAO deleteDAO() {
-        return new DeleteDAOImpl();
     }
 
     @Bean

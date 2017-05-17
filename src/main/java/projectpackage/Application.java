@@ -1,5 +1,6 @@
 package projectpackage;
 
+import org.apache.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,8 +18,10 @@ import java.util.Arrays;
 @SpringBootApplication(exclude = {MultipartAutoConfiguration.class})
 @EnableCaching
 public class Application {
+    private static final Logger log = Logger.getLogger(Application.class);
     public static void main(String[] args) throws Exception {
         SpringApplication.run(new Class<?>[] {Application.class}, args);
+        log.info("Vse ok!");
     }
 
     @Bean

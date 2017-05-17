@@ -1,6 +1,7 @@
 package projectpackage.service.authservice;
 
 import lombok.extern.log4j.Log4j;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.auth.Phone;
@@ -9,7 +10,6 @@ import projectpackage.model.auth.User;
 import projectpackage.repository.authdao.PhoneDAO;
 import projectpackage.repository.authdao.UserDAO;
 import projectpackage.repository.daoexceptions.TransactionException;
-import projectpackage.repository.deletedao.DeleteDAO;
 import projectpackage.repository.reacteav.ReactEAVManager;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -19,11 +19,10 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    UserDAO userDAO;
+    private static final Logger log = Logger.getLogger(UserServiceImpl.class);
 
     @Autowired
-    DeleteDAO deleteDAO;
+    UserDAO userDAO;
 
     @Autowired
     PhoneDAO phoneDAO;
@@ -43,13 +42,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsers(String orderingParameter, boolean ascend) {
-        List<User> list = null;
-        try {
-             list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getEntityCollectionOrderByParameter(orderingParameter, ascend);
-        } catch (ResultEntityNullException e) {
-            log.warn("getAllUsers method returned null list", e);
-        }
-        return list;
+//        List<User> list = null;
+//        try {
+//             list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getEntityCollectionOrderByParameter(orderingParameter, ascend);
+//        } catch (ResultEntityNullException e) {
+//            log.warn("getAllUsers method returned null list", e);
+//        }
+//        return list;
+        log.info("method getAllUsers!");
+        return null;
     }
 
     @Override
@@ -72,10 +73,12 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         int count = 0;
-        for (Phone phone : user.getPhones()) {
-            count = count + deleteDAO.deleteSingleEntityById(phone.getObjectId());
+        if (null != user.getPhones()) {
+            for (Phone phone : user.getPhones()) {
+                count = count + phoneDAO.deletePhone(phone.getObjectId());
+            }
         }
-        count = count + deleteDAO.deleteSingleEntityById(id);
+        count = count + userDAO.deleteUser(id);
         if (count == 0) return false;
         else return true;
     }
@@ -83,7 +86,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean insertUser(User user) {
         try {
-            userDAO.insertUser(user);
+            System.out.println(userDAO.insertUser(user));
         } catch (TransactionException e) {
             return false;
         }

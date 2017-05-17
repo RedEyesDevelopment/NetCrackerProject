@@ -4,41 +4,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.User;
+import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.TransactionException;
 
 @Repository
-public class UserDAOImpl implements UserDAO {
+public class UserDAOImpl extends AbstractDAO implements UserDAO {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
 
     @Override
-    public void insertUser(User user) throws TransactionException {
+    public int insertUser(User user) throws TransactionException {
+        Integer objectId = nextObjectId();
         try {
-            String insertObjectTemplate = "INSERT INTO OBJECTS (OBJECT_ID, PARENT_ID, OBJECT_TYPE_ID, NAME, DESCRIPTION) VALUES (%d, NULL, 3, '%s', NULL)";
-            String insertAttributeTemplate = "INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (%d,%d,'%s',NULL)";
-            String insertReferenceTemplate = "INSERT INTO OBJREFERENCE (ATTR_ID, OBJECT_ID, REFERENCE) VALUES (%d,%d,%d)";
-            String intoObjects = String.format(insertObjectTemplate, user.getObjectId(), user.getLastName());
-            String intoAttributes1 = String.format(insertAttributeTemplate, 15, user.getObjectId(), user.getEmail());
-            String intoAttributes2 = String.format(insertAttributeTemplate, 16, user.getObjectId(), user.getPassword());
-            String intoAttributes3 = String.format(insertAttributeTemplate, 17, user.getObjectId(), user.getFirstName());
-            String intoAttributes4 = String.format(insertAttributeTemplate, 18, user.getObjectId(), user.getLastName());
-            String intoAttributes5 = String.format(insertAttributeTemplate, 19, user.getObjectId(), user.getAdditionalInfo());
-            String intoReferences = String.format(insertReferenceTemplate, 20, user.getObjectId(), user.getRole().getObjectId());
-            //оставлю комменты чтобы не забыть по поводу автокоммитов когда/если будем переделывать
-            //здесь по идее начинаем транзакцию
-            jdbcTemplate.execute(intoObjects);
-            jdbcTemplate.execute(intoAttributes1);
-            jdbcTemplate.execute(intoAttributes2);
-            jdbcTemplate.execute(intoAttributes3);
-            jdbcTemplate.execute(intoAttributes4);
-            jdbcTemplate.execute(intoAttributes5);
-            jdbcTemplate.execute(intoReferences);
+            jdbcTemplate.update(insertObjects, objectId, null, 3, null, null);                      //3 = User
+
+            jdbcTemplate.update(insertAttributes, 15, objectId, user.getEmail(), null);             //email
+            jdbcTemplate.update(insertAttributes, 16, objectId, user.getPassword(), null);          //password
+            jdbcTemplate.update(insertAttributes, 17, objectId, user.getFirstName(), null);         //first_name
+            jdbcTemplate.update(insertAttributes, 18, objectId, user.getLastName(), null);          //last_name
+            jdbcTemplate.update(insertAttributes, 19, objectId, user.getAdditionalInfo(), null);    //additional_info
+
+            jdbcTemplate.update(insertObjReference, 20, objectId, user.getRole().getObjectId());    //hasRole
         } catch (NullPointerException e) {
             throw new TransactionException(user);
         }
-
-        //а здесь коммитим если все окей
+        return objectId;
     }
 
     /**
@@ -47,28 +38,32 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public void updateUser(User newUser, User oldUser) throws TransactionException {
         try {
-            String updateAttributesTemplate = "UPDATE ATTRIBUTES SET VALUE = '%s' WHERE OBJECT_ID = %d AND ATTR_ID = %d";
-            String updateReferenceTemplate = "UPDATE OBJREFERENCE SET REFERENCE = %d WHERE OBJECT_ID = %d AND ATTR_ID = %d";
             if (!oldUser.getEmail().equals(newUser.getEmail())) {
-                jdbcTemplate.execute(String.format(updateAttributesTemplate, newUser.getEmail(), newUser.getObjectId(), 15));
+                jdbcTemplate.update(updateAttributes, newUser.getEmail(), null, newUser.getObjectId(), 15);
             }
             if (!oldUser.getPassword().equals(newUser.getPassword())) {
-                jdbcTemplate.execute(String.format(updateAttributesTemplate, newUser.getPassword(), newUser.getObjectId(), 16));
+                jdbcTemplate.update(updateAttributes, newUser.getPassword(), null, newUser.getObjectId(), 16);
             }
             if (!oldUser.getFirstName().equals(newUser.getFirstName())) {
-                jdbcTemplate.execute(String.format(updateAttributesTemplate, newUser.getFirstName(), newUser.getObjectId(), 17));
+                jdbcTemplate.update(updateAttributes, newUser.getFirstName(), null, newUser.getObjectId(), 17);
             }
             if (!oldUser.getLastName().equals(newUser.getLastName())) {
-                jdbcTemplate.execute(String.format(updateAttributesTemplate, newUser.getLastName(), newUser.getObjectId(), 18));
+                jdbcTemplate.update(updateAttributes, newUser.getLastName(), null, newUser.getObjectId(), 18);
             }
-            if (!oldUser.getLastName().equals(newUser.getLastName())) {
-                jdbcTemplate.execute(String.format(updateAttributesTemplate, newUser.getAdditionalInfo(), newUser.getObjectId(), 19));
+            if (!oldUser.getAdditionalInfo().equals(newUser.getAdditionalInfo())) {
+                jdbcTemplate.update(updateAttributes, newUser.getAdditionalInfo(), null, newUser.getObjectId(), 19);
             }
-            if (oldUser.getRole().getObjectId() != newUser.getRole().getObjectId())
-            jdbcTemplate.execute(String.format(updateReferenceTemplate, newUser.getRole().getObjectId(), newUser.getObjectId(), 20));
+            if (oldUser.getRole().getObjectId() != newUser.getRole().getObjectId()) {
+                jdbcTemplate.update(updateReference, newUser.getRole().getObjectId(), newUser.getObjectId(), 20);
+            }
         } catch (NullPointerException e) {
             throw new TransactionException(newUser);
         }
+    }
+
+    @Override
+    public int deleteUser(int id) {
+        return deleteSingleEntityById(id);
     }
 
 }

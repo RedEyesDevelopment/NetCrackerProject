@@ -7,7 +7,6 @@ import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.User;
 import projectpackage.repository.authdao.PhoneDAO;
 import projectpackage.repository.daoexceptions.TransactionException;
-import projectpackage.repository.deletedao.DeleteDAO;
 import projectpackage.repository.reacteav.ReactEAVManager;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -22,9 +21,6 @@ public class PhoneServiceImpl implements PhoneService{
 
     @Autowired
     PhoneDAO phoneDAO;
-
-    @Autowired
-    DeleteDAO deleteDAO;
 
     @Autowired
     ReactEAVManager manager;
@@ -63,7 +59,7 @@ public class PhoneServiceImpl implements PhoneService{
 
     @Override
     public boolean deletePhone(int id) {
-        int count = deleteDAO.deleteSingleEntityById(id);
+        int count = phoneDAO.deletePhone(id);
         if (count == 0) return false;
         return true;
     }

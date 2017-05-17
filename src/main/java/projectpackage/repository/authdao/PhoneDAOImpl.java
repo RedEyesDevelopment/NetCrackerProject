@@ -3,11 +3,12 @@ package projectpackage.repository.authdao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.model.auth.Phone;
 
 @Repository
-public class PhoneDAOImpl implements PhoneDAO {
+public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -15,7 +16,7 @@ public class PhoneDAOImpl implements PhoneDAO {
 
 
     @Override
-    public void insertPhone(Phone phone) throws TransactionException {
+    public int insertPhone(Phone phone) throws TransactionException {
         try {
             String insertObjectTemplate = "INSERT INTO OBJECTS (OBJECT_ID, PARENT_ID, OBJECT_TYPE_ID, NAME, DESCRIPTION) VALUES (%d, %d, 9, '%s', NULL)";
             String insertAttributeTemplate = "INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (%d,%d,'%s',NULL)";
@@ -26,6 +27,7 @@ public class PhoneDAOImpl implements PhoneDAO {
         } catch (NullPointerException e) {
             throw new TransactionException(phone);
         }
+        return 0;
     }
 
     @Override
@@ -38,5 +40,10 @@ public class PhoneDAOImpl implements PhoneDAO {
         } catch (NullPointerException e) {
             throw new TransactionException(newPhone);
         }
+    }
+
+    @Override
+    public int deletePhone(int id) {
+        return deleteSingleEntityById(id);
     }
 }
