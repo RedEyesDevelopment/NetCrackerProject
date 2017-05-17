@@ -4,11 +4,12 @@ import lombok.Data;
 import projectpackage.repository.reacteav.annotations.ReactChild;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
 import projectpackage.repository.reacteav.annotations.ReactField;
+import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 @Data
 @ReactEntity(entityTypeName = "Price")
 @ReactChild(outerEntityClass = Rate.class, outerFieldName = "prices", outerFieldKey = "objectId", innerFieldKey = "rateId")
-public class Price {
+public class Price implements ReactEntityWithId {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "Number_of_people")

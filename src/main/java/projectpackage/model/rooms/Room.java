@@ -6,12 +6,13 @@ import projectpackage.model.orders.Order;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
 import projectpackage.repository.reacteav.annotations.ReactField;
 import projectpackage.repository.reacteav.annotations.ReactReference;
+import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 @Data
 @ReactEntity(entityTypeName = "Room")
 @ReactReference(outerEntityClass = Block.class, outerFieldName = "room", outerFieldKey = "objectId", innerFieldKey = "objectId")
 @ReactReference(outerEntityClass = Order.class, outerFieldName = "room", outerFieldKey = "objectId", innerFieldKey = "objectId")
-public class Room {
+public class Room implements ReactEntityWithId {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "Room_number")

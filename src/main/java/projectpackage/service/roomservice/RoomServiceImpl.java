@@ -1,7 +1,10 @@
 package projectpackage.service.roomservice;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
+import projectpackage.repository.reacteav.ReactEAVManager;
+import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 
@@ -9,6 +12,10 @@ import java.util.List;
  * Created by Arizel on 16.05.2017.
  */
 public class RoomServiceImpl implements RoomService{
+
+    @Autowired
+    ReactEAVManager manager;
+
     @Override
     public List<Room> getRoomsByNumberOfResidents(int count) {
         return null;
@@ -21,7 +28,13 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     public List<Room> getAllRooms() {
-        return null;
+        List<Room> rooms = null;
+        try {
+             rooms = manager.createReactEAV(Room.class).fetchInnerEntityCollection(RoomType.class).closeFetch().getEntityCollection();
+        } catch (ResultEntityNullException e) {
+            e.printStackTrace();
+        }
+        return rooms;
     }
 
     @Override

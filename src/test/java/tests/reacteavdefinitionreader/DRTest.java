@@ -60,7 +60,13 @@ public class DRTest {
         }
         assertEquals(12, objectVariables.keySet().size());
         assertEquals(4, outerRelations.keySet().size());
-        assertEquals(10, objectVariables.keySet().size());
+        assertEquals(6, referenceRelations.keySet().size());
+        int per=0;
+        for (HashMap<Class, EntityReferenceRelationshipsData> rr: referenceRelations.values()){
+            for (EntityReferenceRelationshipsData data:rr.values()){
+                per++;
+            }
+        }
+        assertEquals(10, per);
     }
-
 }

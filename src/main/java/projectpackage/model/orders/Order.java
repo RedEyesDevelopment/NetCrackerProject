@@ -7,6 +7,7 @@ import projectpackage.model.rooms.Room;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
 import projectpackage.repository.reacteav.annotations.ReactField;
 import projectpackage.repository.reacteav.annotations.ReactReference;
+import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 import java.util.Date;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 @Data
 @ReactEntity(entityTypeName = "Order")
 @ReactReference(outerEntityClass = Notification.class, outerFieldName = "order", outerFieldKey = "objectId", innerFieldKey = "objectId")
-public class Order {
+public class Order implements ReactEntityWithId {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Registration_date")

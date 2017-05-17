@@ -3,8 +3,10 @@ package tests.database;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
-import projectpackage.model.rooms.RoomType;
+import projectpackage.model.rooms.Room;
 import projectpackage.service.roomservice.RoomService;
+
+import java.util.List;
 
 /**
  * Created by Arizel on 16.05.2017.
@@ -15,26 +17,23 @@ public class RoomRepositoryTests extends AbstractDatabaseTest{
 
     @Test
     @Rollback(true)
-    public void getRoomsByNumberOfResidents(int count){
+    public void getRoomsByNumberOfResidents(){
 
     }
 
     @Test
     @Rollback(true)
-    public void getRoomsByType(RoomType roomType) {
+    public void getRoomsByType() {
 
     }
 
     @Test
     @Rollback(true)
     public void getAllRooms() {
-
-    }
-
-    @Test
-    @Rollback(true)
-    public void getAllRooms(String orderingParameter, boolean ascend) {
-
+        List<Room> rooms = roomService.getAllRooms();
+        for (Room room:rooms){
+            System.out.println(room);
+        }
     }
 
     @Test

@@ -5,13 +5,14 @@ import projectpackage.model.auth.User;
 import projectpackage.repository.reacteav.annotations.ReactChild;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
 import projectpackage.repository.reacteav.annotations.ReactField;
+import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 import java.util.Date;
 
 @Data
 @ReactEntity(entityTypeName = "Modification_history")
 @ReactChild(outerEntityClass = Order.class, outerFieldName = "historys", outerFieldKey = "objectId", innerFieldKey = "savedOrder")
-public class ModificationHistory {
+public class ModificationHistory implements ReactEntityWithId {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "modifDate")
