@@ -32,10 +32,10 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
     public void getAllUsers() {
         List<User> list = userService.getAllUsers("email", true);
         for (User user:list){
-            System.out.println(user);
+            log.info(user);
             assertNotNull(user);
         }
-        System.out.println(SEPARATOR);
+        log.info(SEPARATOR);
     }
 
     @Test
@@ -45,8 +45,8 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         int userId = 900;
         user = userService.getSingleUserById(userId);
         assertNotNull(user);
-        System.out.println(user);
-        System.out.println(SEPARATOR);
+        log.info(user);
+        log.info(SEPARATOR);
     }
 
 
@@ -56,8 +56,8 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         int userId = 2006;
         boolean result = userService.deleteUser(userId);
         assertTrue(result);
-        System.out.println("Delete user result = " + result);
-        System.out.println(SEPARATOR);
+        log.info("Delete user result = " + result);
+        log.info(SEPARATOR);
     }
 
     @Test
@@ -76,9 +76,8 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         user.setRole(role);
         boolean result = userService.insertUser(user);
         assertTrue(result);
-        System.out.println();
-        System.out.println("Create user result = " + result);
-        System.out.println(SEPARATOR);
+        log.info("Create user result = " + result);
+        log.info(SEPARATOR);
     }
 
     @Test
@@ -98,19 +97,19 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         newUser.setRole(newRole);
         boolean result = userService.updateUser(newUser.getObjectId(), newUser);
         assertTrue(result);
-        System.out.println("Update user result = " + result);
-        System.out.println(SEPARATOR);
+        log.info("Update user result = " + result);
+        log.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void getUsersByRole(){
-        System.out.println();
+        log.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void getAllUsersWithParameters(){
-        System.out.println();
+        log.info(SEPARATOR);
     }
 }

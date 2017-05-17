@@ -1,6 +1,7 @@
 package projectpackage.service.authservice;
 
 import lombok.extern.log4j.Log4j;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.auth.Phone;
@@ -17,6 +18,8 @@ import java.util.List;
 @Log4j
 @Service
 public class UserServiceImpl implements UserService {
+
+    private static final Logger log = Logger.getLogger(UserServiceImpl.class);
 
     @Autowired
     UserDAO userDAO;
@@ -39,13 +42,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsers(String orderingParameter, boolean ascend) {
-        List<User> list = null;
-        try {
-             list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getEntityCollectionOrderByParameter(orderingParameter, ascend);
-        } catch (ResultEntityNullException e) {
-            log.warn("getAllUsers method returned null list", e);
-        }
-        return list;
+//        List<User> list = null;
+//        try {
+//             list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getEntityCollectionOrderByParameter(orderingParameter, ascend);
+//        } catch (ResultEntityNullException e) {
+//            log.warn("getAllUsers method returned null list", e);
+//        }
+//        return list;
+        log.info("method getAllUsers!");
+        return null;
     }
 
     @Override
