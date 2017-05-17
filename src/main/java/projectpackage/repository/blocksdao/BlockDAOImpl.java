@@ -17,4 +17,9 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     public void updateBlock(Block newBlock, Block oldBlock) throws TransactionException {
 
     }
+
+    @Override
+    public int deleteBlock(int id) {
+        return deleteSingleEntityById(id);
+    }
 }

@@ -9,4 +9,5 @@ import projectpackage.repository.daoexceptions.TransactionException;
 public interface NotificationDAO {
     public int insertNotification(Notification notification) throws TransactionException;
     public void updateNotification(Notification newNotification, Notification oldNotification) throws TransactionException;
+    public int deleteNotification(int id);
 }

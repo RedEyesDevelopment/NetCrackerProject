@@ -9,4 +9,5 @@ import projectpackage.model.auth.Phone;
 public interface PhoneDAO {
     public int insertPhone(Phone phone) throws TransactionException;
     public void updatePhone(Phone newPhone, Phone oldPhone) throws TransactionException;
+    public int deletePhone(int id);
 }

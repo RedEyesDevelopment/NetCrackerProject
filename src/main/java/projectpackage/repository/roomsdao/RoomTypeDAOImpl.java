@@ -17,4 +17,9 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO{
     public void updateRoomType(RoomType newRoomType, RoomType oldRoomType) throws TransactionException {
 
     }
+
+    @Override
+    public int deleteRoomType(int id) {
+        return deleteSingleEntityById(id);
+    }
 }

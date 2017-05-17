@@ -9,4 +9,5 @@ import projectpackage.repository.daoexceptions.TransactionException;
 public interface RateDAO {
     public int insertRate(Rate rate) throws TransactionException;
     public void updateRate(Rate newRate, Rate oldRate) throws TransactionException;
+    public int deleteRate(int id);
 }

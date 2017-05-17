@@ -17,4 +17,9 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     public void updateOrder(Order newOrder, Order oldOrder) throws TransactionException {
 
     }
+
+    @Override
+    public int deleteOrder(int id) {
+        return deleteSingleEntityById(id);
+    }
 }

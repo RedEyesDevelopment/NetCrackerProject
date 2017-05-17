@@ -17,4 +17,9 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO{
     public void updatePrice(Price newPrice, Price oldPrice) throws TransactionException {
 
     }
+
+    @Override
+    public int deletePrice(int id) {
+        return deleteSingleEntityById(id);
+    }
 }

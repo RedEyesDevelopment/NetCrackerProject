@@ -9,4 +9,5 @@ import projectpackage.repository.daoexceptions.TransactionException;
 public interface BlockDAO {
     public int insertBlock(Block block) throws TransactionException;
     public void updateBlock(Block newBlock, Block oldBlock) throws TransactionException;
+    public int deleteBlock(int id);
 }

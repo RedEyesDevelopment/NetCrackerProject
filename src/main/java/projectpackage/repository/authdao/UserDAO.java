@@ -6,4 +6,5 @@ import projectpackage.model.auth.User;
 public interface UserDAO {
     public int insertUser(User user) throws TransactionException;
     public void updateUser(User newUser, User oldUser) throws TransactionException;
+    public int deleteUser(int id);
 }

@@ -17,4 +17,9 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     public void updateRoom(Room newRoom, Room oldRoom) throws TransactionException {
 
     }
+
+    @Override
+    public int deleteRoom(int id) {
+        return deleteSingleEntityById(id);
+    }
 }

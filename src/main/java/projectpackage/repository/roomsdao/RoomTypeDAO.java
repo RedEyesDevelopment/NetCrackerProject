@@ -9,4 +9,5 @@ import projectpackage.repository.daoexceptions.TransactionException;
 public interface RoomTypeDAO {
     public int insertRoomType(RoomType roomType) throws TransactionException;
     public void updateRoomType(RoomType newRoomType, RoomType oldRoomType) throws TransactionException;
+    public int deleteRoomType(int id);
 }

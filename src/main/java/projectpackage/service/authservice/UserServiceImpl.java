@@ -9,7 +9,6 @@ import projectpackage.model.auth.User;
 import projectpackage.repository.authdao.PhoneDAO;
 import projectpackage.repository.authdao.UserDAO;
 import projectpackage.repository.daoexceptions.TransactionException;
-import projectpackage.repository.deletedao.DeleteDAO;
 import projectpackage.repository.reacteav.ReactEAVManager;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -21,9 +20,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserDAO userDAO;
-
-    @Autowired
-    DeleteDAO deleteDAO;
 
     @Autowired
     PhoneDAO phoneDAO;
@@ -72,10 +68,12 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         int count = 0;
-        for (Phone phone : user.getPhones()) {
-            count = count + deleteDAO.deleteSingleEntityById(phone.getObjectId());
+        if (null != user.getPhones()) {
+            for (Phone phone : user.getPhones()) {
+                count = count + phoneDAO.deletePhone(phone.getObjectId());
+            }
         }
-        count = count + deleteDAO.deleteSingleEntityById(id);
+        count = count + userDAO.deleteUser(id);
         if (count == 0) return false;
         else return true;
     }
@@ -83,7 +81,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean insertUser(User user) {
         try {
-            userDAO.insertUser(user);
+            System.out.println(userDAO.insertUser(user));
         } catch (TransactionException e) {
             return false;
         }

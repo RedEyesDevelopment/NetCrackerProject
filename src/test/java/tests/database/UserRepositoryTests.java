@@ -53,7 +53,7 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
     @Test
     @Rollback(true)
     public void deleteUser(){
-        int userId = 901;
+        int userId = 2006;
         boolean result = userService.deleteUser(userId);
         assertTrue(result);
         System.out.println("Delete user result = " + result);
@@ -102,15 +102,15 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         System.out.println(SEPARATOR);
     }
 
-//    @Test
-//    @Rollback(true)
-//    public void getUsersByRole(Role role){
-//        System.out.println();
-//    }
-//
-//    @Test
-//    @Rollback(true)
-//    public void getAllUsers(String orderingParameter, boolean ascend){
-//        System.out.println();
-//    }
+    @Test
+    @Rollback(true)
+    public void getUsersByRole(){
+        System.out.println();
+    }
+
+    @Test
+    @Rollback(true)
+    public void getAllUsersWithParameters(){
+        System.out.println();
+    }
 }

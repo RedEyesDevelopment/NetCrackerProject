@@ -9,4 +9,5 @@ import projectpackage.repository.daoexceptions.TransactionException;
 public interface PriceDAO {
     public int insertPrice(Price price) throws TransactionException;
     public void updatePrice(Price newPrice, Price oldPrice) throws TransactionException;
+    public int deletePrice(int id);
 }

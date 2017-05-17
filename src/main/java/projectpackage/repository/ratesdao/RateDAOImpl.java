@@ -17,4 +17,9 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
     public void updateRate(Rate newRate, Rate oldRate) throws TransactionException {
 
     }
+
+    @Override
+    public int deleteRate(int id) {
+        return deleteSingleEntityById(id);
+    }
 }

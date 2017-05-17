@@ -61,4 +61,9 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         }
     }
 
+    @Override
+    public int deleteUser(int id) {
+        return deleteSingleEntityById(id);
+    }
+
 }

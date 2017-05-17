@@ -41,4 +41,9 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
             throw new TransactionException(newPhone);
         }
     }
+
+    @Override
+    public int deletePhone(int id) {
+        return deleteSingleEntityById(id);
+    }
 }

@@ -17,4 +17,9 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     public void updateNotificationType(NotificationType newNotificationType, NotificationType oldNotificationType) throws TransactionException {
 
     }
+
+    @Override
+    public int deleteNotificationType(int id) {
+        return deleteSingleEntityById(id);
+    }
 }
