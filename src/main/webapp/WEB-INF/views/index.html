@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+    
+    <title>404 Hotel</title>
+
+        <!-- Bootstrap -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    
+    <!-- My styles !-->
+    <link href="css/mystyles.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a role="button" id="loginLink">Log in</a></li>
+                    <li><a role="button" id="signupLink">Sign up</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+        
+    <div id="loginModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Log in</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label class="sr-only" for="emailInput">Email address</label>
+                            <input type="email" class="form-control input-sm" id="emailInput" placeholder="Enter email">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="passwordInput">Password</label>
+                            <input type="password" class="form-control input-sm" id="passwordInput" placeholder="Password">
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox"> Remember me</label>
+                        </div>
+                        <button type="submit" class="btn btn-info btn-sm">Sign in</button>
+                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+    <div id="signupModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Sign up</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label class="sr-only" for="firstNameInput">First Name</label>
+                            <input type="text" class="form-control input-sm" id="firstNameInput" placeholder="Enter first name">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="lastNameInput">Last Name</label>
+                            <input type="text" class="form-control input-sm" id="lastNameInput" placeholder="Enter last name">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="emailInput">Email address</label>
+                            <input type="email" class="form-control input-sm" id="emailInput" placeholder="Enter email">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="phoneNumberInput">Phone Number</label>
+                            <input type="tel" class="form-control input-sm" id="phoneNumberInput" placeholder="Enter phone number">
+                        </div>
+                        <button type="submit" class="btn btn-info btn-sm">Sign up</button>
+                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+    <header class="jumbotron">
+
+        <!-- Main component for a primary marketing message or call to action -->
+
+        <div class="container">
+            <div class="row row-header">
+                <div class="col-xs-12 col-sm-8">
+                    <h1>404 Hotel</h1>
+                    <p style="padding:40px;"></p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras turpis erat, pellentesque et lectus et, fermentum efficitur eros. Praesent a lacinia mi, at sagittis libero. Donec justo ipsum, viverra eget sem eu, sagittis scelerisque libero. Cras tincidunt convallis felis vitae.</p>
+                </div>
+                <div class="col-xs-12 col-sm-4">
+                    <p style="padding:20px;"></p>
+                    <img src="img/logo.png" class="img-responsive">
+                </div>
+            </div>
+        </div>
+    </header>
+        
+    <div class="container">
+        <div class="row row-content booking-block">
+            <div class="col-xs-12">
+                <h2>BOOK NOW</h2>
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="arrivalDate">Arrival</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="departureDate">Departure</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="adultsNumber">Adults</label>
+                        <select class="form-control">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn"><a href="room_type.html">SEARCH AVAILABILITY</a></button>   
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+        
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <!-- My scripts !-->
+    <script src="js/index.js"></script>
+        
+</body>
+</html>
