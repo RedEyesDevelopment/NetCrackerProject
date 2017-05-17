@@ -42,15 +42,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsers(String orderingParameter, boolean ascend) {
-//        List<User> list = null;
-//        try {
-//             list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getEntityCollectionOrderByParameter(orderingParameter, ascend);
-//        } catch (ResultEntityNullException e) {
-//            log.warn("getAllUsers method returned null list", e);
-//        }
-//        return list;
-        log.info("method getAllUsers!");
-        return null;
+        List<User> list = null;
+        try {
+             list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getEntityCollectionOrderByParameter(orderingParameter, ascend);
+        } catch (ResultEntityNullException e) {
+            log.warn("getAllUsers method returned null list", e);
+        }
+        return list;
     }
 
     @Override
