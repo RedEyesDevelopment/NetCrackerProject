@@ -13,29 +13,23 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-
-
     @Override
     public int insertPhone(Phone phone) throws TransactionException {
+        Integer objectId = nextObjectId();
         try {
-            String insertObjectTemplate = "INSERT INTO OBJECTS (OBJECT_ID, PARENT_ID, OBJECT_TYPE_ID, NAME, DESCRIPTION) VALUES (%d, %d, 9, '%s', NULL)";
-            String insertAttributeTemplate = "INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (%d,%d,'%s',NULL)";
-            String intoObjects = String.format(insertObjectTemplate, phone.getObjectId(), phone.getUserId(), phone.getPhoneNumber());
-            String intoAttributes = String.format(insertAttributeTemplate, 38, phone.getObjectId(), phone.getPhoneNumber());
-            jdbcTemplate.execute(intoObjects);
-            jdbcTemplate.execute(intoAttributes);
+            jdbcTemplate.update(insertObjects, objectId, phone.getUserId(), 9, null, null);
+            jdbcTemplate.update(insertAttributes, 38, objectId, phone.getPhoneNumber(), null);
         } catch (NullPointerException e) {
             throw new TransactionException(phone);
         }
-        return 0;
+        return objectId;
     }
 
     @Override
     public void updatePhone(Phone newPhone, Phone oldPhone) throws TransactionException {
         try {
-            String updateAttributesTemplate = "UPDATE ATTRIBUTES SET VALUE = '%s' WHERE OBJECT_ID = %d AND ATTR_ID = %d";
             if (!oldPhone.getPhoneNumber().equals(newPhone.getPhoneNumber())) {
-                jdbcTemplate.execute(String.format(updateAttributesTemplate, newPhone.getPhoneNumber(), newPhone.getObjectId(), 38));
+                jdbcTemplate.update(updateAttributes, newPhone.getPhoneNumber(), null, newPhone.getObjectId(), 38);
             }
         } catch (NullPointerException e) {
             throw new TransactionException(newPhone);
