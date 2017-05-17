@@ -1,15 +1,16 @@
 package projectpackage.repository.blocksdao;
 
 import projectpackage.model.blocks.Block;
+import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.TransactionException;
 
 /**
  * Created by Arizel on 16.05.2017.
  */
-public class BlockDAOImpl implements BlockDAO{
+public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     @Override
-    public void insertBlock(Block block) throws TransactionException {
-
+    public int insertBlock(Block block) throws TransactionException {
+        return 0;
     }
 
     @Override
