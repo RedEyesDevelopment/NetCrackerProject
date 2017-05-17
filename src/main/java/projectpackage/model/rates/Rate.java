@@ -21,6 +21,8 @@ public class Rate {
     private Date rateToDate;
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%PARENT_ID")
     private int roomTypeId;
+    @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Creation_date")
+    private Date CreationDate;
 
     private Set<Price> prices;
 }
