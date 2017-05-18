@@ -1,16 +1,34 @@
 package projectpackage.service.orderservice;
 
+import lombok.extern.log4j.Log4j;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
+import projectpackage.repository.ordersdao.OrderDAO;
+import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.reacteav.ReactEAVManager;
+import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+
 
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
+@Log4j
+@Service
 public class OrderServiceImpl implements OrderService{
+
+    private static final Logger LOGGER = Logger.getLogger(OrderServiceImpl.class);
+
+    @Autowired
+    ReactEAVManager manager;
+
+    @Autowired
+    OrderDAO orderDAO;
+
+
     @Override
     public List<Order> getAllOrders(String orderingParameter, boolean ascend) {
         return null;
@@ -83,16 +101,37 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public boolean deleteOrder(int id) {
-        return false;
+        int count = orderDAO.deleteOrder(id);
+        LOGGER.info("Deleted rows : " + count);
+        if (count == 0) return false;
+        return true;
     }
 
     @Override
     public boolean insertOrder(Order order) {
-        return false;
+        try {
+            int orderId = orderDAO.insertOrder(order);
+            LOGGER.info("Get from DB orderId = " + orderId);
+        } catch (TransactionException e) {
+            LOGGER.warn("Catched transactionException!!!", e);
+            return false;
+        }
+        return true;
     }
 
     @Override
     public boolean updateOrder(int id, Order newOrder) {
-        return false;
+        try {
+            newOrder.setObjectId(id);
+            Order oldOrder = (Order) manager.createReactEAV(Order.class).getSingleEntityWithId(newOrder.getObjectId());
+            orderDAO.updateOrder(newOrder, oldOrder);
+        } catch (ResultEntityNullException e) {
+            LOGGER.warn("Problem with ReactEAV! Pls Check!", e);
+            return false;
+        } catch (TransactionException e) {
+            LOGGER.warn("Catched transactionException!!!", e);
+            return false;
+        }
+        return true;
     }
 }
