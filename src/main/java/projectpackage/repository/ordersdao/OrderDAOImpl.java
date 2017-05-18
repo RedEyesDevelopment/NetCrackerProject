@@ -1,5 +1,7 @@
 package projectpackage.repository.ordersdao;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import projectpackage.model.orders.Order;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.TransactionException;
@@ -19,18 +21,18 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         try {
             jdbcTemplate.update(insertObjects, objectId, null, 2, null, null);                      //2 = Order
 
-            jdbcTemplate.update(insertAttributes, 8, objectId, null, order.getRegistrationDate);     //Registration_date
+            jdbcTemplate.update(insertAttributes, 8, objectId, null, order.getRegistrationDate());     //Registration_date
             jdbcTemplate.update(insertAttributes, 9, objectId, order.getIsPaidFor(), null);          //Is_paid_for
             jdbcTemplate.update(insertAttributes, 10, objectId, order.getIsConfirmed(), null);       //Is_confirmed
-            jdbcTemplate.update(insertAttributes, 11, objectId, null, order.getLivingStartDate);     //Living_start_date
-            jdbcTemplate.update(insertAttributes, 12, objectId, null, order.getLivingFinishDate);    //Living_finish_date
+            jdbcTemplate.update(insertAttributes, 11, objectId, null, order.getLivingStartDate());     //Living_start_date
+            jdbcTemplate.update(insertAttributes, 12, objectId, null, order.getLivingFinishDate());    //Living_finish_date
             jdbcTemplate.update(insertAttributes, 13, objectId, order.getSum(), null);               //Sum
             jdbcTemplate.update(insertAttributes, 14, objectId, order.getComment(), null);           //Comment
 
             jdbcTemplate.update(insertObjReference, 6, objectId, order.getRoom().getObjectId());     //Booked
-            jdbcTemplate.update(insertObjReference, 7, objectId, order.getUser().getObjectId());     //Belong
+            jdbcTemplate.update(insertObjReference, 7, objectId, order.getClient().getObjectId());     //Belong
         } catch (NullPointerException e) {
-            throw new TransactionException(user);
+            throw new TransactionException(order);
         }
         return objectId;
     }
@@ -42,7 +44,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     @Override
     public void updateOrder(Order newOrder, Order oldOrder) throws TransactionException {
         try {
-            if (!oldOrder.getRegistrationDate().getTime() != newOrder.getRegistrationDate().getTime()) {
+            if (oldOrder.getRegistrationDate().getTime() != newOrder.getRegistrationDate().getTime()) {
                 jdbcTemplate.update(updateAttributes, null,  newOrder.getRegistrationDate(), newOrder.getObjectId(), 8);
             }
             if (!oldOrder.getIsPaidFor().equals(newOrder.getIsPaidFor())) {
@@ -51,10 +53,10 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
             if (!oldOrder.getIsConfirmed().equals(newOrder.getIsConfirmed())) {
                 jdbcTemplate.update(updateAttributes, newOrder.getIsConfirmed(), null, newOrder.getObjectId(), 10);
             }
-            if (!oldOrder.getLivingStartDate().getTime() != newOrder.getLivingStartDate().getTime()) {
+            if (oldOrder.getLivingStartDate().getTime() != newOrder.getLivingStartDate().getTime()) {
                 jdbcTemplate.update(updateAttributes, null, newOrder.getLivingStartDate(), newOrder.getObjectId(), 11);
             }
-            if (!oldOrder.getLivingFinishDate().getTime() != newOrder.getLivingFinishDate().getTime()) {
+            if (oldOrder.getLivingFinishDate().getTime() != newOrder.getLivingFinishDate().getTime()) {
                 jdbcTemplate.update(updateAttributes, null,  newOrder.getLivingFinishDate(), newOrder.getObjectId(), 12);
             }
             if (!oldOrder.getSum().equals(newOrder.getSum())) {
@@ -66,8 +68,8 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
             if (oldOrder.getRoom().getObjectId() != newOrder.getRoom().getObjectId()) {
                 jdbcTemplate.update(updateReference, newOrder.getRoom().getObjectId(), newOrder.getObjectId(), 6);
             }
-            if (oldOrder.getUser().getObjectId() != newOrder.getUser().getObjectId()) {
-                jdbcTemplate.update(updateReference, newOrder.getUser().getObjectId(), newOrder.getObjectId(), 7);
+            if (oldOrder.getClient().getObjectId() != newOrder.getClient().getObjectId()) {
+                jdbcTemplate.update(updateReference, newOrder.getClient().getObjectId(), newOrder.getObjectId(), 7);
             }
 
         } catch (NullPointerException e) {
