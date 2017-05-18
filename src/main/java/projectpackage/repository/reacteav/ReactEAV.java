@@ -376,17 +376,14 @@ public class ReactEAV {
             for (EntityReferenceTaskData reference : currentNode.getCurrentEntityReferenceTasks().values()) {
                 objTypelist.add(reference.getInnerClassObjectTypeName());
             }
-            System.out.println("objTypeList.size="+objTypelist.size());
             int j = 0;
             for (int i = 1; i <= referenceNameGenerator.getTablesCounter(); i++) {
-                System.out.println("i="+i);
                 String attrTypeName = "AT_" + config.getReferenceTypePermanentTableName() + i;
                 String objTypeName = "OT_" + config.getReferenceTypePermanentTableName() + i;
                 String objReferenceName = "R_" + config.getReferenceTypePermanentTableName() + i;
                 builder.appendWhereConditionWithTwoTablesEqualsByOB_TY_ID(config.getRootTableName(), attrTypeName);
                 builder.appendWhereConditionWithAttrTypeRefEqualsOB_TY_ID(attrTypeName, objTypeName);
                 builder.appendWhereConditionWithTwoTablesEqualsByAT_ID(attrTypeName, objReferenceName);
-                System.out.println("removing entity with j="+j);
                 builder.appendWhereConditionWithTableCodeEqualsToConstant(objTypeName, objTypelist.get(j));
                 j++;
                 builder.appendWhereConditionWithTwoTablesEqualsByOB_ID(config.getRootTableName(), objReferenceName);

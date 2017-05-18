@@ -74,6 +74,8 @@ public class ReacTask {
     }
 
     void addReferenceIdRelations(int thisId, EntityReferenceIdRelation relation) {
+        System.out.println("**********************************************************************************");
+        System.out.println("ADDING REFERENCE ID RELATION: INT(KEY)="+thisId+" RELATION="+relation);
         this.referenceIdRelations.put(thisId, relation);
     }
 

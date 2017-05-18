@@ -20,6 +20,7 @@ public class ReactEntityRowMapper implements RowMapper {
     HashMap<String, EntityReferenceTaskData> referenceData;
     HashMap<Integer, EntityReferenceIdRelation> objectReferenceTable;
     String dataStringPrefix;
+    int objectRelationsIdNamGenerator = 0;
 
     public ReactEntityRowMapper(Class entityClass, LinkedHashMap<String, EntityVariablesData> parameters, HashMap<String, EntityReferenceTaskData> referenceData, HashMap<Integer, EntityReferenceIdRelation> objectReferenceTable, String dataStringPrefix) {
         clazz = entityClass;
@@ -58,10 +59,14 @@ public class ReactEntityRowMapper implements RowMapper {
             try {
                 if (objectParameterKey.equals("objectId")) {
                     for (EntityReferenceTaskData data : referenceData.values()) {
+                        System.out.println("*****************************************************");
+                        System.out.println("REFERENCING!");
+                        System.out.println("CLASS="+clazz);
                         Integer referenceLinkName = resultSet.getInt(data.getInnerIdParameterNameForQueryParametersMap());
                         Integer objectId = resultSet.getInt(objectParameterKey);
-                        EntityReferenceIdRelation relation = new EntityReferenceIdRelation(referenceLinkName, data.getInnerClass());
-                        objectReferenceTable.put(objectId, relation);
+                        EntityReferenceIdRelation relation = new EntityReferenceIdRelation(objectId, referenceLinkName, data.getInnerClass());
+                        System.out.println("NEW REFERENCE: KEY="+(objectId+objectRelationsIdNamGenerator)+", REF="+relation);
+                        objectReferenceTable.put((objectId+objectRelationsIdNamGenerator++), relation);
                     }
                 }
                 if (newObjectClass.equals(Integer.class)) {

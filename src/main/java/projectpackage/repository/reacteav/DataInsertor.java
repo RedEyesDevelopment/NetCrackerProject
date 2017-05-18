@@ -41,10 +41,12 @@ public class DataInsertor {
                 }
                 parentToInputField.setAccessible(true);
 
+                //TODO: ReferenceIdRelations - test to prove working multiple Fetches!!!
+
                 for (Object outerObject : outerEntity.getResultList()) {
                     boolean doNotModifyTheField = false;
                     for (Object innerObject : innerEntity.getResultList()) {
-                        if (entry.getKey().equals(getEntityId(outerObject)) && entry.getValue().getInnerId() == getEntityId(innerObject)) {
+                        if (entry.getValue().getOuterId()==(getEntityId(outerObject)) && entry.getValue().getInnerId() == getEntityId(innerObject)) {
                             insertInnerEntity(outerObject, innerObject, parentToInputField, doNotModifyTheField);
                             doNotModifyTheField = true;
                             outerEntity.getInnerObjects().remove(innerObject);
