@@ -38,20 +38,16 @@ public class BlockRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deleteBlock(){
-        int blockId = 227;
+        int blockId = 2008;
         boolean result = blockService.deleteBlock(blockId);
         assertTrue(result);
-        LOGGER.info("Delete phone result = " + result);
+        LOGGER.info("Delete block result = " + result);
         LOGGER.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void createBlock(){
-        Price price = new Price();
-        price.setNumberOfPeople(1);
-        //price.setObjectId();
-
         Block block = new Block();
         block.setBlockStartDate(new Date());
         block.setBlockFinishDate(new Date());
@@ -60,12 +56,28 @@ public class BlockRepositoryTests extends AbstractDatabaseTest{
         room.setObjectId(127);
         room.setNumberOfResidents(1);
         room.setRoomNumber(101);
-        //room.setRoomType(new RoomType().get);
+        block.setRoom(room);
+        boolean result = blockService.insertBlock(block);
+        assertTrue(result);
+        LOGGER.info("Insert block result = " + result);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void updateBlock(){
-
+        Block block = new Block();
+        block.setBlockStartDate(new Date());
+        block.setBlockFinishDate(new Date());
+        block.setReason("Updated Reason");
+        Room room = new Room();
+        room.setObjectId(128);
+        room.setNumberOfResidents(2);
+        room.setRoomNumber(102);
+        block.setRoom(room);
+        boolean result = blockService.updateBlock(2007, block);
+        assertTrue(result);
+        LOGGER.info("Update block result = " + result);
+        LOGGER.info(SEPARATOR);
     }
 }

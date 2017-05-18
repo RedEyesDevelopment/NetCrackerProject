@@ -19,7 +19,7 @@ public interface BlockService {
     public List<Block> getAllBlocks(String orderingParameter, boolean ascend);//TODO Pacanu
     public List<Block> getAllBlocks();//TODO Pacanu
     public Block getSingleBlockById(int id);//TODO Pacanu
-    public boolean deleteBlock(int id);//TODO Pacanu
-    public boolean insertBlock(Block block);//TODO Pacanu
-    public boolean updateBlock(int id, Block newBlock);//TODO Pacanu
+    public boolean deleteBlock(int id);
+    public boolean insertBlock(Block block);
+    public boolean updateBlock(int id, Block newBlock);
 }

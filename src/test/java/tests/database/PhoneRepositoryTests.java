@@ -50,7 +50,7 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
     @Test
     @Rollback(true)
     public void deletePhone(){
-        int phoneId = 1102;
+        int phoneId = 2009;
         boolean result = phoneService.deletePhone(phoneId);
         assertTrue(result);
         LOGGER.info("Delete phone result = " + result);
@@ -73,10 +73,9 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
     @Rollback(true)
     public void updatePhone(){
         Phone phone = new Phone();
-        phone.setObjectId(1407);
         phone.setUserId(1406);
         phone.setPhoneNumber("0638509180");
-        boolean result = phoneService.updatePhone(1407, phone);
+        boolean result = phoneService.updatePhone(2009, phone);
         assertTrue(result);
         LOGGER.info("Update phone result = " + result);
         LOGGER.info(SEPARATOR);

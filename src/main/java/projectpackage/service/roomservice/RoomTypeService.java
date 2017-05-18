@@ -17,7 +17,7 @@ public interface RoomTypeService {
     public List<RoomType> getAllRoomTypes();//TODO Pacanu
     public List<RoomType> getAllRoomTypes(String orderingParameter, boolean ascend);//TODO Pacanu
     public RoomType getSingleRoomTypeById(int id);//TODO Pacanu
-    public boolean deleteRoomType(int id);//TODO Pacanu
-    public boolean insertRoomType(RoomType roomType);//TODO Pacanu
-    public boolean updateRoomType(int id, RoomType newRoomType);//TODO Pacanu
+    public boolean deleteRoomType(int id);
+    public boolean insertRoomType(RoomType roomType);
+    public boolean updateRoomType(int id, RoomType newRoomType);
 }

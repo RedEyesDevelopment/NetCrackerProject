@@ -88,7 +88,8 @@ public class BlockServiceImpl implements BlockService{
     public boolean updateBlock(int id, Block newBlock) {
         try {
             newBlock.setObjectId(id);
-            Block oldBlock = (Block) manager.createReactEAV(Block.class).getSingleEntityWithId(newBlock.getObjectId());
+            Block oldBlock = (Block) manager.createReactEAV(Block.class).fetchInnerEntityCollection(Room.class).closeFetch().getSingleEntityWithId(id);
+            LOGGER.info("Problem with old BLOCK!! " + oldBlock.getBlockStartDate() + "  " + oldBlock.getBlockFinishDate());
             blockDAO.updateBlock(newBlock, oldBlock);
         } catch (ResultEntityNullException e) {
             LOGGER.warn("Problem with ReactEAV! Pls Check!", e);
