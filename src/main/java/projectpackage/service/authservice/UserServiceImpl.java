@@ -19,7 +19,7 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private static final Logger log = Logger.getLogger(UserServiceImpl.class);
+    private static final Logger LOGGER = Logger.getLogger(UserServiceImpl.class);
 
     @Autowired
     UserDAO userDAO;
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
         try {
              list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getEntityCollectionOrderByParameter(orderingParameter, ascend);
         } catch (ResultEntityNullException e) {
-            log.warn("getAllUsers method returned null list", e);
+            LOGGER.warn("getAllUsers method returned null list", e);
         }
         return list;
     }
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
         try {
             user = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
-            log.warn("getSingleUserById method returned null list", e);
+            LOGGER.warn("getSingleUserById method returned null list", e);
         }
         return user;
     }
@@ -78,14 +78,16 @@ public class UserServiceImpl implements UserService {
         }
         count = count + userDAO.deleteUser(id);
         if (count == 0) return false;
-        else return true;
+        return true;
     }
 
     @Override
     public boolean insertUser(User user) {
         try {
-            System.out.println(userDAO.insertUser(user));
+            int userId = userDAO.insertUser(user);
+            LOGGER.info("Get from DB phoneId = " + userId);
         } catch (TransactionException e) {
+            LOGGER.warn("Catched transactionException!!!", e);
             return false;
         }
         return true;
@@ -98,8 +100,10 @@ public class UserServiceImpl implements UserService {
             User oldUser = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(newUser.getObjectId());
             userDAO.updateUser(newUser,oldUser);
         } catch (ResultEntityNullException e) {
+            LOGGER.warn("Problem with ReactEAV! Pls Check!", e);
             return false;
         } catch (TransactionException e) {
+            LOGGER.warn("Catched transactionException!!!", e);
             return false;
         }
         return true;

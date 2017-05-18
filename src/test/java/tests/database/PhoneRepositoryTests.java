@@ -1,6 +1,7 @@
 package tests.database;
 
 import lombok.extern.log4j.Log4j;
+import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 @Log4j
 @Transactional(value = "annotationDrivenTransactionManager")
 public class PhoneRepositoryTests extends AbstractDatabaseTest {
-    private final String SEPARATOR = "**********************************************************";
+    private static final Logger LOGGER = Logger.getLogger(PhoneRepositoryTests.class);
 
     @Autowired
     PhoneService phoneService;
@@ -30,9 +31,9 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
     public void getAllPhones() {
         List<Phone> list = phoneService.getAllPhones("userId", true);
         for (Phone phone:list){
-            System.out.println(phone);
+            LOGGER.info(phone);
         }
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
@@ -41,19 +42,19 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
         Phone phone = null;
         int phoneId = 1101;
         phone = phoneService.getSinglePhoneById(phoneId);
-        System.out.println(phone);
-        System.out.println(SEPARATOR);
+        LOGGER.info(phone);
+        LOGGER.info(SEPARATOR);
     }
 
 
     @Test
     @Rollback(true)
     public void deletePhone(){
-        int phoneId = 1102;
+        int phoneId = 2009;
         boolean result = phoneService.deletePhone(phoneId);
         assertTrue(result);
-        System.out.println("Delete phone result = " + result);
-        System.out.println(SEPARATOR);
+        LOGGER.info("Delete phone result = " + result);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
@@ -64,21 +65,20 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
         phone.setUserId(1404);
         boolean result = phoneService.insertPhone(phone);
         assertTrue(result);
-        System.out.println("Create phone result = " + result);
-        System.out.println(SEPARATOR);
+        LOGGER.info("Create phone result = " + result);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void updatePhone(){
         Phone phone = new Phone();
-        phone.setObjectId(1407);
         phone.setUserId(1406);
         phone.setPhoneNumber("0638509180");
-        boolean result = phoneService.updatePhone(1407, phone);
+        boolean result = phoneService.updatePhone(2009, phone);
         assertTrue(result);
-        System.out.println("Update phone result = " + result);
-        System.out.println(SEPARATOR);
+        LOGGER.info("Update phone result = " + result);
+        LOGGER.info(SEPARATOR);
     }
 
 }

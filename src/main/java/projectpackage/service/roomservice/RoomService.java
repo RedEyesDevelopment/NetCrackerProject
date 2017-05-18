@@ -15,7 +15,7 @@ public interface RoomService {
     public List<Room> getAllRooms();//TODO Pacanu
     public List<Room> getAllRooms(String orderingParameter, boolean ascend);//TODO Pacanu
     public Room getSingleRoomById(int id);//TODO Pacanu
-    public boolean deleteRoom(int id);//TODO Pacanu
-    public boolean insertRoom(Room room);//TODO Pacanu
-    public boolean updateRoom(int id, Room newRoom);//TODO Pacanu
+    public boolean deleteRoom(int id);
+    public boolean insertRoom(Room room);
+    public boolean updateRoom(int id, Room newRoom);
 }

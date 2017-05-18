@@ -1,6 +1,7 @@
 package tests.database;
 
 import lombok.extern.log4j.Log4j;
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
@@ -8,6 +9,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.service.authservice.UserService;
+import projectpackage.service.blockservice.BlockServiceImpl;
 
 import java.util.List;
 
@@ -19,7 +21,7 @@ import static org.junit.Assert.assertTrue;
  */
 @Log4j
 public class UserRepositoryTests extends AbstractDatabaseTest {
-    private final String SEPARATOR = "**********************************************************";
+    private static final Logger LOGGER = Logger.getLogger(UserRepositoryTests.class);
 
     @Autowired
     PlatformTransactionManager annotationDrivenTransactionManager;
@@ -32,10 +34,10 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
     public void getAllUsers() {
         List<User> list = userService.getAllUsers("email", true);
         for (User user:list){
-            log.info(user);
+            LOGGER.info(user);
             assertNotNull(user);
         }
-        log.info(SEPARATOR);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
@@ -45,8 +47,8 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         int userId = 900;
         user = userService.getSingleUserById(userId);
         assertNotNull(user);
-        log.info(user);
-        log.info(SEPARATOR);
+        LOGGER.info(user);
+        LOGGER.info(SEPARATOR);
     }
 
 
@@ -56,8 +58,8 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         int userId = 2006;
         boolean result = userService.deleteUser(userId);
         assertTrue(result);
-        log.info("Delete user result = " + result);
-        log.info(SEPARATOR);
+        LOGGER.info("Delete user result = " + result);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
@@ -76,8 +78,8 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         user.setRole(role);
         boolean result = userService.insertUser(user);
         assertTrue(result);
-        log.info("Create user result = " + result);
-        log.info(SEPARATOR);
+        LOGGER.info("Create user result = " + result);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
@@ -97,19 +99,19 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         newUser.setRole(newRole);
         boolean result = userService.updateUser(newUser.getObjectId(), newUser);
         assertTrue(result);
-        log.info("Update user result = " + result);
-        log.info(SEPARATOR);
+        LOGGER.info("Update user result = " + result);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void getUsersByRole(){
-        log.info(SEPARATOR);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void getAllUsersWithParameters(){
-        log.info(SEPARATOR);
+        LOGGER.info(SEPARATOR);
     }
 }

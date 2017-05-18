@@ -1,6 +1,7 @@
 package projectpackage.service.authservice;
 
 import lombok.extern.log4j.Log4j;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.auth.Role;
@@ -15,6 +16,7 @@ import java.util.List;
 @Log4j
 @Service
 public class RoleServiceImpl implements RoleService {
+    private static final Logger LOGGER = Logger.getLogger(RoleServiceImpl.class);
 
     @Autowired
     ReactEAVManager manager;
@@ -30,7 +32,7 @@ public class RoleServiceImpl implements RoleService {
         try {
             list = (List<Role>) manager.createReactEAV(Role.class).getEntityCollectionOrderByParameter(orderingParameter, ascend);
         } catch (ResultEntityNullException e) {
-            log.warn("getAllRoles method returned null list", e);
+            LOGGER.warn("getAllRoles method returned null list", e);
         }
         return list;
     }
@@ -41,7 +43,7 @@ public class RoleServiceImpl implements RoleService {
         try {
             role = (Role) manager.createReactEAV(Role.class).getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
-            log.warn("getSingleRoleById method returned null list", e);
+            LOGGER.warn("getSingleRoleById method returned null list", e);
         }
         return role;
     }
