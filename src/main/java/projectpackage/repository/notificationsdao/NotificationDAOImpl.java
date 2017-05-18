@@ -9,7 +9,7 @@ import projectpackage.repository.daoexceptions.TransactionException;
 /**
  * Created by Arizel on 16.05.2017.
  */
-public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO{
+public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -23,11 +23,15 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO{
             //22 = Message  23 = Send_date  25 = Executed_date
             jdbcTemplate.update(insertAttributes, 22, objectId, notification.getMessage(), null);
             jdbcTemplate.update(insertAttributes, 23, objectId, null, notification.getSendDate());
-            jdbcTemplate.update(insertAttributes, 25, objectId, null, notification.getExecutedDate());
+            if (notification.getExecutedDate() != null) {
+                jdbcTemplate.update(insertAttributes, 25, objectId, null, notification.getExecutedDate());
+            }
             //21 = Sent_by  26 = Has_notification_type  24 = Executed_by    27 = Consider
             jdbcTemplate.update(insertObjReference, 21, objectId, notification.getAuthor().getObjectId());
             jdbcTemplate.update(insertObjReference, 26, objectId, notification.getNotificationType().getObjectId());
-            jdbcTemplate.update(insertObjReference, 24, objectId, notification.getExecutedBy().getObjectId());
+            if (notification.getExecutedBy() != null) {
+                jdbcTemplate.update(insertObjReference, 24, objectId, notification.getExecutedBy().getObjectId());
+            }
             jdbcTemplate.update(insertObjReference, 27, objectId, notification.getOrder().getObjectId());
         } catch (NullPointerException e) {
             throw new TransactionException(notification);

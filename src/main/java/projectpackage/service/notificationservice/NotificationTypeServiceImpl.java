@@ -36,7 +36,7 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
                     .fetchInnerEntityCollection(Role.class).closeFetch()
                     .getEntityCollection();
         } catch (ResultEntityNullException e) {
-            LOGGER.warn("getAllUsers method returned null list", e);
+            LOGGER.warn("getAllNotificationTypes method returned null list", e);
         }
         return list;
     }
@@ -49,7 +49,7 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
                     .fetchInnerEntityCollection(Role.class).closeFetch()
                     .getEntityCollectionOrderByParameter(orderingParameter, ascend);
         } catch (ResultEntityNullException e) {
-            LOGGER.warn("getAllUsers method returned null list", e);
+            LOGGER.warn("getAllNotificationTypes method returned null list", e);
         }
         return list;
     }
@@ -68,7 +68,7 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
                     .fetchInnerEntityCollection(Role.class).closeFetch()
                     .getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
-            LOGGER.warn("getSingleUserById method returned null list", e);
+            LOGGER.warn("getSingleNotificationTypeById method returned null list", e);
         }
         return notificationType;
     }
@@ -81,6 +81,7 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
                     .fetchInnerEntityCollection(Role.class).closeFetch()
                     .getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
+            LOGGER.warn("Problem with ReactEAV! Pls Check!", e);
             return false;
         }
         int count = 0;
@@ -97,7 +98,8 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
             int notifTypeId = notificationTypeDAO.insertNotificationType(notificationType);
             LOGGER.info("Get from DB notificationTypeId = " + notifTypeId);
         } catch (TransactionException e) {
-            return false; // todo писать тут что-то в логгер
+            LOGGER.warn("Catched transactionException!!!", e);
+            return false;
         }
         return true;
     }
@@ -106,13 +108,15 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
     public boolean updateNotificationType(int id, NotificationType newNotificationType) {
         try {
             newNotificationType.setObjectId(id);
-            NotificationType oldUser = (NotificationType) manager.createReactEAV(NotificationType.class)
+            NotificationType oldNotificationType = (NotificationType) manager.createReactEAV(NotificationType.class)
                     .fetchInnerEntityCollection(Role.class).closeFetch()
                     .getSingleEntityWithId(newNotificationType.getObjectId());
-            notificationTypeDAO.updateNotificationType(newNotificationType, oldUser);
+            notificationTypeDAO.updateNotificationType(newNotificationType, oldNotificationType);
         } catch (ResultEntityNullException e) {
+            LOGGER.warn("Problem with ReactEAV! Pls Check!", e);
             return false;
         } catch (TransactionException e) {
+            LOGGER.warn("Catched transactionException!!!", e);
             return false;
         }
         return true;

@@ -1,5 +1,6 @@
 package tests.database;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
@@ -7,7 +8,9 @@ import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.model.notifications.Notification;
 import projectpackage.model.notifications.NotificationType;
+import projectpackage.model.orders.Order;
 import projectpackage.service.notificationservice.NotificationService;
+import projectpackage.service.notificationservice.NotificationServiceImpl;
 
 import java.util.Date;
 import java.util.List;
@@ -18,6 +21,8 @@ import static org.junit.Assert.assertTrue;
  * Created by Arizel on 16.05.2017.
  */
 public class NotificationRepositoryTests extends AbstractDatabaseTest{
+
+    private static final Logger LOGGER = Logger.getLogger(NotificationServiceImpl.class);
 
     @Autowired
     NotificationService notificationService;
@@ -45,44 +50,35 @@ public class NotificationRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deleteNotification(){
-        int notificationId = 1102;
-        boolean result = notificationService.deleteNotification(notificationId);
+        int notifId = 2001;
+        boolean result = notificationService.deleteNotification(notifId);
         assertTrue(result);
-        System.out.println("Delete phone result = " + result);
-        System.out.println(SEPARATOR);
+        LOGGER.info("Delete notification result = " + result);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void createNotification(){
-        // todo роли и тип надо брать с БД
-        Role client = new Role();
-        client.setObjectId(1);
-        client.setRoleName("client");
-        Role admin = new Role();
-        admin.setObjectId(2);
-        admin.setRoleName("admin");
-
         User author = new User();
-        author.setObjectId(9901);
-        author.setRole(client);
-        author.setEmail("emailAuthor");
-        author.setFirstName("AuthorFirstName");
-        author.setLastName("AuthorLastName");
+        author.setObjectId(900);
 
         NotificationType notificationType = new NotificationType();
-        notificationType.setOrientedRole(admin);
-        notificationType.setNotificationTypeTitle("Some note title");
+        notificationType.setObjectId(11);
+
+        Order order = new Order();
+        order.setObjectId(300);
 
         Notification notification = new Notification();
         notification.setAuthor(author);
+        notification.setNotificationType(notificationType);
         notification.setMessage("some message");
         notification.setSendDate(new Date());
-        notification.setNotificationType(notificationType);
+        notification.setOrder(order);
         boolean result = notificationService.insertNotification(notification);
         assertTrue(result);
-        System.out.println("Create phone result = " + result);
-        System.out.println(SEPARATOR);
+        LOGGER.info("Create notification result = " + result);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
