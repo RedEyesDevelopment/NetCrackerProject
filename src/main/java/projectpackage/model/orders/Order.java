@@ -14,7 +14,7 @@ import java.util.List;
 
 @Data
 @ReactEntity(entityTypeName = "Order")
-@ReactReference(outerEntityClass = Notification.class, outerFieldName = "order", outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactReference(referenceName = "OrdertoNotification", outerEntityClass = Notification.class, outerFieldName = "order", outerFieldKey = "objectId", innerFieldKey = "objectId")
 public class Order implements ReactEntityWithId {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;

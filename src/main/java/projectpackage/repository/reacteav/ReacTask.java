@@ -14,6 +14,7 @@ public class ReacTask {
     @Autowired
     ReactEntityValidator validator = new ReactEntityValidator();
     private ReactEAV reactEAV;
+    private ReacTask parentTask;
     private Class objectClass;
     private String thisClassObjectTypeName;
     private List resultList;
@@ -21,16 +22,18 @@ public class ReacTask {
     private Integer targetId;
     private String orderingParameter;
     private boolean ascend;
+    private String referenceId;
     private List<ReacTask> innerObjects;
     private Object entity = null;
     private LinkedHashMap<String, EntityVariablesData> currentEntityParameters;
     private HashMap<Class, EntityOuterRelationshipsData> currentEntityOuterLinks;
-    private HashMap<Class, EntityReferenceRelationshipsData> currentEntityReferenceRelations;
+    private HashMap<String, EntityReferenceRelationshipsData> currentEntityReferenceRelations;
     private HashMap<String, EntityReferenceTaskData> currentEntityReferenceTasks;
     private HashMap<Integer, EntityReferenceIdRelation> referenceIdRelations;
 
-    ReacTask(ReactEAV reactEAV, Class objectClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend) {
+    ReacTask(ReacTask parentTask, ReactEAV reactEAV, Class objectClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend, String referenceId) {
         this.reactEAV = reactEAV;
+        if (null!=parentTask) this.parentTask = parentTask;
         this.objectClass = objectClass;
         this.innerObjects = new LinkedList<>();
         this.resultList = new ArrayList<>();
@@ -38,6 +41,7 @@ public class ReacTask {
         this.targetId = targetId;
         this.orderingParameter = orderingParameter;
         this.ascend = ascend;
+        if (null!=referenceId) this.referenceId=referenceId;
         this.referenceIdRelations = new HashMap<>();
         this.currentEntityReferenceTasks = new HashMap<>();
 
@@ -105,7 +109,7 @@ public class ReacTask {
         return currentEntityOuterLinks;
     }
 
-    HashMap<Class, EntityReferenceRelationshipsData> getCurrentEntityReferenceRelations() {
+    HashMap<String, EntityReferenceRelationshipsData> getCurrentEntityReferenceRelations() {
         return currentEntityReferenceRelations;
     }
 
@@ -161,22 +165,34 @@ public class ReacTask {
         this.ascend = ascend;
     }
 
-    public ReacTask fetchInnerEntityCollectionForInnerObject(Class innerEntityClass) {
-        return fetchingOrderCreation(innerEntityClass, false, null, null, false);
+    String getReferenceId() {
+        return referenceId;
     }
 
-    public ReacTask fetchInnerEntityCollectionOrderByForInnerObject(Class innerEntityClass, String orderingParameter, boolean ascend) {
-        return fetchingOrderCreation(innerEntityClass, false, null, orderingParameter, ascend);
+    void setReferenceId(String referenceId) {
+        this.referenceId = referenceId;
     }
 
-    private ReacTask fetchingOrderCreation(Class innerEntityClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend) {
+    public ReacTask fetchChildEntityCollectionForInnerObject(Class innerEntityClass) {
+        return fetchingOrderCreation(innerEntityClass, false, null, null, false,null);
+    }
+
+    public ReacTask fetchReferenceEntityCollectionForInnerObject(Class innerEntityClass, String referenceId) {
+        return fetchingOrderCreation(innerEntityClass, false, null, null, false,null);
+    }
+
+    private ReacTask fetchingOrderCreation(Class innerEntityClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend, String referenceId) {
         validator.isTargetClassAReactEntity(innerEntityClass);
-        ReacTask childNode = new ReacTask(reactEAV, innerEntityClass, forSingleObject, targetId, orderingParameter, ascend);
+        ReacTask childNode = new ReacTask(this, reactEAV, innerEntityClass, forSingleObject, targetId, orderingParameter, ascend, referenceId);
         this.addInnerObject(childNode);
         return childNode;
     }
 
-    public ReactEAV closeFetch() {
+    public ReactEAV closeAllFetches() {
         return reactEAV;
+    }
+
+    public ReacTask closeFetch() {
+        return parentTask;
     }
 }

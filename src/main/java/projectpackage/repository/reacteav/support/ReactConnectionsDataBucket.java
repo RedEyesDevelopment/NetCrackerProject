@@ -16,9 +16,9 @@ public class ReactConnectionsDataBucket {
     Map<Class, String> classesMap;
     Map<Class, LinkedHashMap<String, EntityVariablesData>> entityVariablesMap;
     Map<Class, HashMap<Class, EntityOuterRelationshipsData>> outerRelationsMap;
-    Map<Class, HashMap<Class, EntityReferenceRelationshipsData>> entityReferenceRelationsMap;
+    Map<Class, HashMap<String, EntityReferenceRelationshipsData>> entityReferenceRelationsMap;
 
-    public ReactConnectionsDataBucket(Map<Class, String> classesMap, Map<Class, LinkedHashMap<String, EntityVariablesData>> entityVariablesMap, Map<Class, HashMap<Class, EntityOuterRelationshipsData>> outerRelationsMap, Map<Class, HashMap<Class, EntityReferenceRelationshipsData>> entityReferenceRelationsMap) {
+    public ReactConnectionsDataBucket(Map<Class, String> classesMap, Map<Class, LinkedHashMap<String, EntityVariablesData>> entityVariablesMap, Map<Class, HashMap<Class, EntityOuterRelationshipsData>> outerRelationsMap, Map<Class, HashMap<String, EntityReferenceRelationshipsData>> entityReferenceRelationsMap) {
         this.classesMap = classesMap;
         this.entityVariablesMap = entityVariablesMap;
         this.outerRelationsMap = outerRelationsMap;
@@ -37,7 +37,7 @@ public class ReactConnectionsDataBucket {
         return ImmutableMap.copyOf(outerRelationsMap);
     }
 
-    public Map<Class, HashMap<Class, EntityReferenceRelationshipsData>> getEntityReferenceRelationsMap() {
+    public Map<Class, HashMap<String, EntityReferenceRelationshipsData>> getEntityReferenceRelationsMap() {
         return ImmutableMap.copyOf(entityReferenceRelationsMap);
     }
 }

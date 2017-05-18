@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.reacteav.ReactEAVManager;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 
@@ -28,13 +27,14 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     public List<Room> getAllRooms() {
-        List<Room> rooms = null;
-        try {
-             rooms = manager.createReactEAV(Room.class).fetchInnerEntityCollection(RoomType.class).closeFetch().getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            e.printStackTrace();
-        }
-        return rooms;
+        return null;
+//        List<Room> rooms = null;
+//        try {
+//             rooms = manager.createReactEAV(Room.class).fetchInnerEntityCollection(RoomType.class).fetchInnerEntityCollectionForInnerObject(Rate.class).fetchInnerEntityCollectionForInnerObject(Price.class).closeFetch().getEntityCollection();
+//        } catch (ResultEntityNullException e) {
+//            e.printStackTrace();
+//        }
+//        return rooms;
     }
 
     @Override

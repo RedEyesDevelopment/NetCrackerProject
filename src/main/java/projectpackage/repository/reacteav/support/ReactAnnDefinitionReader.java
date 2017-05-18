@@ -84,31 +84,33 @@ public class ReactAnnDefinitionReader {
         return entitysVariables;
     }
 
-    public Map<Class, HashMap<Class, EntityReferenceRelationshipsData>> makeObjectsReferenceRelationsMap(){
-        Map<Class, HashMap<Class, EntityReferenceRelationshipsData>> objectReferenceRelations = new HashMap<>();
+    public Map<Class, HashMap<String, EntityReferenceRelationshipsData>> makeObjectsReferenceRelationsMap(){
+        Map<Class, HashMap<String, EntityReferenceRelationshipsData>> objectReferenceRelations = new HashMap<>();
         for (Class clazz:classList){
             if (clazz.isAnnotationPresent(REFERENCEANNOTATION)) {
-                HashMap<Class, EntityReferenceRelationshipsData> thisClassMap = new HashMap<>();
+                HashMap<String, EntityReferenceRelationshipsData> thisClassMap = new HashMap<>();
                 for (Annotation annot : clazz.getAnnotationsByType(REFERENCEANNOTATION)) {
                     ReactReference reactReference = (ReactReference) annot;
                     String outerFieldName = reactReference.outerFieldName();
                     String outerFieldKey = reactReference.outerFieldKey();
                     String innerFieldKey = reactReference.innerFieldKey();
                     Class outerClass = reactReference.outerEntityClass();
-                    EntityReferenceRelationshipsData data = new EntityReferenceRelationshipsData(outerFieldName, innerFieldKey, outerFieldKey);
-                    thisClassMap.put(outerClass, data);
+                    String referenceName = reactReference.referenceName();
+                    EntityReferenceRelationshipsData data = new EntityReferenceRelationshipsData(outerClass, outerFieldName, innerFieldKey, outerFieldKey);
+                    thisClassMap.put(referenceName, data);
                 }
                 objectReferenceRelations.put(clazz,thisClassMap);
             } else if (clazz.isAnnotationPresent(REFERENCEBUCKETANNOTATION)) {
-                HashMap<Class, EntityReferenceRelationshipsData> thisClassMap = new HashMap<>();
+                HashMap<String, EntityReferenceRelationshipsData> thisClassMap = new HashMap<>();
                 References references = (References) clazz.getAnnotation(REFERENCEBUCKETANNOTATION);
                 for (ReactReference reactReference : references.value()) {
                         String outerFieldName = reactReference.outerFieldName();
                         String outerFieldKey = reactReference.outerFieldKey();
                         String innerFieldKey = reactReference.innerFieldKey();
                         Class outerClass = reactReference.outerEntityClass();
-                        EntityReferenceRelationshipsData data = new EntityReferenceRelationshipsData(outerFieldName, innerFieldKey, outerFieldKey);
-                        thisClassMap.put(outerClass, data);
+                    String referenceName = reactReference.referenceName();
+                    EntityReferenceRelationshipsData data = new EntityReferenceRelationshipsData(outerClass, outerFieldName, innerFieldKey, outerFieldKey);
+                    thisClassMap.put(referenceName, data);
                     }
                 objectReferenceRelations.put(clazz,thisClassMap);
             }

@@ -22,7 +22,7 @@ public class DRTest {
         ReactAnnDefinitionReader reader = new ReactAnnDefinitionReader("projectpackage/model");
         Map<Class, LinkedHashMap<String, EntityVariablesData>> objectVariables = reader.makeObjectsVariablesMap();
         Map<Class, HashMap<Class, EntityOuterRelationshipsData>> outerRelations = reader.makeOuterRelationshipsMap();
-        Map<Class, HashMap<Class, EntityReferenceRelationshipsData>> referenceRelations = reader.makeObjectsReferenceRelationsMap();
+        Map<Class, HashMap<String, EntityReferenceRelationshipsData>> referenceRelations = reader.makeObjectsReferenceRelationsMap();
         System.out.println("CLASSES:");
         reader.printClassesList();
         System.out.println();
@@ -49,10 +49,11 @@ public class DRTest {
         }
         System.out.println();
         System.out.println("REFERENCE RELATIONS:");
-        for (Map.Entry<Class, HashMap<Class, EntityReferenceRelationshipsData>> entry: referenceRelations.entrySet()){
+        for (Map.Entry<Class, HashMap<String, EntityReferenceRelationshipsData>> entry: referenceRelations.entrySet()){
             System.out.println("INNER CLASS KEY="+entry.getKey());
-            for (Map.Entry<Class, EntityReferenceRelationshipsData> entry1:entry.getValue().entrySet()){
-                System.out.println("    OUTER CLASS KEY="+entry1.getKey());
+            for (Map.Entry<String, EntityReferenceRelationshipsData> entry1:entry.getValue().entrySet()){
+                System.out.println("    REFERENCE KEY="+entry1.getKey());
+                System.out.println("        OUTER CLASS:"+entry1.getValue().getOuterClass());
                 System.out.println("        OUTER FIELD NAME="+entry1.getValue().getOuterFieldName());
                 System.out.println("        OUTER ID KEY="+entry1.getValue().getOuterIdKey());
                 System.out.println("        INNER ID KEY="+entry1.getValue().getInnerIdKey());
@@ -62,11 +63,11 @@ public class DRTest {
         assertEquals(4, outerRelations.keySet().size());
         assertEquals(6, referenceRelations.keySet().size());
         int per=0;
-        for (HashMap<Class, EntityReferenceRelationshipsData> rr: referenceRelations.values()){
+        for (HashMap<String, EntityReferenceRelationshipsData> rr: referenceRelations.values()){
             for (EntityReferenceRelationshipsData data:rr.values()){
                 per++;
             }
         }
-        assertEquals(10, per);
+        assertEquals(11, per);
     }
 }

@@ -6,6 +6,7 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ReactReference {
+    String referenceName();
     Class outerEntityClass();
     String outerFieldName() default "";
     String outerFieldKey() default "objectId";

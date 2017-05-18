@@ -9,8 +9,8 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 @Data
 @ReactEntity(entityTypeName = "Role")
-@ReactReference(outerEntityClass = User.class, outerFieldName = "role", outerFieldKey = "objectId", innerFieldKey = "objectId")
-@ReactReference(outerEntityClass = NotificationType.class, outerFieldName = "orientedRole", outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactReference(referenceName = "RoleToUser", outerEntityClass = User.class, outerFieldName = "role", outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactReference(referenceName = "RoleToNotification", outerEntityClass = NotificationType.class, outerFieldName = "orientedRole", outerFieldKey = "objectId", innerFieldKey = "objectId")
 public class Role implements ReactEntityWithId {
 
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")

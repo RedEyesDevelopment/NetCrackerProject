@@ -1,6 +1,5 @@
 package projectpackage.service.authservice;
 
-import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 
-@Log4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -57,7 +55,7 @@ public class UserServiceImpl implements UserService {
     public User getSingleUserById(int id) {
         User user=null;
         try {
-            user = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(id);
+            user = (User) manager.createReactEAV(User.class).fetchChildEntityCollection(Phone.class).closeFetch().fetchReferenceEntityCollectionForInnerObject(Role.class, "RoleToUser").closeAllFetches().getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
             log.warn("getSingleUserById method returned null list", e);
         }
@@ -66,21 +64,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean deleteUser(int id) {
-        User user = null;
-        try {
-            user = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            return false;
-        }
-        int count = 0;
-        if (null != user.getPhones()) {
-            for (Phone phone : user.getPhones()) {
-                count = count + phoneDAO.deletePhone(phone.getObjectId());
-            }
-        }
-        count = count + userDAO.deleteUser(id);
-        if (count == 0) return false;
-        else return true;
+        return false;
+//        User user = null;
+//        try {
+//            user = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(id);
+//        } catch (ResultEntityNullException e) {
+//            return false;
+//        }
+//        int count = 0;
+//        if (null != user.getPhones()) {
+//            for (Phone phone : user.getPhones()) {
+//                count = count + phoneDAO.deletePhone(phone.getObjectId());
+//            }
+//        }
+//        count = count + userDAO.deleteUser(id);
+//        if (count == 0) return false;
+//        else return true;
     }
 
     @Override
@@ -95,15 +94,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean updateUser(int id, User newUser) {
-        try {
-            newUser.setObjectId(id);
-            User oldUser = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(newUser.getObjectId());
-            userDAO.updateUser(newUser,oldUser);
-        } catch (ResultEntityNullException e) {
-            return false;
-        } catch (TransactionException e) {
-            return false;
-        }
-        return true;
+        return false;
+//        try {
+//            newUser.setObjectId(id);
+//            User oldUser = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(newUser.getObjectId());
+//            userDAO.updateUser(newUser,oldUser);
+//        } catch (ResultEntityNullException e) {
+//            return false;
+//        } catch (TransactionException e) {
+//            return false;
+//        }
+//        return true;
     }
 }

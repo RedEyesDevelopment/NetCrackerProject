@@ -6,12 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
+import projectpackage.model.notifications.Notification;
+import projectpackage.model.notifications.NotificationType;
+import projectpackage.model.orders.Order;
+import projectpackage.model.rates.Rate;
 import projectpackage.repository.reacteav.ReactEAVManager;
-import projectpackage.repository.reacteav.exceptions.CyclicEntityQueryException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 @Log4j
 public class ReactEAVTest extends AbstractDatabaseTest {
@@ -70,7 +75,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         int userId=901;
         User user = null;
         try {
-            user = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(userId);
+            user = (User) manager.createReactEAV(User.class).fetchReferenceEntityCollection(Role.class, "RoleToUser").closeAllFetches().getSingleEntityWithId(userId);
         } catch (ResultEntityNullException e) {
             e.printStackTrace();
         }
@@ -125,59 +130,59 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     }
 
     //Получить одного юзера с вставленным телефоном и ролью
-    @Test
-    public void queryTestOfSingeUserFetchPhonesFetchRoles(){
-        User user = null;
-        try {
-            user = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(901);
-        } catch (ResultEntityNullException e) {
-        }
-        assertNotNull(user);
-        System.out.println(user.toString());
-        System.out.println(SEPARATOR);
-    }
-
-    //Получить список юзеров со вставленными телефонами
-    @Test
-    public void queryTestOfUsersFetchPhones(){
-        List<User> list = null;
-        try {
-            list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().getEntityCollection();
-        } catch (ResultEntityNullException e) {
-        }
-        for (User user:list){
-            System.out.println(user);
-            assertNotNull(user);
-                for (Phone phone:user.getPhones()){
-                    assertNotNull(phone);
-                }
-        }
-        System.out.println(SEPARATOR);
-    }
-
-    //Получить список юзеров со вставленными ролями
-    @Test
-    public void queryTestOfUsersFetchRoles(){
-        List<User> list = null;
-        try {
-            list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Role.class).closeFetch().getEntityCollection();
-        } catch (ResultEntityNullException e) {
-        }
-        for (User user:list){
-            System.out.println(user);
-            assertNotNull(user);
-            Role role = user.getRole();
-            assertNotNull(role);
-        }
-        System.out.println(SEPARATOR);
-    }
+//    @Test
+//    public void queryTestOfSingeUserFetchPhonesFetchRoles(){
+//        User user = null;
+//        try {
+//            user = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(901);
+//        } catch (ResultEntityNullException e) {
+//        }
+//        assertNotNull(user);
+//        System.out.println(user.toString());
+//        System.out.println(SEPARATOR);
+//    }
+//
+//    //Получить список юзеров со вставленными телефонами
+//    @Test
+//    public void queryTestOfUsersFetchPhones(){
+//        List<User> list = null;
+//        try {
+//            list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().getEntityCollection();
+//        } catch (ResultEntityNullException e) {
+//        }
+//        for (User user:list){
+//            System.out.println(user);
+//            assertNotNull(user);
+//                for (Phone phone:user.getPhones()){
+//                    assertNotNull(phone);
+//                }
+//        }
+//        System.out.println(SEPARATOR);
+//    }
+//
+//    //Получить список юзеров со вставленными ролями
+//    @Test
+//    public void queryTestOfUsersFetchRoles(){
+//        List<User> list = null;
+//        try {
+//            list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Role.class).closeFetch().getEntityCollection();
+//        } catch (ResultEntityNullException e) {
+//        }
+//        for (User user:list){
+//            System.out.println(user);
+//            assertNotNull(user);
+//            Role role = user.getRole();
+//            assertNotNull(role);
+//        }
+//        System.out.println(SEPARATOR);
+//    }
 
     //Получить список юзеров с ролями и телефонами
     @Test
     public void queryTestOfUsersFetchRolesAndPhones(){
         List<User> list = null;
         try {
-            list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Role.class).closeFetch().fetchInnerEntityCollection(Phone.class).closeFetch().getEntityCollection();
+            list = (List<User>) manager.createReactEAV(User.class).fetchReferenceEntityCollection(Role.class, "RoleToUser").closeAllFetches().fetchChildEntityCollection(Phone.class).closeAllFetches().getEntityCollection();
         } catch (ResultEntityNullException e) {
         }
         for (User user:list){
@@ -196,10 +201,11 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     @Test
     public void queryTestOfUsersFetchRolesAndPhonesBackwards(){
         List<User> list = null;
-        try {
-            list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getEntityCollection();
-        } catch (ResultEntityNullException e) {
-        }
+            try {
+                list = (List<User>) manager.createReactEAV(User.class).fetchChildEntityCollection(Phone.class).closeAllFetches().fetchReferenceEntityCollection(Role.class, "RoleToUser").closeAllFetches().getEntityCollection();
+            } catch (ResultEntityNullException e) {
+                e.printStackTrace();
+            }
         for (User user:list){
             System.out.println(user);
             assertNotNull(user);
@@ -212,17 +218,62 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         System.out.println(SEPARATOR);
     }
 
-    //Получить ошибку по циклическому графу
-    @Test(expected = CyclicEntityQueryException.class)
-    public void errorWithCyclicGraphs(){
-        List<User> list = null;
+    @Test
+    public void getNotifications(){
+        List<Notification> nots = null;
         try {
-            list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Role.class).closeFetch().fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getEntityCollection();
+            nots = manager.createReactEAV(Notification.class).fetchReferenceEntityCollection(User.class, "UserToNotificationAsAuthor").closeAllFetches().fetchReferenceEntityCollection(NotificationType.class, "NotificationTypeToNotification").closeAllFetches().fetchReferenceEntityCollection(Order.class, "OrdertoNotification").closeAllFetches().getEntityCollection();
+            for (Notification not:nots){
+                System.out.println(not);
+            }
+            System.out.println(SEPARATOR);
         } catch (ResultEntityNullException e) {
+            e.printStackTrace();
         }
-        for (User user:list){
-            System.out.println(user);
+    }
+
+//    @Test
+//    public void getRooms1(){
+//        List<Room> rooms = null;
+//        try {
+//            rooms = manager.createReactEAV(Room.class).fetchInnerEntityCollection(RoomType.class).fetchInnerEntityCollectionForInnerObject(Rate.class).fetchInnerEntityCollectionForInnerObject(Price.class).closeFetch().getEntityCollection();
+//        } catch (ResultEntityNullException e) {
+//            e.printStackTrace();
+//        }
+//        for (Room room:rooms){
+//            System.out.println(room);
+//        }
+//        System.out.println(SEPARATOR);
+//
+//    }
+//
+//    @Test
+//    public void getRoomTypes(){
+//        List<RoomType> rooms = null;
+//        try {
+//            rooms = manager.createReactEAV(RoomType.class).fetchInnerEntityCollection(Rate.class).fetchInnerEntityCollectionForInnerObject(Price.class).closeFetch().getEntityCollection();
+//        } catch (ResultEntityNullException e) {
+//            e.printStackTrace();
+//        }
+//        for (RoomType room:rooms){
+//            System.out.println(room);
+//        }
+//        System.out.println(SEPARATOR);
+//
+//    }
+
+    @Test
+    public void getRates(){
+        List<Rate> rooms = null;
+        try {
+            rooms = manager.createReactEAV(Rate.class).getEntityCollection();
+        } catch (ResultEntityNullException e) {
+            e.printStackTrace();
+        }
+        for (Rate room:rooms){
+            System.out.println(room);
         }
         System.out.println(SEPARATOR);
+
     }
 }

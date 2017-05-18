@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Data
 @ReactEntity(entityTypeName = "Room_type")
-@ReactReference(outerEntityClass = Room.class, outerFieldName = "roomType", outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactReference(referenceName = "RoomTypeToRoom", outerEntityClass = Room.class, outerFieldName = "roomType", outerFieldKey = "objectId", innerFieldKey = "objectId")
 public class RoomType implements ReactEntityWithId {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
