@@ -46,7 +46,15 @@ public class DataInsertor {
                 for (Object outerObject : outerEntity.getResultList()) {
                     boolean doNotModifyTheField = false;
                     for (Object innerObject : innerEntity.getResultList()) {
-                        if (entry.getValue().getOuterId()==(getEntityId(outerObject)) && entry.getValue().getInnerId() == getEntityId(innerObject)) {
+                        System.out.println("REFERENCE="+entry.getValue().toString());
+                        Integer outerId = entry.getValue().getOuterId();
+                        Integer objectIdToTest =  getEntityId(innerObject);
+                        System.out.println("OUTER ID VALUE="+outerId);
+                        System.out.println("INNER ID VALUE="+objectIdToTest);
+                        System.out.println();
+
+
+                        if (entry.getValue().getOuterId()==getEntityId(innerObject)) {
                             insertInnerEntity(outerObject, innerObject, parentToInputField, doNotModifyTheField);
                             doNotModifyTheField = true;
                             outerEntity.getInnerObjects().remove(innerObject);
