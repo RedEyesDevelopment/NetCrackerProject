@@ -1,10 +1,14 @@
 package tests.database;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import projectpackage.model.rates.Rate;
+import projectpackage.service.rateservice.RateService;
+import projectpackage.service.rateservice.RateServiceImpl;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -13,9 +17,10 @@ import static org.junit.Assert.assertTrue;
  * Created by Arizel on 16.05.2017.
  */
 public class RateRepositoryTests extends AbstractDatabaseTest{
+    private static final Logger LOGGER = Logger.getLogger(RateRepositoryTests.class);
 
     @Autowired
-    Rate rate;
+    RateService rateService;
 
     @Test
     @Rollback(true)
@@ -33,18 +38,38 @@ public class RateRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deleteRate(){
-
+        int rateId = 2006;
+        boolean result = rateService.deleteRate(rateId);
+        assertTrue(result);
+        LOGGER.info("Delete rate result = " + result);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void createRate(){
-
+        Rate rate = new Rate();
+        rate.setRateFromDate(new Date());
+        rate.setRateToDate(new Date());
+        rate.setCreationDate(new Date());
+        rate.setRoomTypeId(7);
+        boolean result = rateService.insertRate(rate);
+        assertTrue(result);
+        LOGGER.info("Create rate result = " + result);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void updateRate(){
-
+        Rate rate = new Rate();
+        rate.setRateFromDate(new Date());
+        rate.setRateToDate(new Date());
+        rate.setCreationDate(new Date());
+        rate.setRoomTypeId(8);
+        boolean result = rateService.updateRate(32, rate);
+        assertTrue(result);
+        LOGGER.info("Update rate result = " + result);
+        LOGGER.info(SEPARATOR);
     }
 }
