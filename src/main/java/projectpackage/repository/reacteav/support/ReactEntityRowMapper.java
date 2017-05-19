@@ -81,6 +81,11 @@ public class ReactEntityRowMapper implements RowMapper {
                     Date date = resultSet.getDate(objectParameterKey+dataStringPrefix);
                     field.set(targetReacEntityObject, date);
                 }
+                if (newObjectClass.equals(Boolean.class)) {
+                    throwedClass = Date.class;
+                    String bool = resultSet.getString(objectParameterKey);
+                    field.set(targetReacEntityObject, Boolean.parseBoolean(bool));
+                }
             } catch (IllegalAccessException e) {
                 throw new WrongTypeClassException(field.getDeclaringClass(), throwedClass);
             }

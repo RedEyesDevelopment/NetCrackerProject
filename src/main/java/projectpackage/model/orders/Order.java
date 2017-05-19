@@ -21,9 +21,9 @@ public class Order implements ReactEntityWithId {
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Registration_date")
     private Date registrationDate;
     @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Is_paid_for")
-    private String isPaidFor;
+    private Boolean isPaidFor;
     @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Is_confirmed")
-    private String isConfirmed;
+    private Boolean isConfirmed;
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Living_start_date")
     private Date livingStartDate;
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Living_finish_date")
@@ -37,19 +37,4 @@ public class Order implements ReactEntityWithId {
     private User client;
     private List<ModificationHistory> historys;
 
-    public boolean isPaidFor(){
-        return Boolean.parseBoolean(isPaidFor);
-    }
-
-    public boolean isConfirmed(){
-        return Boolean.parseBoolean(isConfirmed);
-    }
-
-    public void setIsPaidFor(boolean isPaid){
-        isPaidFor = String.valueOf(isPaid);
-    }
-
-    public void setIsConfirmed(boolean isConfirmed){
-        this.isConfirmed = String.valueOf(isConfirmed);
-    }
 }
