@@ -198,8 +198,6 @@ public class ReactEAV {
     }
 
     private List launchProcess() {
-//        findCyclicGraphs();
-
         for (ReactQueryTaskHolder holder : reactQueryTaskHolders) {
             if (holder.getNode().isForSingleObject()) {
                 Object result = null;
@@ -254,19 +252,6 @@ public class ReactEAV {
         ReacResultDataConnector dataConnector = new ReacResultDataConnector(rootNode);
         return dataConnector.connectEntitiesAndReturn();
     }
-
-//    //Нвхождение повторных запросов одной и той же entity в одном запросе
-//    private void findCyclicGraphs() {
-//        HashSet<Class> classes = new HashSet<>();
-//        Boolean trigger;
-//        for (ReactQueryTaskHolder holder : reactQueryTaskHolders) {
-//            trigger = classes.add(holder.getNode().getObjectClass());
-//            if (trigger.equals(false)) {
-//                CyclicEntityQueryException exception = new CyclicEntityQueryException(holder.getNode().getObjectClass());
-//                throw exception;
-//            }
-//        }
-//    }
 
     //Метод создания ссылки в билдере
     private String getQueryForEntity(LinkedHashMap<String, EntityVariablesData> currentNodeVariables, ReacTask currentNode, boolean isSearchById, String orderingParameter, boolean ascend) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {

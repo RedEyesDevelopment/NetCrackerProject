@@ -57,17 +57,11 @@ public class ReactEntityRowMapper implements RowMapper {
             Class throwedClass = null;
             try {
                 if (objectParameterKey.equals("objectId")) {
-                    System.out.println("FIRST OBJREFERENCETABLE.SIZE="+objectReferenceTable.size());
                     for (Map.Entry<Integer, EntityReferenceTaskData> data : referenceData.entrySet()) {
-                        System.out.println("*****************************************************");
-                        System.out.println("REFERENCING!");
-                        System.out.println("CLASS="+clazz);
                         Integer referenceLinkName = resultSet.getInt(data.getValue().getInnerIdParameterNameForQueryParametersMap());
                         Integer objectId = resultSet.getInt(objectParameterKey);
-                        EntityReferenceIdRelation relation = new EntityReferenceIdRelation(objectId, referenceLinkName, data.getValue().getInnerClass(), data.getValue().getThisFieldName());
-                        System.out.println("NEW REFERENCE: KEY="+data.getKey()+", REF="+relation);
+                        EntityReferenceIdRelation relation = new EntityReferenceIdRelation(objectId, referenceLinkName, data.getValue().getInnerClass());
                         objectReferenceTable.put(data.getKey(), relation);
-                        System.out.println("OBJREFERENCETABLE.SIZE="+objectReferenceTable.size());
                     }
                 }
                 if (newObjectClass.equals(Integer.class)) {
@@ -82,9 +76,9 @@ public class ReactEntityRowMapper implements RowMapper {
                     throwedClass = Long.class;
                     field.set(targetReacEntityObject, resultSet.getLong(objectParameterKey));
                 }
-                if (newObjectClass.equals(java.sql.Date.class)) {
-                    throwedClass = java.sql.Date.class;
-                    Date date = resultSet.getDate(objectParameterKey);
+                if (newObjectClass.equals(Date.class)) {
+                    throwedClass = Date.class;
+                    Date date = resultSet.getDate(objectParameterKey+dataStringPrefix);
                     field.set(targetReacEntityObject, date);
                 }
             } catch (IllegalAccessException e) {

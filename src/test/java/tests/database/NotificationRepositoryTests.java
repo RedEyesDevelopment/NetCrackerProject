@@ -9,7 +9,7 @@ import projectpackage.model.notifications.Notification;
 import projectpackage.model.notifications.NotificationType;
 import projectpackage.service.notificationservice.NotificationService;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -77,7 +77,7 @@ public class NotificationRepositoryTests extends AbstractDatabaseTest{
         Notification notification = new Notification();
         notification.setAuthor(author);
         notification.setMessage("some message");
-        notification.setSendDate(new Date());
+        notification.setSendDate(new Date(System.currentTimeMillis()));
         notification.setNotificationType(notificationType);
         boolean result = notificationService.insertNotification(notification);
         assertTrue(result);

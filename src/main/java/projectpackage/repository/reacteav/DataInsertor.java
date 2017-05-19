@@ -29,9 +29,9 @@ public class DataInsertor {
                 Field parentToInputField = null;
                 String fieldName = null;
 
-                for (EntityReferenceTaskData taskdata : outerEntity.getCurrentEntityReferenceTasks().values()) {
-                    if (taskdata.getInnerClass().equals(targetClass) && taskdata.getThisFieldName().equals(entry.getValue().getFieldName())) {
-                        fieldName = taskdata.getThisFieldName();
+                for (Map.Entry<Integer, EntityReferenceTaskData> taskdata : outerEntity.getCurrentEntityReferenceTasks().entrySet()) {
+                    if (entry.getKey().equals(taskdata.getKey())) {
+                        fieldName = taskdata.getValue().getThisFieldName();
                     }
                 }
                 try {
@@ -41,20 +41,11 @@ public class DataInsertor {
                 }
                 parentToInputField.setAccessible(true);
 
-                //TODO: ReferenceIdRelations - test to prove working multiple Fetches!!!
 
                 for (Object outerObject : outerEntity.getResultList()) {
                     boolean doNotModifyTheField = false;
                     for (Object innerObject : innerEntity.getResultList()) {
-                        System.out.println("REFERENCE="+entry.getValue().toString());
-                        Integer outerId = entry.getValue().getOuterId();
-                        Integer objectIdToTest =  getEntityId(innerObject);
-                        System.out.println("OUTER ID VALUE="+outerId);
-                        System.out.println("INNER ID VALUE="+objectIdToTest);
-                        System.out.println();
-
-
-                        if (entry.getValue().getOuterId()==getEntityId(innerObject)) {
+                        if (entry.getValue().getOuterId() == getEntityId(innerObject)) {
                             insertInnerEntity(outerObject, innerObject, parentToInputField, doNotModifyTheField);
                             doNotModifyTheField = true;
                             outerEntity.getInnerObjects().remove(innerObject);
@@ -131,7 +122,7 @@ public class DataInsertor {
         }
     }
 
-    private int getEntityId(Object entity){
+    private int getEntityId(Object entity) {
         ReactEntityWithId reactEntityWithId = (ReactEntityWithId) entity;
         return reactEntityWithId.getObjectId();
     }
