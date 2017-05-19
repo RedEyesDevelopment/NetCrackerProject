@@ -20,9 +20,9 @@ public class Order implements ReactEntityWithId {
     private int objectId;
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Registration_date")
     private Date registrationDate;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Is_paid_for")
+    @ReactField(valueObjectClass = Boolean.class, databaseAttrtypeCodeValue = "Is_paid_for")
     private Boolean isPaidFor;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Is_confirmed")
+    @ReactField(valueObjectClass = Boolean.class, databaseAttrtypeCodeValue = "Is_confirmed")
     private Boolean isConfirmed;
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Living_start_date")
     private Date livingStartDate;
