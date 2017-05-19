@@ -12,8 +12,6 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-
-
     @Override
     public int insertRate(Rate rate) throws TransactionException {
         Integer objectId = nextObjectId();

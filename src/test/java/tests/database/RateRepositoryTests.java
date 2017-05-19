@@ -6,10 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import projectpackage.model.rates.Rate;
 import projectpackage.service.rateservice.RateService;
-import projectpackage.service.rateservice.RateServiceImpl;
 
+import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
@@ -62,12 +61,15 @@ public class RateRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void updateRate(){
+        Calendar cal = Calendar.getInstance();
+        cal.set(2012, Calendar.JANUARY, 1);
+        Date date = cal.getTime();
         Rate rate = new Rate();
         rate.setRateFromDate(new Date());
         rate.setRateToDate(new Date());
-        rate.setCreationDate(new Date());
+        rate.setCreationDate(date);
         rate.setRoomTypeId(8);
-        boolean result = rateService.updateRate(32, rate);
+        boolean result = rateService.updateRate(2036, rate);
         assertTrue(result);
         LOGGER.info("Update rate result = " + result);
         LOGGER.info(SEPARATOR);

@@ -1,6 +1,5 @@
 package projectpackage.service.rateservice;
 
-import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import projectpackage.model.rates.Price;
@@ -19,7 +18,6 @@ import java.util.List;
  */
 public class RateServiceImpl implements RateService{
     private static final Logger LOGGER = Logger.getLogger(RateServiceImpl.class);
-
 
     @Autowired
     RateDAO rateDAO;
@@ -85,7 +83,6 @@ public class RateServiceImpl implements RateService{
             newRate.setObjectId(id);
             Rate oldRate = (Rate) manager.createReactEAV(Rate.class).
                     fetchInnerEntityCollection(Price.class).closeFetch().
-                    fetchInnerEntityCollection(RoomType.class).closeFetch().
                     getSingleEntityWithId(newRate.getObjectId());
             rateDAO.updateRate(newRate,oldRate);
         } catch (ResultEntityNullException e) {
