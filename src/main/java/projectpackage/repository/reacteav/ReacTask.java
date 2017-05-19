@@ -25,6 +25,7 @@ public class ReacTask {
     private String referenceId;
     private List<ReacTask> innerObjects;
     private Object entity = null;
+    private String statement;
     private LinkedHashMap<String, EntityVariablesData> currentEntityParameters;
     private HashMap<Class, EntityOuterRelationshipsData> currentEntityOuterLinks;
     private HashMap<String, EntityReferenceRelationshipsData> currentEntityReferenceRelations;
@@ -44,6 +45,7 @@ public class ReacTask {
         if (null!=referenceId) this.referenceId=referenceId;
         this.referenceIdRelations = new HashMap<>();
         this.currentEntityReferenceTasks = new HashMap<>();
+        this.statement = null;
 
         //Кастуем класс
         try {
@@ -72,22 +74,12 @@ public class ReacTask {
         return referenceIdRelations;
     }
 
-    void addReferenceIdRelations(int thisId, EntityReferenceIdRelation relation) {
-        System.out.println("**********************************************************************************");
-        System.out.println("ADDING REFERENCE ID RELATION: INT(KEY)="+thisId+" RELATION="+relation);
-        this.referenceIdRelations.put(thisId, relation);
-    }
-
     HashMap<Integer, EntityReferenceTaskData> getCurrentEntityReferenceTasks() {
         return currentEntityReferenceTasks;
     }
 
     boolean hasReferencedObjects() {
         return !currentEntityReferenceTasks.isEmpty();
-    }
-
-    Object getEntity() {
-        return entity;
     }
 
     Class getObjectClass() {
@@ -120,10 +112,6 @@ public class ReacTask {
 
     void setResultList(List resultList) {
         this.resultList = resultList;
-    }
-
-    void addResulttoResultList(Object result) {
-        this.resultList.add(result);
     }
 
     List<ReacTask> getInnerObjects() {
@@ -170,8 +158,12 @@ public class ReacTask {
         return referenceId;
     }
 
-    void setReferenceId(String referenceId) {
-        this.referenceId = referenceId;
+    String getStatement() {
+        return statement;
+    }
+
+    public void setConnectionCondition(String statement) {
+        this.statement = statement;
     }
 
     public ReacTask fetchChildEntityCollectionForInnerObject(Class innerEntityClass) {
