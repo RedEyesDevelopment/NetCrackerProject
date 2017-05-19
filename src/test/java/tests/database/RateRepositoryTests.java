@@ -37,7 +37,7 @@ public class RateRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deleteRate(){
-        int rateId = 2006;
+        int rateId = 2036;
         boolean result = rateService.deleteRate(rateId);
         assertTrue(result);
         LOGGER.info("Delete rate result = " + result);

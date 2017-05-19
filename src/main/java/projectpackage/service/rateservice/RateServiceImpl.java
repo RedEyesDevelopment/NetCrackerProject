@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
-import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.ratesdao.PriceDAO;
 import projectpackage.repository.ratesdao.RateDAO;
@@ -45,21 +44,21 @@ public class RateServiceImpl implements RateService{
 
     @Override
     public boolean deleteRate(int id) {
-        Rate rate = null;
-        try {
-            rate = (Rate) manager.createReactEAV(Rate.class).
-                    fetchInnerEntityCollection(Price.class).closeFetch().
-                    fetchInnerEntityCollection(RoomType.class).closeFetch().
-                    getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            return false;
-        }
+//        Rate rate = null;
+//        try {
+//            rate = (Rate) manager.createReactEAV(Rate.class).
+//                    fetchInnerEntityCollection(Price.class).closeFetch().
+//                    fetchInnerEntityCollection(RoomType.class).closeFetch().
+//                    getSingleEntityWithId(id);
+//        } catch (ResultEntityNullException e) {
+//            return false;
+//        }
         int count = 0;
-        if (null != rate.getPrices()) {
-            for (Price price : rate.getPrices()) {
-                count = count + priceDAO.deletePrice(price.getObjectId());
-            }
-        }
+//        if (null != rate.getPrices()) {
+//            for (Price price : rate.getPrices()) {
+//                count = count + priceDAO.deletePrice(price.getObjectId());
+//            }
+//        }
         count = count + rateDAO.deleteRate(id);
         if (count == 0) return false;
         else return true;

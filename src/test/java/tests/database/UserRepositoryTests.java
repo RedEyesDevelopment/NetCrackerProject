@@ -55,7 +55,7 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
     @Test
     @Rollback(true)
     public void deleteUser(){
-        int userId = 2006;
+        int userId = 2042;
         boolean result = userService.deleteUser(userId);
         assertTrue(result);
         LOGGER.info("Delete user result = " + result);
@@ -90,7 +90,7 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         newRole.setObjectId(2);
         newRole.setRoleName("Reception");
         User newUser = new User();
-        newUser.setObjectId(2003);
+        newUser.setObjectId(2042);
         newUser.setEmail("fsdf@gmail.com");
         newUser.setPassword("4324668");
         newUser.setFirstName("Alexander");

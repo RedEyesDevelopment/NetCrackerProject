@@ -2,6 +2,7 @@ package projectpackage.model.orders;
 
 import lombok.Data;
 import projectpackage.model.auth.User;
+import projectpackage.model.maintenances.JournalRecord;
 import projectpackage.model.notifications.Notification;
 import projectpackage.model.rooms.Room;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
@@ -11,6 +12,7 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @ReactEntity(entityTypeName = "Order")
@@ -32,10 +34,12 @@ public class Order implements ReactEntityWithId {
     private Long sum;
     @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Comment")
     private String comment;
+    private User lastModificator;
 
     private Room room;
     private User client;
     private List<ModificationHistory> historys;
+    private Set<JournalRecord> journalRecords;
 
     public boolean isPaidFor(){
         return Boolean.parseBoolean(isPaidFor);
