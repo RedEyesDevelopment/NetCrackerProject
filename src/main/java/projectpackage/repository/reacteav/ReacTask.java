@@ -28,7 +28,7 @@ public class ReacTask {
     private LinkedHashMap<String, EntityVariablesData> currentEntityParameters;
     private HashMap<Class, EntityOuterRelationshipsData> currentEntityOuterLinks;
     private HashMap<String, EntityReferenceRelationshipsData> currentEntityReferenceRelations;
-    private HashMap<String, EntityReferenceTaskData> currentEntityReferenceTasks;
+    private HashMap<Integer, EntityReferenceTaskData> currentEntityReferenceTasks;
     private HashMap<Integer, EntityReferenceIdRelation> referenceIdRelations;
 
     ReacTask(ReacTask parentTask, ReactEAV reactEAV, Class objectClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend, String referenceId) {
@@ -62,10 +62,9 @@ public class ReacTask {
         this.thisClassObjectTypeName = reactEAV.getDataBucket().getClassesMap().get(objectClass);
     }
 
-    void addCurrentEntityReferenceTasks(EntityReferenceTaskData currentEntityReferenceRelation) {
+    void addCurrentEntityReferenceTasks(int thisId, EntityReferenceTaskData currentEntityReferenceRelation) {
         if (null != currentEntityReferenceRelation) {
-            String data = objectClass.getName() + "to" + currentEntityReferenceRelation.getInnerClass();
-            this.currentEntityReferenceTasks.put(data, currentEntityReferenceRelation);
+            this.currentEntityReferenceTasks.put(thisId, currentEntityReferenceRelation);
         }
     }
 
@@ -79,7 +78,7 @@ public class ReacTask {
         this.referenceIdRelations.put(thisId, relation);
     }
 
-    HashMap<String, EntityReferenceTaskData> getCurrentEntityReferenceTasks() {
+    HashMap<Integer, EntityReferenceTaskData> getCurrentEntityReferenceTasks() {
         return currentEntityReferenceTasks;
     }
 

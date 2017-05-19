@@ -17,12 +17,11 @@ import java.util.Map;
 public class ReactEntityRowMapper implements RowMapper {
     Class clazz;
     LinkedHashMap<String, EntityVariablesData> parameters;
-    HashMap<String, EntityReferenceTaskData> referenceData;
+    HashMap<Integer, EntityReferenceTaskData> referenceData;
     HashMap<Integer, EntityReferenceIdRelation> objectReferenceTable;
     String dataStringPrefix;
-    int objectRelationsIdNamGenerator = 0;
 
-    public ReactEntityRowMapper(Class entityClass, LinkedHashMap<String, EntityVariablesData> parameters, HashMap<String, EntityReferenceTaskData> referenceData, HashMap<Integer, EntityReferenceIdRelation> objectReferenceTable, String dataStringPrefix) {
+    public ReactEntityRowMapper(Class entityClass, LinkedHashMap<String, EntityVariablesData> parameters, HashMap<Integer, EntityReferenceTaskData> referenceData, HashMap<Integer, EntityReferenceIdRelation> objectReferenceTable, String dataStringPrefix) {
         clazz = entityClass;
         this.parameters = parameters;
         this.referenceData = referenceData;
@@ -58,15 +57,17 @@ public class ReactEntityRowMapper implements RowMapper {
             Class throwedClass = null;
             try {
                 if (objectParameterKey.equals("objectId")) {
-                    for (EntityReferenceTaskData data : referenceData.values()) {
+                    System.out.println("FIRST OBJREFERENCETABLE.SIZE="+objectReferenceTable.size());
+                    for (Map.Entry<Integer, EntityReferenceTaskData> data : referenceData.entrySet()) {
                         System.out.println("*****************************************************");
                         System.out.println("REFERENCING!");
                         System.out.println("CLASS="+clazz);
-                        Integer referenceLinkName = resultSet.getInt(data.getInnerIdParameterNameForQueryParametersMap());
+                        Integer referenceLinkName = resultSet.getInt(data.getValue().getInnerIdParameterNameForQueryParametersMap());
                         Integer objectId = resultSet.getInt(objectParameterKey);
-                        EntityReferenceIdRelation relation = new EntityReferenceIdRelation(objectId, referenceLinkName, data.getInnerClass());
-                        System.out.println("NEW REFERENCE: KEY="+(objectId+objectRelationsIdNamGenerator)+", REF="+relation);
-                        objectReferenceTable.put((objectId+objectRelationsIdNamGenerator++), relation);
+                        EntityReferenceIdRelation relation = new EntityReferenceIdRelation(objectId, referenceLinkName, data.getValue().getInnerClass(), data.getValue().getThisFieldName());
+                        System.out.println("NEW REFERENCE: KEY="+data.getKey()+", REF="+relation);
+                        objectReferenceTable.put(data.getKey(), relation);
+                        System.out.println("OBJREFERENCETABLE.SIZE="+objectReferenceTable.size());
                     }
                 }
                 if (newObjectClass.equals(Integer.class)) {

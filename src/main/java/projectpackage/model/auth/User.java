@@ -13,8 +13,8 @@ import java.util.Set;
 
 @Data
 @ReactEntity(entityTypeName = "User")
-@ReactReference(referenceName = "UserToNotificationAsAuthor", outerEntityClass = Notification.class, outerFieldName = "author", outerFieldKey = "objectId", innerFieldKey = "objectId")
-@ReactReference(referenceName = "UserToNotificationAsExecutor", outerEntityClass = Notification.class, outerFieldName = "executedBy", outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactReference(referenceName = "UserToNotificationAsAuthor", outerEntityClass = Notification.class, outerFieldName = "author", outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "21")
+@ReactReference(referenceName = "UserToNotificationAsExecutor", outerEntityClass = Notification.class, outerFieldName = "executedBy", outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "24")
 @ReactReference(referenceName = "UserToModificationHistory", outerEntityClass = ModificationHistory.class, outerFieldName = "modifAuthor", outerFieldKey = "objectId", innerFieldKey = "objectId")
 @ReactReference(referenceName = "UserToOrder", outerEntityClass = Order.class, outerFieldName = "client", outerFieldKey = "objectId", innerFieldKey = "objectId")
 public class User implements ReactEntityWithId {

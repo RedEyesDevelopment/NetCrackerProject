@@ -30,7 +30,7 @@ public class DataInsertor {
                 String fieldName = null;
 
                 for (EntityReferenceTaskData taskdata : outerEntity.getCurrentEntityReferenceTasks().values()) {
-                    if (taskdata.getInnerClass().equals(targetClass)) {
+                    if (taskdata.getInnerClass().equals(targetClass) && taskdata.getThisFieldName().equals(entry.getValue().getFieldName())) {
                         fieldName = taskdata.getThisFieldName();
                     }
                 }

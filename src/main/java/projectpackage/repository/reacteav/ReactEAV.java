@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.reacteav.querying.ReactQueryBuilder;
 import projectpackage.repository.reacteav.querying.ReactQueryTaskHolder;
+import projectpackage.repository.reacteav.relationsdata.EntityAttrIdType;
 import projectpackage.repository.reacteav.relationsdata.EntityReferenceRelationshipsData;
 import projectpackage.repository.reacteav.relationsdata.EntityReferenceTaskData;
 import projectpackage.repository.reacteav.relationsdata.EntityVariablesData;
@@ -185,11 +186,12 @@ public class ReactEAV {
 
     //Добавляем в задание ссылки и маркера на reference-объекты
     private void addReferenceLinks(ReacTask currentTask) {
+        int per = 0;
         for (ReacTask task : currentTask.getInnerObjects()) {
             for (Map.Entry<String, EntityReferenceRelationshipsData> outerData : task.getCurrentEntityReferenceRelations().entrySet()) {
                 if (outerData.getValue().getOuterClass().equals(currentTask.getObjectClass()) && null!=task.getReferenceId() &&task.getReferenceId().equals(outerData.getKey())) {
-                    EntityReferenceTaskData newReferenceTask = new EntityReferenceTaskData(currentTask.getObjectClass(), task.getObjectClass(), task.getThisClassObjectTypeName(), outerData.getValue().getOuterFieldName(), outerData.getValue().getInnerIdKey(), outerData.getValue().getOuterIdKey());
-                    currentTask.addCurrentEntityReferenceTasks(newReferenceTask);
+                    EntityReferenceTaskData newReferenceTask = new EntityReferenceTaskData(currentTask.getObjectClass(), task.getObjectClass(), task.getThisClassObjectTypeName(), outerData.getValue().getOuterFieldName(), outerData.getValue().getInnerIdKey(), outerData.getValue().getOuterIdKey(), outerData.getValue().getReferenceAttrId());
+                    currentTask.addCurrentEntityReferenceTasks(per++, newReferenceTask);
                 }
             }
         }
@@ -276,7 +278,7 @@ public class ReactEAV {
         ObjectTableNameGenerator attributesTablesNameGenerator = new ObjectTableNameGenerator(config.getAttributesPermanentTableName());
 
         //Создаём объекты для связей типа reference
-        HashMap<String, String> objReferenceConnections = new HashMap<>();
+        HashMap<String, EntityAttrIdType> objReferenceConnections = new HashMap<>();
         ObjectTableNameGenerator referenceNameGenerator = null;
         if (currentNode.hasReferencedObjects()) {
             referenceNameGenerator = new ObjectTableNameGenerator(config.getReferenceTypePermanentTableName());
@@ -318,7 +320,8 @@ public class ReactEAV {
                 String nextReferenceName = referenceNameGenerator.getNextTableName();
                 String targetName = "R_" + nextReferenceName;
                 builder.appendSelectColumnWithNaming(targetName, config.getOref(), targetName);
-                objReferenceConnections.put(targetName, reference.getInnerClass().getName());
+                EntityAttrIdType type = new EntityAttrIdType(reference.getInnerClass().getName(), reference.getReferenceAttrId());
+                objReferenceConnections.put(targetName, type);
                 i++;
             }
         }
@@ -372,9 +375,10 @@ public class ReactEAV {
 
         //Аппендим reference
         if (currentNode.hasReferencedObjects()) {
-            List<String> objTypelist = new LinkedList<>();
+            List<EntityAttrIdType> objTypelist = new LinkedList<>();
             for (EntityReferenceTaskData reference : currentNode.getCurrentEntityReferenceTasks().values()) {
-                objTypelist.add(reference.getInnerClassObjectTypeName());
+                EntityAttrIdType type = new EntityAttrIdType(reference.getInnerClassObjectTypeName(),reference.getReferenceAttrId());
+                objTypelist.add(type);
             }
             int j = 0;
             for (int i = 1; i <= referenceNameGenerator.getTablesCounter(); i++) {
@@ -384,16 +388,31 @@ public class ReactEAV {
                 builder.appendWhereConditionWithTwoTablesEqualsByOB_TY_ID(config.getRootTableName(), attrTypeName);
                 builder.appendWhereConditionWithAttrTypeRefEqualsOB_TY_ID(attrTypeName, objTypeName);
                 builder.appendWhereConditionWithTwoTablesEqualsByAT_ID(attrTypeName, objReferenceName);
-                builder.appendWhereConditionWithTableCodeEqualsToConstant(objTypeName, objTypelist.get(j));
+                builder.appendWhereConditionWithTableCodeEqualsToConstant(objTypeName, objTypelist.get(j).getInnerClassObjectTypeName());
+                if (null!=objTypelist.get(j).getAttrId()){
+                    builder.appendWhereConditionWithObRefAttrIdEqualsInteger(attrTypeName, objTypelist.get(j).getAttrId());
+                }
                 j++;
                 builder.appendWhereConditionWithTwoTablesEqualsByOB_ID(config.getRootTableName(), objReferenceName);
             }
         }
 
         for (EntityReferenceTaskData taskData : currentNode.getCurrentEntityReferenceTasks().values()) {
-            for (Map.Entry<String, String> tgtReference : objReferenceConnections.entrySet()) {
-                if (tgtReference.getValue().equals(taskData.getInnerClass().getName())) {
-                    taskData.setInnerIdParameterNameForQueryParametersMap(tgtReference.getKey());
+            Iterator iterator = objReferenceConnections.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String, EntityAttrIdType> tgtReference = (Map.Entry<String, EntityAttrIdType>) iterator.next();
+                String referenceInnerClassObjectTypeName = tgtReference.getValue().getInnerClassObjectTypeName();
+                String taskDataInnerClassName = taskData.getInnerClass().getName();
+                Integer referenceAttrId = tgtReference.getValue().getAttrId();
+                Integer taskDataAttrId = taskData.getReferenceAttrId();
+                if (referenceInnerClassObjectTypeName.equals(taskDataInnerClassName)) {
+                    if (null!=referenceAttrId && null!=taskDataAttrId){
+                        if (referenceAttrId.equals(taskDataAttrId)){
+                            taskData.setInnerIdParameterNameForQueryParametersMap(tgtReference.getKey());
+                        }
+                    } else {
+                        taskData.setInnerIdParameterNameForQueryParametersMap(tgtReference.getKey());
+                    }
                 }
             }
         }

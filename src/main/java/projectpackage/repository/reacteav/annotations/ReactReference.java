@@ -8,7 +8,8 @@ import java.lang.annotation.*;
 public @interface ReactReference {
     String referenceName();
     Class outerEntityClass();
-    String outerFieldName() default "";
+    String attrIdField() default "";
+    String outerFieldName();
     String outerFieldKey() default "objectId";
     String innerFieldKey() default "objectId";
 }
