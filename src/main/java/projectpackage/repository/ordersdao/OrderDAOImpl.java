@@ -21,6 +21,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         try {
             jdbcTemplate.update(insertObjects, objectId, null, 2, null, null);                      //2 = Order
 
+            jdbcTemplate.update(insertAttributes, 5, objectId, objectId, null);
             jdbcTemplate.update(insertAttributes, 8, objectId, null, order.getRegistrationDate());     //Registration_date
             jdbcTemplate.update(insertAttributes, 9, objectId, order.getIsPaidFor(), null);          //Is_paid_for
             jdbcTemplate.update(insertAttributes, 10, objectId, order.getIsConfirmed(), null);       //Is_confirmed
@@ -71,7 +72,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
             if (oldOrder.getClient().getObjectId() != newOrder.getClient().getObjectId()) {
                 jdbcTemplate.update(updateReference, newOrder.getClient().getObjectId(), newOrder.getObjectId(), 7);
             }
-
         } catch (NullPointerException e) {
             throw new TransactionException(newOrder);
         }

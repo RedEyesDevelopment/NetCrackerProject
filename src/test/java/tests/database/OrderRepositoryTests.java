@@ -1,11 +1,15 @@
 package tests.database;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
+import projectpackage.model.auth.User;
 import projectpackage.model.orders.Order;
+import projectpackage.model.rooms.Room;
+import projectpackage.service.orderservice.OrderService;
 
-import java.util.List;
+import java.util.Date;
 
 import static org.junit.Assert.assertTrue;
 
@@ -13,9 +17,10 @@ import static org.junit.Assert.assertTrue;
  * Created by Arizel on 16.05.2017.
  */
 public class OrderRepositoryTests extends AbstractDatabaseTest{
+    private static final Logger LOGGER = Logger.getLogger(OrderRepositoryTests.class);
 
     @Autowired
-    Order order;
+    OrderService orderService;
 
     @Test
     @Rollback(true)
@@ -99,18 +104,57 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deleteOrder(){
-
+        int orderId = 2031;
+        boolean result = orderService.deleteOrder(orderId);
+        assertTrue(result);
+        LOGGER.info("Delete order result = " + result);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void createOrder(){
-
+        Room room = new Room();
+        room.setObjectId(127);
+        User user = new User();
+        user.setObjectId(900);
+        Order order = new Order();
+        order.setRegistrationDate(new Date());
+        order.setIsPaidFor(false);
+        order.setIsConfirmed(false);
+        order.setLivingStartDate(new Date());
+        order.setLivingFinishDate(new Date());
+        order.setSum(7478L);
+        order.setComment("Comment");
+        order.setRoom(room);
+        order.setClient(user);
+        boolean result = orderService.insertOrder(order);
+        assertTrue(result);
+        LOGGER.info("Create order result = " + result);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void updateOrder(){
-
+        Room room = new Room();
+        room.setObjectId(128);
+        User user = new User();
+        user.setObjectId(901);
+        Order order = new Order();
+        order.setRegistrationDate(new Date());
+        order.setIsPaidFor(true);
+        order.setIsConfirmed(true);
+        order.setLivingStartDate(new Date());
+        order.setLivingFinishDate(new Date());
+        order.setSum(10000L);
+        order.setComment("new Comment");
+        order.setRoom(room);
+        order.setClient(user);
+        boolean result = orderService.updateOrder(2031, order);
+        LOGGER.info(result);
+        assertTrue(result);
+        LOGGER.info("Create order result = " + result);
+        LOGGER.info(SEPARATOR);
     }
 }
