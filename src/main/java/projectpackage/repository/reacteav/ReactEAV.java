@@ -40,9 +40,9 @@ public class ReactEAV {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.config = config;
         this.dataBucket = dataBucket;
-        this.rootNode = new ReacTask(null, this, entityClass, true, null, null, false,null);
+        this.rootNode = new ReacTask(null, this, entityClass, true, null, null, false, null);
         this.rootNode.setObjectClass(entityClass);
-        this.conditions=new ArrayList<>();
+        this.conditions = new ArrayList<>();
     }
 
     ReactConnectionsDataBucket getDataBucket() {
@@ -62,12 +62,12 @@ public class ReactEAV {
 
     private ReacTask fetchingOrderCreation(Class innerEntityClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend, String referenceId) {
         validator.isTargetClassAReactEntity(innerEntityClass);
-        ReacTask childNode = new ReacTask(rootNode,this, innerEntityClass, forSingleObject, targetId, orderingParameter, ascend,referenceId);
+        ReacTask childNode = new ReacTask(rootNode, this, innerEntityClass, forSingleObject, targetId, orderingParameter, ascend, referenceId);
         rootNode.addInnerObject(childNode);
         return childNode;
     }
 
-    public ReactEAV addCondition(Class<? extends ReactCondition> conditionClass){
+    public ReactEAV addCondition(Class<? extends ReactCondition> conditionClass) {
         ReactCondition condition = null;
         try {
             condition = conditionClass.newInstance();
@@ -78,7 +78,7 @@ public class ReactEAV {
         }
         ReactConditionData data = null;
         ConditionExecutionMoment moment = null;
-        if (conditionClass.equals(PriceEqualsToRoomCondition.class)){
+        if (conditionClass.equals(PriceEqualsToRoomCondition.class)) {
             moment = ConditionExecutionMoment.AFTER_QUERY;
         }
         data = new ReactConditionData(condition, moment);
@@ -98,7 +98,7 @@ public class ReactEAV {
         } catch (NullPointerException e) {
             throw new ResultEntityNullException();
         }
-        if (null!=conditions && !conditions.isEmpty()){
+        if (null != conditions && !conditions.isEmpty()) {
             conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
         }
         return result;
@@ -115,7 +115,7 @@ public class ReactEAV {
         if (null == result) {
             throw new ResultEntityNullException();
         }
-        if (null!=conditions && !conditions.isEmpty()){
+        if (null != conditions && !conditions.isEmpty()) {
             conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
         }
         return result;
@@ -132,20 +132,37 @@ public class ReactEAV {
         if (null == result) {
             throw new ResultEntityNullException();
         }
-        if (null!=conditions && !conditions.isEmpty()){
+        if (null != conditions && !conditions.isEmpty()) {
             conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
         }
         return result;
     }
 
-    private void conditionExecution(ConditionExecutionMoment moment){
-        for (ReactConditionData data: conditions){
-            if (data.getMoment().equals(moment)){
+    private void conditionExecution(ConditionExecutionMoment moment) {
+        for (ReactConditionData data : conditions) {
+            ReacTask searcheable;
+            if (!data.getCondition().getTargetClass().equals(rootNode.getObjectClass())) {
+                searcheable = recursionConditionTaskSearching(rootNode, data.getClass());
+            } else {
+                searcheable = rootNode;
+            }
+            if (data.getMoment().equals(moment)) {
                 ReactCondition condition = data.getCondition();
-                condition.loadDataToParse(rootNode.getResultList());
+                condition.loadDataToParse(searcheable.getResultList());
                 condition.execute();
             }
         }
+    }
+
+    private ReacTask recursionConditionTaskSearching(ReacTask currentTask, Class searcheableClass) {
+        if (currentTask.getObjectClass().equals(searcheableClass)) {
+            return currentTask;
+        } else {
+            for (ReacTask task : currentTask.getInnerObjects()) {
+                return recursionConditionTaskSearching(task, searcheableClass);
+            }
+        }
+        return null;
     }
 
     private List<ReactQueryTaskHolder> reacTaskPreparator() {
@@ -233,7 +250,7 @@ public class ReactEAV {
         int per = 0;
         for (ReacTask task : currentTask.getInnerObjects()) {
             for (Map.Entry<String, EntityReferenceRelationshipsData> outerData : task.getCurrentEntityReferenceRelations().entrySet()) {
-                if (outerData.getValue().getOuterClass().equals(currentTask.getObjectClass()) && null!=task.getReferenceId() &&task.getReferenceId().equals(outerData.getKey())) {
+                if (outerData.getValue().getOuterClass().equals(currentTask.getObjectClass()) && null != task.getReferenceId() && task.getReferenceId().equals(outerData.getKey())) {
                     EntityReferenceTaskData newReferenceTask = new EntityReferenceTaskData(currentTask.getObjectClass(), task.getObjectClass(), task.getThisClassObjectTypeName(), outerData.getValue().getOuterFieldName(), outerData.getValue().getInnerIdKey(), outerData.getValue().getOuterIdKey(), outerData.getValue().getReferenceAttrId());
                     currentTask.addCurrentEntityReferenceTasks(per++, newReferenceTask);
                 }
@@ -264,8 +281,8 @@ public class ReactEAV {
             } else {
                 List result = null;
                 boolean cloned = false;
-                for (ReactQueryTaskHolder currentHolder: reactQueryTaskHolders){
-                    if (!currentHolder.getNode().getResultList().isEmpty() && holder.getNode().getObjectClass().equals(currentHolder.getNode().getObjectClass())){
+                for (ReactQueryTaskHolder currentHolder : reactQueryTaskHolders) {
+                    if (!currentHolder.getNode().getResultList().isEmpty() && holder.getNode().getObjectClass().equals(currentHolder.getNode().getObjectClass())) {
                         result = new ArrayList(currentHolder.getNode().getResultList());
                         cloned = true;
                     }
@@ -406,7 +423,7 @@ public class ReactEAV {
         if (currentNode.hasReferencedObjects()) {
             List<EntityAttrIdType> objTypelist = new LinkedList<>();
             for (EntityReferenceTaskData reference : currentNode.getCurrentEntityReferenceTasks().values()) {
-                EntityAttrIdType type = new EntityAttrIdType(reference.getInnerClassObjectTypeName(),reference.getReferenceAttrId());
+                EntityAttrIdType type = new EntityAttrIdType(reference.getInnerClassObjectTypeName(), reference.getReferenceAttrId());
                 objTypelist.add(type);
             }
             int j = 0;
@@ -418,7 +435,7 @@ public class ReactEAV {
                 builder.appendWhereConditionWithAttrTypeRefEqualsOB_TY_ID(attrTypeName, objTypeName);
                 builder.appendWhereConditionWithTwoTablesEqualsByAT_ID(attrTypeName, objReferenceName);
                 builder.appendWhereConditionWithTableCodeEqualsToConstant(objTypeName, objTypelist.get(j).getInnerClassObjectTypeName());
-                if (null!=objTypelist.get(j).getAttrId()){
+                if (null != objTypelist.get(j).getAttrId()) {
                     builder.appendWhereConditionWithObRefAttrIdEqualsInteger(attrTypeName, objTypelist.get(j).getAttrId());
                 }
                 j++;
@@ -435,8 +452,8 @@ public class ReactEAV {
                 Integer referenceAttrId = tgtReference.getValue().getAttrId();
                 Integer taskDataAttrId = taskData.getReferenceAttrId();
                 if (referenceInnerClassObjectTypeName.equals(taskDataInnerClassName)) {
-                    if (null!=referenceAttrId && null!=taskDataAttrId){
-                        if (referenceAttrId.equals(taskDataAttrId)){
+                    if (null != referenceAttrId && null != taskDataAttrId) {
+                        if (referenceAttrId.equals(taskDataAttrId)) {
                             taskData.setInnerIdParameterNameForQueryParametersMap(tgtReference.getKey());
                         }
                     } else {

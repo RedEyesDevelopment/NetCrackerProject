@@ -2,15 +2,39 @@ package projectpackage.repository.ratesdao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
+import java.util.List;
 
+@Repository
 public class RateDAOImpl extends AbstractDAO implements RateDAO{
 
     @Autowired
     JdbcTemplate jdbcTemplate;
+
+    @Override
+    public Rate getRate(Integer id) {
+        if (null==id) return null;
+        try {
+            return (Rate) manager.createReactEAV(Rate.class).fetchChildEntityCollection(Price.class).closeAllFetches().getSingleEntityWithId(id);
+        } catch (ResultEntityNullException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<Rate> getAllRates() {
+        try {
+            return manager.createReactEAV(Rate.class).fetchChildEntityCollection(Price.class).closeAllFetches().getEntityCollection();
+        } catch (ResultEntityNullException e) {
+            return null;
+        }
+    }
 
     @Override
     public int insertRate(Rate rate) throws TransactionException {

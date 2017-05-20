@@ -9,7 +9,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.service.authservice.UserService;
-import projectpackage.service.blockservice.BlockServiceImpl;
 
 import java.util.List;
 

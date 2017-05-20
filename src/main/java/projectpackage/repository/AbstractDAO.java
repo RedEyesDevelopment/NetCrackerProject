@@ -21,6 +21,9 @@ public abstract class AbstractDAO {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    protected ReactEAVManager manager;
+
     protected final String insertObjects = "INSERT INTO OBJECTS (OBJECT_ID, PARENT_ID, OBJECT_TYPE_ID, NAME, DESCRIPTION) VALUES (?, ?, ?, ?, ?)";
     protected final String insertAttributes = "INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (?, ?, ?, ?)";
     protected final String insertObjReference = "INSERT INTO OBJREFERENCE (ATTR_ID, OBJECT_ID, REFERENCE) VALUES (?, ?, ?)";

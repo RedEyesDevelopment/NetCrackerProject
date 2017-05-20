@@ -12,13 +12,10 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @ReactEntity(entityTypeName = "Order")
 @ReactReference(referenceName = "OrderToNotification", outerEntityClass = Notification.class, outerFieldName =
-        "order", outerFieldKey = "objectId", innerFieldKey = "objectId")
-@ReactReference(referenceName = "OrderToJournalRecord", outerEntityClass = JournalRecord.class, outerFieldName =
         "order", outerFieldKey = "objectId", innerFieldKey = "objectId")
 public class Order implements ReactEntityWithId {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
@@ -43,6 +40,6 @@ public class Order implements ReactEntityWithId {
     private User client;
     private User lastModificator;
     private List<ModificationHistory> historys;
-    private Set<JournalRecord> journalRecords;
+    private List<JournalRecord> journalRecords;
 
 }

@@ -14,6 +14,11 @@ public class PriceEqualsToRoomCondition implements ReactCondition {
     private List<Object> objects;
 
     @Override
+    public Class getTargetClass() {
+        return Room.class;
+    }
+
+    @Override
     public void loadDataToParse(List<Object> data) {
         this.objects = data;
     }
@@ -35,7 +40,6 @@ public class PriceEqualsToRoomCondition implements ReactCondition {
                 }
                 newRate.setPrices(prices);
                 rates.add(newRate);
-                System.out.println();
             }
             newRates.put(room.getObjectId(),rates);
         }
@@ -47,6 +51,7 @@ public class PriceEqualsToRoomCondition implements ReactCondition {
             Room room = (Room) obj;
             for (Map.Entry<Integer, Set<Rate>> entry:newRates.entrySet()){
                 if (entry.getKey().equals(room.getObjectId())){
+                    System.out.println("CURRENT ROOM ROOMTYPE ID="+room.getRoomType().getObjectId());
                     RoomType newRoomType = (RoomType) room.getRoomType().clone();
                     newRoomType.setRates(entry.getValue());
                     room.setRoomType(newRoomType);

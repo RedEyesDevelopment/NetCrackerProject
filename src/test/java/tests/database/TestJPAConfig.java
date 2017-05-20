@@ -34,27 +34,18 @@ import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
 import projectpackage.repository.reacteav.support.ReactEntityValidator;
 import projectpackage.repository.roomsdao.RoomDAO;
 import projectpackage.repository.roomsdao.RoomDAOImpl;
-import projectpackage.repository.roomsdao.RoomTypeDAO;
-import projectpackage.repository.roomsdao.RoomTypeDAOImpl;
-import projectpackage.service.authservice.*;
-import projectpackage.service.blockservice.BlockService;
-import projectpackage.service.blockservice.BlockServiceImpl;
+import projectpackage.service.authservice.PhoneService;
+import projectpackage.service.authservice.PhoneServiceImpl;
+import projectpackage.service.authservice.RoleService;
+import projectpackage.service.authservice.RoleServiceImpl;
 import projectpackage.service.notificationservice.NotificationService;
 import projectpackage.service.notificationservice.NotificationServiceImpl;
-import projectpackage.service.notificationservice.NotificationTypeService;
-import projectpackage.service.notificationservice.NotificationTypeServiceImpl;
 import projectpackage.service.orderservice.ModificationHistoryService;
 import projectpackage.service.orderservice.ModificationHistoryServiceImpl;
 import projectpackage.service.orderservice.OrderService;
 import projectpackage.service.orderservice.OrderServiceImpl;
 import projectpackage.service.rateservice.PriceService;
 import projectpackage.service.rateservice.PriceServiceImpl;
-import projectpackage.service.rateservice.RateService;
-import projectpackage.service.rateservice.RateServiceImpl;
-import projectpackage.service.roomservice.RoomService;
-import projectpackage.service.roomservice.RoomServiceImpl;
-import projectpackage.service.roomservice.RoomTypeService;
-import projectpackage.service.roomservice.RoomTypeServiceImpl;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -64,6 +55,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Properties;
+
+//import projectpackage.repository.roomsdao.RoomTypeDAOImpl;
 
 /**
  * Created by Gvozd on 06.01.2017.
@@ -201,10 +194,10 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         return new RoomDAOImpl();
     }
 
-    @Bean
-    RoomTypeDAO roomTypeDAO(){
-        return new RoomTypeDAOImpl();
-    }
+//    @Bean
+//    RoomTypeDAO roomTypeDAO(){
+//        return new RoomTypeDAOImpl();
+//    }
 
     @Bean
     PriceDAO priceDAO(){
@@ -226,10 +219,10 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         return new BlockDAOImpl();
     }
 
-    @Bean
-    UserService userService() {
-        return new UserServiceImpl();
-    }
+//    @Bean
+//    UserService userService() {
+//        return new UserServiceImpl();
+//    }
 
     @Bean
     RoleService roleService() {
@@ -241,20 +234,20 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         return new PhoneServiceImpl();
     }
 
-    @Bean
-    BlockService blockService() {
-        return new BlockServiceImpl();
-    }
+//    @Bean
+//    BlockService blockService() {
+//        return new BlockServiceImpl();
+//    }
 
     @Bean
     NotificationService notificationService() {
         return new NotificationServiceImpl();
     }
 
-    @Bean
-    NotificationTypeService notificationTypeService() {
-        return new NotificationTypeServiceImpl();
-    }
+//    @Bean
+//    NotificationTypeService notificationTypeService() {
+//        return new NotificationTypeServiceImpl();
+//    }
 
     @Bean
     OrderService orderService() {
@@ -266,25 +259,25 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         return new ModificationHistoryServiceImpl();
     }
 
-    @Bean
-    RoomService roomService() {
-        return new RoomServiceImpl();
-    }
-
-    @Bean
-    RoomTypeService roomTypeService() {
-        return new RoomTypeServiceImpl();
-    }
+//    @Bean
+//    RoomService roomService() {
+//        return new RoomServiceImpl();
+//    }
+//
+//    @Bean
+//    RoomTypeService roomTypeService() {
+//        return new RoomTypeServiceImpl();
+//    }
 
     @Bean
     PriceService priceService() {
         return new PriceServiceImpl();
     }
 
-    @Bean
-    RateService rateService() {
-        return new RateServiceImpl();
-    }
+//    @Bean
+//    RateService rateService() {
+//        return new RateServiceImpl();
+//    }
 
     @Bean
     ReactConstantConfiguration reactConstantConfiguration() { return new ReactConstantConfiguration(); }

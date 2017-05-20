@@ -241,6 +241,19 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getRooms(){
+        List<Room> rooms = null;
+        try {
+            rooms = manager.createReactEAV(Room.class).fetchReferenceEntityCollection(RoomType.class, "RoomTypeToRoom").closeAllFetches().getEntityCollection();
+        } catch (ResultEntityNullException e) {
+            e.printStackTrace();
+        }
+        for (Room room:rooms){
+            System.out.println(room);
+        }
+    }
+
+    @Test
     public void getRooms1(){
         List<Room> rooms = null;
         try {

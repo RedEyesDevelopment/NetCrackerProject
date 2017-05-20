@@ -2,16 +2,41 @@ package projectpackage.repository.roomsdao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+import projectpackage.model.rates.Price;
+import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
+import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
+import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
+import java.util.List;
+
+@Repository
 public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     @Autowired
     JdbcTemplate jdbcTemplate;
+
+    @Override
+    public Room getRoom(Integer id) {
+        if (null==id) return null;
+        try {
+            return (Room) manager.createReactEAV(Room.class).fetchReferenceEntityCollection(RoomType.class, "RoomTypeToRoom").fetchChildEntityCollectionForInnerObject(Rate.class).fetchChildEntityCollectionForInnerObject(Price.class).closeAllFetches().addCondition(PriceEqualsToRoomCondition.class).getSingleEntityWithId(id);
+        } catch (ResultEntityNullException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<Room> getAllRooms() {
+        try {
+            return manager.createReactEAV(Room.class).fetchReferenceEntityCollection(RoomType.class, "RoomTypeToRoom").fetchChildEntityCollectionForInnerObject(Rate.class).fetchChildEntityCollectionForInnerObject(Price.class).closeAllFetches().addCondition(PriceEqualsToRoomCondition.class).getEntityCollection();
+        } catch (ResultEntityNullException e) {
+            return null;
+        }
+    }
 
     @Override
     public int insertRoom(Room room) throws TransactionException {

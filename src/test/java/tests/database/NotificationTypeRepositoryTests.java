@@ -7,7 +7,6 @@ import org.springframework.test.annotation.Rollback;
 import projectpackage.model.auth.Role;
 import projectpackage.model.notifications.NotificationType;
 import projectpackage.service.notificationservice.NotificationTypeService;
-import projectpackage.service.notificationservice.NotificationTypeServiceImpl;
 
 import java.util.List;
 
@@ -19,7 +18,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class NotificationTypeRepositoryTests extends AbstractDatabaseTest {
 
-    private static final Logger LOGGER = Logger.getLogger(NotificationTypeServiceImpl.class);
+    private static final Logger LOGGER = Logger.getLogger("fucktoy");
 
     @Autowired
     NotificationTypeService notificationTypeService;
