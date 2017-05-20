@@ -12,7 +12,6 @@ import java.util.*;
  */
 public class PriceEqualsToRoomCondition implements ReactCondition {
     private List<Object> objects;
-    Map<Rate, Set<Price>> map = new HashMap<>();
 
     @Override
     public void loadDataToParse(List<Object> data) {
