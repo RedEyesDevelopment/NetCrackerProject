@@ -16,7 +16,10 @@ import java.util.Set;
 @ReactReference(referenceName = "UserToNotificationAsAuthor", outerEntityClass = Notification.class, outerFieldName = "author", outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "21")
 @ReactReference(referenceName = "UserToNotificationAsExecutor", outerEntityClass = Notification.class, outerFieldName = "executedBy", outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "24")
 @ReactReference(referenceName = "UserToModificationHistory", outerEntityClass = ModificationHistory.class, outerFieldName = "modifAuthor", outerFieldKey = "objectId", innerFieldKey = "objectId")
-@ReactReference(referenceName = "UserToOrder", outerEntityClass = Order.class, outerFieldName = "client", outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactReference(referenceName = "UserToOrderAsClient", outerEntityClass = Order.class, outerFieldName = "client",
+        outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "7")
+@ReactReference(referenceName = "UserToOrderAsLastModificator", outerEntityClass = Order.class, outerFieldName = "lastModificator",
+        outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "44")
 public class User implements ReactEntityWithId {
 
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
@@ -31,6 +34,8 @@ public class User implements ReactEntityWithId {
     private String lastName;
     @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Additional_info")
     private String additionalInfo;
+    @ReactField(valueObjectClass = Boolean.class, databaseAttrtypeCodeValue = "Enabled")
+    private Boolean enabled;
 
     private Role role;
     private Set<Phone> phones;

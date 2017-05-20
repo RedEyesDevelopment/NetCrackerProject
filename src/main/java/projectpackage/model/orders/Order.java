@@ -16,7 +16,10 @@ import java.util.Set;
 
 @Data
 @ReactEntity(entityTypeName = "Order")
-@ReactReference(referenceName = "OrdertoNotification", outerEntityClass = Notification.class, outerFieldName = "order", outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactReference(referenceName = "OrderToNotification", outerEntityClass = Notification.class, outerFieldName =
+        "order", outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactReference(referenceName = "OrderToJournalRecord", outerEntityClass = JournalRecord.class, outerFieldName =
+        "order", outerFieldKey = "objectId", innerFieldKey = "objectId")
 public class Order implements ReactEntityWithId {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
@@ -34,10 +37,11 @@ public class Order implements ReactEntityWithId {
     private Long sum;
     @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Comment")
     private String comment;
-    private User lastModificator;
 
+    private Category category;
     private Room room;
     private User client;
+    private User lastModificator;
     private List<ModificationHistory> historys;
     private Set<JournalRecord> journalRecords;
 
