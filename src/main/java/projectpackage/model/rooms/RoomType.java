@@ -11,8 +11,8 @@ import java.util.Set;
 
 @Data
 @ReactEntity(entityTypeName = "Room_type")
-@ReactReference(outerEntityClass = Room.class, outerFieldName = "roomType", outerFieldKey = "objectId", innerFieldKey = "objectId")
-public class RoomType implements ReactEntityWithId {
+@ReactReference(referenceName = "RoomTypeToRoom", outerEntityClass = Room.class, outerFieldName = "roomType", outerFieldKey = "objectId", innerFieldKey = "objectId")
+public class RoomType implements ReactEntityWithId, Cloneable {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Room_type_title")
@@ -21,4 +21,14 @@ public class RoomType implements ReactEntityWithId {
     private String content;
 
     private Set<Rate> rates;
+
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

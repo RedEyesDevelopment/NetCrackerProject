@@ -1,15 +1,10 @@
 package projectpackage.service.roomservice;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import projectpackage.model.rates.Price;
-import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
-import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.ReactEAVManager;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
-import projectpackage.repository.roomsdao.RoomDAO;
 
 import java.util.List;
 

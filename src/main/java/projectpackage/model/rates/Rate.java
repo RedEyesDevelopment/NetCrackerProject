@@ -13,7 +13,7 @@ import java.util.Set;
 @Data
 @ReactEntity(entityTypeName = "Rate")
 @ReactChild(outerEntityClass = RoomType.class, outerFieldName = "rates", outerFieldKey = "objectId", innerFieldKey = "roomTypeId")
-public class Rate implements ReactEntityWithId {
+public class Rate implements ReactEntityWithId, Cloneable{
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Rate_from_date")
@@ -23,7 +23,17 @@ public class Rate implements ReactEntityWithId {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%PARENT_ID")
     private Integer roomTypeId;
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Creation_date")
-    private Date CreationDate;
+    private Date creationDate;
 
     private Set<Price> prices;
+
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

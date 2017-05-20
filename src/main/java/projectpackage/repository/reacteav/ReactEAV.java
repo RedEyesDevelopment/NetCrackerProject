@@ -6,13 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import projectpackage.repository.reacteav.exceptions.CyclicEntityQueryException;
+import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
+import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
+import projectpackage.repository.reacteav.conditions.ReactCondition;
+import projectpackage.repository.reacteav.conditions.ReactConditionData;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+import projectpackage.repository.reacteav.querying.ReactQueryBuilder;
+import projectpackage.repository.reacteav.querying.ReactQueryTaskHolder;
+import projectpackage.repository.reacteav.relationsdata.EntityAttrIdType;
 import projectpackage.repository.reacteav.relationsdata.EntityReferenceRelationshipsData;
 import projectpackage.repository.reacteav.relationsdata.EntityReferenceTaskData;
 import projectpackage.repository.reacteav.relationsdata.EntityVariablesData;
-import projectpackage.repository.reacteav.querying.ReactQueryBuilder;
-import projectpackage.repository.reacteav.querying.ReactQueryTaskHolder;
 import projectpackage.repository.reacteav.support.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -23,6 +27,7 @@ public class ReactEAV {
     private ReactConstantConfiguration config;
     private ReactConnectionsDataBucket dataBucket;
     private ReacTask rootNode;
+    private List<ReactConditionData> conditions;
     private List<ReactQueryTaskHolder> reactQueryTaskHolders;
 
     @Autowired
@@ -35,29 +40,50 @@ public class ReactEAV {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.config = config;
         this.dataBucket = dataBucket;
-        this.rootNode = new ReacTask(this, entityClass, true, null, null, false);
+        this.rootNode = new ReacTask(null, this, entityClass, true, null, null, false,null);
         this.rootNode.setObjectClass(entityClass);
+        this.conditions=new ArrayList<>();
     }
 
     ReactConnectionsDataBucket getDataBucket() {
         return dataBucket;
     }
 
-    public ReacTask fetchInnerEntityCollection(Class innerEntityClass) {
-        ReacTask newReacTask = fetchingOrderCreation(innerEntityClass, false, null, null, false);
+    public ReacTask fetchChildEntityCollection(Class innerEntityClass) {
+        ReacTask newReacTask = fetchingOrderCreation(innerEntityClass, false, null, null, false, null);
         return newReacTask;
     }
 
-    public ReacTask fetchInnerEntityCollectionOrderBy(Class innerEntityClass, String orderingParameter, boolean ascend) {
-        ReacTask newReacTask = fetchingOrderCreation(innerEntityClass, false, null, orderingParameter, ascend);
+    public ReacTask fetchReferenceEntityCollection(Class innerEntityClass, String referenceName) {
+        ReacTask newReacTask = fetchingOrderCreation(innerEntityClass, false, null, null, false, referenceName);
         return newReacTask;
     }
 
-    private ReacTask fetchingOrderCreation(Class innerEntityClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend) {
+
+    private ReacTask fetchingOrderCreation(Class innerEntityClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend, String referenceId) {
         validator.isTargetClassAReactEntity(innerEntityClass);
-        ReacTask childNode = new ReacTask(this, innerEntityClass, forSingleObject, targetId, orderingParameter, ascend);
+        ReacTask childNode = new ReacTask(rootNode,this, innerEntityClass, forSingleObject, targetId, orderingParameter, ascend,referenceId);
         rootNode.addInnerObject(childNode);
         return childNode;
+    }
+
+    public ReactEAV addCondition(Class<? extends ReactCondition> conditionClass){
+        ReactCondition condition = null;
+        try {
+            condition = conditionClass.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        ReactConditionData data = null;
+        ConditionExecutionMoment moment = null;
+        if (conditionClass.equals(PriceEqualsToRoomCondition.class)){
+            moment = ConditionExecutionMoment.AFTER_QUERY;
+        }
+        data = new ReactConditionData(condition, moment);
+        this.conditions.add(data);
+        return this;
     }
 
     public Object getSingleEntityWithId(int targetId) throws ResultEntityNullException {
@@ -71,6 +97,9 @@ public class ReactEAV {
             result = launchProcess().get(0);
         } catch (NullPointerException e) {
             throw new ResultEntityNullException();
+        }
+        if (null!=conditions && !conditions.isEmpty()){
+            conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
         }
         return result;
     }
@@ -86,6 +115,9 @@ public class ReactEAV {
         if (null == result) {
             throw new ResultEntityNullException();
         }
+        if (null!=conditions && !conditions.isEmpty()){
+            conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
+        }
         return result;
     }
 
@@ -100,7 +132,20 @@ public class ReactEAV {
         if (null == result) {
             throw new ResultEntityNullException();
         }
+        if (null!=conditions && !conditions.isEmpty()){
+            conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
+        }
         return result;
+    }
+
+    private void conditionExecution(ConditionExecutionMoment moment){
+        for (ReactConditionData data: conditions){
+            if (data.getMoment().equals(moment)){
+                ReactCondition condition = data.getCondition();
+                condition.loadDataToParse(rootNode.getResultList());
+                condition.execute();
+            }
+        }
     }
 
     private List<ReactQueryTaskHolder> reacTaskPreparator() {
@@ -185,19 +230,18 @@ public class ReactEAV {
 
     //Добавляем в задание ссылки и маркера на reference-объекты
     private void addReferenceLinks(ReacTask currentTask) {
+        int per = 0;
         for (ReacTask task : currentTask.getInnerObjects()) {
-            for (Map.Entry<Class, EntityReferenceRelationshipsData> outerData : task.getCurrentEntityReferenceRelations().entrySet()) {
-                if (outerData.getKey().equals(currentTask.getObjectClass())) {
-                    EntityReferenceTaskData newReferenceTask = new EntityReferenceTaskData(outerData.getKey(), task.getObjectClass(), task.getThisClassObjectTypeName(), outerData.getValue().getOuterFieldName(), outerData.getValue().getInnerIdKey(), outerData.getValue().getOuterIdKey());
-                    currentTask.addCurrentEntityReferenceTasks(newReferenceTask);
+            for (Map.Entry<String, EntityReferenceRelationshipsData> outerData : task.getCurrentEntityReferenceRelations().entrySet()) {
+                if (outerData.getValue().getOuterClass().equals(currentTask.getObjectClass()) && null!=task.getReferenceId() &&task.getReferenceId().equals(outerData.getKey())) {
+                    EntityReferenceTaskData newReferenceTask = new EntityReferenceTaskData(currentTask.getObjectClass(), task.getObjectClass(), task.getThisClassObjectTypeName(), outerData.getValue().getOuterFieldName(), outerData.getValue().getInnerIdKey(), outerData.getValue().getOuterIdKey(), outerData.getValue().getReferenceAttrId());
+                    currentTask.addCurrentEntityReferenceTasks(per++, newReferenceTask);
                 }
             }
         }
     }
 
     private List launchProcess() {
-        findCyclicGraphs();
-
         for (ReactQueryTaskHolder holder : reactQueryTaskHolders) {
             if (holder.getNode().isForSingleObject()) {
                 Object result = null;
@@ -219,19 +263,28 @@ public class ReactEAV {
                 }
             } else {
                 List result = null;
-                try {
-                    result = (List) namedParameterJdbcTemplate.query(holder.getQuery(), holder.getSource(), new RowMapperResultSetExtractor(new ReactEntityRowMapper(holder.getNode().getObjectClass(), holder.getNode().getCurrentEntityParameters(), holder.getNode().getCurrentEntityReferenceTasks(), holder.getNode().getReferenceIdRelations(), config.getDateAppender())));
-                    holder.getNode().setResultList(result);
-                } catch (EmptyResultDataAccessException empty) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("ReactEAV failed to get object collection from database, DB returned null. This may be because there is no entity objects in database.");
-                    sb.append("Root entity class=" + rootNode.getObjectClass());
-                    sb.append("Entity-that-returned-null-class=" + holder.getNode().getObjectClass());
-                    sb.append("Query=" + holder.getQuery());
-                    sb.append("Sorting parameter=" + holder.getNode().getOrderingParameter());
-                    log.log(Level.WARN, sb.toString(), empty);
-                    if (holder.getNode().equals(rootNode)) {
-                        return null;
+                boolean cloned = false;
+                for (ReactQueryTaskHolder currentHolder: reactQueryTaskHolders){
+                    if (!currentHolder.getNode().getResultList().isEmpty() && holder.getNode().getObjectClass().equals(currentHolder.getNode().getObjectClass())){
+                        result = new ArrayList(currentHolder.getNode().getResultList());
+                        cloned = true;
+                    }
+                }
+                if (!cloned) {
+                    try {
+                        result = (List) namedParameterJdbcTemplate.query(holder.getQuery(), holder.getSource(), new RowMapperResultSetExtractor(new ReactEntityRowMapper(holder.getNode().getObjectClass(), holder.getNode().getCurrentEntityParameters(), holder.getNode().getCurrentEntityReferenceTasks(), holder.getNode().getReferenceIdRelations(), config.getDateAppender())));
+                        holder.getNode().setResultList(result);
+                    } catch (EmptyResultDataAccessException empty) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("ReactEAV failed to get object collection from database, DB returned null. This may be because there is no entity objects in database.");
+                        sb.append("Root entity class=" + rootNode.getObjectClass());
+                        sb.append("Entity-that-returned-null-class=" + holder.getNode().getObjectClass());
+                        sb.append("Query=" + holder.getQuery());
+                        sb.append("Sorting parameter=" + holder.getNode().getOrderingParameter());
+                        log.log(Level.WARN, sb.toString(), empty);
+                        if (holder.getNode().equals(rootNode)) {
+                            return null;
+                        }
                     }
                 }
             }
@@ -244,19 +297,6 @@ public class ReactEAV {
         return dataConnector.connectEntitiesAndReturn();
     }
 
-    //Нвхождение повторных запросов одной и той же entity в одном запросе
-    private void findCyclicGraphs() {
-        HashSet<Class> classes = new HashSet<>();
-        Boolean trigger;
-        for (ReactQueryTaskHolder holder : reactQueryTaskHolders) {
-            trigger = classes.add(holder.getNode().getObjectClass());
-            if (trigger.equals(false)) {
-                CyclicEntityQueryException exception = new CyclicEntityQueryException(holder.getNode().getObjectClass());
-                throw exception;
-            }
-        }
-    }
-
     //Метод создания ссылки в билдере
     private String getQueryForEntity(LinkedHashMap<String, EntityVariablesData> currentNodeVariables, ReacTask currentNode, boolean isSearchById, String orderingParameter, boolean ascend) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
         //Создаём стрингбилдер и ReactQueryBuilder, нацеленный на стрингбилдер.
@@ -267,7 +307,7 @@ public class ReactEAV {
         ObjectTableNameGenerator attributesTablesNameGenerator = new ObjectTableNameGenerator(config.getAttributesPermanentTableName());
 
         //Создаём объекты для связей типа reference
-        HashMap<String, String> objReferenceConnections = new HashMap<>();
+        HashMap<String, EntityAttrIdType> objReferenceConnections = new HashMap<>();
         ObjectTableNameGenerator referenceNameGenerator = null;
         if (currentNode.hasReferencedObjects()) {
             referenceNameGenerator = new ObjectTableNameGenerator(config.getReferenceTypePermanentTableName());
@@ -309,7 +349,8 @@ public class ReactEAV {
                 String nextReferenceName = referenceNameGenerator.getNextTableName();
                 String targetName = "R_" + nextReferenceName;
                 builder.appendSelectColumnWithNaming(targetName, config.getOref(), targetName);
-                objReferenceConnections.put(targetName, reference.getInnerClass().getName());
+                EntityAttrIdType type = new EntityAttrIdType(reference.getInnerClass().getName(), reference.getReferenceAttrId());
+                objReferenceConnections.put(targetName, type);
                 i++;
             }
         }
@@ -363,9 +404,10 @@ public class ReactEAV {
 
         //Аппендим reference
         if (currentNode.hasReferencedObjects()) {
-            List<String> objTypelist = new LinkedList<>();
+            List<EntityAttrIdType> objTypelist = new LinkedList<>();
             for (EntityReferenceTaskData reference : currentNode.getCurrentEntityReferenceTasks().values()) {
-                objTypelist.add(reference.getInnerClassObjectTypeName());
+                EntityAttrIdType type = new EntityAttrIdType(reference.getInnerClassObjectTypeName(),reference.getReferenceAttrId());
+                objTypelist.add(type);
             }
             int j = 0;
             for (int i = 1; i <= referenceNameGenerator.getTablesCounter(); i++) {
@@ -375,16 +417,31 @@ public class ReactEAV {
                 builder.appendWhereConditionWithTwoTablesEqualsByOB_TY_ID(config.getRootTableName(), attrTypeName);
                 builder.appendWhereConditionWithAttrTypeRefEqualsOB_TY_ID(attrTypeName, objTypeName);
                 builder.appendWhereConditionWithTwoTablesEqualsByAT_ID(attrTypeName, objReferenceName);
-                builder.appendWhereConditionWithTableCodeEqualsToConstant(objTypeName, objTypelist.remove(j));
+                builder.appendWhereConditionWithTableCodeEqualsToConstant(objTypeName, objTypelist.get(j).getInnerClassObjectTypeName());
+                if (null!=objTypelist.get(j).getAttrId()){
+                    builder.appendWhereConditionWithObRefAttrIdEqualsInteger(attrTypeName, objTypelist.get(j).getAttrId());
+                }
                 j++;
                 builder.appendWhereConditionWithTwoTablesEqualsByOB_ID(config.getRootTableName(), objReferenceName);
             }
         }
 
         for (EntityReferenceTaskData taskData : currentNode.getCurrentEntityReferenceTasks().values()) {
-            for (Map.Entry<String, String> tgtReference : objReferenceConnections.entrySet()) {
-                if (tgtReference.getValue().equals(taskData.getInnerClass().getName())) {
-                    taskData.setInnerIdParameterNameForQueryParametersMap(tgtReference.getKey());
+            Iterator iterator = objReferenceConnections.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String, EntityAttrIdType> tgtReference = (Map.Entry<String, EntityAttrIdType>) iterator.next();
+                String referenceInnerClassObjectTypeName = tgtReference.getValue().getInnerClassObjectTypeName();
+                String taskDataInnerClassName = taskData.getInnerClass().getName();
+                Integer referenceAttrId = tgtReference.getValue().getAttrId();
+                Integer taskDataAttrId = taskData.getReferenceAttrId();
+                if (referenceInnerClassObjectTypeName.equals(taskDataInnerClassName)) {
+                    if (null!=referenceAttrId && null!=taskDataAttrId){
+                        if (referenceAttrId.equals(taskDataAttrId)){
+                            taskData.setInnerIdParameterNameForQueryParametersMap(tgtReference.getKey());
+                        }
+                    } else {
+                        taskData.setInnerIdParameterNameForQueryParametersMap(tgtReference.getKey());
+                    }
                 }
             }
         }

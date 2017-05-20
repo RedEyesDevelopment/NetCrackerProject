@@ -17,11 +17,11 @@ import java.util.Map;
 public class ReactEntityRowMapper implements RowMapper {
     Class clazz;
     LinkedHashMap<String, EntityVariablesData> parameters;
-    HashMap<String, EntityReferenceTaskData> referenceData;
+    HashMap<Integer, EntityReferenceTaskData> referenceData;
     HashMap<Integer, EntityReferenceIdRelation> objectReferenceTable;
     String dataStringPrefix;
 
-    public ReactEntityRowMapper(Class entityClass, LinkedHashMap<String, EntityVariablesData> parameters, HashMap<String, EntityReferenceTaskData> referenceData, HashMap<Integer, EntityReferenceIdRelation> objectReferenceTable, String dataStringPrefix) {
+    public ReactEntityRowMapper(Class entityClass, LinkedHashMap<String, EntityVariablesData> parameters, HashMap<Integer, EntityReferenceTaskData> referenceData, HashMap<Integer, EntityReferenceIdRelation> objectReferenceTable, String dataStringPrefix) {
         clazz = entityClass;
         this.parameters = parameters;
         this.referenceData = referenceData;
@@ -57,11 +57,11 @@ public class ReactEntityRowMapper implements RowMapper {
             Class throwedClass = null;
             try {
                 if (objectParameterKey.equals("objectId")) {
-                    for (EntityReferenceTaskData data : referenceData.values()) {
-                        Integer referenceLinkName = resultSet.getInt(data.getInnerIdParameterNameForQueryParametersMap());
+                    for (Map.Entry<Integer, EntityReferenceTaskData> data : referenceData.entrySet()) {
+                        Integer referenceLinkName = resultSet.getInt(data.getValue().getInnerIdParameterNameForQueryParametersMap());
                         Integer objectId = resultSet.getInt(objectParameterKey);
-                        EntityReferenceIdRelation relation = new EntityReferenceIdRelation(referenceLinkName, data.getInnerClass());
-                        objectReferenceTable.put(objectId, relation);
+                        EntityReferenceIdRelation relation = new EntityReferenceIdRelation(objectId, referenceLinkName, data.getValue().getInnerClass());
+                        objectReferenceTable.put(data.getKey(), relation);
                     }
                 }
                 if (newObjectClass.equals(Integer.class)) {
@@ -76,10 +76,15 @@ public class ReactEntityRowMapper implements RowMapper {
                     throwedClass = Long.class;
                     field.set(targetReacEntityObject, resultSet.getLong(objectParameterKey));
                 }
-                if (newObjectClass.equals(java.sql.Date.class)) {
-                    throwedClass = java.sql.Date.class;
-                    Date date = resultSet.getDate(objectParameterKey);
+                if (newObjectClass.equals(Date.class)) {
+                    throwedClass = Date.class;
+                    Date date = resultSet.getDate(objectParameterKey+dataStringPrefix);
                     field.set(targetReacEntityObject, date);
+                }
+                if (newObjectClass.equals(Boolean.class)) {
+                    throwedClass = Date.class;
+                    String bool = resultSet.getString(objectParameterKey);
+                    field.set(targetReacEntityObject, Boolean.parseBoolean(bool));
                 }
             } catch (IllegalAccessException e) {
                 throw new WrongTypeClassException(field.getDeclaringClass(), throwedClass);

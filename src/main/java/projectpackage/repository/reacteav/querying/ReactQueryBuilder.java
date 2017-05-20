@@ -136,6 +136,14 @@ public class ReactQueryBuilder {
         return true;
     }
 
+    public boolean appendWhereConditionWithObRefAttrIdEqualsInteger(String tableName, Integer integer) {
+        if (queryHasBeenFinished) return false;
+        if (!firstWordInWhereQueryFlag) appendAnd();
+        queryBuilder.append(tableName + "." + config.getAid() + "=" + integer);
+        firstWordInWhereQueryFlag = false;
+        return true;
+    }
+
     public boolean appendWhereConditionWithRootTableObjectIdSearching() {
         if (queryHasBeenFinished) return false;
         if (!firstWordInWhereQueryFlag) appendAnd();

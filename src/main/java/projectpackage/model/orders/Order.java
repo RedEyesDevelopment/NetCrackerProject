@@ -16,16 +16,16 @@ import java.util.Set;
 
 @Data
 @ReactEntity(entityTypeName = "Order")
-@ReactReference(outerEntityClass = Notification.class, outerFieldName = "order", outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactReference(referenceName = "OrdertoNotification", outerEntityClass = Notification.class, outerFieldName = "order", outerFieldKey = "objectId", innerFieldKey = "objectId")
 public class Order implements ReactEntityWithId {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Registration_date")
     private Date registrationDate;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Is_paid_for")
-    private String isPaidFor;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Is_confirmed")
-    private String isConfirmed;
+    @ReactField(valueObjectClass = Boolean.class, databaseAttrtypeCodeValue = "Is_paid_for")
+    private Boolean isPaidFor;
+    @ReactField(valueObjectClass = Boolean.class, databaseAttrtypeCodeValue = "Is_confirmed")
+    private Boolean isConfirmed;
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Living_start_date")
     private Date livingStartDate;
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Living_finish_date")
@@ -41,19 +41,4 @@ public class Order implements ReactEntityWithId {
     private List<ModificationHistory> historys;
     private Set<JournalRecord> journalRecords;
 
-    public boolean isPaidFor(){
-        return Boolean.parseBoolean(isPaidFor);
-    }
-
-    public boolean isConfirmed(){
-        return Boolean.parseBoolean(isConfirmed);
-    }
-
-    public void setIsPaidFor(boolean isPaid){
-        isPaidFor = String.valueOf(isPaid);
-    }
-
-    public void setIsConfirmed(boolean isConfirmed){
-        this.isConfirmed = String.valueOf(isConfirmed);
-    }
 }

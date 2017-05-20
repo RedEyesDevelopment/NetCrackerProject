@@ -4,15 +4,19 @@ package projectpackage.repository.reacteav.relationsdata;
  * Created by Lenovo on 14.05.2017.
  */
 public class EntityReferenceRelationshipsData {
+    private Class outerClass;
     private String outerFieldName;
     private String innerIdKey;
     private String outerIdKey;
+    private Integer referenceAttrId;
 
 
-    public EntityReferenceRelationshipsData(String outerFieldName, String innerIdKey, String outerIdKey) {
+    public EntityReferenceRelationshipsData(Class outerClass, String outerFieldName, String innerIdKey, String outerIdKey, Integer referenceAttrId) {
+        this.outerClass = outerClass;
         this.outerFieldName = outerFieldName;
         this.innerIdKey = innerIdKey;
         this.outerIdKey = outerIdKey;
+        this.referenceAttrId = referenceAttrId;
     }
 
     public String getOuterFieldName() {
@@ -25,5 +29,13 @@ public class EntityReferenceRelationshipsData {
 
     public String getOuterIdKey() {
         return outerIdKey;
+    }
+
+    public Class getOuterClass() {
+        return outerClass;
+    }
+
+    public Integer getReferenceAttrId() {
+        return referenceAttrId;
     }
 }
