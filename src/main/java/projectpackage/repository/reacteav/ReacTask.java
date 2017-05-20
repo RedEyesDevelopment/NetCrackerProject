@@ -25,7 +25,6 @@ public class ReacTask {
     private String referenceId;
     private List<ReacTask> innerObjects;
     private Object entity = null;
-    private String statement;
     private LinkedHashMap<String, EntityVariablesData> currentEntityParameters;
     private HashMap<Class, EntityOuterRelationshipsData> currentEntityOuterLinks;
     private HashMap<String, EntityReferenceRelationshipsData> currentEntityReferenceRelations;
@@ -45,7 +44,6 @@ public class ReacTask {
         if (null!=referenceId) this.referenceId=referenceId;
         this.referenceIdRelations = new HashMap<>();
         this.currentEntityReferenceTasks = new HashMap<>();
-        this.statement = null;
 
         //Кастуем класс
         try {
@@ -156,14 +154,6 @@ public class ReacTask {
 
     String getReferenceId() {
         return referenceId;
-    }
-
-    String getStatement() {
-        return statement;
-    }
-
-    public void setConnectionCondition(String statement) {
-        this.statement = statement;
     }
 
     public ReacTask fetchChildEntityCollectionForInnerObject(Class innerEntityClass) {

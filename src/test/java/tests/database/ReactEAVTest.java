@@ -9,8 +9,12 @@ import projectpackage.model.auth.User;
 import projectpackage.model.notifications.Notification;
 import projectpackage.model.notifications.NotificationType;
 import projectpackage.model.orders.Order;
+import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
+import projectpackage.model.rooms.Room;
+import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.reacteav.ReactEAVManager;
+import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -188,8 +192,10 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         for (User user:list){
             System.out.println(user);
             assertNotNull(user);
-            for (Phone phone:user.getPhones()){
-                assertNotNull(phone);
+            if (user.getObjectId()!=999) {
+                for (Phone phone : user.getPhones()) {
+                    assertNotNull(phone);
+                }
             }
             Role role = user.getRole();
             assertNotNull(role);
@@ -209,8 +215,10 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         for (User user:list){
             System.out.println(user);
             assertNotNull(user);
-            for (Phone phone:user.getPhones()){
-                assertNotNull(phone);
+            if (user.getObjectId()!=999) {
+                for (Phone phone : user.getPhones()) {
+                    assertNotNull(phone);
+                }
             }
             Role role = user.getRole();
             assertNotNull(role);
@@ -232,20 +240,20 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         }
     }
 
-//    @Test
-//    public void getRooms1(){
-//        List<Room> rooms = null;
-//        try {
-//            rooms = manager.createReactEAV(Room.class).fetchInnerEntityCollection(RoomType.class).fetchInnerEntityCollectionForInnerObject(Rate.class).fetchInnerEntityCollectionForInnerObject(Price.class).closeFetch().getEntityCollection();
-//        } catch (ResultEntityNullException e) {
-//            e.printStackTrace();
-//        }
-//        for (Room room:rooms){
-//            System.out.println(room);
-//        }
-//        System.out.println(SEPARATOR);
-//
-//    }
+    @Test
+    public void getRooms1(){
+        List<Room> rooms = null;
+        try {
+            rooms = manager.createReactEAV(Room.class).fetchReferenceEntityCollection(RoomType.class, "RoomTypeToRoom").fetchChildEntityCollectionForInnerObject(Rate.class).fetchChildEntityCollectionForInnerObject(Price.class).closeAllFetches().addCondition(PriceEqualsToRoomCondition.class).getEntityCollection();
+        } catch (ResultEntityNullException e) {
+            e.printStackTrace();
+        }
+        for (Room room:rooms){
+            System.out.println(room);
+        }
+        System.out.println(SEPARATOR);
+
+    }
 //
 //    @Test
 //    public void getRoomTypes(){

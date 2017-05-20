@@ -6,6 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
+import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
+import projectpackage.repository.reacteav.conditions.ReactCondition;
+import projectpackage.repository.reacteav.conditions.ReactConditionData;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.reacteav.querying.ReactQueryBuilder;
 import projectpackage.repository.reacteav.querying.ReactQueryTaskHolder;
@@ -23,6 +27,7 @@ public class ReactEAV {
     private ReactConstantConfiguration config;
     private ReactConnectionsDataBucket dataBucket;
     private ReacTask rootNode;
+    private List<ReactConditionData> conditions;
     private List<ReactQueryTaskHolder> reactQueryTaskHolders;
 
     @Autowired
@@ -37,6 +42,7 @@ public class ReactEAV {
         this.dataBucket = dataBucket;
         this.rootNode = new ReacTask(null, this, entityClass, true, null, null, false,null);
         this.rootNode.setObjectClass(entityClass);
+        this.conditions=new ArrayList<>();
     }
 
     ReactConnectionsDataBucket getDataBucket() {
@@ -61,6 +67,25 @@ public class ReactEAV {
         return childNode;
     }
 
+    public ReactEAV addCondition(Class<? extends ReactCondition> conditionClass){
+        ReactCondition condition = null;
+        try {
+            condition = conditionClass.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        ReactConditionData data = null;
+        ConditionExecutionMoment moment = null;
+        if (conditionClass.equals(PriceEqualsToRoomCondition.class)){
+            moment = ConditionExecutionMoment.AFTER_QUERY;
+        }
+        data = new ReactConditionData(condition, moment);
+        this.conditions.add(data);
+        return this;
+    }
+
     public Object getSingleEntityWithId(int targetId) throws ResultEntityNullException {
         rootNode.setForSingleObject(true);
         rootNode.setTargetId(targetId);
@@ -72,6 +97,9 @@ public class ReactEAV {
             result = launchProcess().get(0);
         } catch (NullPointerException e) {
             throw new ResultEntityNullException();
+        }
+        if (null!=conditions && !conditions.isEmpty()){
+            conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
         }
         return result;
     }
@@ -87,6 +115,9 @@ public class ReactEAV {
         if (null == result) {
             throw new ResultEntityNullException();
         }
+        if (null!=conditions && !conditions.isEmpty()){
+            conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
+        }
         return result;
     }
 
@@ -101,7 +132,20 @@ public class ReactEAV {
         if (null == result) {
             throw new ResultEntityNullException();
         }
+        if (null!=conditions && !conditions.isEmpty()){
+            conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
+        }
         return result;
+    }
+
+    private void conditionExecution(ConditionExecutionMoment moment){
+        for (ReactConditionData data: conditions){
+            if (data.getMoment().equals(moment)){
+                ReactCondition condition = data.getCondition();
+                condition.loadDataToParse(rootNode.getResultList());
+                condition.execute();
+            }
+        }
     }
 
     private List<ReactQueryTaskHolder> reacTaskPreparator() {
