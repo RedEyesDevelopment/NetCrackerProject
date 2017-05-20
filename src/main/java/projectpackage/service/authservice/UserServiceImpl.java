@@ -10,8 +10,6 @@ import projectpackage.model.auth.User;
 import projectpackage.repository.authdao.PhoneDAO;
 import projectpackage.repository.authdao.UserDAO;
 import projectpackage.repository.daoexceptions.TransactionException;
-import projectpackage.repository.reacteav.ReactEAVManager;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 
@@ -27,9 +25,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     PhoneDAO phoneDAO;
 
-    @Autowired
-    ReactEAVManager manager;
-
     @Override
     public List<User> getUsersByRole(Role role) {
         return null;
@@ -37,39 +32,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsers() {
-        return null;
+        List<User> users = userDAO.getAllUsers();
+        if (users == null) LOGGER.info("Returned NULL!!!");
+        return users;
     }
 
     @Override
     public List<User> getAllUsers(String orderingParameter, boolean ascend) {
-        List<User> list = null;
-        try {
-             list = (List<User>) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getEntityCollectionOrderByParameter(orderingParameter, ascend);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn("getAllUsers method returned null list", e);
-        }
-        return list;
+        return null;
     }
 
     @Override
     public User getSingleUserById(int id) {
-        User user=null;
-        try {
-            user = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn("getSingleUserById method returned null list", e);
-        }
+        User user = userDAO.getUser(id);
+        if (user == null) LOGGER.info("Returned NULL!!!");
         return user;
     }
 
     @Override
     public boolean deleteUser(int id) {
-        User user = null;
-        try {
-            user = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            return false;
-        }
+        User user = userDAO.getUser(id);
         int count = 0;
         if (null != user.getPhones()) {
             for (Phone phone : user.getPhones()) {
@@ -97,11 +79,8 @@ public class UserServiceImpl implements UserService {
     public boolean updateUser(int id, User newUser) {
         try {
             newUser.setObjectId(id);
-            User oldUser = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(newUser.getObjectId());
-            userDAO.updateUser(newUser,oldUser);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn("Problem with ReactEAV! Pls Check!", e);
-            return false;
+            User oldUser = userDAO.getUser(id);
+            userDAO.updateUser(newUser, oldUser);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
             return false;

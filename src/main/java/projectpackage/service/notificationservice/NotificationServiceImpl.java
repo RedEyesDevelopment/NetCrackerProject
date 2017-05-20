@@ -8,13 +8,9 @@ import projectpackage.model.notifications.Notification;
 import projectpackage.model.notifications.NotificationType;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.notificationsdao.NotificationDAO;
-import projectpackage.repository.reacteav.ReactEAVManager;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.Date;
 import java.util.List;
-
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 
 /**
  * Created by Arizel on 16.05.2017.
@@ -22,9 +18,6 @@ import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 public class NotificationServiceImpl implements NotificationService{
 
     private static final Logger LOGGER = Logger.getLogger(NotificationServiceImpl.class);
-
-    @Autowired
-    ReactEAVManager manager;
 
     @Autowired
     NotificationDAO notificationDAO;
@@ -36,7 +29,9 @@ public class NotificationServiceImpl implements NotificationService{
 
     @Override
     public List<Notification> getAllNotifications() {
-        return null;
+        List<Notification> notifications = notificationDAO.getAllNotifications();
+        if (notifications == null) LOGGER.info("Returned NULL!!!");
+        return notifications;
     }
 
     @Override
@@ -71,18 +66,13 @@ public class NotificationServiceImpl implements NotificationService{
 
     @Override
     public Notification getSingleNotificationById(int id) {
-        return null;
+        Notification notification = notificationDAO.getNotification(id);
+        if (notification == null) LOGGER.info("Returned NULL!!!");
+        return notification;
     }
 
     @Override
     public boolean deleteNotification(int id) {
-        Notification notification = null;
-        try {
-            // todo тут собирать ReactEAV'ом и ниже проверить нет ли свзяей на него
-        } catch (Throwable e) {
-            LOGGER.warn("Problem with ReactEAV! Pls Check!", e);
-            return false;
-        }
         int count = 0;
         count = count + notificationDAO.deleteNotification(id);
         if (count == 0) return false;
@@ -103,7 +93,14 @@ public class NotificationServiceImpl implements NotificationService{
 
     @Override
     public boolean updateNotification(int id, Notification newNotification) {
-        // todo ждём ReacEAV
-        return false;
+        try {
+            newNotification.setObjectId(id);
+            Notification oldNotification = notificationDAO.getNotification(id);
+            notificationDAO.updateNotification(newNotification, oldNotification);
+        } catch (TransactionException e) {
+            LOGGER.warn("Catched transactionException!!!", e);
+            return false;
+        }
+        return true;
     }
 }

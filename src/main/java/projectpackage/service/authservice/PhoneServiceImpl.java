@@ -8,8 +8,6 @@ import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.User;
 import projectpackage.repository.authdao.PhoneDAO;
 import projectpackage.repository.daoexceptions.TransactionException;
-import projectpackage.repository.reacteav.ReactEAVManager;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 
@@ -24,12 +22,11 @@ public class PhoneServiceImpl implements PhoneService{
     @Autowired
     PhoneDAO phoneDAO;
 
-    @Autowired
-    ReactEAVManager manager;
-
     @Override
     public List<Phone> getAllPhones() {
-        return null;
+        List<Phone> phones = phoneDAO.getAllPhones();
+        if (phones == null) LOGGER.info("Returned NULL!!!");
+        return phones;
     }
 
     @Override
@@ -39,23 +36,13 @@ public class PhoneServiceImpl implements PhoneService{
 
     @Override
     public List<Phone> getAllPhones(String orderingParameter, boolean ascend) {
-        List<Phone> phones = null;
-        try {
-            phones = (List<Phone>) manager.createReactEAV(Phone.class).getEntityCollectionOrderByParameter(orderingParameter, ascend);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn("getAllPhones method returned null list", e);
-        }
-        return phones;
+        return null;
     }
 
     @Override
     public Phone getSinglePhoneById(int id) {
-        Phone phone = null;
-        try {
-            phone = (Phone) manager.createReactEAV(Phone.class).getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn("getSinglePhoneById method returned null list", e);
-        }
+        Phone phone = phoneDAO.getPhone(id);
+        if (phone == null) LOGGER.info("Returned NULL!!!");
         return phone;
     }
 
@@ -83,11 +70,8 @@ public class PhoneServiceImpl implements PhoneService{
     public boolean updatePhone(int id, Phone newPhone) {
         try {
             newPhone.setObjectId(id);
-            Phone oldPhone = (Phone) manager.createReactEAV(Phone.class).getSingleEntityWithId(newPhone.getObjectId());
+            Phone oldPhone = phoneDAO.getPhone(id);
             phoneDAO.updatePhone(newPhone, oldPhone);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn("Problem with ReactEAV! Pls Check!", e);
-            return false;
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
             return false;

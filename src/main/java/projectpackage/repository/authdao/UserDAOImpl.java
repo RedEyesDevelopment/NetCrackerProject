@@ -1,17 +1,50 @@
 package projectpackage.repository.authdao;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import projectpackage.model.auth.Phone;
+import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+
+import java.util.List;
 
 @Repository
 public class UserDAOImpl extends AbstractDAO implements UserDAO {
+    private static final Logger LOGGER = Logger.getLogger(UserDAOImpl.class);
 
     @Autowired
     JdbcTemplate jdbcTemplate;
+
+
+    @Override
+    public User getUser(Integer id) {
+        if (id == null) return null;
+        try {
+            return (User) manager.createReactEAV(User.class).fetchChildEntityCollection(Phone.class).closeFetch()
+                    .fetchReferenceEntityCollectionForInnerObject(Role.class, "RoleToUser").closeAllFetches()
+                    .getSingleEntityWithId(id);
+        } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
+            return null;
+        }
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        try {
+            return manager.createReactEAV(User.class).fetchChildEntityCollection(Phone.class).closeFetch()
+                    .fetchReferenceEntityCollectionForInnerObject(Role.class, "RoleToUser").closeAllFetches()
+                    .getEntityCollection();
+        } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
+            return null;
+        }
+    }
 
     @Override
     public int insertUser(User user) throws TransactionException {

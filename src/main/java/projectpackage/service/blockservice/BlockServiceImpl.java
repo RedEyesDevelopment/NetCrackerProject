@@ -6,8 +6,6 @@ import projectpackage.model.blocks.Block;
 import projectpackage.model.rooms.Room;
 import projectpackage.repository.blocksdao.BlockDAO;
 import projectpackage.repository.daoexceptions.TransactionException;
-import projectpackage.repository.reacteav.ReactEAVManager;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.Date;
 import java.util.List;
@@ -21,9 +19,6 @@ public class BlockServiceImpl implements BlockService{
     @Autowired
     BlockDAO blockDAO;
 
-    @Autowired
-    ReactEAVManager manager;
-
     @Override
     public List<Block> getAllBlocks(String orderingParameter, boolean ascend) {
         return null;
@@ -31,7 +26,9 @@ public class BlockServiceImpl implements BlockService{
 
     @Override
     public List<Block> getAllBlocks() {
-        return null;
+        List<Block> blocks = blockDAO.getAllBlocks();
+        if (blocks == null) LOGGER.info("Returned NULL!!!");
+        return blocks;
     }
 
     @Override
@@ -61,7 +58,9 @@ public class BlockServiceImpl implements BlockService{
 
     @Override
     public Block getSingleBlockById(int id) {
-        return null;
+        Block block = blockDAO.getBlock(id);
+        if (block == null) LOGGER.info("Returned NULL!!!");
+        return block;
     }
 
     @Override
@@ -88,12 +87,9 @@ public class BlockServiceImpl implements BlockService{
     public boolean updateBlock(int id, Block newBlock) {
         try {
             newBlock.setObjectId(id);
-            Block oldBlock = (Block) manager.createReactEAV(Block.class).fetchInnerEntityCollection(Room.class).closeFetch().getSingleEntityWithId(id);
+            Block oldBlock = blockDAO.getBlock(id);
             LOGGER.info("Problem with old BLOCK!! " + oldBlock.getBlockStartDate() + "  " + oldBlock.getBlockFinishDate());
             blockDAO.updateBlock(newBlock, oldBlock);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn("Problem with ReactEAV! Pls Check!", e);
-            return false;
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
             return false;

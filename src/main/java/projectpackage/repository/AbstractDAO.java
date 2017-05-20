@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
+import projectpackage.repository.reacteav.ReactEAVManager;
 
 import java.sql.Types;
 import java.util.Map;
@@ -13,7 +14,10 @@ import java.util.Map;
 /**
  * Created by Arizel on 17.05.2017.
  */
-public class AbstractDAO {
+public abstract class AbstractDAO {
+    @Autowired
+    protected ReactEAVManager manager;
+
     @Autowired
     JdbcTemplate jdbcTemplate;
 

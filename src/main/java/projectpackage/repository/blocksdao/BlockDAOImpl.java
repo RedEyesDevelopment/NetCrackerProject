@@ -1,17 +1,48 @@
 package projectpackage.repository.blocksdao;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import projectpackage.model.blocks.Block;
+import projectpackage.model.rooms.Room;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+
+import java.util.List;
 
 /**
  * Created by Arizel on 16.05.2017.
  */
 public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
+    private static final Logger LOGGER = Logger.getLogger(BlockDAOImpl.class);
+
+
     @Autowired
     JdbcTemplate jdbcTemplate;
+
+    @Override
+    public Block getBlock(Integer id) {
+        if (id == null) return null;
+        try {
+            return (Block) manager.createReactEAV(Block.class).fetchReferenceEntityCollection(Room.class, "RoomToBlock")
+                    .closeAllFetches().getSingleEntityWithId(id);
+        } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
+            return null;
+        }
+    }
+
+    @Override
+    public List<Block> getAllBlocks() {
+        try {
+            return manager.createReactEAV(Block.class).fetchReferenceEntityCollection(Room.class, "RoomToBlock")
+                    .closeAllFetches().getEntityCollection();
+        } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
+            return null;
+        }
+    }
 
     @Override
     public int insertBlock(Block block) throws TransactionException {

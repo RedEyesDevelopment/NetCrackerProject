@@ -9,6 +9,9 @@ import java.util.List;
  * Created by Arizel on 16.05.2017.
  */
 public class ModificationHistoryServiceImpl implements ModificationHistoryService{
+
+
+
     @Override
     public List<ModificationHistory> getAllModificationHistory(String orderingParameter, boolean ascend) {
         return null;
@@ -16,7 +19,9 @@ public class ModificationHistoryServiceImpl implements ModificationHistoryServic
 
     @Override
     public List<ModificationHistory> getAllModificationHistory() {
-        return null;
+        List<ModificationHistory> notificationTypes = notificationTypeDAO.getAllNotificationTypes();
+        if (notificationTypes == null) LOGGER.info("Returned NULL!!!");
+        return notificationTypes;
     }
 
     @Override

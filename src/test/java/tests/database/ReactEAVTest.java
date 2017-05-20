@@ -230,7 +230,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     public void getNotifications(){
         List<Notification> nots = null;
         try {
-            nots = manager.createReactEAV(Notification.class).fetchReferenceEntityCollection(User.class, "UserToNotificationAsAuthor").closeAllFetches().fetchReferenceEntityCollection(NotificationType.class, "NotificationTypeToNotification").closeAllFetches().fetchReferenceEntityCollection(Order.class, "OrdertoNotification").closeAllFetches().fetchReferenceEntityCollection(User.class, "UserToNotificationAsExecutor").closeAllFetches().getEntityCollection();
+            nots = manager.createReactEAV(Notification.class).fetchReferenceEntityCollection(User.class, "UserToNotificationAsAuthor").closeAllFetches().fetchReferenceEntityCollection(NotificationType.class, "NotificationTypeToNotification").closeAllFetches().fetchReferenceEntityCollection(Order.class, "OrderToNotification").closeAllFetches().fetchReferenceEntityCollection(User.class, "UserToNotificationAsExecutor").closeAllFetches().getEntityCollection();
             for (Notification not:nots){
                 System.out.println(not);
             }

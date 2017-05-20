@@ -5,8 +5,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.auth.Role;
-import projectpackage.repository.reacteav.ReactEAVManager;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+import projectpackage.repository.authdao.RoleDAO;
 
 import java.util.List;
 
@@ -19,32 +18,24 @@ public class RoleServiceImpl implements RoleService {
     private static final Logger LOGGER = Logger.getLogger(RoleServiceImpl.class);
 
     @Autowired
-    ReactEAVManager manager;
+    RoleDAO roleDAO;
 
     @Override
     public List<Role> getAllRoles() {
-        return null;
+        List<Role> roles = roleDAO.getAllRoles();
+        if (roles == null) LOGGER.info("Returned NULL!!!");
+        return roles;
     }
 
     @Override
     public List<Role> getAllRoles(String orderingParameter, boolean ascend) {
-        List<Role> list = null;
-        try {
-            list = (List<Role>) manager.createReactEAV(Role.class).getEntityCollectionOrderByParameter(orderingParameter, ascend);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn("getAllRoles method returned null list", e);
-        }
-        return list;
+        return null;
     }
 
     @Override
     public Role getSingleRoleById(int id) {
-        Role role=null;
-        try {
-            role = (Role) manager.createReactEAV(Role.class).getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn("getSingleRoleById method returned null list", e);
-        }
+        Role role = roleDAO.getRole(id);
+        if (role == null) LOGGER.info("Returned NULL!!!");
         return role;
     }
 
