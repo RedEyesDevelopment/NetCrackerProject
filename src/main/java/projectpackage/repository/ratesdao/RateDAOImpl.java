@@ -47,7 +47,7 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
             //31 = Rate_to_date
             jdbcTemplate.update(insertAttributes, 31, objectId, null, rate.getRateToDate());
             //44 = Creation_date
-            jdbcTemplate.update(insertAttributes, 44, objectId, null, rate.getCreationDate());
+//            jdbcTemplate.update(insertAttributes, 44, objectId, null, rate.getCreationDate());
         } catch (NullPointerException e) {
             throw new TransactionException(rate);
         }
@@ -65,10 +65,10 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
                 jdbcTemplate.update(updateAttributes, null, newRate.getRateToDate(),
                         newRate.getObjectId(), 31);
             }
-            if (oldRate.getCreationDate().getTime() != newRate.getCreationDate().getTime()) {
-                jdbcTemplate.update(updateAttributes, null, newRate.getCreationDate(),
-                        newRate.getObjectId(), 44);
-            }
+//            if (oldRate.getCreationDate().getTime() != newRate.getCreationDate().getTime()) {
+//                jdbcTemplate.update(updateAttributes, null, newRate.getCreationDate(),
+//                        newRate.getObjectId(), 44);
+//            }
         } catch (NullPointerException e) {
             throw new TransactionException(newRate);
         }

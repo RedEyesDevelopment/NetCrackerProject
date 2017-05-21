@@ -15,8 +15,6 @@ import java.util.Map;
  * Created by Arizel on 17.05.2017.
  */
 public abstract class AbstractDAO {
-    @Autowired
-    protected ReactEAVManager manager;
 
     @Autowired
     JdbcTemplate jdbcTemplate;

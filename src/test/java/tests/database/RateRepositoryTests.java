@@ -50,7 +50,7 @@ public class RateRepositoryTests extends AbstractDatabaseTest{
         Rate rate = new Rate();
         rate.setRateFromDate(new Date());
         rate.setRateToDate(new Date());
-        rate.setCreationDate(new Date());
+//        rate.setCreationDate(new Date());
         rate.setRoomTypeId(7);
         boolean result = rateService.insertRate(rate);
         assertTrue(result);
@@ -67,7 +67,7 @@ public class RateRepositoryTests extends AbstractDatabaseTest{
         Rate rate = new Rate();
         rate.setRateFromDate(new Date());
         rate.setRateToDate(new Date());
-        rate.setCreationDate(date);
+//        rate.setCreationDate(date);
         rate.setRoomTypeId(8);
         boolean result = rateService.updateRate(2036, rate);
         assertTrue(result);

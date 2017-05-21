@@ -263,7 +263,7 @@ public class ReactEAV {
             if (holder.getNode().isForSingleObject()) {
                 Object result = null;
                 try {
-                    result = namedParameterJdbcTemplate.queryForObject(holder.getQuery(), holder.getSource(), new ReactEntityRowMapper(holder.getNode().getObjectClass(), holder.getNode().getCurrentEntityParameters(), holder.getNode().getCurrentEntityReferenceTasks(), holder.getNode().getReferenceIdRelations(), config.getDateAppender()));
+                    result = namedParameterJdbcTemplate.queryForObject(holder.getQuery(), holder.getSource(), new ReactEntityRowMapper(holder.getNode(), config.getDateAppender()));
                     holder.getNode().getResultList().add(result);
                 } catch (EmptyResultDataAccessException empty) {
                     StringBuilder sb = new StringBuilder();
@@ -289,7 +289,7 @@ public class ReactEAV {
                 }
                 if (!cloned) {
                     try {
-                        result = (List) namedParameterJdbcTemplate.query(holder.getQuery(), holder.getSource(), new RowMapperResultSetExtractor(new ReactEntityRowMapper(holder.getNode().getObjectClass(), holder.getNode().getCurrentEntityParameters(), holder.getNode().getCurrentEntityReferenceTasks(), holder.getNode().getReferenceIdRelations(), config.getDateAppender())));
+                        result = (List) namedParameterJdbcTemplate.query(holder.getQuery(), holder.getSource(), new RowMapperResultSetExtractor(new ReactEntityRowMapper(holder.getNode(), config.getDateAppender())));
                         holder.getNode().setResultList(result);
                     } catch (EmptyResultDataAccessException empty) {
                         StringBuilder sb = new StringBuilder();
