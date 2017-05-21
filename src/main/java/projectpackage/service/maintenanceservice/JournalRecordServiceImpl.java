@@ -24,7 +24,9 @@ public class JournalRecordServiceImpl implements JournalRecordService{
 
     @Override
     public List<JournalRecord> getAllJournalRecords() {
-        return null;
+        List<JournalRecord> journalRecords = journalRecordDAO.getAllJournalRecords();
+        if (null == journalRecords) LOGGER.info("Returned NULL!!!");
+        return journalRecords;
     }
 
     @Override
@@ -34,7 +36,9 @@ public class JournalRecordServiceImpl implements JournalRecordService{
 
     @Override
     public JournalRecord getSingleEntityById(int id) {
-        return null;
+        JournalRecord journalRecord = journalRecordDAO.getJournalRecord(id);
+        if (null == journalRecord) LOGGER.info("Returned NULL!!!");
+        return journalRecord;
     }
 
     @Override

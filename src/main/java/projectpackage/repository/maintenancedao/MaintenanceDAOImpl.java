@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 
@@ -22,12 +23,23 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
 
     @Override
     public Maintenance getMaintenance(Integer id) {
-        return null;
+        if (null == id) return null;
+        try {
+            return (Maintenance) manager.createReactEAV(Maintenance.class).getSingleEntityWithId(id);
+        } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
+            return null;
+        }
     }
 
     @Override
     public List<Maintenance> getAllMaintenances() {
-        return null;
+        try {
+            return manager.createReactEAV(Maintenance.class).getEntityCollection();
+        } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
+            return null;
+        }
     }
 
     @Override

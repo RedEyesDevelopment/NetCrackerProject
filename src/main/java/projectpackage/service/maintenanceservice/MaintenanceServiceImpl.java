@@ -23,7 +23,9 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 
     @Override
     public List<Maintenance> getAllMaintenances() {
-        return null;
+        List<Maintenance> maintenances = maintenanceDAO.getAllMaintenances();
+        if (null == maintenances) LOGGER.info("Returned NULL!!!");
+        return maintenances;
     }
 
     @Override
@@ -33,7 +35,9 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 
     @Override
     public Maintenance getSingleMaintenanceById(int id) {
-        return null;
+        Maintenance maintenance = maintenanceDAO.getMaintenance(id);
+        if (null == maintenance) LOGGER.info("Returned NULL!!!");
+        return maintenance;
     }
 
     @Override

@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.JournalRecord;
+import projectpackage.model.maintenances.Maintenance;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 
@@ -23,12 +25,29 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
 
     @Override
     public JournalRecord getJournalRecord(Integer id) {
-        return null;
+        if (null == id) return null;
+        try {
+            return (JournalRecord) manager.createReactEAV(JournalRecord.class)
+                    .fetchReferenceEntityCollection(Maintenance.class, "MaintenanceToJournalRecord")
+                    .closeAllFetches()
+                    .getSingleEntityWithId(id);
+        } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
+            return null;
+        }
     }
 
     @Override
     public List<JournalRecord> getAllJournalRecords() {
-        return null;
+        try {
+            return manager.createReactEAV(JournalRecord.class)
+                    .fetchReferenceEntityCollection(Maintenance.class, "MaintenanceToJournalRecord")
+                    .closeAllFetches()
+                    .getEntityCollection();
+        } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
+            return null;
+        }
     }
 
     @Override
