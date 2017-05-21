@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import projectpackage.model.security.AuthCredentials;
+import projectpackage.repository.securitydao.AuthCredentialsDAO;
 
 /**
  * Created by Gvozd on 07.01.2017.
@@ -24,17 +26,20 @@ public class SecurityServiceImpl implements SecurityService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    private AuthCredentialsDAO authCredentialsDAO;
+
     @Override
-    public String findLoggedInUsername() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+    public int getAuthenticatedUserId(String s){
+        AuthCredentials credentials = authCredentialsDAO.getUserByUsername(s);
+        return credentials.getUserId();
     }
 
     @Override
     public Boolean autologin(String username, String password) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         String encodedPassword = bCryptPasswordEncoder.encode(password);
-        System.out.println("ENCODED PASSWORD="+encodedPassword);
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, encodedPassword, userDetails.getAuthorities());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,password, userDetails.getAuthorities());
         authenticationManager.authenticate(authenticationToken);
         if (authenticationToken.isAuthenticated()){
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);

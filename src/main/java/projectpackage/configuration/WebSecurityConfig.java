@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import projectpackage.service.securityservice.UserDetailsServiceImpl;
 
 @Configuration
@@ -26,15 +27,16 @@ import projectpackage.service.securityservice.UserDetailsServiceImpl;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable();
         http
-//                .formLogin().loginPage("/login").usernameParameter("username").passwordParameter("password").failureUrl("/login?error").defaultSuccessUrl("/", false)
-//                .and().logout().logoutSuccessUrl("/login?logout").invalidateHttpSession(true).logoutUrl("/logout").logoutRequestMatcher(new AntPathRequestMatcher("/logout")).and()
+                .logout().invalidateHttpSession(true).logoutUrl("/auth/logout").logoutRequestMatcher(new AntPathRequestMatcher("/logout")).and()
+//                .formLogin().loginPage("/login").usernameParameter("username").passwordParameter("password").failureUrl("/login?error").and()
                 .authorizeRequests()
-                .antMatchers("/fileapi/**").hasAnyAuthority("USER", "ADMIN")
                 .antMatchers("/", "/home").permitAll()
-                .antMatchers("/registration").anonymous()
+                .antMatchers("/auth").permitAll()
+                .antMatchers("/auth/**").permitAll()
                 .antMatchers("/users").anonymous()
-                .antMatchers("/users/**").hasAnyAuthority("USER", "ADMIN");
+                .antMatchers("/users/**").hasAnyAuthority("CLIENT", "ADMIN");
     }
 
     @Autowired

@@ -27,10 +27,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String s) {
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         AuthCredentials credentials = authCredentialsDAO.getUserByUsername(s);
-        if (null==credentials && null==credentials.getRolename()) {
+        if (null==credentials || null==credentials.getRolename()) {
             return null;
         }
             grantedAuthorities.add(new SimpleGrantedAuthority(credentials.getRolename()));
         return new org.springframework.security.core.userdetails.User(credentials.getLogin(), credentials.getPassword(), grantedAuthorities);
     }
+
+
 }

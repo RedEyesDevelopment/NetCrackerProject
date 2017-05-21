@@ -31,7 +31,7 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
     @Test
     @Rollback(true)
     public void getAllUsers() {
-        List<User> list = userService.getAllUsers("email", true);
+        List<User> list = userService.getAllUsers();
         for (User user:list){
             LOGGER.info(user);
             assertNotNull(user);

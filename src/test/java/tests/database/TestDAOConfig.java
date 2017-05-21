@@ -67,7 +67,7 @@ import java.util.Properties;
  */
 @ContextConfiguration
 @EnableTransactionManagement
-public class TestJPAConfig implements TransactionManagementConfigurer {
+public class TestDAOConfig implements TransactionManagementConfigurer {
 
     private String driver;
     private String url;
@@ -75,7 +75,7 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     private String password;
     private String modelPackage;
 
-    public TestJPAConfig() {
+    public TestDAOConfig() {
         Locale.setDefault(Locale.ENGLISH);
         Properties props = new Properties();
         FileInputStream fis = null;
