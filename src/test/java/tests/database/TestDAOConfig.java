@@ -31,25 +31,16 @@ import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
 import projectpackage.repository.reacteav.support.ReactEntityValidator;
 import projectpackage.repository.roomsdao.RoomDAO;
 import projectpackage.repository.roomsdao.RoomDAOImpl;
-import projectpackage.repository.roomsdao.RoomTypeDAO;
-import projectpackage.repository.roomsdao.RoomTypeDAOImpl;
-import projectpackage.service.authservice.*;
-import projectpackage.service.blockservice.BlockService;
-import projectpackage.service.blockservice.BlockServiceImpl;
+import projectpackage.service.authservice.PhoneService;
+import projectpackage.service.authservice.PhoneServiceImpl;
+import projectpackage.service.authservice.RoleService;
+import projectpackage.service.authservice.RoleServiceImpl;
 import projectpackage.service.notificationservice.NotificationService;
 import projectpackage.service.notificationservice.NotificationServiceImpl;
-import projectpackage.service.notificationservice.NotificationTypeService;
-import projectpackage.service.notificationservice.NotificationTypeServiceImpl;
 import projectpackage.service.orderservice.OrderService;
 import projectpackage.service.orderservice.OrderServiceImpl;
 import projectpackage.service.rateservice.PriceService;
 import projectpackage.service.rateservice.PriceServiceImpl;
-import projectpackage.service.rateservice.RateService;
-import projectpackage.service.rateservice.RateServiceImpl;
-import projectpackage.service.roomservice.RoomService;
-import projectpackage.service.roomservice.RoomServiceImpl;
-import projectpackage.service.roomservice.RoomTypeService;
-import projectpackage.service.roomservice.RoomTypeServiceImpl;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -69,7 +60,7 @@ import java.util.Properties;
  */
 @ContextConfiguration
 @EnableTransactionManagement
-public class TestJPAConfig implements TransactionManagementConfigurer {
+public class TestDAOConfig implements TransactionManagementConfigurer {
 
     private String driver;
     private String url;
@@ -77,7 +68,7 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     private String password;
     private String modelPackage;
 
-    public TestJPAConfig() {
+    public TestDAOConfig() {
         Locale.setDefault(Locale.ENGLISH);
         Properties props = new Properties();
         FileInputStream fis = null;
@@ -173,6 +164,16 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     }
 
     @Bean
+    AuthenticationManager authenticationManager() {
+        return null;
+    }
+
+    @Bean
+    UserDetailsService userDetailsService() {
+        return null;
+    }
+
+    @Bean
     JdbcTemplate jdbcTemplate () { return new JdbcTemplate(dataSource()); }
 
     @Bean
@@ -187,6 +188,12 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
 
     @Bean
     RoleDAO roleDAO() { return new RoleDAOImpl();}
+
+    @Bean
+    ModificationHistoryDAO modificationHistoryDAO() {return null;}
+
+    @Bean
+    JournalRecordDAO journalRecordDAO() {return  null;}
 
     @Bean
     NotificationDAO notificationDAO(){
@@ -305,4 +312,16 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     ReactEntityValidator reactEntityValidator(){
         return new ReactEntityValidator();
     }
+
+    @Bean
+    BCryptPasswordEncoder bCryptPasswordEncoder() {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(11);
+        return encoder;
+    }
+
+    @Bean
+    AuthCredentialsDAO authCredentialsDAO() { return new AuthCredentialsDAOImpl(); }
+
+    @Bean
+    SecurityService securityService() {return new SecurityServiceImpl(); }
 }

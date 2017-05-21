@@ -11,12 +11,10 @@ import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
 import projectpackage.repository.reacteav.conditions.ReactCondition;
 import projectpackage.repository.reacteav.conditions.ReactConditionData;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+import projectpackage.repository.reacteav.exceptions.WrongFetchException;
 import projectpackage.repository.reacteav.querying.ReactQueryBuilder;
 import projectpackage.repository.reacteav.querying.ReactQueryTaskHolder;
-import projectpackage.repository.reacteav.relationsdata.EntityAttrIdType;
-import projectpackage.repository.reacteav.relationsdata.EntityReferenceRelationshipsData;
-import projectpackage.repository.reacteav.relationsdata.EntityReferenceTaskData;
-import projectpackage.repository.reacteav.relationsdata.EntityVariablesData;
+import projectpackage.repository.reacteav.relationsdata.*;
 import projectpackage.repository.reacteav.support.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -49,14 +47,37 @@ public class ReactEAV {
         return dataBucket;
     }
 
-    public ReacTask fetchRootChild(Class innerEntityClass) {
+    public ReacTask fetchChildEntityCollection(Class innerEntityClass) {
+        checkInnerRelations(rootNode.getObjectClass(), dataBucket.getOuterRelationsMap().get(innerEntityClass).keySet());
         ReacTask newReacTask = fetchingOrderCreation(innerEntityClass, false, null, null, false, null);
         return newReacTask;
     }
 
-    public ReacTask fetchRootReference(Class innerEntityClass, String referenceName) {
+    public ReacTask fetchReferenceEntityCollection(Class innerEntityClass, String referenceName) {
+        boolean innerHasIt = false;
+        for (EntityReferenceRelationshipsData data:dataBucket.getEntityReferenceRelationsMap().get(innerEntityClass).values()){
+            if (data.getOuterClass().equals(rootNode.getObjectClass())){
+                innerHasIt = true;
+            }
+        }
+        if (!innerHasIt) {
+            WrongFetchException exception = new WrongFetchException(rootNode.getObjectClass(), innerEntityClass);
+            throw exception;
+        }
+
         ReacTask newReacTask = fetchingOrderCreation(innerEntityClass, false, null, null, false, referenceName);
         return newReacTask;
+    }
+
+    private void checkInnerRelations(Class clazz, Set<Class> set){
+        boolean rootHasIt=false;
+        for (Class currentClass: set){
+            if (currentClass.equals(clazz)) rootHasIt = true;
+        }
+        if (!rootHasIt) {
+            WrongFetchException exception = new WrongFetchException(rootNode.getObjectClass(), clazz);
+            throw exception;
+        }
     }
 
 
