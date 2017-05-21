@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -168,6 +170,16 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
     @Bean
     NamedParameterJdbcTemplate namedParameteJdbcTemplate() {
         return new NamedParameterJdbcTemplate(dataSource());
+    }
+
+    @Bean
+    AuthenticationManager authenticationManager() {
+        return null;
+    }
+
+    @Bean
+    UserDetailsService userDetailsService() {
+        return null;
     }
 
     @Bean
