@@ -11,7 +11,7 @@ import java.util.List;
 public interface JournalRecordDAO {
     public JournalRecord getJournalRecord(Integer id);
     public List<JournalRecord> getAllJournalRecords();
-    public int insertJournalRecord(JournalRecord complimentary) throws TransactionException;
+    public int insertJournalRecord(JournalRecord journalRecord) throws TransactionException;
     public void updateJournalRecord(JournalRecord newJournalRecord, JournalRecord oldJournalRecord) throws TransactionException;
     public int deleteJournalRecord(int id);
 }

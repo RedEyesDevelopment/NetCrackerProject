@@ -13,7 +13,7 @@ import java.util.Date;
  */
 @Data
 @ReactEntity(entityTypeName = "JournalRecord")
-@ReactChild(outerEntityClass = Order.class, outerFieldName = "journalRecords", outerFieldKey = "objectId", innerFieldKey = "orderId")
+@ReactChild(outerEntityClass = Order.class, outerFieldName = "journalRecords", outerFieldKey = "objectId", innerFieldKey = "categoryId")
 public class JournalRecord {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;

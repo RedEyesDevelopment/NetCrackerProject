@@ -36,7 +36,26 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     public Order getOrder(Integer id) {
         if (null == id) return null;
         try {
-            return (Order) manager.createReactEAV(Order.class).fetchReferenceEntityCollection(User.class, "UserToOrderAsClient").fetchChildEntityCollectionForInnerObject(Phone.class).closeAllFetches().fetchReferenceEntityCollection(User.class, "UserToOrderAsLastModificator").fetchReferenceEntityCollectionForInnerObject(Role.class, "RoleToUser").closeAllFetches().fetchReferenceEntityCollection(Room.class, "RoomToOrder").fetchReferenceEntityCollectionForInnerObject(RoomType.class, "RoomTypeToRoom").fetchChildEntityCollectionForInnerObject(Rate.class).fetchChildEntityCollectionForInnerObject(Price.class).closeAllFetches().fetchChildEntityCollection(JournalRecord.class).closeAllFetches().fetchReferenceEntityCollection(Category.class, "OrderToCategory").fetchChildEntityCollectionForInnerObject(Complimentary.class).fetchReferenceEntityCollectionForInnerObject(Maintenance.class, "MaintenanceToComplimentary").closeAllFetches().addCondition(PriceEqualsToRoomCondition.class).getSingleEntityWithId(id);
+            return (Order) manager.createReactEAV(Order.class)
+                    .fetchReferenceEntityCollection(User.class, "UserToOrderAsClient")
+                    .fetchChildEntityCollectionForInnerObject(Phone.class)
+                    .closeAllFetches()
+                    .fetchReferenceEntityCollection(User.class, "UserToOrderAsLastModificator")
+                    .fetchReferenceEntityCollectionForInnerObject(Role.class, "RoleToUser")
+                    .closeAllFetches()
+                    .fetchReferenceEntityCollection(Room.class, "RoomToOrder")
+                    .fetchReferenceEntityCollectionForInnerObject(RoomType.class, "RoomTypeToRoom")
+                    .fetchChildEntityCollectionForInnerObject(Rate.class)
+                    .fetchChildEntityCollectionForInnerObject(Price.class)
+                    .closeAllFetches()
+                    .fetchChildEntityCollection(JournalRecord.class)
+                    .closeAllFetches()
+                    .fetchReferenceEntityCollection(Category.class, "OrderToCategory")
+                    .fetchChildEntityCollectionForInnerObject(Complimentary.class)
+                    .fetchReferenceEntityCollectionForInnerObject(Maintenance.class, "MaintenanceToComplimentary")
+                    .closeAllFetches()
+                    .addCondition(PriceEqualsToRoomCondition.class)
+                    .getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
             return null;
         }
@@ -45,7 +64,26 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     @Override
     public List<Order> getAllOrder() {
         try {
-            return (List<Order>) manager.createReactEAV(Order.class).fetchReferenceEntityCollection(User.class, "UserToOrderAsClient").fetchChildEntityCollectionForInnerObject(Phone.class).closeAllFetches().fetchReferenceEntityCollection(User.class, "UserToOrderAsLastModificator").fetchReferenceEntityCollectionForInnerObject(Role.class, "RoleToUser").closeAllFetches().fetchReferenceEntityCollection(Room.class, "RoomToOrder").fetchReferenceEntityCollectionForInnerObject(RoomType.class, "RoomTypeToRoom").fetchChildEntityCollectionForInnerObject(Rate.class).fetchChildEntityCollectionForInnerObject(Price.class).closeAllFetches().fetchChildEntityCollection(JournalRecord.class).closeAllFetches().fetchReferenceEntityCollection(Category.class, "OrderToCategory").fetchChildEntityCollectionForInnerObject(Complimentary.class).fetchReferenceEntityCollectionForInnerObject(Maintenance.class, "MaintenanceToComplimentary").closeAllFetches().addCondition(PriceEqualsToRoomCondition.class).getEntityCollection();
+            return (List<Order>) manager.createReactEAV(Order.class)
+                    .fetchReferenceEntityCollection(User.class, "UserToOrderAsClient")
+                    .fetchChildEntityCollectionForInnerObject(Phone.class)
+                    .closeAllFetches()
+                    .fetchReferenceEntityCollection(User.class, "UserToOrderAsLastModificator")
+                    .fetchReferenceEntityCollectionForInnerObject(Role.class, "RoleToUser")
+                    .closeAllFetches()
+                    .fetchReferenceEntityCollection(Room.class, "RoomToOrder")
+                    .fetchReferenceEntityCollectionForInnerObject(RoomType.class, "RoomTypeToRoom")
+                    .fetchChildEntityCollectionForInnerObject(Rate.class)
+                    .fetchChildEntityCollectionForInnerObject(Price.class)
+                    .closeAllFetches()
+                    .fetchChildEntityCollection(JournalRecord.class)
+                    .closeAllFetches()
+                    .fetchReferenceEntityCollection(Category.class, "OrderToCategory")
+                    .fetchChildEntityCollectionForInnerObject(Complimentary.class)
+                    .fetchReferenceEntityCollectionForInnerObject(Maintenance.class, "MaintenanceToComplimentary")
+                    .closeAllFetches()
+                    .addCondition(PriceEqualsToRoomCondition.class)
+                    .getEntityCollection();
         } catch (ResultEntityNullException e) {
             return null;
         }

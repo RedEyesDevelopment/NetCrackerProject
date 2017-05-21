@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
     public boolean insertUser(User user) {
         try {
             int userId = userDAO.insertUser(user);
-            LOGGER.info("Get from DB phoneId = " + userId);
+            LOGGER.info("Get from DB userId = " + userId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
             return false;
