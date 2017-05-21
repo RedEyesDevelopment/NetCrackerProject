@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import projectpackage.model.blocks.Block;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
+import projectpackage.model.support.IUDAnswer;
 import projectpackage.repository.blocksdao.BlockDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
@@ -52,25 +53,13 @@ public class RoomServiceImpl implements RoomService{
     }
 
     @Override
-    public boolean deleteRoom(int id) {
-//        List<Block> blocks = blockDAO.getAllBlocks();
-//        for (Block block : blocks) {
-//            if (block.getRoom().getObjectId() == id) {
-//                blockDAO.deleteBlock(block.getObjectId());
-//            }
-//        }
-
-//        int count = roomDAO.deleteRoom(id);
-//        LOGGER.info("Deleted rows : " + count);
-//        if (count == 0) return false;
-//        return true;
-
-//        try {
-//            roomDAO.deleteRoom(id);
-//        } catch (ReferenceBreakException e) {
-//            return new POJO(fal)
-//        }
-//        return new POJO()
+    public IUDAnswer deleteRoom(int id) {
+        try {
+            roomDAO.deleteRoom(id);
+        } catch (ReferenceBreakException e) {
+            return new IUDAnswer(false, e.printReferencesEntities());
+        }
+        return new IUDAnswer(true);
     }
 
     @Override
