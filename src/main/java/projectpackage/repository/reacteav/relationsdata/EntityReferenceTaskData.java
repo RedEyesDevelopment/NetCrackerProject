@@ -10,9 +10,8 @@ public class EntityReferenceTaskData {
     private String thisFieldName;
     private String innerIdKey;
     private String thisIdKey;
-    Integer referenceAttrId;
+    private Integer referenceAttrId;
     private String innerIdParameterNameForQueryParametersMap;
-    private int innerObjectIdForInsertion;
 
     public EntityReferenceTaskData(Class thisClass, Class innerClass, String innerClassObjectTypeName, String thisFieldName, String innerIdKey, String thisIdKey, Integer referenceAttrId) {
         this.thisClass = thisClass;
@@ -48,16 +47,8 @@ public class EntityReferenceTaskData {
         return thisIdKey;
     }
 
-    public int getInnerObjectIdForInsertion() {
-        return innerObjectIdForInsertion;
-    }
-
     public Integer getReferenceAttrId() {
         return referenceAttrId;
-    }
-
-    public void setInnerObjectIdForInsertion(int innerObjectIdForInsertion) {
-        this.innerObjectIdForInsertion = innerObjectIdForInsertion;
     }
 
     public String getInnerIdParameterNameForQueryParametersMap() {

@@ -72,6 +72,10 @@ public class ReacTask {
         return referenceIdRelations;
     }
 
+    void addReferenceIdRelations(Integer key, EntityReferenceIdRelation value) {
+        this.referenceIdRelations.put(key, value);
+    }
+
     HashMap<Integer, EntityReferenceTaskData> getCurrentEntityReferenceTasks() {
         return currentEntityReferenceTasks;
     }

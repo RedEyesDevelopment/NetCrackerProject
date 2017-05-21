@@ -1,4 +1,4 @@
-package projectpackage.repository.reacteav.support;
+package projectpackage.repository.reacteav;
 
 import org.springframework.jdbc.core.RowMapper;
 import projectpackage.repository.reacteav.exceptions.WrongTypeClassException;
@@ -16,16 +16,18 @@ import java.util.Map;
 
 public class ReactEntityRowMapper implements RowMapper {
     Class clazz;
+    ReacTask task;
     LinkedHashMap<String, EntityVariablesData> parameters;
     HashMap<Integer, EntityReferenceTaskData> referenceData;
     HashMap<Integer, EntityReferenceIdRelation> objectReferenceTable;
     String dataStringPrefix;
 
-    public ReactEntityRowMapper(Class entityClass, LinkedHashMap<String, EntityVariablesData> parameters, HashMap<Integer, EntityReferenceTaskData> referenceData, HashMap<Integer, EntityReferenceIdRelation> objectReferenceTable, String dataStringPrefix) {
-        clazz = entityClass;
-        this.parameters = parameters;
-        this.referenceData = referenceData;
-        this.objectReferenceTable = objectReferenceTable;
+    public ReactEntityRowMapper(ReacTask task, String dataStringPrefix) {
+        this.task = task;
+        this.clazz = task.getObjectClass();
+        this.parameters = task.getCurrentEntityParameters();
+        this.referenceData = task.getCurrentEntityReferenceTasks();
+        this.objectReferenceTable = task.getReferenceIdRelations();
         this.dataStringPrefix = dataStringPrefix;
     }
 
@@ -60,8 +62,8 @@ public class ReactEntityRowMapper implements RowMapper {
                     for (Map.Entry<Integer, EntityReferenceTaskData> data : referenceData.entrySet()) {
                         Integer referenceLinkName = resultSet.getInt(data.getValue().getInnerIdParameterNameForQueryParametersMap());
                         Integer objectId = resultSet.getInt(objectParameterKey);
-                        EntityReferenceIdRelation relation = new EntityReferenceIdRelation(objectId, referenceLinkName, data.getValue().getInnerClass());
-                        objectReferenceTable.put(data.getKey(), relation);
+                        EntityReferenceIdRelation relation = new EntityReferenceIdRelation(data.getKey(), objectId, referenceLinkName, data.getValue().getInnerClass());
+                        task.addReferenceIdRelations(objectId, relation);
                     }
                 }
                 if (newObjectClass.equals(Integer.class)) {

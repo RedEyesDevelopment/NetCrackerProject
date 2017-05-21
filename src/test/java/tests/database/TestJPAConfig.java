@@ -12,10 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
-import projectpackage.repository.authdao.PhoneDAO;
-import projectpackage.repository.authdao.PhoneDAOImpl;
-import projectpackage.repository.authdao.UserDAO;
-import projectpackage.repository.authdao.UserDAOImpl;
+import projectpackage.repository.authdao.*;
 import projectpackage.repository.blocksdao.BlockDAO;
 import projectpackage.repository.blocksdao.BlockDAOImpl;
 import projectpackage.repository.notificationsdao.NotificationDAO;
@@ -40,8 +37,6 @@ import projectpackage.service.authservice.RoleService;
 import projectpackage.service.authservice.RoleServiceImpl;
 import projectpackage.service.notificationservice.NotificationService;
 import projectpackage.service.notificationservice.NotificationServiceImpl;
-import projectpackage.service.orderservice.ModificationHistoryService;
-import projectpackage.service.orderservice.ModificationHistoryServiceImpl;
 import projectpackage.service.orderservice.OrderService;
 import projectpackage.service.orderservice.OrderServiceImpl;
 import projectpackage.service.rateservice.PriceService;
@@ -55,6 +50,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Properties;
+
+//import projectpackage.service.orderservice.ModificationHistoryServiceImpl;
 
 //import projectpackage.repository.roomsdao.RoomTypeDAOImpl;
 
@@ -180,6 +177,9 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     }
 
     @Bean
+    RoleDAO roleDAO() { return new RoleDAOImpl();}
+
+    @Bean
     NotificationDAO notificationDAO(){
         return new NotificationDAOImpl();
     }
@@ -254,10 +254,10 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         return new OrderServiceImpl();
     }
 
-    @Bean
-    ModificationHistoryService modificationHistoryService() {
-        return new ModificationHistoryServiceImpl();
-    }
+//    @Bean
+//    ModificationHistoryService modificationHistoryService() {
+//        return new ModificationHistoryServiceImpl();
+//    }
 
 //    @Bean
 //    RoomService roomService() {

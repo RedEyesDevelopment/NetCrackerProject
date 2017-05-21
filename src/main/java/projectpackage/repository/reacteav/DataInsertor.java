@@ -22,7 +22,7 @@ public class DataInsertor {
     }
 
     void connectBy() {
-
+        System.out.println();
         if (outerEntity.hasReferencedObjects()) {
             for (Map.Entry<Integer, EntityReferenceIdRelation> entry : outerEntity.getReferenceIdRelations().entrySet()) {
                 Class targetClass = entry.getValue().getInnerClass();
@@ -30,7 +30,7 @@ public class DataInsertor {
                 String fieldName = null;
 
                 for (Map.Entry<Integer, EntityReferenceTaskData> taskdata : outerEntity.getCurrentEntityReferenceTasks().entrySet()) {
-                    if (entry.getKey().equals(taskdata.getKey())) {
+                    if (taskdata.getKey().equals(entry.getValue().getReferenceTaskId())){
                         fieldName = taskdata.getValue().getThisFieldName();
                     }
                 }
@@ -45,7 +45,11 @@ public class DataInsertor {
                 for (Object outerObject : outerEntity.getResultList()) {
                     boolean doNotModifyTheField = false;
                     for (Object innerObject : innerEntity.getResultList()) {
-                        if (entry.getValue().getOuterId() == getEntityId(innerObject)) {
+
+                        ReactEntityWithId outer = (ReactEntityWithId) outerObject;
+                        ReactEntityWithId inner = (ReactEntityWithId) innerObject;
+
+                        if (entry.getValue().getOuterId() == getEntityId(innerObject) && entry.getValue().getInnerId() == getEntityId(outerObject)) {
                             insertInnerEntity(outerObject, innerObject, parentToInputField, doNotModifyTheField);
                             doNotModifyTheField = true;
                             outerEntity.getInnerObjects().remove(innerObject);
