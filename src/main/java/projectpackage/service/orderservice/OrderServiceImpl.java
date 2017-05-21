@@ -26,11 +26,11 @@ public class OrderServiceImpl implements OrderService{
     @Autowired
     OrderDAO orderDAO;
 
-    @Autowired
-    ModificationHistoryDAO historyDAO;
+//    @Autowired
+//    ModificationHistoryDAO historyDAO;
 
-    @Autowired
-    JournalRecordDAO journalRecordDAO;
+//    @Autowired
+//    JournalRecordDAO journalRecordDAO;
 
     @Override
     public List<Order> getAllOrders(String orderingParameter, boolean ascend) {
@@ -109,12 +109,12 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public boolean deleteOrder(int id) {
         Order order = orderDAO.getOrder(id);
-        for (ModificationHistory history : order.getHistorys()) {
-            historyDAO.deleteModificationHistory(history.getObjectId());
-        }
-        for (JournalRecord record : order.getJournalRecords()) {
-            journalRecordDAO.deleteJournalRecord(record.getObjectId());
-        }
+//        for (ModificationHistory history : order.getHistorys()) {
+//            historyDAO.deleteModificationHistory(history.getObjectId());
+//        }
+//        for (JournalRecord record : order.getJournalRecords()) {
+//            journalRecordDAO.deleteJournalRecord(record.getObjectId());
+//        }
         int count = orderDAO.deleteOrder(id);
         LOGGER.info("Deleted rows : " + count);
         if (count == 0) return false;

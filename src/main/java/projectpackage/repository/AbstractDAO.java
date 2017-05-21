@@ -1,11 +1,14 @@
 package projectpackage.repository;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.reacteav.ReactEAVManager;
 
 import java.sql.Types;
@@ -15,6 +18,9 @@ import java.util.Map;
  * Created by Arizel on 17.05.2017.
  */
 public abstract class AbstractDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(AbstractDAO.class);
+
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -32,14 +38,26 @@ public abstract class AbstractDAO {
         return jdbcTemplate.queryForObject("SELECT seq_obj_id.nextval FROM DUAL", Integer.class);
     }
 
-    public int deleteSingleEntityById(int id) {
+    public void deleteSingleEntityById(int id) throws ReferenceBreakException {
         SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate)
                 .withFunctionName("DELETE_OBJECT_BY_ID")
                 .declareParameters(
                         new SqlParameter("obj_id", Types.BIGINT),
                         new SqlOutParameter("count_rows", Types.BIGINT));
 
-        Map<String, Object> execute = call.execute(new MapSqlParameterSource("obj_id", id));
-        return Math.toIntExact((Long) execute.get("count_rows"));
+        Map<String, Object> execute = null;
+        try {
+            execute = call.execute(new MapSqlParameterSource("obj_id", id));
+        } catch (UncategorizedSQLException e) {
+            if (e.getSQLException().getErrorCode() == 20001) {
+                String message = e.getSQLException().getMessage();
+                message = message.substring(11);
+                ReferenceBreakException rbe = new ReferenceBreakException(message.split(" "));
+                LOGGER.info("Someone tried delete Entity, witch have references on self.");
+                throw rbe;
+            } else {
+                throw e;
+            }
+        }
     }
 }
