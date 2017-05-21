@@ -1,6 +1,7 @@
 package projectpackage.repository.blocksdao;
 
 import projectpackage.model.blocks.Block;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 
 import java.util.List;
@@ -13,5 +14,5 @@ public interface BlockDAO {
     public List<Block> getAllBlocks();
     public int insertBlock(Block block) throws TransactionException;
     public void updateBlock(Block newBlock, Block oldBlock) throws TransactionException;
-    public int deleteBlock(int id);
+    public void deleteBlock(int id) throws ReferenceBreakException;
 }

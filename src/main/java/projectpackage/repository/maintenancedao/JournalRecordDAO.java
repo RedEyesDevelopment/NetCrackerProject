@@ -1,6 +1,7 @@
 package projectpackage.repository.maintenancedao;
 
 import projectpackage.model.maintenances.JournalRecord;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 
 import java.util.List;
@@ -13,5 +14,5 @@ public interface JournalRecordDAO {
     public List<JournalRecord> getAllJournalRecords();
     public int insertJournalRecord(JournalRecord journalRecord) throws TransactionException;
     public void updateJournalRecord(JournalRecord newJournalRecord, JournalRecord oldJournalRecord) throws TransactionException;
-    public int deleteJournalRecord(int id);
+    public void deleteJournalRecord(int id) throws ReferenceBreakException;
 }

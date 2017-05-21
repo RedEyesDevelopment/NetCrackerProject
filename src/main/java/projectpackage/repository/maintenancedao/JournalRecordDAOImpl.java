@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.JournalRecord;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -17,7 +18,7 @@ import java.util.List;
  */
 @Repository
 public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDAO {
-    private static final Logger LOGGER = Logger.getLogger(MaintenanceDAOImpl.class);
+    private static final Logger LOGGER = Logger.getLogger(JournalRecordDAOImpl.class);
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -28,7 +29,7 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
         if (null == id) return null;
         try {
             return (JournalRecord) manager.createReactEAV(JournalRecord.class)
-                    .fetchReferenceEntityCollection(Maintenance.class, "MaintenanceToJournalRecord")
+                    .fetchRootReference(Maintenance.class, "MaintenanceToJournalRecord")
                     .closeAllFetches()
                     .getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
@@ -41,7 +42,7 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
     public List<JournalRecord> getAllJournalRecords() {
         try {
             return manager.createReactEAV(JournalRecord.class)
-                    .fetchReferenceEntityCollection(Maintenance.class, "MaintenanceToJournalRecord")
+                    .fetchRootReference(Maintenance.class, "MaintenanceToJournalRecord")
                     .closeAllFetches()
                     .getEntityCollection();
         } catch (ResultEntityNullException e) {
@@ -80,7 +81,7 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
             if (oldJournalRecord.getUsedDate().getTime() !=(newJournalRecord.getUsedDate().getTime())) {
                 jdbcTemplate.update(updateAttribute, null, newJournalRecord.getUsedDate(), newJournalRecord.getObjectId(), 56);
             }
-            if (!oldJournalRecord.getMaintenance().equals(newJournalRecord.getMaintenance())) {
+            if (oldJournalRecord.getMaintenance().getObjectId() != newJournalRecord.getMaintenance().getObjectId()) {
                 jdbcTemplate.update(updateReference, newJournalRecord.getMaintenance().getObjectId(), newJournalRecord.getObjectId(), 53);
             }
         } catch (NullPointerException e) {
@@ -89,7 +90,7 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
     }
 
     @Override
-    public int deleteJournalRecord(int id) {
-        return deleteSingleEntityById(id);
+    public void deleteJournalRecord(int id) throws ReferenceBreakException {
+        deleteSingleEntityById(id);
     }
 }

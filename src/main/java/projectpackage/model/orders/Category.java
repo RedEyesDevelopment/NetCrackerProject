@@ -21,8 +21,8 @@ public class Category {
 
     @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Category_title")
     private String categoryTitle;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Category_price")
-    private String categoryPrice;
+    @ReactField(valueObjectClass = Long.class, databaseAttrtypeCodeValue = "Category_price")
+    private Long categoryPrice;
 
     private Set<Complimentary> complimentaries;
 }

@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -76,7 +77,7 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
     }
 
     @Override
-    public int deleteMaintenance(int id) {
-        return deleteSingleEntityById(id);
+    public void deleteMaintenance(int id) throws ReferenceBreakException {
+        deleteSingleEntityById(id);
     }
 }

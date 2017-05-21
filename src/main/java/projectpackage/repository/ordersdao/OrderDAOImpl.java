@@ -1,5 +1,6 @@
 package projectpackage.repository.ordersdao;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -16,6 +17,7 @@ import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
@@ -27,6 +29,7 @@ import java.util.List;
  */
 @Repository
 public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
+    private static final Logger LOGGER = Logger.getLogger(OrderDAOImpl.class);
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -37,26 +40,30 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         if (null == id) return null;
         try {
             return (Order) manager.createReactEAV(Order.class)
-                    .fetchReferenceEntityCollection(User.class, "UserToOrderAsClient")
-                    .fetchChildEntityCollectionForInnerObject(Phone.class)
+                    .fetchRootReference(User.class, "UserToOrderAsClient")
+                    .fetchInnerChild(Phone.class).closeFetch()
+                    .fetchInnerReference(Role.class, "RoleToUser")
                     .closeAllFetches()
-                    .fetchReferenceEntityCollection(User.class, "UserToOrderAsLastModificator")
-                    .fetchReferenceEntityCollectionForInnerObject(Role.class, "RoleToUser")
+                    .fetchRootReference(User.class, "UserToOrderAsLastModificator")
+                    .fetchInnerReference(Role.class, "RoleToUser").closeFetch()
+                    .fetchInnerChild(Phone.class)
                     .closeAllFetches()
-                    .fetchReferenceEntityCollection(Room.class, "RoomToOrder")
-                    .fetchReferenceEntityCollectionForInnerObject(RoomType.class, "RoomTypeToRoom")
-                    .fetchChildEntityCollectionForInnerObject(Rate.class)
-                    .fetchChildEntityCollectionForInnerObject(Price.class)
+                    .fetchRootReference(Room.class, "RoomToOrder")
+                    .fetchInnerReference(RoomType.class, "RoomTypeToRoom")
+                    .fetchInnerChild(Rate.class)
+                    .fetchInnerChild(Price.class)
                     .closeAllFetches()
-                    .fetchChildEntityCollection(JournalRecord.class)
+                    .fetchRootChild(JournalRecord.class)
+                    .fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
                     .closeAllFetches()
-                    .fetchReferenceEntityCollection(Category.class, "OrderToCategory")
-                    .fetchChildEntityCollectionForInnerObject(Complimentary.class)
-                    .fetchReferenceEntityCollectionForInnerObject(Maintenance.class, "MaintenanceToComplimentary")
+                    .fetchRootReference(Category.class, "OrderToCategory")
+                    .fetchInnerChild(Complimentary.class)
+                    .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
                     .closeAllFetches()
                     .addCondition(PriceEqualsToRoomCondition.class)
                     .getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
             return null;
         }
     }
@@ -65,26 +72,30 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     public List<Order> getAllOrder() {
         try {
             return (List<Order>) manager.createReactEAV(Order.class)
-                    .fetchReferenceEntityCollection(User.class, "UserToOrderAsClient")
-                    .fetchChildEntityCollectionForInnerObject(Phone.class)
+                    .fetchRootReference(User.class, "UserToOrderAsClient")
+                    .fetchInnerChild(Phone.class).closeFetch()
+                    .fetchInnerReference(Role.class, "RoleToUser")
                     .closeAllFetches()
-                    .fetchReferenceEntityCollection(User.class, "UserToOrderAsLastModificator")
-                    .fetchReferenceEntityCollectionForInnerObject(Role.class, "RoleToUser")
+                    .fetchRootReference(User.class, "UserToOrderAsLastModificator")
+                    .fetchInnerReference(Role.class, "RoleToUser").closeFetch()
+                    .fetchInnerChild(Phone.class)
                     .closeAllFetches()
-                    .fetchReferenceEntityCollection(Room.class, "RoomToOrder")
-                    .fetchReferenceEntityCollectionForInnerObject(RoomType.class, "RoomTypeToRoom")
-                    .fetchChildEntityCollectionForInnerObject(Rate.class)
-                    .fetchChildEntityCollectionForInnerObject(Price.class)
+                    .fetchRootReference(Room.class, "RoomToOrder")
+                    .fetchInnerReference(RoomType.class, "RoomTypeToRoom")
+                    .fetchInnerChild(Rate.class)
+                    .fetchInnerChild(Price.class)
                     .closeAllFetches()
-                    .fetchChildEntityCollection(JournalRecord.class)
+                    .fetchRootChild(JournalRecord.class)
+                    .fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
                     .closeAllFetches()
-                    .fetchReferenceEntityCollection(Category.class, "OrderToCategory")
-                    .fetchChildEntityCollectionForInnerObject(Complimentary.class)
-                    .fetchReferenceEntityCollectionForInnerObject(Maintenance.class, "MaintenanceToComplimentary")
+                    .fetchRootReference(Category.class, "OrderToCategory")
+                    .fetchInnerChild(Complimentary.class)
+                    .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
                     .closeAllFetches()
                     .addCondition(PriceEqualsToRoomCondition.class)
                     .getEntityCollection();
         } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
             return null;
         }
     }
@@ -97,13 +108,22 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
 
             jdbcTemplate.update(insertAttribute, 5, objectId, objectId, null);
             jdbcTemplate.update(insertAttribute, 8, objectId, null, order.getRegistrationDate());     //Registration_date
-            jdbcTemplate.update(insertAttribute, 9, objectId, order.getIsPaidFor(), null);          //Is_paid_for
-            jdbcTemplate.update(insertAttribute, 10, objectId, order.getIsConfirmed(), null);       //Is_confirmed
+            if (order.getIsPaidFor()) {
+                jdbcTemplate.update(insertAttribute, 9, objectId, "true", null);      //Is_paid_for
+            } else {
+                jdbcTemplate.update(insertAttribute, 9, objectId, "false", null);      //Is_paid_for
+            }
+            if (order.getIsConfirmed()) {
+                jdbcTemplate.update(insertAttribute, 10, objectId, "true", null);
+            } else {
+                jdbcTemplate.update(insertAttribute, 10, objectId, "false", null);
+            }
             jdbcTemplate.update(insertAttribute, 11, objectId, null, order.getLivingStartDate());     //Living_start_date
             jdbcTemplate.update(insertAttribute, 12, objectId, null, order.getLivingFinishDate());    //Living_finish_date
             jdbcTemplate.update(insertAttribute, 13, objectId, order.getSum(), null);               //Sum
             jdbcTemplate.update(insertAttribute, 14, objectId, order.getComment(), null);           //Comment
 
+            jdbcTemplate.update(insertObjReference, 44, objectId, order.getLastModificator().getObjectId());
             jdbcTemplate.update(insertObjReference, 6, objectId, order.getRoom().getObjectId());     //Booked
             jdbcTemplate.update(insertObjReference, 7, objectId, order.getClient().getObjectId());     //Belong
         } catch (NullPointerException e) {
@@ -112,10 +132,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         return objectId;
     }
 
-    /**
-     * Метод получает новый заказ и старый, затем сравнивает их поля и выполняет запросы по шаблону
-     */
-
     @Override
     public void updateOrder(Order newOrder, Order oldOrder) throws TransactionException {
         try {
@@ -123,10 +139,18 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 jdbcTemplate.update(updateAttribute, null,  newOrder.getRegistrationDate(), newOrder.getObjectId(), 8);
             }
             if (!oldOrder.getIsPaidFor().equals(newOrder.getIsPaidFor())) {
-                jdbcTemplate.update(updateAttribute, newOrder.getIsPaidFor(), null, newOrder.getObjectId(), 9);
+                if (newOrder.getIsPaidFor()) {
+                    jdbcTemplate.update(updateAttribute, "true", null, newOrder.getObjectId(), 9);
+                } else {
+                    jdbcTemplate.update(updateAttribute, "false", null, newOrder.getObjectId(), 9);
+                }
             }
             if (!oldOrder.getIsConfirmed().equals(newOrder.getIsConfirmed())) {
-                jdbcTemplate.update(updateAttribute, newOrder.getIsConfirmed(), null, newOrder.getObjectId(), 10);
+                if (newOrder.getIsConfirmed()) {
+                    jdbcTemplate.update(updateAttribute, "true", null, newOrder.getObjectId(), 10);
+                } else {
+                    jdbcTemplate.update(updateAttribute, "false", null, newOrder.getObjectId(), 10);
+                }
             }
             if (oldOrder.getLivingStartDate().getTime() != newOrder.getLivingStartDate().getTime()) {
                 jdbcTemplate.update(updateAttribute, null, newOrder.getLivingStartDate(), newOrder.getObjectId(), 11);
@@ -140,6 +164,9 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
             if (!oldOrder.getComment().equals(newOrder.getComment())) {
                 jdbcTemplate.update(updateAttribute, newOrder.getComment(), null, newOrder.getObjectId(), 14);
             }
+            if (oldOrder.getLastModificator().getObjectId() != newOrder.getLastModificator().getObjectId()) {
+                jdbcTemplate.update(updateReference, newOrder.getLastModificator().getObjectId(), newOrder.getObjectId(), 44);
+            }
             if (oldOrder.getRoom().getObjectId() != newOrder.getRoom().getObjectId()) {
                 jdbcTemplate.update(updateReference, newOrder.getRoom().getObjectId(), newOrder.getObjectId(), 6);
             }
@@ -152,7 +179,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     }
 
     @Override
-    public int deleteOrder(int id) {
-        return deleteSingleEntityById(id);
+    public void deleteOrder(int id) throws ReferenceBreakException {
+        deleteSingleEntityById(id);
     }
 }

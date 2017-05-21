@@ -1,11 +1,13 @@
 package projectpackage.repository.ratesdao;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -13,16 +15,19 @@ import java.util.List;
 
 @Repository
 public class RateDAOImpl extends AbstractDAO implements RateDAO{
+    private static final Logger LOGGER = Logger.getLogger(RateDAOImpl.class);
 
     @Autowired
     JdbcTemplate jdbcTemplate;
 
     @Override
     public Rate getRate(Integer id) {
-        if (null==id) return null;
+        if (null == id) return null;
         try {
-            return (Rate) manager.createReactEAV(Rate.class).fetchChildEntityCollection(Price.class).closeAllFetches().getSingleEntityWithId(id);
+            return (Rate) manager.createReactEAV(Rate.class).fetchRootChild(Price.class).closeAllFetches()
+                    .getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
             return null;
         }
     }
@@ -30,8 +35,9 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
     @Override
     public List<Rate> getAllRates() {
         try {
-            return manager.createReactEAV(Rate.class).fetchChildEntityCollection(Price.class).closeAllFetches().getEntityCollection();
+            return manager.createReactEAV(Rate.class).fetchRootChild(Price.class).closeAllFetches().getEntityCollection();
         } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
             return null;
         }
     }
@@ -66,7 +72,7 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
     }
 
     @Override
-    public int deleteRate(int id) {
-        return deleteSingleEntityById(id);
+    public void deleteRate(int id) throws ReferenceBreakException {
+        deleteSingleEntityById(id);
     }
 }

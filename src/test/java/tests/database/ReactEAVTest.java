@@ -79,7 +79,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         int userId=901;
         User user = null;
         try {
-            user = (User) manager.createReactEAV(User.class).fetchReferenceEntityCollection(Role.class, "RoleToUser").closeAllFetches().getSingleEntityWithId(userId);
+            user = (User) manager.createReactEAV(User.class).fetchRootReference(Role.class, "RoleToUser").closeAllFetches().getSingleEntityWithId(userId);
         } catch (ResultEntityNullException e) {
             e.printStackTrace();
         }
@@ -186,7 +186,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     public void queryTestOfUsersFetchRolesAndPhones(){
         List<User> list = null;
         try {
-            list = (List<User>) manager.createReactEAV(User.class).fetchReferenceEntityCollection(Role.class, "RoleToUser").closeAllFetches().fetchChildEntityCollection(Phone.class).closeAllFetches().getEntityCollection();
+            list = (List<User>) manager.createReactEAV(User.class).fetchRootReference(Role.class, "RoleToUser").closeAllFetches().fetchRootChild(Phone.class).closeAllFetches().getEntityCollection();
         } catch (ResultEntityNullException e) {
         }
         for (User user:list){
@@ -208,7 +208,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     public void queryTestOfUsersFetchRolesAndPhonesBackwards(){
         List<User> list = null;
             try {
-                list = (List<User>) manager.createReactEAV(User.class).fetchChildEntityCollection(Phone.class).closeAllFetches().fetchReferenceEntityCollection(Role.class, "RoleToUser").closeAllFetches().getEntityCollection();
+                list = (List<User>) manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches().fetchRootReference(Role.class, "RoleToUser").closeAllFetches().getEntityCollection();
             } catch (ResultEntityNullException e) {
                 e.printStackTrace();
             }
@@ -230,7 +230,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     public void getNotifications(){
         List<Notification> nots = null;
         try {
-            nots = manager.createReactEAV(Notification.class).fetchReferenceEntityCollection(User.class, "UserToNotificationAsAuthor").closeAllFetches().fetchReferenceEntityCollection(NotificationType.class, "NotificationTypeToNotification").closeAllFetches().fetchReferenceEntityCollection(Order.class, "OrderToNotification").closeAllFetches().fetchReferenceEntityCollection(User.class, "UserToNotificationAsExecutor").closeAllFetches().getEntityCollection();
+            nots = manager.createReactEAV(Notification.class).fetchRootReference(User.class, "UserToNotificationAsAuthor").closeAllFetches().fetchRootReference(NotificationType.class, "NotificationTypeToNotification").closeAllFetches().fetchRootReference(Order.class, "OrderToNotification").closeAllFetches().fetchRootReference(User.class, "UserToNotificationAsExecutor").closeAllFetches().getEntityCollection();
             for (Notification not:nots){
                 System.out.println(not);
             }
@@ -255,7 +255,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     public void getRooms(){
         List<Room> rooms = null;
         try {
-            rooms = manager.createReactEAV(Room.class).fetchReferenceEntityCollection(RoomType.class, "RoomTypeToRoom").closeAllFetches().fetchChildEntityCollection(Rate.class).closeAllFetches().getEntityCollection();
+            rooms = manager.createReactEAV(Room.class).fetchRootReference(RoomType.class, "RoomTypeToRoom").closeAllFetches().fetchRootChild(Rate.class).closeAllFetches().getEntityCollection();
         } catch (ResultEntityNullException e) {
             e.printStackTrace();
         }
@@ -268,7 +268,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     public void getRooms1(){
         List<Room> rooms = null;
         try {
-            rooms = manager.createReactEAV(Room.class).fetchReferenceEntityCollection(RoomType.class, "RoomTypeToRoom").fetchChildEntityCollectionForInnerObject(Rate.class).fetchChildEntityCollectionForInnerObject(Price.class).closeAllFetches().addCondition(PriceEqualsToRoomCondition.class).getEntityCollection();
+            rooms = manager.createReactEAV(Room.class).fetchRootReference(RoomType.class, "RoomTypeToRoom").fetchInnerChild(Rate.class).fetchInnerChild(Price.class).closeAllFetches().addCondition(PriceEqualsToRoomCondition.class).getEntityCollection();
         } catch (ResultEntityNullException e) {
             e.printStackTrace();
         }

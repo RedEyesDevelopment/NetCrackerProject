@@ -1,10 +1,12 @@
 package projectpackage.repository.ratesdao;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.rates.Price;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -15,6 +17,7 @@ import java.util.List;
  */
 @Repository
 public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
+    private static final Logger LOGGER = Logger.getLogger(PriceDAOImpl.class);
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -25,6 +28,7 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
         try {
             return (Price) manager.createReactEAV(Price.class).getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
             return null;
         }
     }
@@ -34,6 +38,7 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
         try {
             return manager.createReactEAV(Price.class).getEntityCollection();
         } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
             return null;
         }
     }
@@ -68,7 +73,7 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
     }
 
     @Override
-    public int deletePrice(int id) {
-        return deleteSingleEntityById(id);
+    public void deletePrice(int id) throws ReferenceBreakException {
+        deleteSingleEntityById(id);
     }
 }

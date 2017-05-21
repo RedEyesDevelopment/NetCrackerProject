@@ -3,9 +3,11 @@ package projectpackage.repository.blocksdao;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 import projectpackage.model.blocks.Block;
 import projectpackage.model.rooms.Room;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -14,6 +16,7 @@ import java.util.List;
 /**
  * Created by Arizel on 16.05.2017.
  */
+@Repository
 public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     private static final Logger LOGGER = Logger.getLogger(BlockDAOImpl.class);
 
@@ -25,7 +28,7 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     public Block getBlock(Integer id) {
         if (id == null) return null;
         try {
-            return (Block) manager.createReactEAV(Block.class).fetchReferenceEntityCollection(Room.class, "RoomToBlock")
+            return (Block) manager.createReactEAV(Block.class).fetchRootReference(Room.class, "RoomToBlock")
                     .closeAllFetches().getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);
@@ -36,7 +39,7 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     @Override
     public List<Block> getAllBlocks() {
         try {
-            return manager.createReactEAV(Block.class).fetchReferenceEntityCollection(Room.class, "RoomToBlock")
+            return manager.createReactEAV(Block.class).fetchRootReference(Room.class, "RoomToBlock")
                     .closeAllFetches().getEntityCollection();
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);
@@ -82,7 +85,7 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     }
 
     @Override
-    public int deleteBlock(int id) {
-        return deleteSingleEntityById(id);
+    public void deleteBlock(int id) throws ReferenceBreakException {
+        deleteSingleEntityById(id);
     }
 }

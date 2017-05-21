@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Phone;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -63,7 +64,7 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
     }
 
     @Override
-    public int deletePhone(int id) {
-        return deleteSingleEntityById(id);
+    public void deletePhone(int id) throws ReferenceBreakException {
+        deleteSingleEntityById(id);
     }
 }

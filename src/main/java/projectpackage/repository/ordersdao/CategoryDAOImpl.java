@@ -1,5 +1,6 @@
 package projectpackage.repository.ordersdao;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -7,6 +8,7 @@ import projectpackage.model.maintenances.Complimentary;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.model.orders.Category;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -17,6 +19,8 @@ import java.util.List;
  */
 @Repository
 public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
+    private static final Logger LOGGER = Logger.getLogger(CategoryDAOImpl.class);
+
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -26,11 +30,12 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
         if (null == id) return null;
         try {
             return (Category) manager.createReactEAV(Category.class)
-                    .fetchChildEntityCollection(Complimentary.class)
-                    .fetchReferenceEntityCollectionForInnerObject(Maintenance.class, "MaintenanceToComplimentary")
+                    .fetchRootChild(Complimentary.class)
+                    .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
                     .closeAllFetches()
-                    .getEntityCollection();
+                    .getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
             return null;
         }
     }
@@ -39,11 +44,12 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
     public List<Category> getAllCategories() {
         try {
             return manager.createReactEAV(Category.class)
-                    .fetchChildEntityCollection(Complimentary.class)
-                    .fetchReferenceEntityCollectionForInnerObject(Maintenance.class, "MaintenanceToComplimentary")
+                    .fetchRootChild(Complimentary.class)
+                    .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
                     .closeAllFetches()
                     .getEntityCollection();
         } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
             return null;
         }
     }
@@ -77,7 +83,7 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
     }
 
     @Override
-    public int deleteCategory(int id) {
-        return deleteSingleEntityById(id);
+    public void deleteCategory(int id) throws ReferenceBreakException {
+        deleteSingleEntityById(id);
     }
 }

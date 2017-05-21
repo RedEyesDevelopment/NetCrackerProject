@@ -1,5 +1,6 @@
 package projectpackage.repository.authdao;
 
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.model.auth.Phone;
 
@@ -13,5 +14,5 @@ public interface PhoneDAO {
     public List<Phone> getAllPhones();
     public int insertPhone(Phone phone) throws TransactionException;
     public void updatePhone(Phone newPhone, Phone oldPhone) throws TransactionException;
-    public int deletePhone(int id);
+    public void deletePhone(int id) throws ReferenceBreakException;
 }

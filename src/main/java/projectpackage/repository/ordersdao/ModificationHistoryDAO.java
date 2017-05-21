@@ -10,5 +10,5 @@ import java.util.List;
 public interface ModificationHistoryDAO {
     public ModificationHistory getModificationHistory(Integer id);
     public List<ModificationHistory> getAllModificationHistories();
-    public int deleteModificationHistory(int id);
+    public void deleteModificationHistory(int id);
 }

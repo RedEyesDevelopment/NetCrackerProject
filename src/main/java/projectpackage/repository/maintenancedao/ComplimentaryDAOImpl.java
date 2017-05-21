@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.Complimentary;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -26,8 +27,8 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
         if (id == null) return null;
         try {
             return (Complimentary) manager.createReactEAV(Complimentary.class)
-                    .fetchReferenceEntityCollection(Maintenance.class, "MaintenanceToComplimentary").closeAllFetches()
-                    .getSingleEntityWithId(id);
+                    .fetchRootReference(Maintenance.class, "MaintenanceToComplimentary")
+                    .closeAllFetches().getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);
             return null;
@@ -38,8 +39,8 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     public List<Complimentary> getAllComplimentaries() {
         try {
             return manager.createReactEAV(Complimentary.class)
-                    .fetchReferenceEntityCollection(Maintenance.class, "MaintenanceToComplimentary").closeAllFetches()
-                    .getEntityCollection();
+                    .fetchRootReference(Maintenance.class, "MaintenanceToComplimentary")
+                    .closeAllFetches().getEntityCollection();
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);
             return null;
@@ -52,7 +53,6 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
         try {
             jdbcTemplate.update(insertObject, objectId, complimentary.getCategoryId(), 15, null, null);
             jdbcTemplate.update(insertObjReference, 51, objectId, complimentary.getMaintenance().getObjectId());
-
         } catch (NullPointerException e) {
             throw new TransactionException(this);
         }
@@ -62,7 +62,7 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     @Override
     public void updateComplimentary(Complimentary newComplimentary, Complimentary oldComplimentary) throws TransactionException {
         try {
-            if (!oldComplimentary.getMaintenance().equals(newComplimentary.getMaintenance())) {
+            if (oldComplimentary.getMaintenance().getObjectId() != newComplimentary.getMaintenance().getObjectId()) {
                 jdbcTemplate.update(updateReference, newComplimentary.getMaintenance().getObjectId(), newComplimentary.getObjectId(), 51);
             }
         } catch (NullPointerException e) {
@@ -72,7 +72,7 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     }
 
     @Override
-    public int deleteComplimentary(int id) {
-        return deleteSingleEntityById(id);
+    public void deleteComplimentary(int id) throws ReferenceBreakException {
+        deleteSingleEntityById(id);
     }
 }

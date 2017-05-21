@@ -1,6 +1,7 @@
 package projectpackage.repository.roomsdao;
 
 import projectpackage.model.rooms.RoomType;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 
 import java.util.List;
@@ -13,5 +14,5 @@ public interface RoomTypeDAO {
     public List<RoomType> getAllRoomTypes();
     public int insertRoomType(RoomType roomType) throws TransactionException;
     public void updateRoomType(RoomType newRoomType, RoomType oldRoomType) throws TransactionException;
-    public int deleteRoomType(int id);
+    public void deleteRoomType(int id) throws ReferenceBreakException;
 }

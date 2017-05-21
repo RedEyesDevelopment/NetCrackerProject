@@ -3,11 +3,21 @@ package projectpackage.repository.notificationsdao;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+import projectpackage.model.auth.Phone;
+import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
+import projectpackage.model.maintenances.Complimentary;
+import projectpackage.model.maintenances.JournalRecord;
+import projectpackage.model.maintenances.Maintenance;
 import projectpackage.model.notifications.Notification;
 import projectpackage.model.notifications.NotificationType;
+import projectpackage.model.orders.Category;
 import projectpackage.model.orders.Order;
+import projectpackage.model.rooms.Room;
+import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -16,6 +26,7 @@ import java.util.List;
 /**
  * Created by Arizel on 16.05.2017.
  */
+@Repository
 public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO {
     private static final Logger LOGGER = Logger.getLogger(NotificationDAOImpl.class);
 
@@ -26,7 +37,24 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     public Notification getNotification(Integer id) {
         if (id == null) return null;
         try {
-            return (Notification) manager.createReactEAV(Notification.class).fetchReferenceEntityCollection(User.class, "UserToNotificationAsAuthor").closeAllFetches().fetchReferenceEntityCollection(NotificationType.class, "NotificationTypeToNotification").closeAllFetches().fetchReferenceEntityCollection(Order.class, "OrderToNotification").closeAllFetches().fetchReferenceEntityCollection(User.class, "UserToNotificationAsExecutor").closeAllFetches().getEntityCollection();
+            return (Notification) manager.createReactEAV(Notification.class)
+                    .fetchRootReference(User.class, "UserToNotificationAsAuthor")
+                    .fetchInnerChild(Phone.class).closeFetch()
+                    .fetchInnerReference(Role.class, "RoleToUser").closeAllFetches()
+                    .fetchRootReference(NotificationType.class, "NotificationTypeToNotification")
+                    .fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches()
+                    .fetchRootReference(Order.class, "OrderToNotification")
+                    .fetchInnerChild(JournalRecord.class).fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
+                    .closeFetch().closeFetch()
+                    .fetchInnerReference(Room.class, "RoomToOrder")
+                    .fetchInnerReference(RoomType.class, "RoomTypeToRoom").closeFetch()
+                    .fetchInnerReference(Category.class, "OrderToCategory")
+                    .fetchInnerChild(Complimentary.class)
+                    .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary").closeAllFetches()
+                    .fetchRootReference(User.class, "UserToNotificationAsExecutor")
+                    .fetchInnerChild(Phone.class)
+                    .closeAllFetches()
+                    .getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);
             return null;
@@ -36,7 +64,24 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     @Override
     public List<Notification> getAllNotifications() {
         try {
-            return manager.createReactEAV(Notification.class).fetchReferenceEntityCollection(User.class, "UserToNotificationAsAuthor").closeAllFetches().fetchReferenceEntityCollection(NotificationType.class, "NotificationTypeToNotification").closeAllFetches().fetchReferenceEntityCollection(Order.class, "OrderToNotification").closeAllFetches().fetchReferenceEntityCollection(User.class, "UserToNotificationAsExecutor").closeAllFetches().getEntityCollection();
+            return manager.createReactEAV(Notification.class)
+                    .fetchRootReference(User.class, "UserToNotificationAsAuthor")
+                    .fetchInnerChild(Phone.class).closeFetch()
+                    .fetchInnerReference(Role.class, "RoleToUser").closeAllFetches()
+                    .fetchRootReference(NotificationType.class, "NotificationTypeToNotification")
+                    .fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches()
+                    .fetchRootReference(Order.class, "OrderToNotification")
+                    .fetchInnerChild(JournalRecord.class).fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
+                    .closeFetch().closeFetch()
+                    .fetchInnerReference(Room.class, "RoomToOrder")
+                    .fetchInnerReference(RoomType.class, "RoomTypeToRoom").closeFetch()
+                    .fetchInnerReference(Category.class, "OrderToCategory")
+                    .fetchInnerChild(Complimentary.class)
+                    .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary").closeAllFetches()
+                    .fetchRootReference(User.class, "UserToNotificationAsExecutor")
+                    .fetchInnerChild(Phone.class)
+                    .closeAllFetches()
+                    .getEntityCollection();
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);
             return null;
@@ -70,11 +115,11 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                 jdbcTemplate.update(updateAttribute, newNotification.getMessage(), null,
                         newNotification.getObjectId(), 22);
             }
-            if (!oldNotification.getSendDate().equals(newNotification.getSendDate())) {
+            if (oldNotification.getSendDate().getTime() != newNotification.getSendDate().getTime()) {
                 jdbcTemplate.update(updateAttribute, null, newNotification.getSendDate(),
                         newNotification.getObjectId(), 23);
             }
-            if (!oldNotification.getExecutedDate().equals(newNotification.getExecutedDate())) {
+            if (oldNotification.getExecutedDate().getTime() != newNotification.getExecutedDate().getTime()) {
                 jdbcTemplate.update(updateAttribute, null, newNotification.getExecutedDate(),
                         newNotification.getObjectId(), 25);
             }
@@ -100,7 +145,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     }
 
     @Override
-    public int deleteNotification(int id) {
-        return deleteSingleEntityById(id);
+    public void deleteNotification(int id) throws ReferenceBreakException {
+        deleteSingleEntityById(id);
     }
 }

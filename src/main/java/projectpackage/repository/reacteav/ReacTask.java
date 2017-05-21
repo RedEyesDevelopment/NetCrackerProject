@@ -160,11 +160,11 @@ public class ReacTask {
         return referenceId;
     }
 
-    public ReacTask fetchChildEntityCollectionForInnerObject(Class innerEntityClass) {
+    public ReacTask fetchInnerChild(Class innerEntityClass) {
         return fetchingOrderCreation(innerEntityClass, false, null, null, false,null);
     }
 
-    public ReacTask fetchReferenceEntityCollectionForInnerObject(Class innerEntityClass, String referenceId) {
+    public ReacTask fetchInnerReference(Class innerEntityClass, String referenceId) {
         return fetchingOrderCreation(innerEntityClass, false, null, null, false,null);
     }
 

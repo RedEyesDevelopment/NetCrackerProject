@@ -1,6 +1,7 @@
 package projectpackage.repository.ordersdao;
 
 import projectpackage.model.orders.Order;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 
 import java.util.List;
@@ -13,5 +14,5 @@ public interface OrderDAO {
     public List<Order> getAllOrder();
     public int insertOrder(Order order) throws TransactionException;
     public void updateOrder(Order newOrder, Order oldOrder) throws TransactionException;
-    public int deleteOrder(int id);
+    public void deleteOrder(int id) throws ReferenceBreakException;
 }
