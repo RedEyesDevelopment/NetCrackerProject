@@ -41,6 +41,8 @@ import projectpackage.service.orderservice.OrderService;
 import projectpackage.service.orderservice.OrderServiceImpl;
 import projectpackage.service.rateservice.PriceService;
 import projectpackage.service.rateservice.PriceServiceImpl;
+import projectpackage.service.pdf.PdfService;
+import projectpackage.service.pdf.PdfServiceImpl;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -278,6 +280,11 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
 //    RateService rateService() {
 //        return new RateServiceImpl();
 //    }
+
+    @Bean
+    PdfService pdfService() {
+        return new PdfServiceImpl();
+    }
 
     @Bean
     ReactConstantConfiguration reactConstantConfiguration() { return new ReactConstantConfiguration(); }
