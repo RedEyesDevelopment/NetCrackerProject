@@ -1,5 +1,6 @@
 package projectpackage.repository.roomsdao;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -8,6 +9,7 @@ import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
@@ -16,6 +18,9 @@ import java.util.List;
 
 @Repository
 public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
+
+    private static final Logger LOGGER = Logger.getLogger(RoomDAOImpl.class);
+
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -72,7 +77,7 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     }
 
     @Override
-    public int deleteRoom(int id) {
-        return deleteSingleEntityById(id);
+    public void deleteRoom(int id) throws ReferenceBreakException {
+        deleteSingleEntityById(id);
     }
 }

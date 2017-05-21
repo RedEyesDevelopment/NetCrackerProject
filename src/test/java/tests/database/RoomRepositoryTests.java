@@ -52,7 +52,7 @@ public class RoomRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deleteRoom(){
-        int roomId = 2010;
+        int roomId = 135;
         boolean result = roomService.deleteRoom(roomId);
         assertTrue(result);
         LOGGER.info("Delete room result = " + result);
