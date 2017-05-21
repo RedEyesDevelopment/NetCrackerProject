@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface PriceDAO {
     public Price getPrice(Integer id);
-    public List<Price> getAllPrice();
+    public List<Price> getAllPrices();
     public int insertPrice(Price price) throws TransactionException;
     public void updatePrice(Price newPrice, Price oldPrice) throws TransactionException;
     public int deletePrice(int id);

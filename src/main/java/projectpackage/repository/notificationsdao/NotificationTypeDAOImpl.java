@@ -45,14 +45,13 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     public int insertNotificationType(NotificationType notificationType) throws TransactionException {
         Integer objectId = nextObjectId();
         try {
-            //11 = Notification_type
-            jdbcTemplate.update(insertObjects, objectId, null, 11, null, null);
-            //40 = Notification_type_title
-            jdbcTemplate.update(insertAttributes, 40, objectId, notificationType.getNotificationTypeTitle(), null);
-            //41 = Oriented
+            jdbcTemplate.update(insertObject, objectId, null, 11, null, null);
+
+            jdbcTemplate.update(insertAttribute, 40, objectId, notificationType.getNotificationTypeTitle(), null);
+
             jdbcTemplate.update(insertObjReference, 41, objectId, notificationType.getOrientedRole().getObjectId());
         } catch (NullPointerException e) {
-            throw new TransactionException(notificationType);
+            throw new TransactionException(this);
         }
         return objectId;
     }
@@ -61,7 +60,7 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     public void updateNotificationType(NotificationType newNotificationType, NotificationType oldNotificationType) throws TransactionException {
         try {
             if (!oldNotificationType.getNotificationTypeTitle().equals(newNotificationType.getNotificationTypeTitle())) {
-                jdbcTemplate.update(updateAttributes, newNotificationType.getNotificationTypeTitle(), null,
+                jdbcTemplate.update(updateAttribute, newNotificationType.getNotificationTypeTitle(), null,
                         newNotificationType.getObjectId(), 40);
             }
             if (oldNotificationType.getOrientedRole().getObjectId() != newNotificationType.getOrientedRole().getObjectId()) {
@@ -69,12 +68,13 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
                         newNotificationType.getObjectId(), 41);
             }
         } catch (NullPointerException e) {
-            throw new TransactionException(newNotificationType);
+            throw new TransactionException(this);
         }
     }
 
     @Override
     public int deleteNotificationType(int id) {
+        //TODO доделать проверки на связи
         return deleteSingleEntityById(id);
     }
 }

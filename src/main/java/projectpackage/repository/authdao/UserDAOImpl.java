@@ -50,17 +50,17 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     public int insertUser(User user) throws TransactionException {
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObjects, objectId, null, 3, null, null);                      //3 = User
+            jdbcTemplate.update(insertObject, objectId, null, 3, null, null);                      //3 = User
 
-            jdbcTemplate.update(insertAttributes, 15, objectId, user.getEmail(), null);             //email
-            jdbcTemplate.update(insertAttributes, 16, objectId, user.getPassword(), null);          //password
-            jdbcTemplate.update(insertAttributes, 17, objectId, user.getFirstName(), null);         //first_name
-            jdbcTemplate.update(insertAttributes, 18, objectId, user.getLastName(), null);          //last_name
-            jdbcTemplate.update(insertAttributes, 19, objectId, user.getAdditionalInfo(), null);    //additional_info
+            jdbcTemplate.update(insertAttribute, 15, objectId, user.getEmail(), null);             //email
+            jdbcTemplate.update(insertAttribute, 16, objectId, user.getPassword(), null);          //password
+            jdbcTemplate.update(insertAttribute, 17, objectId, user.getFirstName(), null);         //first_name
+            jdbcTemplate.update(insertAttribute, 18, objectId, user.getLastName(), null);          //last_name
+            jdbcTemplate.update(insertAttribute, 19, objectId, user.getAdditionalInfo(), null);    //additional_info
 
             jdbcTemplate.update(insertObjReference, 20, objectId, user.getRole().getObjectId());    //hasRole
         } catch (NullPointerException e) {
-            throw new TransactionException(user);
+            throw new TransactionException(this);
         }
         return objectId;
     }
@@ -72,30 +72,31 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     public void updateUser(User newUser, User oldUser) throws TransactionException {
         try {
             if (!oldUser.getEmail().equals(newUser.getEmail())) {
-                jdbcTemplate.update(updateAttributes, newUser.getEmail(), null, newUser.getObjectId(), 15);
+                jdbcTemplate.update(updateAttribute, newUser.getEmail(), null, newUser.getObjectId(), 15);
             }
             if (!oldUser.getPassword().equals(newUser.getPassword())) {
-                jdbcTemplate.update(updateAttributes, newUser.getPassword(), null, newUser.getObjectId(), 16);
+                jdbcTemplate.update(updateAttribute, newUser.getPassword(), null, newUser.getObjectId(), 16);
             }
             if (!oldUser.getFirstName().equals(newUser.getFirstName())) {
-                jdbcTemplate.update(updateAttributes, newUser.getFirstName(), null, newUser.getObjectId(), 17);
+                jdbcTemplate.update(updateAttribute, newUser.getFirstName(), null, newUser.getObjectId(), 17);
             }
             if (!oldUser.getLastName().equals(newUser.getLastName())) {
-                jdbcTemplate.update(updateAttributes, newUser.getLastName(), null, newUser.getObjectId(), 18);
+                jdbcTemplate.update(updateAttribute, newUser.getLastName(), null, newUser.getObjectId(), 18);
             }
             if (!oldUser.getAdditionalInfo().equals(newUser.getAdditionalInfo())) {
-                jdbcTemplate.update(updateAttributes, newUser.getAdditionalInfo(), null, newUser.getObjectId(), 19);
+                jdbcTemplate.update(updateAttribute, newUser.getAdditionalInfo(), null, newUser.getObjectId(), 19);
             }
             if (oldUser.getRole().getObjectId() != newUser.getRole().getObjectId()) {
                 jdbcTemplate.update(updateReference, newUser.getRole().getObjectId(), newUser.getObjectId(), 20);
             }
         } catch (NullPointerException e) {
-            throw new TransactionException(newUser);
+            throw new TransactionException(this);
         }
     }
 
     @Override
     public int deleteUser(int id) {
+        //TODO доделать проверки на связи ModificationHistory
         return deleteSingleEntityById(id);
     }
 

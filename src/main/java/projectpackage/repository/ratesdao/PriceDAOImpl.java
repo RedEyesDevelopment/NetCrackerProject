@@ -30,7 +30,7 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
     }
 
     @Override
-    public List<Price> getAllPrice() {
+    public List<Price> getAllPrices() {
         try {
             return manager.createReactEAV(Price.class).getEntityCollection();
         } catch (ResultEntityNullException e) {
@@ -42,14 +42,11 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
     public int insertPrice(Price price) throws TransactionException {
         Integer objectId = nextObjectId();
         try {
-            //7 = Price
-            jdbcTemplate.update(insertObjects, objectId, price.getRateId(), 7, null, null);
-            //32 = Number_of_people
-            jdbcTemplate.update(insertAttributes, 32, objectId, price.getNumberOfPeople(), null);
-            //33 = Rate
-            jdbcTemplate.update(insertAttributes, 33, objectId, price.getRate(), null);
+            jdbcTemplate.update(insertObject, objectId, price.getRateId(), 7, null, null);
+            jdbcTemplate.update(insertAttribute, 32, objectId, price.getNumberOfPeople(), null);
+            jdbcTemplate.update(insertAttribute, 33, objectId, price.getRate(), null);
         } catch (NullPointerException e) {
-            throw new TransactionException(price);
+            throw new TransactionException(this);
         }
         return objectId;
     }
@@ -58,15 +55,15 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
     public void updatePrice(Price newPrice, Price oldPrice) throws TransactionException {
         try {
             if (!oldPrice.getNumberOfPeople().equals(newPrice.getNumberOfPeople())) {
-                jdbcTemplate.update(updateAttributes, newPrice.getNumberOfPeople(), null,
+                jdbcTemplate.update(updateAttribute, newPrice.getNumberOfPeople(), null,
                         newPrice.getObjectId(), 32);
             }
             if (!oldPrice.getRate().equals(newPrice.getRate())) {
-                jdbcTemplate.update(updateAttributes, newPrice.getRate(), null,
+                jdbcTemplate.update(updateAttribute, newPrice.getRate(), null,
                         newPrice.getObjectId(), 33);
             }
         } catch (NullPointerException e) {
-            throw new TransactionException(newPrice);
+            throw new TransactionException(this);
         }
     }
 

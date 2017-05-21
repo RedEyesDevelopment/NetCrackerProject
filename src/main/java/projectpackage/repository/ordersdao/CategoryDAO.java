@@ -13,5 +13,5 @@ public interface CategoryDAO {
     public List<Category> getAllCategories();
     public int insertCategory(Category category) throws TransactionException;
     public void updateCategory(Category newCategory, Category oldCategory) throws TransactionException;
-    public int deleteCategory(int id);
+    public int deleteCategory(int id);//TODO доделать проверки на связи
 }

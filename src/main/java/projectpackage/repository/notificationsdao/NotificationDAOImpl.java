@@ -47,18 +47,18 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     public int insertNotification(Notification notification) throws TransactionException {
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObjects, objectId, null, 4, null, null);
+            jdbcTemplate.update(insertObject, objectId, null, 4, null, null);
 
-            jdbcTemplate.update(insertAttributes, 22, objectId, notification.getMessage(), null);
-            jdbcTemplate.update(insertAttributes, 23, objectId, null, notification.getSendDate());
-            jdbcTemplate.update(insertAttributes, 25, objectId, null, notification.getExecutedDate());
+            jdbcTemplate.update(insertAttribute, 22, objectId, notification.getMessage(), null);
+            jdbcTemplate.update(insertAttribute, 23, objectId, null, notification.getSendDate());
+            jdbcTemplate.update(insertAttribute, 25, objectId, null, notification.getExecutedDate());
 
             jdbcTemplate.update(insertObjReference, 21, objectId, notification.getAuthor().getObjectId());
             jdbcTemplate.update(insertObjReference, 26, objectId, notification.getNotificationType().getObjectId());
             jdbcTemplate.update(insertObjReference, 24, objectId, notification.getExecutedBy().getObjectId());
             jdbcTemplate.update(insertObjReference, 27, objectId, notification.getOrder().getObjectId());
         } catch (NullPointerException e) {
-            throw new TransactionException(notification);
+            throw new TransactionException(this);
         }
         return objectId;
     }
@@ -67,15 +67,15 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     public void updateNotification(Notification newNotification, Notification oldNotification) throws TransactionException {
         try {
             if (!oldNotification.getMessage().equals(newNotification.getMessage())) {
-                jdbcTemplate.update(updateAttributes, newNotification.getMessage(), null,
+                jdbcTemplate.update(updateAttribute, newNotification.getMessage(), null,
                         newNotification.getObjectId(), 22);
             }
             if (!oldNotification.getSendDate().equals(newNotification.getSendDate())) {
-                jdbcTemplate.update(updateAttributes, null, newNotification.getSendDate(),
+                jdbcTemplate.update(updateAttribute, null, newNotification.getSendDate(),
                         newNotification.getObjectId(), 23);
             }
             if (!oldNotification.getExecutedDate().equals(newNotification.getExecutedDate())) {
-                jdbcTemplate.update(updateAttributes, null, newNotification.getExecutedDate(),
+                jdbcTemplate.update(updateAttribute, null, newNotification.getExecutedDate(),
                         newNotification.getObjectId(), 25);
             }
             if (oldNotification.getAuthor().getObjectId() != newNotification.getAuthor().getObjectId()) {
@@ -95,7 +95,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                         newNotification.getObjectId(), 27);
             }
         } catch (NullPointerException e) {
-            throw new TransactionException(newNotification);
+            throw new TransactionException(this);
         }
     }
 

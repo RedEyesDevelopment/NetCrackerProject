@@ -42,14 +42,14 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     public int insertRoom(Room room) throws TransactionException {
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObjects, objectId, null, 1, null, null);
+            jdbcTemplate.update(insertObject, objectId, null, 1, null, null);
 
-            jdbcTemplate.update(insertAttributes, 1, objectId, room.getRoomNumber(), null);
-            jdbcTemplate.update(insertAttributes, 2, objectId, room.getNumberOfResidents(), null);
+            jdbcTemplate.update(insertAttribute, 1, objectId, room.getRoomNumber(), null);
+            jdbcTemplate.update(insertAttribute, 2, objectId, room.getNumberOfResidents(), null);
 
             jdbcTemplate.update(insertObjReference, 4, objectId, room.getRoomType().getObjectId());
         } catch (NullPointerException e) {
-            throw new TransactionException(room);
+            throw new TransactionException(this);
         }
         return objectId;
     }
@@ -58,16 +58,16 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     public void updateRoom(Room newRoom, Room oldRoom) throws TransactionException {
         try {
             if (!oldRoom.getRoomNumber().equals(newRoom.getRoomNumber())) {
-                jdbcTemplate.update(updateAttributes, newRoom.getRoomNumber(), null, newRoom.getObjectId(), 1);
+                jdbcTemplate.update(updateAttribute, newRoom.getRoomNumber(), null, newRoom.getObjectId(), 1);
             }
             if (!oldRoom.getNumberOfResidents().equals(newRoom.getNumberOfResidents())) {
-                jdbcTemplate.update(updateAttributes, newRoom.getNumberOfResidents(), null, newRoom.getObjectId(), 2);
+                jdbcTemplate.update(updateAttribute, newRoom.getNumberOfResidents(), null, newRoom.getObjectId(), 2);
             }
             if (oldRoom.getRoomType().getObjectId() != newRoom.getRoomType().getObjectId()) {
                 jdbcTemplate.update(updateReference, newRoom.getRoomType().getObjectId(), newRoom.getObjectId(), 4);
             }
         } catch (NullPointerException e) {
-            throw new TransactionException(newRoom);
+            throw new TransactionException(this);
         }
     }
 

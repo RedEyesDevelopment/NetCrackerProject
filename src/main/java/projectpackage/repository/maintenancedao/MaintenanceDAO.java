@@ -13,5 +13,5 @@ public interface MaintenanceDAO {
     public List<Maintenance> getAllMaintenances();
     public int insertMaintenance(Maintenance maintenance) throws TransactionException;
     public void updateMaintenance(Maintenance newMaintenance, Maintenance oldMaintenance) throws TransactionException;
-    public int deleteMaintenance(int id);
+    public int deleteMaintenance(int id);//TODO доделать проверки на связи
 }

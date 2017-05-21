@@ -1,7 +1,10 @@
 package projectpackage.service.orderservice;
 
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
+import projectpackage.repository.ordersdao.ModificationHistoryDAO;
 
 import java.util.List;
 
@@ -9,8 +12,10 @@ import java.util.List;
  * Created by Arizel on 16.05.2017.
  */
 public class ModificationHistoryServiceImpl implements ModificationHistoryService{
+    private static final Logger LOGGER = Logger.getLogger(ModificationHistoryServiceImpl.class);
 
-
+    @Autowired
+    ModificationHistoryDAO modificationHistoryDAO;
 
     @Override
     public List<ModificationHistory> getAllModificationHistory(String orderingParameter, boolean ascend) {
@@ -19,9 +24,9 @@ public class ModificationHistoryServiceImpl implements ModificationHistoryServic
 
     @Override
     public List<ModificationHistory> getAllModificationHistory() {
-        List<ModificationHistory> notificationTypes = notificationTypeDAO.getAllNotificationTypes();
-        if (notificationTypes == null) LOGGER.info("Returned NULL!!!");
-        return notificationTypes;
+        List<ModificationHistory> modificationHistories = modificationHistoryDAO.getAllModificationHistories();
+        if (modificationHistories == null) LOGGER.info("Returned NULL!!!");
+        return modificationHistories;
     }
 
     @Override
@@ -31,6 +36,8 @@ public class ModificationHistoryServiceImpl implements ModificationHistoryServic
 
     @Override
     public ModificationHistory getSingleModificationHistoryById(int id) {
-        return null;
+        ModificationHistory modificationHistory = modificationHistoryDAO.getModificationHistory(id);
+        if (modificationHistory == null) LOGGER.info("Returned NULL!!!");
+        return modificationHistory;
     }
 }

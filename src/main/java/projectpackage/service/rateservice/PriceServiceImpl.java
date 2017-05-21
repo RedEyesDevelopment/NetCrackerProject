@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import projectpackage.model.rates.Price;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.ratesdao.PriceDAO;
-import projectpackage.repository.reacteav.ReactEAVManager;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 
@@ -19,12 +17,11 @@ public class PriceServiceImpl implements PriceService{
     @Autowired
     PriceDAO priceDAO;
 
-    @Autowired
-    ReactEAVManager manager;
-
     @Override
     public List<Price> getAllPrices() {
-        return null;
+        List<Price> prices = priceDAO.getAllPrices();
+        if (prices == null) LOGGER.info("Returned NULL!!!");
+        return prices;
     }
 
     @Override
@@ -34,7 +31,9 @@ public class PriceServiceImpl implements PriceService{
 
     @Override
     public Price getSinglePriceById(int id) {
-        return null;
+        Price price = priceDAO.getPrice(id);
+        if (price == null) LOGGER.info("Returned NULL!!!");
+        return price;
     }
 
     @Override
@@ -61,11 +60,8 @@ public class PriceServiceImpl implements PriceService{
     public boolean updatePrice(int id, Price newPrice) {
         try {
             newPrice.setObjectId(id);
-            Price oldPrice = (Price) manager.createReactEAV(Price.class).getSingleEntityWithId(id);
+            Price oldPrice = priceDAO.getPrice(id);
             priceDAO.updatePrice(newPrice, oldPrice);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn("Problem with ReactEAV! Pls Check!", e);
-            return false;
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
             return false;

@@ -22,8 +22,6 @@ public class Rate implements ReactEntityWithId, Cloneable{
     private Date rateToDate;
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%PARENT_ID")
     private Integer roomTypeId;
-    @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Creation_date")
-    private Date creationDate;
 
     private Set<Price> prices;
 

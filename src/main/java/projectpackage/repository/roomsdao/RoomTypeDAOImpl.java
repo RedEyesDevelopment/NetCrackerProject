@@ -21,7 +21,7 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO{
     public RoomType getRoomType(Integer id) {
         if (null==id) return null;
         try {
-            return (RoomType) manager.createReactEAV(RoomType.class).getSingleEntityWithId(id);
+            return (RoomType) manager.createReactEAV(RoomType.class).fetchChildEntityCollection(Rate.class).fetchChildEntityCollectionForInnerObject(Price.class).closeAllFetches().getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
             return null;
         }
@@ -40,12 +40,12 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO{
     public int insertRoomType(RoomType roomType) throws TransactionException {
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObjects, objectId, null, 5, null, null);
+            jdbcTemplate.update(insertObject, objectId, null, 5, null, null);
 
-            jdbcTemplate.update(insertAttributes, 28, objectId, roomType.getRoomTypeTitle(), null);
-            jdbcTemplate.update(insertAttributes, 29, objectId, roomType.getContent(), null);
+            jdbcTemplate.update(insertAttribute, 28, objectId, roomType.getRoomTypeTitle(), null);
+            jdbcTemplate.update(insertAttribute, 29, objectId, roomType.getContent(), null);
         } catch (NullPointerException e) {
-            throw new TransactionException(roomType);
+            throw new TransactionException(this);
         }
         return objectId;
     }
@@ -54,13 +54,13 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO{
     public void updateRoomType(RoomType newRoomType, RoomType oldRoomType) throws TransactionException {
         try {
             if (!oldRoomType.getRoomTypeTitle().equals(newRoomType.getRoomTypeTitle())) {
-                jdbcTemplate.update(updateAttributes, newRoomType.getRoomTypeTitle(), null, newRoomType.getObjectId(), 28);
+                jdbcTemplate.update(updateAttribute, newRoomType.getRoomTypeTitle(), null, newRoomType.getObjectId(), 28);
             }
             if (!oldRoomType.getContent().equals(newRoomType.getContent())) {
-                jdbcTemplate.update(updateAttributes, newRoomType.getContent(), null, newRoomType.getObjectId(), 29);
+                jdbcTemplate.update(updateAttribute, newRoomType.getContent(), null, newRoomType.getObjectId(), 29);
             }
         } catch (NullPointerException e) {
-            throw new TransactionException(newRoomType);
+            throw new TransactionException(this);
         }
     }
 

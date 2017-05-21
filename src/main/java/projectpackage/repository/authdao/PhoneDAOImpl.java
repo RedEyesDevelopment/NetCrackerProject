@@ -43,10 +43,10 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
     public int insertPhone(Phone phone) throws TransactionException {
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObjects, objectId, phone.getUserId(), 9, null, null);
-            jdbcTemplate.update(insertAttributes, 38, objectId, phone.getPhoneNumber(), null);
+            jdbcTemplate.update(insertObject, objectId, phone.getUserId(), 9, null, null);
+            jdbcTemplate.update(insertAttribute, 38, objectId, phone.getPhoneNumber(), null);
         } catch (NullPointerException e) {
-            throw new TransactionException(phone);
+            throw new TransactionException(this);
         }
         return objectId;
     }
@@ -55,10 +55,10 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
     public void updatePhone(Phone newPhone, Phone oldPhone) throws TransactionException {
         try {
             if (!oldPhone.getPhoneNumber().equals(newPhone.getPhoneNumber())) {
-                jdbcTemplate.update(updateAttributes, newPhone.getPhoneNumber(), null, newPhone.getObjectId(), 38);
+                jdbcTemplate.update(updateAttribute, newPhone.getPhoneNumber(), null, newPhone.getObjectId(), 38);
             }
         } catch (NullPointerException e) {
-            throw new TransactionException(newPhone);
+            throw new TransactionException(this);
         }
     }
 
