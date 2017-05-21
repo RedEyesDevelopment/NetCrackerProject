@@ -6,8 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.Complimentary;
 import projectpackage.model.maintenances.Maintenance;
-import projectpackage.model.orders.Category;
-import projectpackage.model.orders.Order;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
@@ -52,7 +50,7 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     public int insertComplimentary(Complimentary complimentary) throws TransactionException {
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObject, objectId, complimentary.getOrderId(), 15, null, null);
+            jdbcTemplate.update(insertObject, objectId, complimentary.getCategoryId(), 15, null, null);
             jdbcTemplate.update(insertObjReference, 51, objectId, complimentary.getMaintenance().getObjectId());
 
         } catch (NullPointerException e) {

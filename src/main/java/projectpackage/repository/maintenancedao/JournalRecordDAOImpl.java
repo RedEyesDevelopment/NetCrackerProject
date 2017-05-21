@@ -1,0 +1,76 @@
+package projectpackage.repository.maintenancedao;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+import projectpackage.model.maintenances.JournalRecord;
+import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.daoexceptions.TransactionException;
+
+import java.util.List;
+
+/**
+ * Created by Dima on 21.05.2017.
+ */
+@Repository
+public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDAO {
+    private static final Logger LOGGER = Logger.getLogger(MaintenanceDAOImpl.class);
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
+
+    @Override
+    public JournalRecord getJournalRecord(Integer id) {
+        return null;
+    }
+
+    @Override
+    public List<JournalRecord> getAllJournalRecords() {
+        return null;
+    }
+
+    @Override
+    public int insertJournalRecord(JournalRecord journalRecord) throws TransactionException {
+        Integer objectId = nextObjectId();
+        try {
+            jdbcTemplate.update(insertObject, objectId, journalRecord.getOrderId(), 16, null, null);
+
+            jdbcTemplate.update(insertAttribute, 54, objectId, journalRecord.getCount(), null);
+            jdbcTemplate.update(insertAttribute, 55, objectId, journalRecord.getCost(), null);
+            jdbcTemplate.update(insertAttribute, 56, objectId, null, journalRecord.getUsedDate());
+
+            jdbcTemplate.update(insertObjReference, 53, objectId, journalRecord.getMaintenance().getObjectId());
+
+        } catch (NullPointerException e) {
+            throw new TransactionException(this);
+        }
+        return objectId;
+    }
+
+    @Override
+    public void updateJournalRecord(JournalRecord newJournalRecord, JournalRecord oldJournalRecord) throws TransactionException {
+        try {
+            if (!oldJournalRecord.getCount().equals(newJournalRecord.getCount())) {
+                jdbcTemplate.update(updateAttribute, newJournalRecord.getCount(), null, newJournalRecord.getObjectId(), 54);
+            }
+            if (!oldJournalRecord.getCost().equals(newJournalRecord.getCost())) {
+                jdbcTemplate.update(updateAttribute, newJournalRecord.getCost(), null, newJournalRecord.getObjectId(), 55);
+            }
+            if (oldJournalRecord.getUsedDate().getTime() !=(newJournalRecord.getUsedDate().getTime())) {
+                jdbcTemplate.update(updateAttribute, null, newJournalRecord.getUsedDate(), newJournalRecord.getObjectId(), 56);
+            }
+            if (!oldJournalRecord.getMaintenance().equals(newJournalRecord.getMaintenance())) {
+                jdbcTemplate.update(updateReference, newJournalRecord.getMaintenance().getObjectId(), newJournalRecord.getObjectId(), 53);
+            }
+        } catch (NullPointerException e) {
+            throw new TransactionException(this);
+        }
+    }
+
+    @Override
+    public int deleteJournalRecord(int id) {
+        return deleteSingleEntityById(id);
+    }
+}

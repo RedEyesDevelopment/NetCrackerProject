@@ -14,7 +14,7 @@ public class Complimentary {
     private int objectId;
 
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%PARENT_ID")
-    private int orderId;
+    private int categoryId;
 
     private Maintenance maintenance;
 }

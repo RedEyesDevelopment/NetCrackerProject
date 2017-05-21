@@ -75,7 +75,7 @@ public class BlockServiceImpl implements BlockService{
     public boolean insertBlock(Block block) {
         try {
             int blockId = blockDAO.insertBlock(block);
-            LOGGER.info("Get from DB phoneId = " + blockId);
+            LOGGER.info("Get from DB blockId = " + blockId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
             return false;
