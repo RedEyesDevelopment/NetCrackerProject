@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.auth.Phone;
-import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.repository.authdao.PhoneDAO;
 import projectpackage.repository.authdao.UserDAO;
@@ -26,20 +25,10 @@ public class UserServiceImpl implements UserService {
     PhoneDAO phoneDAO;
 
     @Override
-    public List<User> getUsersByRole(Role role) {
-        return null;
-    }
-
-    @Override
     public List<User> getAllUsers() {
         List<User> users = userDAO.getAllUsers();
         if (users == null) LOGGER.info("Returned NULL!!!");
         return users;
-    }
-
-    @Override
-    public List<User> getAllUsers(String orderingParameter, boolean ascend) {
-        return null;
     }
 
     @Override

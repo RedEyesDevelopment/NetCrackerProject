@@ -3,6 +3,7 @@ package projectpackage.repository.notificationsdao;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.User;
 import projectpackage.model.notifications.Notification;
 import projectpackage.model.notifications.NotificationType;
@@ -13,9 +14,7 @@ import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
+@Repository
 public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO {
     private static final Logger LOGGER = Logger.getLogger(NotificationDAOImpl.class);
 

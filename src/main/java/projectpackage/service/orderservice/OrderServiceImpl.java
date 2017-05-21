@@ -10,8 +10,6 @@ import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
 import projectpackage.repository.daoexceptions.TransactionException;
-import projectpackage.repository.maintenancedao.JournalRecordDAO;
-import projectpackage.repository.ordersdao.ModificationHistoryDAO;
 import projectpackage.repository.ordersdao.OrderDAO;
 
 import java.util.Date;
@@ -26,11 +24,11 @@ public class OrderServiceImpl implements OrderService{
     @Autowired
     OrderDAO orderDAO;
 
-    @Autowired
-    ModificationHistoryDAO historyDAO;
-
-    @Autowired
-    JournalRecordDAO journalRecordDAO;
+//    @Autowired
+//    ModificationHistoryDAO modificationHistoryDAO;
+//
+//    @Autowired
+//    JournalRecordDAO journalRecordDAO;
 
     @Override
     public List<Order> getAllOrders(String orderingParameter, boolean ascend) {
@@ -110,10 +108,10 @@ public class OrderServiceImpl implements OrderService{
     public boolean deleteOrder(int id) {
         Order order = orderDAO.getOrder(id);
         for (ModificationHistory history : order.getHistorys()) {
-            historyDAO.deleteModificationHistory(history.getObjectId());
+//            historyDAO.deleteModificationHistory(history.getObjectId());
         }
         for (JournalRecord record : order.getJournalRecords()) {
-            journalRecordDAO.deleteJournalRecord(record.getObjectId());
+//            journalRecordDAO.deleteJournalRecord(record.getObjectId());
         }
         int count = orderDAO.deleteOrder(id);
         LOGGER.info("Deleted rows : " + count);

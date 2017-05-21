@@ -17,21 +17,20 @@ import java.util.List;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-@RestController(value = "/users")
+@RestController
+@RequestMapping("/users")
 public class UserController {
 
     @Autowired
     UserService userService;
 
-    //Get User List with Sortings
+    //Get User List
     @ResponseStatus(HttpStatus.OK)
     @CacheResult(cacheName = "userList")
-    @GetMapping(value = "/{sortingParameter}&{sortingOrder}",produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public List<Resource<User>> getUserList(@PathVariable("sortingParameter") String sortingParameter, @PathVariable("sortingOrder") String sortingOrderString){
-        //Parse boolean String "ASCEND"
-        Boolean sortingOrder = Boolean.parseBoolean(sortingOrderString);
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public List<Resource<User>> getUserList(){
         //Get users from service
-        List<User> users = userService.getAllUsers(sortingParameter,sortingOrder);
+        List<User> users = userService.getAllUsers();
         //Create Resources for usersList
         List<Resource<User>> resources = new ArrayList<>();
         for (User user:users){
@@ -46,7 +45,7 @@ public class UserController {
     //Get single User by id
     //	@Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public Resource<User> getUser(@PathVariable("id") Integer id){
         //PATHVARIABLE is not optional, so every times it returns a value
         User user = userService.getSingleUserById(id);

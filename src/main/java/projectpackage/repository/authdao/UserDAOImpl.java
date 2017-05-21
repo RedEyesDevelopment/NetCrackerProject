@@ -25,8 +25,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     public User getUser(Integer id) {
         if (id == null) return null;
         try {
-            return (User) manager.createReactEAV(User.class).fetchChildEntityCollection(Phone.class).closeFetch()
-                    .fetchReferenceEntityCollectionForInnerObject(Role.class, "RoleToUser").closeAllFetches()
+            return (User) manager.createReactEAV(User.class).fetchChildEntityCollection(Phone.class).closeAllFetches()
+                    .fetchReferenceEntityCollection(Role.class, "RoleToUser").closeAllFetches()
                     .getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);
@@ -37,8 +37,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     @Override
     public List<User> getAllUsers() {
         try {
-            return manager.createReactEAV(User.class).fetchChildEntityCollection(Phone.class).closeFetch()
-                    .fetchReferenceEntityCollectionForInnerObject(Role.class, "RoleToUser").closeAllFetches()
+            return manager.createReactEAV(User.class).fetchChildEntityCollection(Phone.class).closeAllFetches()
+                    .fetchReferenceEntityCollection(Role.class, "RoleToUser").closeAllFetches()
                     .getEntityCollection();
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);

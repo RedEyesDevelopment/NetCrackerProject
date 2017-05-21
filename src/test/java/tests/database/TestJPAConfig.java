@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -15,10 +16,12 @@ import org.springframework.transaction.annotation.TransactionManagementConfigure
 import projectpackage.repository.authdao.*;
 import projectpackage.repository.blocksdao.BlockDAO;
 import projectpackage.repository.blocksdao.BlockDAOImpl;
+import projectpackage.repository.maintenancedao.JournalRecordDAO;
 import projectpackage.repository.notificationsdao.NotificationDAO;
 import projectpackage.repository.notificationsdao.NotificationDAOImpl;
 import projectpackage.repository.notificationsdao.NotificationTypeDAO;
 import projectpackage.repository.notificationsdao.NotificationTypeDAOImpl;
+import projectpackage.repository.ordersdao.ModificationHistoryDAO;
 import projectpackage.repository.ordersdao.OrderDAO;
 import projectpackage.repository.ordersdao.OrderDAOImpl;
 import projectpackage.repository.ratesdao.PriceDAO;
@@ -31,6 +34,8 @@ import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
 import projectpackage.repository.reacteav.support.ReactEntityValidator;
 import projectpackage.repository.roomsdao.RoomDAO;
 import projectpackage.repository.roomsdao.RoomDAOImpl;
+import projectpackage.repository.securitydao.AuthCredentialsDAO;
+import projectpackage.repository.securitydao.AuthCredentialsDAOImpl;
 import projectpackage.service.authservice.PhoneService;
 import projectpackage.service.authservice.PhoneServiceImpl;
 import projectpackage.service.authservice.RoleService;
@@ -41,6 +46,8 @@ import projectpackage.service.orderservice.OrderService;
 import projectpackage.service.orderservice.OrderServiceImpl;
 import projectpackage.service.rateservice.PriceService;
 import projectpackage.service.rateservice.PriceServiceImpl;
+import projectpackage.service.securityservice.SecurityService;
+import projectpackage.service.securityservice.SecurityServiceImpl;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -180,6 +187,12 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     RoleDAO roleDAO() { return new RoleDAOImpl();}
 
     @Bean
+    ModificationHistoryDAO modificationHistoryDAO() {return null;}
+
+    @Bean
+    JournalRecordDAO journalRecordDAO() {return  null;}
+
+    @Bean
     NotificationDAO notificationDAO(){
         return new NotificationDAOImpl();
     }
@@ -296,4 +309,16 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     ReactEntityValidator reactEntityValidator(){
         return new ReactEntityValidator();
     }
+
+    @Bean
+    BCryptPasswordEncoder bCryptPasswordEncoder() {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(11);
+        return encoder;
+    }
+
+    @Bean
+    AuthCredentialsDAO authCredentialsDAO() { return new AuthCredentialsDAOImpl(); }
+
+    @Bean
+    SecurityService securityService() {return new SecurityServiceImpl(); }
 }

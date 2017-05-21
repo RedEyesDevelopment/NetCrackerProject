@@ -10,7 +10,7 @@ import tests.AbstractTest;
 /**
  * Created by Gvozd on 06.01.2017.
  */
-@ContextConfiguration(classes = {TestJPAConfig.class})
+@ContextConfiguration(classes = {TestsSecurityConfig.class, TestJPAConfig.class})
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
         TransactionalTestExecutionListener.class,
         DbUnitTestExecutionListener.class })
