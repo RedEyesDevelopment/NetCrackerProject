@@ -43,7 +43,6 @@ public class UserController {
     }
 
     //Get single User by id
-    //	@Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public Resource<User> getUser(@PathVariable("id") Integer id){
@@ -58,7 +57,7 @@ public class UserController {
 
     //Create user, fetch into database
     @CacheRemoveAll(cacheName = "userList")
-    @PostMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Boolean> createUser(@RequestBody User newUser){
         //Creating RESPONSEENTITY - special class for responsing with object and HttpStatusCode
         Boolean result = userService.insertUser(newUser);
@@ -75,7 +74,7 @@ public class UserController {
     //Update user method
     //	@Secured("ROLE_ADMIN")
     @CacheRemoveAll(cacheName = "userList")
-    @PutMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Boolean> updateUser(@PathVariable("id") Integer id, @RequestBody User changedUser){
         //Validating link pathVariable ID is equal to changedUser ID
         if (!id.equals(changedUser.getObjectId())){
@@ -96,7 +95,7 @@ public class UserController {
     //Delete user method
     //	@Secured("ROLE_ADMIN")
     @CacheRemoveAll(cacheName = "userList")
-    @DeleteMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Boolean> deleteUser(@PathVariable("id") Integer id){
         //Creating RESPONSEENTITY - special class for responsing with object and HttpStatusCode
         Boolean result = userService.deleteUser(id);
