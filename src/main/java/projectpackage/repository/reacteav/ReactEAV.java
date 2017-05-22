@@ -61,7 +61,7 @@ public class ReactEAV {
             }
         }
         if (!innerHasIt) {
-            WrongFetchException exception = new WrongFetchException(rootNode.getObjectClass(), innerEntityClass);
+            WrongFetchException exception = new WrongFetchException(rootNode.getObjectClass(), innerEntityClass, "root");
             throw exception;
         }
 
@@ -75,7 +75,7 @@ public class ReactEAV {
             if (currentClass.equals(clazz)) rootHasIt = true;
         }
         if (!rootHasIt) {
-            WrongFetchException exception = new WrongFetchException(rootNode.getObjectClass(), clazz);
+            WrongFetchException exception = new WrongFetchException(clazz, rootNode.getObjectClass(), "root");
             throw exception;
         }
     }

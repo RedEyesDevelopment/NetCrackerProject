@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projectpackage.model.auth.User;
+import projectpackage.model.support.IUDAnswer;
 import projectpackage.service.authservice.UserService;
 
 import javax.cache.annotation.CacheRemoveAll;
@@ -60,14 +61,14 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Boolean> createUser(@RequestBody User newUser){
         //Creating RESPONSEENTITY - special class for responsing with object and HttpStatusCode
-        Boolean result = userService.insertUser(newUser);
+        IUDAnswer result = userService.insertUser(newUser);
         //Making status object for result boolean
         HttpStatus status;
-        if (result) {
+        if (result.isSuccessful()) {
             status = HttpStatus.CREATED;
         } else status = HttpStatus.BAD_REQUEST;
         //Creating simple ResponseEntity
-        ResponseEntity<Boolean> responseEntity = new ResponseEntity<Boolean>(result, status);
+        ResponseEntity<Boolean> responseEntity = new ResponseEntity<Boolean>(result.isSuccessful(), status);
         return responseEntity;
     }
 
@@ -81,14 +82,14 @@ public class UserController {
             return new ResponseEntity<Boolean>(false, HttpStatus.NOT_ACCEPTABLE);
         }
         //Creating RESPONSEENTITY - special class for responsing with object and HttpStatusCode
-        Boolean result = userService.updateUser(id, changedUser);
+        IUDAnswer result = userService.updateUser(id, changedUser);
         //Making status object for result boolean
         HttpStatus status;
-        if (result) {
+        if (result.isSuccessful()) {
             status = HttpStatus.ACCEPTED;
         } else status = HttpStatus.BAD_REQUEST;
         //Creating simple ResponseEntity
-        ResponseEntity<Boolean> responseEntity = new ResponseEntity<Boolean>(result, status);
+        ResponseEntity<Boolean> responseEntity = new ResponseEntity<Boolean>(result.isSuccessful(), status);
         return responseEntity;
     }
 
@@ -98,14 +99,14 @@ public class UserController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Boolean> deleteUser(@PathVariable("id") Integer id){
         //Creating RESPONSEENTITY - special class for responsing with object and HttpStatusCode
-        Boolean result = userService.deleteUser(id);
+        IUDAnswer result = userService.deleteUser(id);
         //Making status object for result boolean
         HttpStatus status;
-        if (result) {
+        if (result.isSuccessful()) {
             status = HttpStatus.ACCEPTED;
         } else status = HttpStatus.NOT_FOUND;
         //Creating simple ResponseEntity
-        ResponseEntity<Boolean> responseEntity = new ResponseEntity<Boolean>(result, status);
+        ResponseEntity<Boolean> responseEntity = new ResponseEntity<Boolean>(result.isSuccessful(), status);
         return responseEntity;
     }
 }

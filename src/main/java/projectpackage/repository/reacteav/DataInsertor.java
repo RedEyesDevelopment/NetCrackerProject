@@ -22,7 +22,6 @@ public class DataInsertor {
     }
 
     void connectBy() {
-        System.out.println();
         if (outerEntity.hasReferencedObjects()) {
             for (Map.Entry<Integer, EntityReferenceIdRelation> entry : outerEntity.getReferenceIdRelations().entrySet()) {
                 Class targetClass = entry.getValue().getInnerClass();

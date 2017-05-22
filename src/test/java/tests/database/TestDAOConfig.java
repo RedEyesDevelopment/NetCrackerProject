@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -15,10 +18,12 @@ import org.springframework.transaction.annotation.TransactionManagementConfigure
 import projectpackage.repository.authdao.*;
 import projectpackage.repository.blocksdao.BlockDAO;
 import projectpackage.repository.blocksdao.BlockDAOImpl;
+import projectpackage.repository.maintenancedao.JournalRecordDAO;
 import projectpackage.repository.notificationsdao.NotificationDAO;
 import projectpackage.repository.notificationsdao.NotificationDAOImpl;
 import projectpackage.repository.notificationsdao.NotificationTypeDAO;
 import projectpackage.repository.notificationsdao.NotificationTypeDAOImpl;
+import projectpackage.repository.ordersdao.ModificationHistoryDAO;
 import projectpackage.repository.ordersdao.OrderDAO;
 import projectpackage.repository.ordersdao.OrderDAOImpl;
 import projectpackage.repository.ratesdao.PriceDAO;
@@ -31,16 +36,31 @@ import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
 import projectpackage.repository.reacteav.support.ReactEntityValidator;
 import projectpackage.repository.roomsdao.RoomDAO;
 import projectpackage.repository.roomsdao.RoomDAOImpl;
-import projectpackage.service.authservice.PhoneService;
-import projectpackage.service.authservice.PhoneServiceImpl;
-import projectpackage.service.authservice.RoleService;
-import projectpackage.service.authservice.RoleServiceImpl;
+import projectpackage.repository.roomsdao.RoomTypeDAO;
+import projectpackage.repository.roomsdao.RoomTypeDAOImpl;
+import projectpackage.repository.securitydao.AuthCredentialsDAO;
+import projectpackage.repository.securitydao.AuthCredentialsDAOImpl;
+import projectpackage.service.authservice.*;
+import projectpackage.service.blockservice.BlockService;
+import projectpackage.service.blockservice.BlockServiceImpl;
 import projectpackage.service.notificationservice.NotificationService;
 import projectpackage.service.notificationservice.NotificationServiceImpl;
+import projectpackage.service.notificationservice.NotificationTypeService;
+import projectpackage.service.notificationservice.NotificationTypeServiceImpl;
 import projectpackage.service.orderservice.OrderService;
 import projectpackage.service.orderservice.OrderServiceImpl;
 import projectpackage.service.rateservice.PriceService;
 import projectpackage.service.rateservice.PriceServiceImpl;
+import projectpackage.service.rateservice.RateService;
+import projectpackage.service.rateservice.RateServiceImpl;
+import projectpackage.service.roomservice.RoomService;
+import projectpackage.service.roomservice.RoomServiceImpl;
+import projectpackage.service.roomservice.RoomTypeService;
+import projectpackage.service.roomservice.RoomTypeServiceImpl;
+import projectpackage.service.securityservice.SecurityService;
+import projectpackage.service.securityservice.SecurityServiceImpl;
+import projectpackage.support.PhoneRegexService;
+import projectpackage.support.PhoneRegexServiceImpl;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -294,6 +314,9 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
     RateService rateService() {
         return new RateServiceImpl();
     }
+
+    @Bean
+    PhoneRegexService phoneRegexService() { return new PhoneRegexServiceImpl();}
 
     @Bean
     ReactConstantConfiguration reactConstantConfiguration() { return new ReactConstantConfiguration(); }

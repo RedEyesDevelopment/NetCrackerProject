@@ -1,6 +1,7 @@
 package projectpackage.repository.reacteav;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import projectpackage.repository.reacteav.exceptions.WrongFetchException;
 import projectpackage.repository.reacteav.relationsdata.*;
 import projectpackage.repository.reacteav.support.ReactEntityValidator;
 
@@ -33,7 +34,7 @@ public class ReacTask {
 
     ReacTask(ReacTask parentTask, ReactEAV reactEAV, Class objectClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend, String referenceId) {
         this.reactEAV = reactEAV;
-        if (null!=parentTask) this.parentTask = parentTask;
+        if (null != parentTask) this.parentTask = parentTask;
         this.objectClass = objectClass;
         this.innerObjects = new LinkedList<>();
         this.resultList = new ArrayList<>();
@@ -41,7 +42,7 @@ public class ReacTask {
         this.targetId = targetId;
         this.orderingParameter = orderingParameter;
         this.ascend = ascend;
-        if (null!=referenceId) this.referenceId=referenceId;
+        if (null != referenceId) this.referenceId = referenceId;
         this.referenceIdRelations = new HashMap<>();
         this.currentEntityReferenceTasks = new HashMap<>();
 
@@ -53,12 +54,16 @@ public class ReacTask {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+
         this.currentEntityParameters = reactEAV.getDataBucket().getEntityVariablesMap().get(objectClass);
         if (null == currentEntityParameters) currentEntityParameters = new LinkedHashMap<>();
+
         this.currentEntityOuterLinks = reactEAV.getDataBucket().getOuterRelationsMap().get(objectClass);
         if (null == currentEntityOuterLinks) currentEntityOuterLinks = new HashMap<>();
+
         this.currentEntityReferenceRelations = reactEAV.getDataBucket().getEntityReferenceRelationsMap().get(objectClass);
         if (null == currentEntityReferenceRelations) currentEntityReferenceRelations = new LinkedHashMap<>();
+
         this.thisClassObjectTypeName = reactEAV.getDataBucket().getClassesMap().get(objectClass);
     }
 
@@ -161,11 +166,24 @@ public class ReacTask {
     }
 
     public ReacTask fetchInnerChild(Class innerEntityClass) {
-        return fetchingOrderCreation(innerEntityClass, false, null, null, false,null);
+        ReacTask newTask = fetchingOrderCreation(innerEntityClass, false, null, null, false, null);
+        checkInnerRelations(this.objectClass, newTask.getCurrentEntityOuterLinks().keySet());
+        return newTask;
     }
 
     public ReacTask fetchInnerReference(Class innerEntityClass, String referenceId) {
-        return fetchingOrderCreation(innerEntityClass, false, null, null, false,null);
+        ReacTask newTask =fetchingOrderCreation(innerEntityClass, false, null, null, false, null);
+        boolean innerHasIt = false;
+        for (EntityReferenceRelationshipsData data : newTask.getCurrentEntityReferenceRelations().values()) {
+            if (data.getOuterClass().equals(innerEntityClass)) {
+                innerHasIt = true;
+            }
+        }
+        if (!innerHasIt) {
+            WrongFetchException exception = new WrongFetchException(this.objectClass, innerEntityClass, this.toString());
+            throw exception;
+        }
+        return newTask;
     }
 
     private ReacTask fetchingOrderCreation(Class innerEntityClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend, String referenceId) {
@@ -173,6 +191,17 @@ public class ReacTask {
         ReacTask childNode = new ReacTask(this, reactEAV, innerEntityClass, forSingleObject, targetId, orderingParameter, ascend, referenceId);
         this.addInnerObject(childNode);
         return childNode;
+    }
+
+    private void checkInnerRelations(Class clazz, Set<Class> set) {
+        boolean rootHasIt = false;
+        for (Class currentClass : set) {
+            if (currentClass.equals(clazz)) rootHasIt = true;
+        }
+        if (!rootHasIt) {
+            WrongFetchException exception = new WrongFetchException(this.objectClass, clazz, this.toString());
+            throw exception;
+        }
     }
 
     public ReactEAV closeAllFetches() {
