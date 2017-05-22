@@ -2,6 +2,7 @@ package projectpackage.repository.maintenancedao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.Maintenance;
@@ -53,8 +54,8 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
             jdbcTemplate.update(insertAttribute, 48, objectId, maintenance.getMaintenanceType(), null);
             jdbcTemplate.update(insertAttribute, 49, objectId, maintenance.getMaintenancePrice(), null);
 
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
         return objectId;
     }
@@ -71,8 +72,8 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
             if (!oldMaintenance.getMaintenancePrice().equals(newMaintenance.getMaintenancePrice())) {
                 jdbcTemplate.update(updateAttribute, newMaintenance.getMaintenancePrice(), null, newMaintenance.getObjectId(), 49);
             }
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
     }
 

@@ -2,6 +2,7 @@ package projectpackage.repository.blocksdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.blocks.Block;
@@ -58,8 +59,8 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
             jdbcTemplate.update(insertAttribute, 37, objectId, block.getReason(), null);
 
             jdbcTemplate.update(insertObjReference, 34, objectId, block.getRoom().getObjectId());
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
         return objectId;
     }
@@ -79,8 +80,8 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
             if (oldBlock.getRoom().getObjectId() != newBlock.getRoom().getObjectId()) {
                 jdbcTemplate.update(updateReference, newBlock.getRoom().getObjectId(), newBlock.getObjectId(), 34);
             }
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
     }
 

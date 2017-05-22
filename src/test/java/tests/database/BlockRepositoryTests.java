@@ -39,7 +39,7 @@ public class BlockRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getSingleBlockById(){
-        Block block = blockService.getSingleBlockById(2007);// check id
+        Block block = blockService.getSingleBlockById(2007);
         LOGGER.info(block);
         LOGGER.info(SEPARATOR);
     }
@@ -48,7 +48,7 @@ public class BlockRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deleteBlock(){
-        int blockId = 2008;
+        int blockId = 2047;
         IUDAnswer iudAnswer = blockService.deleteBlock(blockId);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Delete block result = " + iudAnswer.isSuccessful());
@@ -85,7 +85,7 @@ public class BlockRepositoryTests extends AbstractDatabaseTest{
         room.setNumberOfResidents(2);
         room.setRoomNumber(102);
         block.setRoom(room);
-        IUDAnswer iudAnswer = blockService.updateBlock(2007, block);
+        IUDAnswer iudAnswer = blockService.updateBlock(2047, block);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Update block result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);

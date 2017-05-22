@@ -2,6 +2,7 @@ package projectpackage.repository.authdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Phone;
@@ -26,8 +27,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     public User getUser(Integer id) {
         if (id == null) return null;
         try {
-            return (User) manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeFetch()
-                    .fetchInnerReference(Role.class, "RoleToUser").closeAllFetches()
+            return (User) manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches()
+                    .fetchRootReference(Role.class, "RoleToUser").closeAllFetches()
                     .getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);
@@ -38,8 +39,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     @Override
     public List<User> getAllUsers() {
         try {
-            return manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeFetch()
-                    .fetchInnerReference(Role.class, "RoleToUser").closeAllFetches()
+            return manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches()
+                    .fetchRootReference(Role.class, "RoleToUser").closeAllFetches()
                     .getEntityCollection();
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);
@@ -65,8 +66,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
             }
 
             jdbcTemplate.update(insertObjReference, 20, objectId, user.getRole().getObjectId());    //hasRole
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
         return objectId;
     }
@@ -99,11 +100,13 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
                     jdbcTemplate.update(updateAttribute, "false", null, newUser.getObjectId(), 3);
                 }
             }
+            System.out.println("OLDUSER ROLE ID: " + oldUser.getRole().getObjectId());
+            System.out.println("NEWUSER ROLE ID: " + newUser.getRole().getObjectId());
             if (oldUser.getRole().getObjectId() != newUser.getRole().getObjectId()) {
                 jdbcTemplate.update(updateReference, newUser.getRole().getObjectId(), newUser.getObjectId(), 20);
             }
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
     }
 

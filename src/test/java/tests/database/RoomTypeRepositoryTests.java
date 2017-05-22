@@ -22,7 +22,6 @@ import static org.junit.Assert.assertTrue;
 public class RoomTypeRepositoryTests extends AbstractDatabaseTest{
     private static final Logger LOGGER = Logger.getLogger(RoomTypeRepositoryTests.class);
 
-
     @Autowired
     RoomTypeService roomTypeService;
 
@@ -77,7 +76,7 @@ public class RoomTypeRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deleteRoomType(){
-        int roomTypeId = 2011;
+        int roomTypeId = 2075;
         IUDAnswer iudAnswer = roomTypeService.deleteRoomType(roomTypeId);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Delete roomType result = " + iudAnswer.isSuccessful());
@@ -103,7 +102,7 @@ public class RoomTypeRepositoryTests extends AbstractDatabaseTest{
         roomType.setObjectId(2011);
         roomType.setContent("new someContent");
         roomType.setRoomTypeTitle("new Type epta");
-        IUDAnswer iudAnswer = roomTypeService.updateRoomType(2011, roomType);
+        IUDAnswer iudAnswer = roomTypeService.updateRoomType(2075, roomType);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Update roomType result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);

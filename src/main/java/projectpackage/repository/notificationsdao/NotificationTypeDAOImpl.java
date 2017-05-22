@@ -2,6 +2,7 @@ package projectpackage.repository.notificationsdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Role;
@@ -28,7 +29,7 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
         if (id == null) return null;
         try {
             return (NotificationType) manager.createReactEAV(NotificationType.class)
-                    .fetchRootReference(Role.class, "RoleToNotification")
+                    .fetchRootReference(Role.class, "RoleToNotificationType")
                     .closeAllFetches().getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);
@@ -57,8 +58,8 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
             jdbcTemplate.update(insertAttribute, 40, objectId, notificationType.getNotificationTypeTitle(), null);
 
             jdbcTemplate.update(insertObjReference, 41, objectId, notificationType.getOrientedRole().getObjectId());
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
         return objectId;
     }
@@ -74,8 +75,8 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
                 jdbcTemplate.update(updateReference, newNotificationType.getOrientedRole().getObjectId(),
                         newNotificationType.getObjectId(), 41);
             }
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
     }
 

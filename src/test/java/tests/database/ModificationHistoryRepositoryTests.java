@@ -57,7 +57,7 @@ public class ModificationHistoryRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deleteModificationHistory() throws ReferenceBreakException {
-        int modificationHistoryId = 2008;//check id
+        int modificationHistoryId = 2058;
         IUDAnswer iudAnswer = modificationHistoryService.deleteModificationHistory(modificationHistoryId);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Delete modificationHistory result = " + iudAnswer.isSuccessful());
@@ -72,6 +72,7 @@ public class ModificationHistoryRepositoryTests extends AbstractDatabaseTest{
         User user = new User();
         user.setObjectId(900);
         Order order = new Order();
+        order.setObjectId(300);
         order.setRegistrationDate(new Date());
         order.setIsPaidFor(false);
         order.setIsConfirmed(false);
@@ -81,13 +82,15 @@ public class ModificationHistoryRepositoryTests extends AbstractDatabaseTest{
         order.setComment("Comment");
         order.setRoom(room);
         order.setClient(user);
+        order.setLastModificator(user);
 
 
         Room room1 = new Room();
         room.setObjectId(128);
         User user1 = new User();
-        user.setObjectId(901);
+        user1.setObjectId(901);
         Order order1 = new Order();
+        order1.setObjectId(300);
         order1.setRegistrationDate(new Date());
         order1.setIsPaidFor(true);
         order1.setIsConfirmed(true);
@@ -97,9 +100,11 @@ public class ModificationHistoryRepositoryTests extends AbstractDatabaseTest{
         order1.setComment("new Comment");
         order1.setRoom(room1);
         order1.setClient(user1);
+        order1.setLastModificator(user1);
 
         IUDAnswer iudAnswer = modificationHistoryService.insertModificationHistory(order1, order);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Update modificationHistory result = " + iudAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
     }
 }

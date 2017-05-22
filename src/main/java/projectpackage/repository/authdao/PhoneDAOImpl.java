@@ -2,6 +2,7 @@ package projectpackage.repository.authdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Phone;
@@ -46,8 +47,8 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
         try {
             jdbcTemplate.update(insertObject, objectId, phone.getUserId(), 9, null, null);
             jdbcTemplate.update(insertAttribute, 38, objectId, phone.getPhoneNumber(), null);
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
         return objectId;
     }
@@ -58,8 +59,8 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
             if (!oldPhone.getPhoneNumber().equals(newPhone.getPhoneNumber())) {
                 jdbcTemplate.update(updateAttribute, newPhone.getPhoneNumber(), null, newPhone.getObjectId(), 38);
             }
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
     }
 

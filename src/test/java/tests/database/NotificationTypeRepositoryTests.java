@@ -39,7 +39,7 @@ public class NotificationTypeRepositoryTests extends AbstractDatabaseTest {
     @Rollback(true)
     public void getSingleNotificationTypeById() {
         NotificationType notificationType = null;
-        int notifTypeId = 2000;
+        int notifTypeId = 2067;
         notificationType = notificationTypeService.getSingleNotificationTypeById(notifTypeId);
         assertNotNull(notificationType);
         LOGGER.info(notificationType);
@@ -56,7 +56,7 @@ public class NotificationTypeRepositoryTests extends AbstractDatabaseTest {
     @Test
     @Rollback(true)
     public void deleteNotificationType() {
-        int notifTypeId = 2000;
+        int notifTypeId = 2067;
         IUDAnswer iudAnswer = notificationTypeService.deleteNotificationType(notifTypeId);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Delete notifType result = " + iudAnswer.isSuccessful());
@@ -85,7 +85,7 @@ public class NotificationTypeRepositoryTests extends AbstractDatabaseTest {
         newRole.setObjectId(2);
         newRole.setRoleName("Reception");
         NotificationType notificationType = new NotificationType();
-        notificationType.setObjectId(2000);
+        notificationType.setObjectId(2067);
         notificationType.setOrientedRole(newRole);
         notificationType.setNotificationTypeTitle("UpdateNotifTypeTEST");
         IUDAnswer iudAnswer = notificationTypeService.updateNotificationType(notificationType.getObjectId(), notificationType);

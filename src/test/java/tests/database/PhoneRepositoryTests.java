@@ -51,7 +51,7 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
     @Test
     @Rollback(true)
     public void deletePhone(){
-        int phoneId = 2009;
+        int phoneId = 2070;
         IUDAnswer iudAnswer = phoneService.deletePhone(phoneId);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Delete phone result = " + iudAnswer.isSuccessful());
@@ -62,8 +62,8 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
     @Rollback(true)
     public void createPhone(){
         Phone phone = new Phone();
-        phone.setPhoneNumber("7583475543");
-        phone.setUserId(1404);
+        phone.setPhoneNumber("0638509108");
+        phone.setUserId(901);
         IUDAnswer iudAnswer = phoneService.insertPhone(phone);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Create phone result = " + iudAnswer.isSuccessful());
@@ -76,7 +76,7 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
         Phone phone = new Phone();
         phone.setUserId(1406);
         phone.setPhoneNumber("0638509180");
-        IUDAnswer iudAnswer = phoneService.updatePhone(2009, phone);
+        IUDAnswer iudAnswer = phoneService.updatePhone(2070, phone);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Update phone result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);

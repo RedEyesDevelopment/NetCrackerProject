@@ -51,7 +51,7 @@ public class NotificationRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deleteNotification(){
-        int notId = 2008;//check id
+        int notId = 2065;
         IUDAnswer iudAnswer = notificationService.deleteNotification(notId);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Delete notification result = " + iudAnswer.isSuccessful());
@@ -71,6 +71,8 @@ public class NotificationRepositoryTests extends AbstractDatabaseTest{
         order.setObjectId(300);
 
         Notification notification = new Notification();
+        notification.setExecutedDate(new Date());
+        notification.setExecutedBy(author);
         notification.setAuthor(author);
         notification.setNotificationType(notificationType);
         notification.setMessage("some message");
@@ -84,7 +86,7 @@ public class NotificationRepositoryTests extends AbstractDatabaseTest{
 
     @Test
     @Rollback(true)
-    public void updateNotification(){
+    public void updateNotification(){//need check after merge
         User author = new User();
         author.setObjectId(901);
 
@@ -95,12 +97,15 @@ public class NotificationRepositoryTests extends AbstractDatabaseTest{
         order.setObjectId(300);
 
         Notification notification = new Notification();
+        notification.setObjectId(2065);
+        notification.setExecutedDate(new Date());
+        notification.setExecutedBy(author);
         notification.setAuthor(author);
         notification.setNotificationType(notificationType);
         notification.setMessage("new some message");
         notification.setSendDate(new Date());
         notification.setOrder(order);
-        IUDAnswer iudAnswer = notificationService.insertNotification(notification);
+        IUDAnswer iudAnswer = notificationService.updateNotification( 2065, notification);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Create notification result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);

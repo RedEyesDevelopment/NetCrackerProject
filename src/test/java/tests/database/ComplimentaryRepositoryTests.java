@@ -47,7 +47,7 @@ public class ComplimentaryRepositoryTests extends  AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deleteComplimentary(){
-        int complimentaryId = 2008;//check id
+        int complimentaryId = 2051;
         IUDAnswer iudAnswer = complimentaryService.deleteComplimentary(complimentaryId);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Delete complimentary result = " + iudAnswer.isSuccessful());
@@ -58,9 +58,9 @@ public class ComplimentaryRepositoryTests extends  AbstractDatabaseTest{
     @Rollback(true)
     public void createComplimentary(){
         Maintenance maintenance = new Maintenance();
-        maintenance.setObjectId(323);
+        maintenance.setObjectId(1500);
         Complimentary complimentary = new Complimentary();
-        complimentary.setCategoryId(32);//check parent id
+        complimentary.setCategoryId(32);
         complimentary.setMaintenance(maintenance);
         IUDAnswer iudAnswer = complimentaryService.insertComplimentary(complimentary);
         assertTrue(iudAnswer.isSuccessful());
@@ -72,11 +72,11 @@ public class ComplimentaryRepositoryTests extends  AbstractDatabaseTest{
     @Rollback(true)
     public void updateComplimentary(){
         Maintenance maintenance = new Maintenance();
-        maintenance.setObjectId(323);
+        maintenance.setObjectId(1501);
         Complimentary complimentary = new Complimentary();
-        complimentary.setCategoryId(32);//check parent id
+        complimentary.setCategoryId(32);
         complimentary.setMaintenance(maintenance);
-        IUDAnswer iudAnswer = complimentaryService.updateComplimentary(324, complimentary);
+        IUDAnswer iudAnswer = complimentaryService.updateComplimentary(2051, complimentary);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Update complimentary result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);

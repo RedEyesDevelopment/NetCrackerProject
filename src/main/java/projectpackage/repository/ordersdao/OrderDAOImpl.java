@@ -2,6 +2,7 @@ package projectpackage.repository.ordersdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Phone;
@@ -126,8 +127,8 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
             jdbcTemplate.update(insertObjReference, 44, objectId, order.getLastModificator().getObjectId());
             jdbcTemplate.update(insertObjReference, 6, objectId, order.getRoom().getObjectId());     //Booked
             jdbcTemplate.update(insertObjReference, 7, objectId, order.getClient().getObjectId());     //Belong
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
         return objectId;
     }
@@ -173,8 +174,8 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
             if (oldOrder.getClient().getObjectId() != newOrder.getClient().getObjectId()) {
                 jdbcTemplate.update(updateReference, newOrder.getClient().getObjectId(), newOrder.getObjectId(), 7);
             }
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
     }
 

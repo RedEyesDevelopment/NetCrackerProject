@@ -2,6 +2,7 @@ package projectpackage.repository.ordersdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.Complimentary;
@@ -62,8 +63,8 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
 
             jdbcTemplate.update(insertAttribute, 45, objectId, category.getCategoryTitle(), null);
             jdbcTemplate.update(insertAttribute, 46, objectId, category.getCategoryPrice(), null);
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
         return objectId;
     }
@@ -77,8 +78,8 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
             if (!oldCategory.getCategoryPrice().equals(newCategory.getCategoryPrice())) {
                 jdbcTemplate.update(updateAttribute, newCategory.getCategoryPrice(), null, newCategory.getObjectId(), 46);
             }
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
     }
 

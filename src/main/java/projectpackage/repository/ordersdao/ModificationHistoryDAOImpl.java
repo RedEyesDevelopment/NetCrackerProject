@@ -3,6 +3,7 @@ package projectpackage.repository.ordersdao;
 import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.User;
@@ -57,9 +58,8 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
         Integer objectId = nextObjectId();
         try {
             jdbcTemplate.update(insertObject, objectId, oldOrder.getObjectId(), 12, null, null);
-            jdbcTemplate.update(insertAttribute, 43, objectId, null, new Date());
-            jdbcTemplate.update(insertObjReference, 42, objectId, oldOrder.getLastModificator().getObjectId());
 
+            jdbcTemplate.update(insertAttribute, 43, objectId, null, new Date());
             if (oldOrder.getRegistrationDate().getTime() != newOrder.getRegistrationDate().getTime()) {
                 jdbcTemplate.update(insertAttribute, 8, objectId, null, oldOrder.getRegistrationDate());
             }
@@ -98,8 +98,10 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
             if (oldOrder.getClient().getObjectId() != newOrder.getClient().getObjectId()) {
                 jdbcTemplate.update(insertObjReference, 7, objectId, oldOrder.getClient().getObjectId());
             }
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+
+            jdbcTemplate.update(insertObjReference, 42, objectId, oldOrder.getLastModificator().getObjectId());
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
         return objectId;
     }

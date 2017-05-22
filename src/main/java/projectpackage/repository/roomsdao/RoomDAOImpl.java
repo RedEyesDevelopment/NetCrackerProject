@@ -2,6 +2,7 @@ package projectpackage.repository.roomsdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.rates.Price;
@@ -61,8 +62,8 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
             jdbcTemplate.update(insertAttribute, 2, objectId, room.getNumberOfResidents(), null);
 
             jdbcTemplate.update(insertObjReference, 4, objectId, room.getRoomType().getObjectId());
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
         return objectId;
     }
@@ -79,8 +80,8 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
             if (oldRoom.getRoomType().getObjectId() != newRoom.getRoomType().getObjectId()) {
                 jdbcTemplate.update(updateReference, newRoom.getRoomType().getObjectId(), newRoom.getObjectId(), 4);
             }
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
     }
 

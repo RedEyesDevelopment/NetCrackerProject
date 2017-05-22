@@ -192,11 +192,11 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         for (User user:list){
             System.out.println(user);
             assertNotNull(user);
-            if (user.getObjectId()!=999) {
-                for (Phone phone : user.getPhones()) {
-                    assertNotNull(phone);
-                }
-            }
+//            if (user.getObjectId()!=999) {
+//                for (Phone phone : user.getPhones()) {
+//                    assertNotNull(phone);
+//                }
+//            }
             Role role = user.getRole();
             assertNotNull(role);
         }

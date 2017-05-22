@@ -2,6 +2,7 @@ package projectpackage.repository.maintenancedao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.JournalRecord;
@@ -63,8 +64,8 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
 
             jdbcTemplate.update(insertObjReference, 53, objectId, journalRecord.getMaintenance().getObjectId());
 
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
         return objectId;
     }
@@ -84,8 +85,8 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
             if (oldJournalRecord.getMaintenance().getObjectId() != newJournalRecord.getMaintenance().getObjectId()) {
                 jdbcTemplate.update(updateReference, newJournalRecord.getMaintenance().getObjectId(), newJournalRecord.getObjectId(), 53);
             }
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
     }
 

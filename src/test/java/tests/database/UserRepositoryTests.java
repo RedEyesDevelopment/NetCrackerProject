@@ -44,7 +44,7 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
     @Rollback(true)
     public void getSingleUserById(){
         User user = null;
-        int userId = 900;
+        int userId = 2078;
         user = userService.getSingleUserById(userId);
         assertNotNull(user);
         LOGGER.info(user);
@@ -55,7 +55,7 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
     @Test
     @Rollback(true)
     public void deleteUser(){
-        int userId = 2042;
+        int userId = 2078;
         IUDAnswer iudAnswer = userService.deleteUser(userId);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Delete user result = " + iudAnswer.isSuccessful());
@@ -75,6 +75,7 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         user.setLastName("Merlyan");
         user.setAdditionalInfo("nothing");
         user.setRole(role);
+        user.setEnabled(true);
         IUDAnswer iudAnswer = userService.insertUser(user);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Create user result = " + iudAnswer.isSuccessful());
@@ -88,13 +89,14 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         newRole.setObjectId(2);
         newRole.setRoleName("Reception");
         User newUser = new User();
-        newUser.setObjectId(2042);
+        newUser.setObjectId(2078);
         newUser.setEmail("fsdf@gmail.com");
         newUser.setPassword("4324668");
         newUser.setFirstName("Alexander");
         newUser.setLastName("Merl");
         newUser.setAdditionalInfo("My new INFO");
         newUser.setRole(newRole);
+        newUser.setEnabled(false);
         IUDAnswer iudAnswer = userService.updateUser(newUser.getObjectId(), newUser);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Update user result = " + iudAnswer.isSuccessful());

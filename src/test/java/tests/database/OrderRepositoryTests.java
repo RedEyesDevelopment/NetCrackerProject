@@ -113,7 +113,7 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deleteOrder(){
-        int orderId = 2031;
+        int orderId = 2069;
         IUDAnswer iudAnswer = orderService.deleteOrder(orderId);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Delete order result = " + iudAnswer.isSuccessful());
@@ -137,6 +137,7 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
         order.setComment("Comment");
         order.setRoom(room);
         order.setClient(user);
+        order.setLastModificator(user);
         IUDAnswer iudAnswer = orderService.insertOrder(order);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Create order result = " + iudAnswer.isSuccessful());
@@ -145,7 +146,7 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
 
     @Test
     @Rollback(true)
-    public void updateOrder(){
+    public void updateOrder(){// check after merge
         Room room = new Room();
         room.setObjectId(128);
         User user = new User();
@@ -160,7 +161,8 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
         order.setComment("new Comment");
         order.setRoom(room);
         order.setClient(user);
-        IUDAnswer iudAnswer = orderService.updateOrder(2031, order);
+        order.setLastModificator(user);
+        IUDAnswer iudAnswer = orderService.updateOrder(2069, order);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Create order result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);

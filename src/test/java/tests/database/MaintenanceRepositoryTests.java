@@ -5,12 +5,10 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
-import projectpackage.model.maintenances.JournalRecord;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.model.support.IUDAnswer;
 import projectpackage.service.maintenanceservice.MaintenanceService;
 
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -37,8 +35,8 @@ public class MaintenanceRepositoryTests extends AbstractDatabaseTest{
 
     @Test
     @Rollback(true)
-    public void getSingleJournalRecordById(){
-        Maintenance maintenance = maintenanceService.getSingleMaintenanceById(2007);// check id
+    public void getSingleMaintenanceById(){
+        Maintenance maintenance = maintenanceService.getSingleMaintenanceById(2007);
         LOGGER.info(maintenance);
         LOGGER.info(SEPARATOR);
     }
@@ -46,8 +44,8 @@ public class MaintenanceRepositoryTests extends AbstractDatabaseTest{
 
     @Test
     @Rollback(true)
-    public void deleteJournalRecord(){
-        int maintenanceId = 2008;
+    public void deleteMaintenance(){
+        int maintenanceId = 2054;
         IUDAnswer iudAnswer = maintenanceService.deleteMaintenance(maintenanceId);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Delete maintenance result = " + iudAnswer.isSuccessful());
@@ -56,7 +54,7 @@ public class MaintenanceRepositoryTests extends AbstractDatabaseTest{
 
     @Test
     @Rollback(true)
-    public void createJournalRecord(){
+    public void createMaintenance(){
         Maintenance maintenance = new Maintenance();
         maintenance.setMaintenancePrice(534L);
         maintenance.setMaintenanceTitle("title main");
@@ -69,12 +67,12 @@ public class MaintenanceRepositoryTests extends AbstractDatabaseTest{
 
     @Test
     @Rollback(true)
-    public void updateJournalRecord(){
+    public void updateMaintenance(){
         Maintenance maintenance = new Maintenance();
         maintenance.setMaintenancePrice(600L);
         maintenance.setMaintenanceTitle("new title main");
         maintenance.setMaintenanceType("new type of main");
-        IUDAnswer iudAnswer = maintenanceService.updateMaintenance(432, maintenance);
+        IUDAnswer iudAnswer = maintenanceService.updateMaintenance(2054, maintenance);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Update maintenance result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);

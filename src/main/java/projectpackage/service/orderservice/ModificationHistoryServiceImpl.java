@@ -51,7 +51,8 @@ public class ModificationHistoryServiceImpl implements ModificationHistoryServic
     @Override
     public IUDAnswer insertModificationHistory(Order newOrder, Order oldOrder) throws TransactionException {
         try {
-            modificationHistoryDAO.insertModificationHistory(newOrder, oldOrder);
+            int modificationId = modificationHistoryDAO.insertModificationHistory(newOrder, oldOrder);
+            LOGGER.info("Get from DB modificationHistoryId = " + modificationId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
             return new IUDAnswer(false, e.getMessage());

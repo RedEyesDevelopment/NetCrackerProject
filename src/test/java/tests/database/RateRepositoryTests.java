@@ -45,7 +45,7 @@ public class RateRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deleteRate(){
-        int rateId = 2036;
+        int rateId = 2072;
         IUDAnswer iudAnswer = rateService.deleteRate(rateId);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Delete rate result = " + iudAnswer.isSuccessful());
@@ -75,7 +75,7 @@ public class RateRepositoryTests extends AbstractDatabaseTest{
         rate.setRateFromDate(new Date());
         rate.setRateToDate(new Date());
         rate.setRoomTypeId(8);
-        IUDAnswer iudAnswer = rateService.updateRate(2036, rate);
+        IUDAnswer iudAnswer = rateService.updateRate(2072, rate);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Update rate result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);

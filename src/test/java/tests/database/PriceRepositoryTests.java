@@ -45,7 +45,7 @@ public class PriceRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deletePrice(){
-        int priceId = 2032;
+        int priceId = 2071;
         IUDAnswer iudAnswer = priceService.deletePrice(priceId);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Delete price result = " + iudAnswer.isSuccessful());
@@ -72,7 +72,7 @@ public class PriceRepositoryTests extends AbstractDatabaseTest{
         price.setNumberOfPeople(1);
         price.setRate(7897494L);
         price.setRateId(32);
-        IUDAnswer iudAnswer = priceService.updatePrice(2032, price);
+        IUDAnswer iudAnswer = priceService.updatePrice(2071, price);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Update price result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);

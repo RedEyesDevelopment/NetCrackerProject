@@ -2,6 +2,7 @@ package projectpackage.repository.ratesdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.rates.Price;
@@ -49,8 +50,8 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
             jdbcTemplate.update(insertObject, objectId, rate.getRoomTypeId(), 6, null, null);
             jdbcTemplate.update(insertAttribute, 30, objectId, null, rate.getRateFromDate());
             jdbcTemplate.update(insertAttribute, 31, objectId, null, rate.getRateToDate());
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
         return objectId;
     }
@@ -66,8 +67,8 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
                 jdbcTemplate.update(updateAttribute, null, newRate.getRateToDate(),
                         newRate.getObjectId(), 31);
             }
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
     }
 

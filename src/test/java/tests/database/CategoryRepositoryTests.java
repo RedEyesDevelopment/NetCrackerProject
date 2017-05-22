@@ -39,7 +39,7 @@ public class CategoryRepositoryTests extends AbstractDatabaseTest {
     @Test
     @Rollback(true)
     public void getSingleCategoryById(){
-        Category category = categoryService.getSingleCategoryById(2007);// check id
+        Category category = categoryService.getSingleCategoryById(2007);
         LOGGER.info(category);
         LOGGER.info(SEPARATOR);
     }
@@ -48,7 +48,7 @@ public class CategoryRepositoryTests extends AbstractDatabaseTest {
     @Test
     @Rollback(true)
     public void deleteCategory(){
-        int categoryId = 2008;
+        int categoryId = 2049;
         IUDAnswer iudAnswer = categoryService.deleteCategory(categoryId);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Delete category result = " + iudAnswer.isSuccessful());
@@ -73,7 +73,7 @@ public class CategoryRepositoryTests extends AbstractDatabaseTest {
         Category category = new Category();
         category.setCategoryPrice(4L);
         category.setCategoryTitle("new Title");
-        IUDAnswer iudAnswer = categoryService.updateCategory(53, category);
+        IUDAnswer iudAnswer = categoryService.updateCategory(2049, category);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Update category result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);

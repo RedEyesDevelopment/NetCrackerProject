@@ -172,10 +172,10 @@ public class ReacTask {
     }
 
     public ReacTask fetchInnerReference(Class innerEntityClass, String referenceId) {
-        ReacTask newTask =fetchingOrderCreation(innerEntityClass, false, null, null, false, null);
+        ReacTask newTask = fetchingOrderCreation(innerEntityClass, false, null, null, false, null);
         boolean innerHasIt = false;
         for (EntityReferenceRelationshipsData data : newTask.getCurrentEntityReferenceRelations().values()) {
-            if (data.getOuterClass().equals(innerEntityClass)) {
+            if (data.getOuterClass().equals(this.objectClass)) {
                 innerHasIt = true;
             }
         }

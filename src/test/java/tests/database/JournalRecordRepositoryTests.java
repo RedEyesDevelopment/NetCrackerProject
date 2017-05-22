@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import projectpackage.model.maintenances.JournalRecord;
 import projectpackage.model.maintenances.Maintenance;
-import projectpackage.model.orders.Category;
 import projectpackage.model.support.IUDAnswer;
 import projectpackage.service.maintenanceservice.JournalRecordService;
 
@@ -39,7 +38,7 @@ public class JournalRecordRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getSingleJournalRecordById(){
-        JournalRecord journalRecord = journalRecordService.getSingleEntityById(2007);// check id
+        JournalRecord journalRecord = journalRecordService.getSingleEntityById(2007);
         LOGGER.info(journalRecord);
         LOGGER.info(SEPARATOR);
     }
@@ -48,7 +47,7 @@ public class JournalRecordRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deleteJournalRecord(){
-        int journalRecordId = 2008;
+        int journalRecordId = 2053;
         IUDAnswer iudAnswer = journalRecordService.deleteJournalRecord(journalRecordId);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Delete journalRecord result = " + iudAnswer.isSuccessful());
@@ -59,12 +58,12 @@ public class JournalRecordRepositoryTests extends AbstractDatabaseTest{
     @Rollback(true)
     public void createJournalRecord(){
         Maintenance maintenance = new Maintenance();
-        maintenance.setObjectId(435);
+        maintenance.setObjectId(1500);
         JournalRecord journalRecord = new JournalRecord();
         journalRecord.setCost(3234L);
         journalRecord.setCount(34);
         journalRecord.setUsedDate(new Date());
-        journalRecord.setOrderId(432);
+        journalRecord.setOrderId(300);
         journalRecord.setMaintenance(maintenance);
         IUDAnswer iudAnswer = journalRecordService.insertJournalRecord(journalRecord);
         assertTrue(iudAnswer.isSuccessful());
@@ -76,14 +75,14 @@ public class JournalRecordRepositoryTests extends AbstractDatabaseTest{
     @Rollback(true)
     public void updateJournalRecord(){
         Maintenance maintenance = new Maintenance();
-        maintenance.setObjectId(433);
+        maintenance.setObjectId(1501);
         JournalRecord journalRecord = new JournalRecord();
         journalRecord.setCost(4000L);
         journalRecord.setCount(50);
         journalRecord.setUsedDate(new Date());
-        journalRecord.setOrderId(431);
+        journalRecord.setOrderId(301);
         journalRecord.setMaintenance(maintenance);
-        IUDAnswer iudAnswer = journalRecordService.updateJournalRecord(432, journalRecord);
+        IUDAnswer iudAnswer = journalRecordService.updateJournalRecord(2053, journalRecord);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Update journalRecord result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);

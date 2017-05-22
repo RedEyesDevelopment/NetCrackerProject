@@ -18,14 +18,12 @@ import org.springframework.transaction.annotation.TransactionManagementConfigure
 import projectpackage.repository.authdao.*;
 import projectpackage.repository.blocksdao.BlockDAO;
 import projectpackage.repository.blocksdao.BlockDAOImpl;
-import projectpackage.repository.maintenancedao.JournalRecordDAO;
+import projectpackage.repository.maintenancedao.*;
 import projectpackage.repository.notificationsdao.NotificationDAO;
 import projectpackage.repository.notificationsdao.NotificationDAOImpl;
 import projectpackage.repository.notificationsdao.NotificationTypeDAO;
 import projectpackage.repository.notificationsdao.NotificationTypeDAOImpl;
-import projectpackage.repository.ordersdao.ModificationHistoryDAO;
-import projectpackage.repository.ordersdao.OrderDAO;
-import projectpackage.repository.ordersdao.OrderDAOImpl;
+import projectpackage.repository.ordersdao.*;
 import projectpackage.repository.ratesdao.PriceDAO;
 import projectpackage.repository.ratesdao.PriceDAOImpl;
 import projectpackage.repository.ratesdao.RateDAO;
@@ -43,12 +41,12 @@ import projectpackage.repository.securitydao.AuthCredentialsDAOImpl;
 import projectpackage.service.authservice.*;
 import projectpackage.service.blockservice.BlockService;
 import projectpackage.service.blockservice.BlockServiceImpl;
+import projectpackage.service.maintenanceservice.*;
 import projectpackage.service.notificationservice.NotificationService;
 import projectpackage.service.notificationservice.NotificationServiceImpl;
 import projectpackage.service.notificationservice.NotificationTypeService;
 import projectpackage.service.notificationservice.NotificationTypeServiceImpl;
-import projectpackage.service.orderservice.OrderService;
-import projectpackage.service.orderservice.OrderServiceImpl;
+import projectpackage.service.orderservice.*;
 import projectpackage.service.rateservice.PriceService;
 import projectpackage.service.rateservice.PriceServiceImpl;
 import projectpackage.service.rateservice.RateService;
@@ -210,10 +208,10 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
     RoleDAO roleDAO() { return new RoleDAOImpl();}
 
     @Bean
-    ModificationHistoryDAO modificationHistoryDAO() {return null;}
+    ModificationHistoryDAO modificationHistoryDAO() {return new ModificationHistoryDAOImpl();}
 
     @Bean
-    JournalRecordDAO journalRecordDAO() {return  null;}
+    JournalRecordDAO journalRecordDAO() {return new JournalRecordDAOImpl();}
 
     @Bean
     NotificationDAO notificationDAO(){
@@ -256,6 +254,27 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
     }
 
     @Bean
+    CategoryDAO categoryDAO() { return new CategoryDAOImpl(); }
+
+    @Bean
+    ComplimentaryDAO complimentaryDAO() { return new ComplimentaryDAOImpl(); }
+
+    @Bean
+    MaintenanceDAO maintenanceDAO() { return new MaintenanceDAOImpl(); }
+
+    @Bean
+    MaintenanceService maintenanceService() { return new MaintenanceServiceImpl(); }
+
+    @Bean
+    ComplimentaryService complimentaryService() { return new ComplimentaryServiceImpl(); }
+
+    @Bean
+    CategoryService categoryService() { return new CategoryServiceImpl(); }
+
+    @Bean
+    JournalRecordService journalRecordService() { return new JournalRecordServiceImpl(); }
+
+    @Bean
     UserService userService() {
         return new UserServiceImpl();
     }
@@ -290,10 +309,10 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
         return new OrderServiceImpl();
     }
 
-//    @Bean
-//    ModificationHistoryService modificationHistoryService() {
-//        return new ModificationHistoryServiceImpl();
-//    }
+    @Bean
+    ModificationHistoryService modificationHistoryService() {
+        return new ModificationHistoryServiceImpl();
+    }
 
     @Bean
     RoomService roomService() {

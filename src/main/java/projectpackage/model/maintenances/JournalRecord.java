@@ -5,6 +5,7 @@ import projectpackage.model.orders.Order;
 import projectpackage.repository.reacteav.annotations.ReactChild;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
 import projectpackage.repository.reacteav.annotations.ReactField;
+import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 import java.util.Date;
 
@@ -14,7 +15,7 @@ import java.util.Date;
 @Data
 @ReactEntity(entityTypeName = "JournalRecord")
 @ReactChild(outerEntityClass = Order.class, outerFieldName = "journalRecords", outerFieldKey = "objectId", innerFieldKey = "categoryId")
-public class JournalRecord {
+public class JournalRecord implements ReactEntityWithId{
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%PARENT_ID")

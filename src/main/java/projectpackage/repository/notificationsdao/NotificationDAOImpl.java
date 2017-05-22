@@ -2,6 +2,7 @@ package projectpackage.repository.notificationsdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Phone;
@@ -39,15 +40,16 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         try {
             return (Notification) manager.createReactEAV(Notification.class)
                     .fetchRootReference(User.class, "UserToNotificationAsAuthor")
-                    .fetchInnerChild(Phone.class).closeFetch()
-                    .fetchInnerReference(Role.class, "RoleToUser").closeAllFetches()
+                    .fetchInnerReference(Role.class, "RoleToUser").closeFetch()
+                    .fetchInnerChild(Phone.class)
+                    .closeAllFetches()
                     .fetchRootReference(NotificationType.class, "NotificationTypeToNotification")
                     .fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches()
                     .fetchRootReference(Order.class, "OrderToNotification")
                     .fetchInnerChild(JournalRecord.class).fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
                     .closeFetch().closeFetch()
                     .fetchInnerReference(Room.class, "RoomToOrder")
-                    .fetchInnerReference(RoomType.class, "RoomTypeToRoom").closeFetch()
+                    .fetchInnerReference(RoomType.class, "RoomTypeToRoom").closeFetch().closeFetch()
                     .fetchInnerReference(Category.class, "OrderToCategory")
                     .fetchInnerChild(Complimentary.class)
                     .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary").closeAllFetches()
@@ -102,8 +104,8 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
             jdbcTemplate.update(insertObjReference, 26, objectId, notification.getNotificationType().getObjectId());
             jdbcTemplate.update(insertObjReference, 24, objectId, notification.getExecutedBy().getObjectId());
             jdbcTemplate.update(insertObjReference, 27, objectId, notification.getOrder().getObjectId());
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
         return objectId;
     }
@@ -139,8 +141,8 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                 jdbcTemplate.update(updateReference, newNotification.getOrder().getObjectId(),
                         newNotification.getObjectId(), 27);
             }
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
     }
 

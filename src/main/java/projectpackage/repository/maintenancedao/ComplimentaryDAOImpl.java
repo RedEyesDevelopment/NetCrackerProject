@@ -2,6 +2,7 @@ package projectpackage.repository.maintenancedao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.Complimentary;
@@ -53,8 +54,8 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
         try {
             jdbcTemplate.update(insertObject, objectId, complimentary.getCategoryId(), 15, null, null);
             jdbcTemplate.update(insertObjReference, 51, objectId, complimentary.getMaintenance().getObjectId());
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
         return objectId;
     }
@@ -65,8 +66,8 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
             if (oldComplimentary.getMaintenance().getObjectId() != newComplimentary.getMaintenance().getObjectId()) {
                 jdbcTemplate.update(updateReference, newComplimentary.getMaintenance().getObjectId(), newComplimentary.getObjectId(), 51);
             }
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
 
         }
     }

@@ -58,7 +58,7 @@ public class RoomRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deleteRoom(){
-        int roomId = 135;
+        int roomId = 2074;
         IUDAnswer iudAnswer = roomService.deleteRoom(roomId);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Delete room result = " + iudAnswer.isSuccessful());
@@ -89,7 +89,7 @@ public class RoomRepositoryTests extends AbstractDatabaseTest{
         room.setNumberOfResidents(2);
         roomType.setObjectId(7);
         room.setRoomType(roomType);
-        IUDAnswer iudAnswer = roomService.updateRoom(2010, room);
+        IUDAnswer iudAnswer = roomService.updateRoom(2074, room);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Update room result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
