@@ -8,6 +8,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.PlatformTransactionManager;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
+import projectpackage.model.support.IUDAnswer;
 import projectpackage.service.authservice.UserService;
 
 import java.util.List;
@@ -55,16 +56,15 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
     @Rollback(true)
     public void deleteUser(){
         int userId = 2042;
-        boolean result = userService.deleteUser(userId);
-        assertTrue(result);
-        LOGGER.info("Delete user result = " + result);
+        IUDAnswer iudAnswer = userService.deleteUser(userId);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Delete user result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void createUser(){
-        //TODO пока предполагается, что null и empty вообще не будет, потом надо переделать все тесты так чтобы инсерт падал!
         Role role = new Role();
         role.setRoleName("Admin");
         role.setObjectId(1);
@@ -75,16 +75,15 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         user.setLastName("Merlyan");
         user.setAdditionalInfo("nothing");
         user.setRole(role);
-        boolean result = userService.insertUser(user);
-        assertTrue(result);
-        LOGGER.info("Create user result = " + result);
+        IUDAnswer iudAnswer = userService.insertUser(user);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Create user result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void updateUser(){
-        //TODO пока предполагается, что null и empty вообще не будет, потом надо переделать все тесты так чтобы апдейт падал!
         Role newRole = new Role();
         newRole.setObjectId(2);
         newRole.setRoleName("Reception");
@@ -96,9 +95,9 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
         newUser.setLastName("Merl");
         newUser.setAdditionalInfo("My new INFO");
         newUser.setRole(newRole);
-        boolean result = userService.updateUser(newUser.getObjectId(), newUser);
-        assertTrue(result);
-        LOGGER.info("Update user result = " + result);
+        IUDAnswer iudAnswer = userService.updateUser(newUser.getObjectId(), newUser);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Update user result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 

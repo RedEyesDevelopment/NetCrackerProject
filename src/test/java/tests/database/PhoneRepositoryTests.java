@@ -9,6 +9,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.Phone;
+import projectpackage.model.support.IUDAnswer;
 import projectpackage.service.authservice.PhoneService;
 
 import java.util.List;
@@ -51,9 +52,9 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
     @Rollback(true)
     public void deletePhone(){
         int phoneId = 2009;
-        boolean result = phoneService.deletePhone(phoneId);
-        assertTrue(result);
-        LOGGER.info("Delete phone result = " + result);
+        IUDAnswer iudAnswer = phoneService.deletePhone(phoneId);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Delete phone result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
@@ -63,9 +64,9 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
         Phone phone = new Phone();
         phone.setPhoneNumber("7583475543");
         phone.setUserId(1404);
-        boolean result = phoneService.insertPhone(phone);
-        assertTrue(result);
-        LOGGER.info("Create phone result = " + result);
+        IUDAnswer iudAnswer = phoneService.insertPhone(phone);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Create phone result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
@@ -75,9 +76,9 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
         Phone phone = new Phone();
         phone.setUserId(1406);
         phone.setPhoneNumber("0638509180");
-        boolean result = phoneService.updatePhone(2009, phone);
-        assertTrue(result);
-        LOGGER.info("Update phone result = " + result);
+        IUDAnswer iudAnswer = phoneService.updatePhone(2009, phone);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Update phone result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 

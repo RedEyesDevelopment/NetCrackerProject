@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import projectpackage.model.auth.Role;
 import projectpackage.model.notifications.NotificationType;
+import projectpackage.model.support.IUDAnswer;
 import projectpackage.service.notificationservice.NotificationTypeService;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class NotificationTypeRepositoryTests extends AbstractDatabaseTest {
 
-    private static final Logger LOGGER = Logger.getLogger("fucktoy");
+    private static final Logger LOGGER = Logger.getLogger(NotificationTypeRepositoryTests.class);
 
     @Autowired
     NotificationTypeService notificationTypeService;
@@ -48,7 +49,7 @@ public class NotificationTypeRepositoryTests extends AbstractDatabaseTest {
     @Test
     @Rollback(true)
     public void getNotificationTypeByRole() {
-        // todo
+
     }
 
 
@@ -56,9 +57,9 @@ public class NotificationTypeRepositoryTests extends AbstractDatabaseTest {
     @Rollback(true)
     public void deleteNotificationType() {
         int notifTypeId = 2000;
-        boolean result = notificationTypeService.deleteNotificationType(notifTypeId);
-        assertTrue(result);
-        LOGGER.info("Delete notifType result = " + result);
+        IUDAnswer iudAnswer = notificationTypeService.deleteNotificationType(notifTypeId);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Delete notifType result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
@@ -71,9 +72,9 @@ public class NotificationTypeRepositoryTests extends AbstractDatabaseTest {
         NotificationType notificationType = new NotificationType();
         notificationType.setNotificationTypeTitle("TestNotificationType");
         notificationType.setOrientedRole(role);
-        boolean result = notificationTypeService.insertNotificationType(notificationType);
-        assertTrue(result);
-        LOGGER.info("Create notification result = " + result);
+        IUDAnswer iudAnswer = notificationTypeService.insertNotificationType(notificationType);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Create notification result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
@@ -87,9 +88,9 @@ public class NotificationTypeRepositoryTests extends AbstractDatabaseTest {
         notificationType.setObjectId(2000);
         notificationType.setOrientedRole(newRole);
         notificationType.setNotificationTypeTitle("UpdateNotifTypeTEST");
-        boolean result = notificationTypeService.updateNotificationType(notificationType.getObjectId(), notificationType);
-        assertTrue(result);
-        LOGGER.info("Update notification result = " + result);
+        IUDAnswer iudAnswer = notificationTypeService.updateNotificationType(notificationType.getObjectId(), notificationType);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Update notification result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 }

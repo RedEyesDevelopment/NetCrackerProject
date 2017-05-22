@@ -1,5 +1,6 @@
 package tests.database;
 
+import com.sun.org.apache.xpath.internal.operations.Or;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +8,11 @@ import org.springframework.test.annotation.Rollback;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
+import projectpackage.model.support.IUDAnswer;
 import projectpackage.service.orderservice.OrderService;
 
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
@@ -25,7 +28,11 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getAllOrders() {
-
+        List<Order> orders = orderService.getAllOrders();
+        for (Order order : orders) {
+            LOGGER.info(order);
+        }
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
@@ -97,7 +104,9 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getSingleOrderById(){
-
+        Order order = orderService.getSingleOrderById(534);
+        LOGGER.info(order);
+        LOGGER.info(SEPARATOR);
     }
 
 
@@ -105,9 +114,9 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
     @Rollback(true)
     public void deleteOrder(){
         int orderId = 2031;
-        boolean result = orderService.deleteOrder(orderId);
-        assertTrue(result);
-        LOGGER.info("Delete order result = " + result);
+        IUDAnswer iudAnswer = orderService.deleteOrder(orderId);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Delete order result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
@@ -128,9 +137,9 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
         order.setComment("Comment");
         order.setRoom(room);
         order.setClient(user);
-        boolean result = orderService.insertOrder(order);
-        assertTrue(result);
-        LOGGER.info("Create order result = " + result);
+        IUDAnswer iudAnswer = orderService.insertOrder(order);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Create order result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
@@ -151,10 +160,9 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
         order.setComment("new Comment");
         order.setRoom(room);
         order.setClient(user);
-        boolean result = orderService.updateOrder(2031, order);
-        LOGGER.info(result);
-        assertTrue(result);
-        LOGGER.info("Create order result = " + result);
+        IUDAnswer iudAnswer = orderService.updateOrder(2031, order);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Create order result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 }

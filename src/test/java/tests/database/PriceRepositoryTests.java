@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.rates.Price;
+import projectpackage.model.support.IUDAnswer;
 import projectpackage.service.rateservice.PriceService;
 import projectpackage.service.rateservice.PriceServiceImpl;
 
@@ -25,13 +26,19 @@ public class PriceRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getAllPrices() {
-
+        List<Price> prices = priceService.getAllPrices();
+        for (Price price : prices) {
+            LOGGER.info(price);
+        }
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void getSinglePriceById(){
-
+        Price price = priceService.getSinglePriceById(453);
+        LOGGER.info(price);
+        LOGGER.info(SEPARATOR);
     }
 
 
@@ -39,9 +46,9 @@ public class PriceRepositoryTests extends AbstractDatabaseTest{
     @Rollback(true)
     public void deletePrice(){
         int priceId = 2032;
-        boolean result = priceService.deletePrice(priceId);
-        assertTrue(result);
-        LOGGER.info("Delete price result = " + result);
+        IUDAnswer iudAnswer = priceService.deletePrice(priceId);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Delete price result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
@@ -52,9 +59,9 @@ public class PriceRepositoryTests extends AbstractDatabaseTest{
         price.setNumberOfPeople(2);
         price.setRate(7897493L);
         price.setRateId(31);
-        boolean result = priceService.insertPrice(price);
-        assertTrue(result);
-        LOGGER.info("Create price result = " + result);
+        IUDAnswer iudAnswer = priceService.insertPrice(price);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Create price result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
@@ -65,9 +72,9 @@ public class PriceRepositoryTests extends AbstractDatabaseTest{
         price.setNumberOfPeople(1);
         price.setRate(7897494L);
         price.setRateId(32);
-        boolean result = priceService.updatePrice(2032, price);
-        assertTrue(result);
-        LOGGER.info("Update price result = " + result);
+        IUDAnswer iudAnswer = priceService.updatePrice(2032, price);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Update price result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 }

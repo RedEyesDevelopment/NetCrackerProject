@@ -9,6 +9,7 @@ import projectpackage.model.auth.User;
 import projectpackage.model.notifications.Notification;
 import projectpackage.model.notifications.NotificationType;
 import projectpackage.model.orders.Order;
+import projectpackage.model.support.IUDAnswer;
 import projectpackage.service.notificationservice.NotificationService;
 import projectpackage.service.notificationservice.NotificationServiceImpl;
 
@@ -50,10 +51,10 @@ public class NotificationRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deleteNotification(){
-        int notifId = 2001;
-        boolean result = notificationService.deleteNotification(notifId);
-        assertTrue(result);
-        LOGGER.info("Delete notification result = " + result);
+        int notId = 2008;//check id
+        IUDAnswer iudAnswer = notificationService.deleteNotification(notId);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Delete notification result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
@@ -75,16 +76,34 @@ public class NotificationRepositoryTests extends AbstractDatabaseTest{
         notification.setMessage("some message");
         notification.setSendDate(new Date());
         notification.setOrder(order);
-        boolean result = notificationService.insertNotification(notification);
-        assertTrue(result);
-        LOGGER.info("Create notification result = " + result);
+        IUDAnswer iudAnswer = notificationService.insertNotification(notification);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Create notification result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void updateNotification(){
+        User author = new User();
+        author.setObjectId(901);
 
+        NotificationType notificationType = new NotificationType();
+        notificationType.setObjectId(10);
+
+        Order order = new Order();
+        order.setObjectId(300);
+
+        Notification notification = new Notification();
+        notification.setAuthor(author);
+        notification.setNotificationType(notificationType);
+        notification.setMessage("new some message");
+        notification.setSendDate(new Date());
+        notification.setOrder(order);
+        IUDAnswer iudAnswer = notificationService.insertNotification(notification);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Create notification result = " + iudAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
     }
 
     public void getNotificationsBySendDate(){

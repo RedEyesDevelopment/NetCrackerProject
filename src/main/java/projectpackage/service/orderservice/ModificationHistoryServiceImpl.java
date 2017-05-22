@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
+import projectpackage.model.support.IUDAnswer;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.ordersdao.ModificationHistoryDAO;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 
@@ -28,7 +30,7 @@ public class ModificationHistoryServiceImpl implements ModificationHistoryServic
     }
 
     @Override
-    public List<ModificationHistory> getAllModificationHistory() throws ResultEntityNullException {
+    public List<ModificationHistory> getAllModificationHistory() {
         List<ModificationHistory> modificationHistories = modificationHistoryDAO.getAllModificationHistories();
         if (modificationHistories == null) LOGGER.info("Returned NULL!!!");
         return modificationHistories;
@@ -44,5 +46,26 @@ public class ModificationHistoryServiceImpl implements ModificationHistoryServic
         ModificationHistory modificationHistory = modificationHistoryDAO.getModificationHistory(id);
         if (modificationHistory == null) LOGGER.info("Returned NULL!!!");
         return modificationHistory;
+    }
+
+    @Override
+    public IUDAnswer insertModificationHistory(Order newOrder, Order oldOrder) throws TransactionException {
+        try {
+            modificationHistoryDAO.insertModificationHistory(newOrder, oldOrder);
+        } catch (TransactionException e) {
+            LOGGER.warn("Catched transactionException!!!", e);
+            return new IUDAnswer(false, e.getMessage());
+        }
+        return new IUDAnswer(true);
+    }
+
+    @Override
+    public IUDAnswer deleteModificationHistory(int id) throws ReferenceBreakException {
+        try {
+            modificationHistoryDAO.deleteModificationHistory(id);
+        } catch (ReferenceBreakException e) {
+            return new IUDAnswer(false, e.printReferencesEntities());
+        }
+        return new IUDAnswer(true);
     }
 }

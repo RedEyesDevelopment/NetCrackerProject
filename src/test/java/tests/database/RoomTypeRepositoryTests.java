@@ -1,5 +1,6 @@
 package tests.database;
 
+import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +8,11 @@ import org.springframework.test.annotation.Rollback;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
+import projectpackage.model.support.IUDAnswer;
 import projectpackage.service.roomservice.RoomTypeService;
 
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
@@ -50,7 +53,11 @@ public class RoomTypeRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getAllRoomTypes() {
-
+        List<RoomType> roomTypes = roomTypeService.getAllRoomTypes();
+        for (RoomType roomType : roomTypes) {
+            LOGGER.info(roomType);
+        }
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
@@ -62,16 +69,18 @@ public class RoomTypeRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getSingleRoomTypeById(){
-
+        RoomType roomType = roomTypeService.getSingleRoomTypeById(532);
+        LOGGER.info(roomType);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void deleteRoomType(){
         int roomTypeId = 2011;
-        boolean result = roomTypeService.deleteRoomType(roomTypeId);
-        assertTrue(result);
-        LOGGER.info("Delete roomType result = " + result);
+        IUDAnswer iudAnswer = roomTypeService.deleteRoomType(roomTypeId);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Delete roomType result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
@@ -81,9 +90,9 @@ public class RoomTypeRepositoryTests extends AbstractDatabaseTest{
         RoomType roomType = new RoomType();
         roomType.setContent("someContent");
         roomType.setRoomTypeTitle("Type epta");
-        boolean result = roomTypeService.insertRoomType(roomType);
-        assertTrue(result);
-        LOGGER.info("Create roomType result = " + result);
+        IUDAnswer iudAnswer = roomTypeService.insertRoomType(roomType);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Create roomType result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
@@ -94,9 +103,9 @@ public class RoomTypeRepositoryTests extends AbstractDatabaseTest{
         roomType.setObjectId(2011);
         roomType.setContent("new someContent");
         roomType.setRoomTypeTitle("new Type epta");
-        boolean result = roomTypeService.updateRoomType(2011, roomType);
-        assertTrue(result);
-        LOGGER.info("Update roomType result = " + result);
+        IUDAnswer iudAnswer = roomTypeService.updateRoomType(2011, roomType);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Update roomType result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 }

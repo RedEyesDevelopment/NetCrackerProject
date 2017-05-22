@@ -10,6 +10,7 @@ import projectpackage.model.support.IUDAnswer;
 import projectpackage.repository.authdao.PhoneDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.support.PhoneRegexService;
 
 import java.util.List;
 
@@ -20,6 +21,9 @@ import java.util.List;
 @Service
 public class PhoneServiceImpl implements PhoneService{
     private static final Logger LOGGER = Logger.getLogger(PhoneServiceImpl.class);
+
+    @Autowired
+    PhoneRegexService phoneRegexService;
 
     @Autowired
     PhoneDAO phoneDAO;
@@ -60,6 +64,9 @@ public class PhoneServiceImpl implements PhoneService{
 
     @Override
     public IUDAnswer insertPhone(Phone phone) {
+        boolean isValid = phoneRegexService.match(phone.getPhoneNumber());
+        if (!isValid) return new IUDAnswer(false, "Incorrect phone number!");
+
         try {
             int phoneId = phoneDAO.insertPhone(phone);
             LOGGER.info("Get from DB phoneId = " + phoneId);
@@ -72,6 +79,9 @@ public class PhoneServiceImpl implements PhoneService{
 
     @Override
     public IUDAnswer updatePhone(int id, Phone newPhone) {
+        boolean isValid = phoneRegexService.match(newPhone.getPhoneNumber());
+        if (!isValid) return new IUDAnswer(false, "Incorrect phone number!");
+
         try {
             newPhone.setObjectId(id);
             Phone oldPhone = phoneDAO.getPhone(id);
