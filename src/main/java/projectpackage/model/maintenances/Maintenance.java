@@ -17,7 +17,6 @@ import projectpackage.repository.reacteav.annotations.ReactReference;
 public class Maintenance {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
-
     @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Maintenance_title")
     private String maintenanceTitle;
     @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Maintenance_type")

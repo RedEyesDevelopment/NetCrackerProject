@@ -18,14 +18,14 @@ import org.springframework.transaction.annotation.TransactionManagementConfigure
 import projectpackage.repository.authdao.*;
 import projectpackage.repository.blocksdao.BlockDAO;
 import projectpackage.repository.blocksdao.BlockDAOImpl;
+import projectpackage.repository.maintenancedao.ComplimentaryDAO;
+import projectpackage.repository.maintenancedao.ComplimentaryDAOImpl;
 import projectpackage.repository.maintenancedao.JournalRecordDAO;
 import projectpackage.repository.notificationsdao.NotificationDAO;
 import projectpackage.repository.notificationsdao.NotificationDAOImpl;
 import projectpackage.repository.notificationsdao.NotificationTypeDAO;
 import projectpackage.repository.notificationsdao.NotificationTypeDAOImpl;
-import projectpackage.repository.ordersdao.ModificationHistoryDAO;
-import projectpackage.repository.ordersdao.OrderDAO;
-import projectpackage.repository.ordersdao.OrderDAOImpl;
+import projectpackage.repository.ordersdao.*;
 import projectpackage.repository.ratesdao.PriceDAO;
 import projectpackage.repository.ratesdao.PriceDAOImpl;
 import projectpackage.repository.ratesdao.RateDAO;
@@ -47,6 +47,8 @@ import projectpackage.service.notificationservice.NotificationService;
 import projectpackage.service.notificationservice.NotificationServiceImpl;
 import projectpackage.service.notificationservice.NotificationTypeService;
 import projectpackage.service.notificationservice.NotificationTypeServiceImpl;
+import projectpackage.service.orderservice.CategoryService;
+import projectpackage.service.orderservice.CategoryServiceImpl;
 import projectpackage.service.orderservice.OrderService;
 import projectpackage.service.orderservice.OrderServiceImpl;
 import projectpackage.service.rateservice.PriceService;
@@ -202,6 +204,12 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
     }
 
     @Bean
+    CategoryDAO categoryDAO() {return new CategoryDAOImpl(); }
+
+    @Bean
+    ComplimentaryDAO complimentaryDAO() {return new ComplimentaryDAOImpl(); }
+
+    @Bean
     PhoneDAO phoneDAO() {
         return new PhoneDAOImpl();
     }
@@ -214,6 +222,9 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
 
     @Bean
     JournalRecordDAO journalRecordDAO() {return  null;}
+
+    @Bean
+    CategoryService categoryService() { return new CategoryServiceImpl(); }
 
     @Bean
     NotificationDAO notificationDAO(){

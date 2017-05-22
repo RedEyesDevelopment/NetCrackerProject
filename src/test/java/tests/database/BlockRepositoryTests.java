@@ -6,9 +6,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import projectpackage.model.blocks.Block;
-import projectpackage.model.rates.Price;
 import projectpackage.model.rooms.Room;
-import projectpackage.model.rooms.RoomType;
 import projectpackage.model.support.IUDAnswer;
 import projectpackage.service.blockservice.BlockService;
 
@@ -39,7 +37,7 @@ public class BlockRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getSingleBlockById(){
-        Block block = blockService.getSingleBlockById(2007);// check id
+        Block block = blockService.getSingleBlockById(227);// check id
         LOGGER.info(block);
         LOGGER.info(SEPARATOR);
     }
