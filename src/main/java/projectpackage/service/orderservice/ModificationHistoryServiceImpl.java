@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
 import projectpackage.repository.ordersdao.ModificationHistoryDAO;
+import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class ModificationHistoryServiceImpl implements ModificationHistoryServic
     }
 
     @Override
-    public List<ModificationHistory> getAllModificationHistory() {
+    public List<ModificationHistory> getAllModificationHistory() throws ResultEntityNullException {
         List<ModificationHistory> modificationHistories = modificationHistoryDAO.getAllModificationHistories();
         if (modificationHistories == null) LOGGER.info("Returned NULL!!!");
         return modificationHistories;
