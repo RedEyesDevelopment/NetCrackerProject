@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.User;
+import projectpackage.model.support.IUDAnswer;
 import projectpackage.repository.authdao.PhoneDAO;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 
 import java.util.List;
@@ -47,35 +49,37 @@ public class PhoneServiceImpl implements PhoneService{
     }
 
     @Override
-    public boolean deletePhone(int id) {
-        int count = phoneDAO.deletePhone(id);
-        LOGGER.info("Deleted rows : " + count);
-        if (count == 0) return false;
-        return true;
+    public IUDAnswer deletePhone(int id) {
+        try {
+            phoneDAO.deletePhone(id);
+        } catch (ReferenceBreakException e) {
+            return new IUDAnswer(false, e.printReferencesEntities());
+        }
+        return new IUDAnswer(true);
     }
 
     @Override
-    public boolean insertPhone(Phone phone) {
+    public IUDAnswer insertPhone(Phone phone) {
         try {
             int phoneId = phoneDAO.insertPhone(phone);
             LOGGER.info("Get from DB phoneId = " + phoneId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(true);
     }
 
     @Override
-    public boolean updatePhone(int id, Phone newPhone) {
+    public IUDAnswer updatePhone(int id, Phone newPhone) {
         try {
             newPhone.setObjectId(id);
             Phone oldPhone = phoneDAO.getPhone(id);
             phoneDAO.updatePhone(newPhone, oldPhone);
+            return new IUDAnswer(true);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
     }
 }

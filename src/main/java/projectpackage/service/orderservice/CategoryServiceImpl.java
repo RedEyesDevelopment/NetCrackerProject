@@ -4,8 +4,9 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import projectpackage.model.maintenances.Complimentary;
 import projectpackage.model.orders.Category;
+import projectpackage.model.support.IUDAnswer;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.maintenancedao.ComplimentaryDAO;
 import projectpackage.repository.ordersdao.CategoryDAO;
@@ -46,39 +47,37 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public boolean deleteCategory(int id) {
-        Category category = categoryDAO.getCategory(id);
-        for (Complimentary complimentary : category.getComplimentaries()) {
-            complimentaryDAO.deleteComplimentary(complimentary.getObjectId());
+    public IUDAnswer deleteCategory(int id) {
+        try {
+            categoryDAO.deleteCategory(id);
+        } catch (ReferenceBreakException e) {
+            return new IUDAnswer(false, e.printReferencesEntities());
         }
-        int count = categoryDAO.deleteCategory(id);
-        LOGGER.info("Deleted rows : " + count);
-        if (count == 0) return false;
-        return true;
+        return new IUDAnswer(true);
     }
 
     @Override
-    public boolean insertCategory(Category category) {
+    public IUDAnswer insertCategory(Category category) {
         try {
             int categoryId = categoryDAO.insertCategory(category);
             LOGGER.info("Get from DB categoryId = " + categoryId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(true);
     }
 
     @Override
-    public boolean updateCategory(int id, Category newCategory) {
+    public IUDAnswer updateCategory(int id, Category newCategory) {
         try {
             newCategory.setObjectId(id);
             Category oldCategory = categoryDAO.getCategory(id);
             categoryDAO.updateCategory(newCategory, oldCategory);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(true);
     }
 }

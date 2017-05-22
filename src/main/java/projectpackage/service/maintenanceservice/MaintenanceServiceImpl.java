@@ -5,6 +5,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.maintenances.Maintenance;
+import projectpackage.model.support.IUDAnswer;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.maintenancedao.MaintenanceDAO;
 
@@ -41,35 +43,37 @@ public class MaintenanceServiceImpl implements MaintenanceService {
     }
 
     @Override
-    public boolean deleteMaintenance(int id) {
-        int count = maintenanceDAO.deleteMaintenance(id);
-        LOGGER.info("Deleted rows : " + count);
-        if (count == 0) return false;
-        return true;
+    public IUDAnswer deleteMaintenance(int id) {
+        try {
+            maintenanceDAO.deleteMaintenance(id);
+        } catch (ReferenceBreakException e) {
+            return new IUDAnswer(false, e.printReferencesEntities());
+        }
+        return new IUDAnswer(true);
     }
 
     @Override
-    public boolean insertMaintenance(Maintenance maintenance) {
+    public IUDAnswer insertMaintenance(Maintenance maintenance) {
         try {
             int maintenanceId = maintenanceDAO.insertMaintenance(maintenance);
             LOGGER.info("Get from DB maintenanceId = " + maintenanceId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(true);
     }
 
     @Override
-    public boolean updateMaintenance(int id, Maintenance newMaintenance) {
+    public IUDAnswer updateMaintenance(int id, Maintenance newMaintenance) {
         try {
             newMaintenance.setObjectId(id);
             Maintenance oldMaintenance = maintenanceDAO.getMaintenance(id);
             maintenanceDAO.updateMaintenance(newMaintenance, oldMaintenance);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(true);
     }
 }

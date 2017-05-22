@@ -1,6 +1,7 @@
 package projectpackage.service.orderservice;
 
 import projectpackage.model.orders.Category;
+import projectpackage.model.support.IUDAnswer;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface CategoryService {
     public List<Category> getAllCategories();
     public List<Category> getAllCategories(String orderingParameter, boolean ascend);
     public Category getSingleCategoryById(int id);
-    public boolean deleteCategory(int id);
-    public boolean insertCategory(Category category);
-    public boolean updateCategory(int id, Category newCategory);
+    public IUDAnswer deleteCategory(int id);
+    public IUDAnswer insertCategory(Category category);
+    public IUDAnswer updateCategory(int id, Category newCategory);
 }

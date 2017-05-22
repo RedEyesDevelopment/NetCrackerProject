@@ -1,10 +1,14 @@
 package projectpackage.service.blockservice;
 
+import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import projectpackage.model.blocks.Block;
 import projectpackage.model.rooms.Room;
+import projectpackage.model.support.IUDAnswer;
 import projectpackage.repository.blocksdao.BlockDAO;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 
 import java.util.Date;
@@ -13,6 +17,8 @@ import java.util.List;
 /**
  * Created by Arizel on 16.05.2017.
  */
+@Log4j
+@Service
 public class BlockServiceImpl implements BlockService{
     private static final Logger LOGGER = Logger.getLogger(BlockServiceImpl.class);
 
@@ -64,27 +70,29 @@ public class BlockServiceImpl implements BlockService{
     }
 
     @Override
-    public boolean deleteBlock(int id) {
-        int count = blockDAO.deleteBlock(id);
-        LOGGER.info("Deleted rows : " + count);
-        if (count == 0) return false;
-        return true;
+    public IUDAnswer deleteBlock(int id) {
+        try {
+            blockDAO.deleteBlock(id);
+        } catch (ReferenceBreakException e) {
+            return new IUDAnswer(false, e.printReferencesEntities());
+        }
+        return new IUDAnswer(true);
     }
 
     @Override
-    public boolean insertBlock(Block block) {
+    public IUDAnswer insertBlock(Block block) {
         try {
             int blockId = blockDAO.insertBlock(block);
             LOGGER.info("Get from DB blockId = " + blockId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(true);
     }
 
     @Override
-    public boolean updateBlock(int id, Block newBlock) {
+    public IUDAnswer updateBlock(int id, Block newBlock) {
         try {
             newBlock.setObjectId(id);
             Block oldBlock = blockDAO.getBlock(id);
@@ -92,8 +100,8 @@ public class BlockServiceImpl implements BlockService{
             blockDAO.updateBlock(newBlock, oldBlock);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(true);
     }
 }

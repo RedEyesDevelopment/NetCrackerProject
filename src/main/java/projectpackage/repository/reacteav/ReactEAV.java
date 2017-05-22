@@ -47,13 +47,13 @@ public class ReactEAV {
         return dataBucket;
     }
 
-    public ReacTask fetchChildEntityCollection(Class innerEntityClass) {
+    public ReacTask fetchRootChild(Class innerEntityClass) {
         checkInnerRelations(rootNode.getObjectClass(), dataBucket.getOuterRelationsMap().get(innerEntityClass).keySet());
         ReacTask newReacTask = fetchingOrderCreation(innerEntityClass, false, null, null, false, null);
         return newReacTask;
     }
 
-    public ReacTask fetchReferenceEntityCollection(Class innerEntityClass, String referenceName) {
+    public ReacTask fetchRootReference(Class innerEntityClass, String referenceName) {
         boolean innerHasIt = false;
         for (EntityReferenceRelationshipsData data:dataBucket.getEntityReferenceRelationsMap().get(innerEntityClass).values()){
             if (data.getOuterClass().equals(rootNode.getObjectClass())){

@@ -6,6 +6,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.maintenances.JournalRecord;
+import projectpackage.model.support.IUDAnswer;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.maintenancedao.JournalRecordDAO;
 
@@ -42,35 +44,37 @@ public class JournalRecordServiceImpl implements JournalRecordService{
     }
 
     @Override
-    public boolean deleteJournalRecord(int id) {
-        int count = journalRecordDAO.deleteJournalRecord(id);
-        LOGGER.info("Deleted rows : " + count);
-        if (count == 0) return false;
-        return true;
+    public IUDAnswer deleteJournalRecord(int id) {
+        try {
+            journalRecordDAO.deleteJournalRecord(id);
+        } catch (ReferenceBreakException e) {
+            return new IUDAnswer(false, e.printReferencesEntities());
+        }
+        return new IUDAnswer(true);
     }
 
     @Override
-    public boolean insertJournalRecord(JournalRecord journalRecord) {
+    public IUDAnswer insertJournalRecord(JournalRecord journalRecord) {
         try {
             int journalRecordId = journalRecordDAO.insertJournalRecord(journalRecord);
             LOGGER.info("Get from DB journalRecordId = " + journalRecordId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(true);
     }
 
     @Override
-    public boolean updateJournalRecord(int id, JournalRecord newJournalRecord) {
+    public IUDAnswer updateJournalRecord(int id, JournalRecord newJournalRecord) {
         try {
             newJournalRecord.setObjectId(id);
             JournalRecord oldJournalRecord = journalRecordDAO.getJournalRecord(id);
             journalRecordDAO.updateJournalRecord(newJournalRecord, oldJournalRecord);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(true);
     }
 }

@@ -17,6 +17,6 @@ public interface RoomService {
     public List<Room> getAllRooms(String orderingParameter, boolean ascend);//TODO Pacanu
     public Room getSingleRoomById(int id);//TODO Pacanu
     public IUDAnswer deleteRoom(int id);
-    public boolean insertRoom(Room room);
-    public boolean updateRoom(int id, Room newRoom);
+    public IUDAnswer insertRoom(Room room);
+    public IUDAnswer updateRoom(int id, Room newRoom);
 }

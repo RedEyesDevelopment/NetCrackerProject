@@ -5,13 +5,12 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.auth.Role;
-import projectpackage.model.notifications.Notification;
 import projectpackage.model.notifications.NotificationType;
+import projectpackage.model.support.IUDAnswer;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
-import projectpackage.repository.notificationsdao.NotificationDAO;
 import projectpackage.repository.notificationsdao.NotificationTypeDAO;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -25,9 +24,6 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
 
     @Autowired
     NotificationTypeDAO notificationTypeDAO;
-
-    @Autowired
-    NotificationDAO notificationDAO;
 
     @Override
     public List<NotificationType> getAllNotificationTypes() {
@@ -54,44 +50,37 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
     }
 
     @Override
-    public boolean deleteNotificationType(int id) {
-        int count = 0;
-        List<Notification> list = notificationDAO.getAllNotifications();
-        Iterator<Notification> iterator = list.iterator();
-        while (iterator.hasNext()){
-            Notification not = iterator.next();
-            if (not.getNotificationType().getObjectId() == id){
-                count += notificationDAO.deleteNotification(not.getObjectId());
-            }
+    public IUDAnswer deleteNotificationType(int id) {
+        try {
+            notificationTypeDAO.deleteNotificationType(id);
+        } catch (ReferenceBreakException e) {
+            return new IUDAnswer(false, e.printReferencesEntities());
         }
-
-        count += notificationTypeDAO.deleteNotificationType(id);
-        if (count == 0) return false;
-        else return true;
+        return new IUDAnswer(true);
     }
 
     @Override
-    public boolean insertNotificationType(NotificationType notificationType) {
+    public IUDAnswer insertNotificationType(NotificationType notificationType) {
         try {
             int notifTypeId = notificationTypeDAO.insertNotificationType(notificationType);
             LOGGER.info("Get from DB notificationTypeId = " + notifTypeId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(true);
     }
 
     @Override
-    public boolean updateNotificationType(int id, NotificationType newNotificationType) {
+    public IUDAnswer updateNotificationType(int id, NotificationType newNotificationType) {
         try {
             newNotificationType.setObjectId(id);
             NotificationType oldNotificationType = notificationTypeDAO.getNotificationType(id);
             notificationTypeDAO.updateNotificationType(newNotificationType, oldNotificationType);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(true);
     }
 }

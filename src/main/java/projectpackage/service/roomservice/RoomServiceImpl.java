@@ -1,12 +1,12 @@
 package projectpackage.service.roomservice;
 
+import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import projectpackage.model.blocks.Block;
+import org.springframework.stereotype.Service;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.model.support.IUDAnswer;
-import projectpackage.repository.blocksdao.BlockDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.roomsdao.RoomDAO;
@@ -17,6 +17,8 @@ import java.util.List;
 /**
  * Created by Arizel on 16.05.2017.
  */
+@Log4j
+@Service
 public class RoomServiceImpl implements RoomService{
     private static final Logger LOGGER = Logger.getLogger(RoomServiceImpl.class);
 
@@ -63,27 +65,27 @@ public class RoomServiceImpl implements RoomService{
     }
 
     @Override
-    public boolean insertRoom(Room room) {
+    public IUDAnswer insertRoom(Room room) {
         try {
             int roomId = roomDAO.insertRoom(room);
             LOGGER.info("Get from DB roomId = " + roomId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(true);
     }
 
     @Override
-    public boolean updateRoom(int id, Room newRoom) {
+    public IUDAnswer updateRoom(int id, Room newRoom) {
         try {
             newRoom.setObjectId(id);
             Room oldRoom = roomDAO.getRoom(id);
             roomDAO.updateRoom(newRoom, oldRoom);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(true);
     }
 }

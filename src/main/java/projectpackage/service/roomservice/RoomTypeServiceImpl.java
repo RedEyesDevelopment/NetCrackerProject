@@ -1,11 +1,13 @@
 package projectpackage.service.roomservice;
 
+import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import projectpackage.model.rates.Rate;
+import org.springframework.stereotype.Service;
 import projectpackage.model.rooms.RoomType;
+import projectpackage.model.support.IUDAnswer;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
-import projectpackage.repository.ratesdao.RateDAO;
 import projectpackage.repository.roomsdao.RoomTypeDAO;
 
 import java.util.Date;
@@ -14,14 +16,13 @@ import java.util.List;
 /**
  * Created by Arizel on 16.05.2017.
  */
+@Log4j
+@Service
 public class RoomTypeServiceImpl implements RoomTypeService{
     private static final Logger LOGGER = Logger.getLogger(RoomTypeServiceImpl.class);
 
     @Autowired
     RoomTypeDAO roomTypeDAO;
-
-    @Autowired
-    RateDAO rateDAO;
 
     @Override
     public List<RoomType> getRoomTypes(Date date) {
@@ -59,39 +60,37 @@ public class RoomTypeServiceImpl implements RoomTypeService{
     }
 
     @Override
-    public boolean deleteRoomType(int id) {
-        RoomType roomType = roomTypeDAO.getRoomType(id);
-        for (Rate rate : roomType.getRates()) {
-            rateDAO.deleteRate(rate.getObjectId());
+    public IUDAnswer deleteRoomType(int id) {
+        try {
+            roomTypeDAO.deleteRoomType(id);
+        } catch (ReferenceBreakException e) {
+            return new IUDAnswer(false, e.printReferencesEntities());
         }
-        int count = roomTypeDAO.deleteRoomType(id);
-        LOGGER.info("Deleted rows : " + count);
-        if (count == 0) return false;
-        return true;
+        return new IUDAnswer(true);
     }
 
     @Override
-    public boolean insertRoomType(RoomType roomType) {
+    public IUDAnswer insertRoomType(RoomType roomType) {
         try {
             int roomTypeId = roomTypeDAO.insertRoomType(roomType);
             LOGGER.info("Get from DB roomId = " + roomTypeId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(true);
     }
 
     @Override
-    public boolean updateRoomType(int id, RoomType newRoomType) {
+    public IUDAnswer updateRoomType(int id, RoomType newRoomType) {
         try {
             newRoomType.setObjectId(id);
             RoomType oldRoomType = roomTypeDAO.getRoomType(id);
             roomTypeDAO.updateRoomType(newRoomType, oldRoomType);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(true);
     }
 }

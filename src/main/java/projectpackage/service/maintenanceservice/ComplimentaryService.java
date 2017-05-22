@@ -1,6 +1,7 @@
 package projectpackage.service.maintenanceservice;
 
 import projectpackage.model.maintenances.Complimentary;
+import projectpackage.model.support.IUDAnswer;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface ComplimentaryService {
 
     public List<Complimentary> getAllComplimentaries();//TODO Merlyan
     public Complimentary getSingleComplimentaryById(int id);
-    public boolean deleteComplimentary(int id);
-    public boolean insertComplimentary(Complimentary complimentary);
-    public boolean updateComplimentary(int id, Complimentary newComplimentary);
+    public IUDAnswer deleteComplimentary(int id);
+    public IUDAnswer insertComplimentary(Complimentary complimentary);
+    public IUDAnswer updateComplimentary(int id, Complimentary newComplimentary);
 }

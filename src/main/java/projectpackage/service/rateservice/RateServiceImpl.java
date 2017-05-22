@@ -1,11 +1,13 @@
 package projectpackage.service.rateservice;
 
+import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import projectpackage.model.rates.Price;
+import org.springframework.stereotype.Service;
 import projectpackage.model.rates.Rate;
+import projectpackage.model.support.IUDAnswer;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
-import projectpackage.repository.ratesdao.PriceDAO;
 import projectpackage.repository.ratesdao.RateDAO;
 
 import java.util.List;
@@ -13,14 +15,13 @@ import java.util.List;
 /**
  * Created by Arizel on 16.05.2017.
  */
+@Log4j
+@Service
 public class RateServiceImpl implements RateService{
     private static final Logger LOGGER = Logger.getLogger(RateServiceImpl.class);
 
     @Autowired
     RateDAO rateDAO;
-
-    @Autowired
-    PriceDAO priceDAO;
 
     @Override
     public List<Rate> getAllRates() {
@@ -42,39 +43,37 @@ public class RateServiceImpl implements RateService{
     }
 
     @Override
-    public boolean deleteRate(int id) {
-        Rate rate = rateDAO.getRate(id);
-        for (Price price : rate.getPrices()) {
-            priceDAO.deletePrice(id);
+    public IUDAnswer deleteRate(int id) {
+        try {
+            rateDAO.deleteRate(id);
+        } catch (ReferenceBreakException e) {
+            return new IUDAnswer(false, e.printReferencesEntities());
         }
-        int count = 0;
-        count = count + rateDAO.deleteRate(id);
-        if (count == 0) return false;
-        else return true;
+        return new IUDAnswer(true);
     }
 
     @Override
-    public boolean insertRate(Rate rate) {
+    public IUDAnswer insertRate(Rate rate) {
         try {
             int rateId = rateDAO.insertRate(rate);
             LOGGER.info("Get from DB rateId = " + rateId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(true);
     }
 
     @Override
-    public boolean updateRate(int id, Rate newRate) {
+    public IUDAnswer updateRate(int id, Rate newRate) {
         try {
             newRate.setObjectId(id);
             Rate oldRate = rateDAO.getRate(id);
             rateDAO.updateRate(newRate, oldRate);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(true);
     }
 }
