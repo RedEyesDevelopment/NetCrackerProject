@@ -47,7 +47,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                     .fetchInnerChild(JournalRecord.class).fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
                     .closeFetch().closeFetch()
                     .fetchInnerReference(Room.class, "RoomToOrder")
-                    .fetchInnerReference(RoomType.class, "RoomTypeToRoom").closeFetch()
+                    .fetchInnerReference(RoomType.class, "RoomTypeToRoom").closeFetch().closeFetch()
                     .fetchInnerReference(Category.class, "OrderToCategory")
                     .fetchInnerChild(Complimentary.class)
                     .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary").closeAllFetches()

@@ -17,7 +17,7 @@ import java.util.List;
 @ReactEntity(entityTypeName = "Order")
 @ReactReference(referenceName = "OrderToNotification", outerEntityClass = Notification.class, outerFieldName =
         "order", outerFieldKey = "objectId", innerFieldKey = "objectId")
-public class Order implements ReactEntityWithId {
+public class Order implements ReactEntityWithId, Cloneable {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Registration_date")
@@ -42,4 +42,13 @@ public class Order implements ReactEntityWithId {
     private List<ModificationHistory> historys;
     private List<JournalRecord> journalRecords;
 
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

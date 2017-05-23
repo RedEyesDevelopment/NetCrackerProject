@@ -93,7 +93,7 @@ public class DataInsertor {
 
         }
 
-        outerEntity.getInnerObjects().remove(innerEntity);
+//        outerEntity.getInnerObjects().remove(innerEntity);
     }
 
     void insertInnerEntity(Object outer, Object inner, Field outerField, boolean doNotModifyTheField) {

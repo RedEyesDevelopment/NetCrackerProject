@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
-import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.model.notifications.Notification;
 import projectpackage.model.notifications.NotificationType;
@@ -42,7 +41,7 @@ public class NotificationRepositoryTests extends AbstractDatabaseTest{
     @Rollback(true)
     public void getSingleNotificationById(){
         Notification notification = null;
-        int notificationId = 1101;
+        int notificationId = 1400;
         notification = notificationService.getSingleNotificationById(notificationId);
         System.out.println(notification);
         System.out.println(SEPARATOR);
