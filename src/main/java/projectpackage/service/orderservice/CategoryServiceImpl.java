@@ -3,7 +3,7 @@ package projectpackage.service.orderservice;
 import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import projectpackage.model.orders.Category;
 import projectpackage.model.support.IUDAnswer;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by Dima on 21.05.2017.
  */
-@Repository
+@Service
 @Log4j
 public class CategoryServiceImpl implements CategoryService {
     private static final Logger LOGGER = Logger.getLogger(CategoryServiceImpl.class);

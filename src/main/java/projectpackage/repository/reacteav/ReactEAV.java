@@ -14,8 +14,14 @@ import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.reacteav.exceptions.WrongFetchException;
 import projectpackage.repository.reacteav.querying.ReactQueryBuilder;
 import projectpackage.repository.reacteav.querying.ReactQueryTaskHolder;
-import projectpackage.repository.reacteav.relationsdata.*;
-import projectpackage.repository.reacteav.support.*;
+import projectpackage.repository.reacteav.relationsdata.EntityAttrIdType;
+import projectpackage.repository.reacteav.relationsdata.EntityReferenceRelationshipsData;
+import projectpackage.repository.reacteav.relationsdata.EntityReferenceTaskData;
+import projectpackage.repository.reacteav.relationsdata.EntityVariablesData;
+import projectpackage.repository.reacteav.support.ObjectTableNameGenerator;
+import projectpackage.repository.reacteav.support.ReactConnectionsDataBucket;
+import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
+import projectpackage.repository.reacteav.support.ReactEntityValidator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -48,6 +54,7 @@ public class ReactEAV {
     }
 
     public ReacTask fetchRootChild(Class innerEntityClass) {
+        System.out.println();
         checkInnerRelations(rootNode.getObjectClass(), dataBucket.getOuterRelationsMap().get(innerEntityClass).keySet());
         ReacTask newReacTask = fetchingOrderCreation(innerEntityClass, false, null, null, false, null);
         return newReacTask;
@@ -64,7 +71,6 @@ public class ReactEAV {
             WrongFetchException exception = new WrongFetchException(rootNode.getObjectClass(), innerEntityClass, "root");
             throw exception;
         }
-
         ReacTask newReacTask = fetchingOrderCreation(innerEntityClass, false, null, null, false, referenceName);
         return newReacTask;
     }
@@ -271,7 +277,7 @@ public class ReactEAV {
         int per = 0;
         for (ReacTask task : currentTask.getInnerObjects()) {
             for (Map.Entry<String, EntityReferenceRelationshipsData> outerData : task.getCurrentEntityReferenceRelations().entrySet()) {
-                if (outerData.getValue().getOuterClass().equals(currentTask.getObjectClass()) && null != task.getReferenceId() && task.getReferenceId().equals(outerData.getKey())) {
+       if (outerData.getValue().getOuterClass().equals(currentTask.getObjectClass()) && null != task.getReferenceId() && task.getReferenceId().equals(outerData.getKey())) {
                     EntityReferenceTaskData newReferenceTask = new EntityReferenceTaskData(currentTask.getObjectClass(), task.getObjectClass(), task.getThisClassObjectTypeName(), outerData.getValue().getOuterFieldName(), outerData.getValue().getInnerIdKey(), outerData.getValue().getOuterIdKey(), outerData.getValue().getReferenceAttrId());
                     currentTask.addCurrentEntityReferenceTasks(per++, newReferenceTask);
                 }
@@ -300,12 +306,12 @@ public class ReactEAV {
                     }
                 }
             } else {
-                List result = null;
+                List result;
                 boolean cloned = false;
                 for (ReactQueryTaskHolder currentHolder : reactQueryTaskHolders) {
                     if (!currentHolder.getNode().getResultList().isEmpty() && holder.getNode().getObjectClass().equals(currentHolder.getNode().getObjectClass())) {
                         result = new ArrayList(currentHolder.getNode().getResultList());
-                        cloned = true;
+                        holder.getNode().setResultList(result);
                     }
                 }
                 if (!cloned) {

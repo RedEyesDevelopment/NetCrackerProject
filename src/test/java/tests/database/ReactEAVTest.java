@@ -6,8 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
+import projectpackage.model.maintenances.Complimentary;
+import projectpackage.model.maintenances.JournalRecord;
+import projectpackage.model.maintenances.Maintenance;
 import projectpackage.model.notifications.Notification;
 import projectpackage.model.notifications.NotificationType;
+import projectpackage.model.orders.Category;
 import projectpackage.model.orders.Order;
 import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
@@ -230,10 +234,39 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     public void getNotifications(){
         List<Notification> nots = null;
         try {
-            nots = manager.createReactEAV(Notification.class).fetchRootReference(User.class, "UserToNotificationAsAuthor").closeAllFetches().fetchRootReference(NotificationType.class, "NotificationTypeToNotification").closeAllFetches().fetchRootReference(Order.class, "OrderToNotification").closeAllFetches().fetchRootReference(User.class, "UserToNotificationAsExecutor").closeAllFetches().getEntityCollection();
+            nots = manager.createReactEAV(Notification.class).fetchRootReference(User.class, "UserToNotificationAsAuthor").closeAllFetches().fetchRootReference(NotificationType.class, "NotificationTypeToNotification").closeAllFetches().fetchRootReference(User.class, "UserToNotificationAsExecutor").closeAllFetches().fetchRootReference(Order.class, "OrderToNotification").closeAllFetches().getEntityCollection();
             for (Notification not:nots){
                 System.out.println(not);
             }
+            System.out.println(SEPARATOR);
+        } catch (ResultEntityNullException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void getNotifications2(){
+        Notification nots = null;
+        try {
+            nots = (Notification) manager.createReactEAV(Notification.class)
+                    .fetchRootReference(User.class, "UserToNotificationAsAuthor")
+                    .fetchInnerChild(Phone.class).closeFetch()
+                    .fetchInnerReference(Role.class, "RoleToUser").closeAllFetches()
+                    .fetchRootReference(NotificationType.class, "NotificationTypeToNotification")
+                    .fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches()
+                    .fetchRootReference(Order.class, "OrderToNotification")
+                    .fetchInnerChild(JournalRecord.class).fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
+                    .closeFetch().closeFetch()
+                    .fetchInnerReference(Room.class, "RoomToOrder")
+                    .fetchInnerReference(RoomType.class, "RoomTypeToRoom").closeFetch().closeFetch()
+                    .fetchInnerReference(Category.class, "OrderToCategory")
+                    .fetchInnerChild(Complimentary.class)
+                    .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary").closeAllFetches()
+                    .fetchRootReference(User.class, "UserToNotificationAsExecutor")
+                    .fetchInnerChild(Phone.class)
+                    .closeAllFetches()
+                    .getSingleEntityWithId(1400);
+                System.out.println(nots);
             System.out.println(SEPARATOR);
         } catch (ResultEntityNullException e) {
             e.printStackTrace();

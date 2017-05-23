@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Data
 @ReactEntity(entityTypeName = "Notification")
-public class Notification implements ReactEntityWithId {
+public class Notification implements ReactEntityWithId, Cloneable {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Message")
@@ -25,4 +25,14 @@ public class Notification implements ReactEntityWithId {
     private Order order;
     private User executedBy;
     private NotificationType notificationType;
+
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

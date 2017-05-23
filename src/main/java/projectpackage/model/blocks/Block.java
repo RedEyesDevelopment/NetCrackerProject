@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Data
 @ReactEntity(entityTypeName = "Block")
-public class Block implements ReactEntityWithId {
+public class Block implements ReactEntityWithId, Cloneable {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Block_start_date")
@@ -21,4 +21,14 @@ public class Block implements ReactEntityWithId {
     private String reason;
 
     private Room room;
+
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -43,6 +43,7 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
 
     @Override
     public List<Category> getAllCategories() {
+        System.out.println("ALLMAINTENANCES");
         try {
             return manager.createReactEAV(Category.class)
                     .fetchRootChild(Complimentary.class)

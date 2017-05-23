@@ -14,8 +14,8 @@ import java.util.Date;
  */
 @Data
 @ReactEntity(entityTypeName = "JournalRecord")
-@ReactChild(outerEntityClass = Order.class, outerFieldName = "journalRecords", outerFieldKey = "objectId", innerFieldKey = "categoryId")
-public class JournalRecord implements ReactEntityWithId{
+@ReactChild(outerEntityClass = Order.class, outerFieldName = "journalRecords", outerFieldKey = "objectId", innerFieldKey = "orderId")
+public class JournalRecord implements ReactEntityWithId, Cloneable {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%PARENT_ID")
@@ -28,4 +28,14 @@ public class JournalRecord implements ReactEntityWithId{
     private Date usedDate;
 
     private Maintenance maintenance;
+
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

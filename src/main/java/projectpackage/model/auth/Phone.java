@@ -9,7 +9,7 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 @Data
 @ReactEntity(entityTypeName = "Phone")
 @ReactChild(outerEntityClass = User.class, outerFieldName = "phones", outerFieldKey = "objectId", innerFieldKey = "userId")
-public class Phone implements ReactEntityWithId {
+public class Phone implements ReactEntityWithId, Cloneable {
 
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
@@ -18,4 +18,13 @@ public class Phone implements ReactEntityWithId {
     @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Phone_number")
     private String phoneNumber;
 
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

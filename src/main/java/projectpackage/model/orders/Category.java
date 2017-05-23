@@ -16,7 +16,7 @@ import java.util.Set;
 @ReactEntity(entityTypeName = "Category")
 @ReactReference(referenceName = "OrderToCategory", outerEntityClass = Order.class, outerFieldName = "category",
         outerFieldKey = "objectId", innerFieldKey = "objectId")
-public class Category implements ReactEntityWithId{
+public class Category implements ReactEntityWithId, Cloneable {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
 
@@ -26,4 +26,14 @@ public class Category implements ReactEntityWithId{
     private Long categoryPrice;
 
     private Set<Complimentary> complimentaries;
+
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
