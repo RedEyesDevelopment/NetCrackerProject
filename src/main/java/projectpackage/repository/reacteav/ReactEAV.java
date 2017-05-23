@@ -181,13 +181,16 @@ public class ReactEAV {
         }
     }
 
+
+    //TODO RECURSIVE SEARCHING FOR CONDITION TARGET OBJECT
     private ReacTask recursionConditionTaskSearching(ReacTask currentTask, Class searcheableClass) {
-        if (currentTask.getObjectClass().equals(searcheableClass)) {
-            return currentTask;
-        } else {
+        System.out.println("RECURSION CONDITION ");
+        if (!currentTask.getObjectClass().equals(searcheableClass)) {
             for (ReacTask task : currentTask.getInnerObjects()) {
                 return recursionConditionTaskSearching(task, searcheableClass);
             }
+        } else {
+            return currentTask;
         }
         return null;
     }

@@ -176,6 +176,7 @@ public class ReacTask {
         boolean innerHasIt = false;
         for (EntityReferenceRelationshipsData data : newTask.getCurrentEntityReferenceRelations().values()) {
             if (data.getOuterClass().equals(this.objectClass)) {
+                System.out.println("REFERENCE VALIDATION="+data.getOuterClass()+" is in reference of task "+newTask+" of class "+innerEntityClass);
                 innerHasIt = true;
             }
         }

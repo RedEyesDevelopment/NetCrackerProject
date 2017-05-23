@@ -245,6 +245,20 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getNotificationsWithUserRole(){
+        List<Notification> nots = null;
+        try {
+            nots = manager.createReactEAV(Notification.class).fetchRootReference(User.class, "UserToNotificationAsAuthor").fetchInnerReference(Role.class, "RoleToUser").closeAllFetches().fetchRootReference(NotificationType.class, "NotificationTypeToNotification").closeAllFetches().fetchRootReference(User.class, "UserToNotificationAsExecutor").closeAllFetches().fetchRootReference(Order.class, "OrderToNotification").closeAllFetches().getEntityCollection();
+            for (Notification not:nots){
+                System.out.println(not);
+            }
+            System.out.println(SEPARATOR);
+        } catch (ResultEntityNullException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
     public void getNotifications2(){
         Notification nots = null;
         try {

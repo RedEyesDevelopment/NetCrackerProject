@@ -2,6 +2,7 @@ package projectpackage.repository.reacteav;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Created by Lenovo on 08.05.2017.
@@ -19,7 +20,12 @@ public class ReacResultDataConnector {
             RecursiveConnector connector = new RecursiveConnector(rootTask, reacTask);
             connectors.add(connector);
         }
-        for (RecursiveConnector connector : connectors) connector.doConnect();
+        ListIterator<RecursiveConnector> iterator = connectors.listIterator(connectors.size());
+        while(iterator.hasPrevious()){
+            RecursiveConnector connector = iterator.previous();
+            connector.doConnect();
+        }
+//        for (RecursiveConnector connector : connectors.) connector.doConnect();
 
         return rootTask.getResultList();
     }
