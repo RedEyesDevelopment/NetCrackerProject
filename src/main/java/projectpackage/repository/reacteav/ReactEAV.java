@@ -311,7 +311,7 @@ public class ReactEAV {
                 for (ReactQueryTaskHolder currentHolder : reactQueryTaskHolders) {
                     if (!currentHolder.getNode().getResultList().isEmpty() && holder.getNode().getObjectClass().equals(currentHolder.getNode().getObjectClass())) {
                         result = new ArrayList(currentHolder.getNode().getResultList());
-
+                        holder.getNode().setResultList(result);
                     }
                 }
                 if (!cloned) {
