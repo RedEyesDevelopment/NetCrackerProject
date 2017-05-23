@@ -43,6 +43,8 @@ import projectpackage.repository.securitydao.AuthCredentialsDAOImpl;
 import projectpackage.service.authservice.*;
 import projectpackage.service.blockservice.BlockService;
 import projectpackage.service.blockservice.BlockServiceImpl;
+import projectpackage.service.maintenanceservice.ComplimentaryService;
+import projectpackage.service.maintenanceservice.ComplimentaryServiceImpl;
 import projectpackage.service.notificationservice.NotificationService;
 import projectpackage.service.notificationservice.NotificationServiceImpl;
 import projectpackage.service.notificationservice.NotificationTypeService;
@@ -194,6 +196,9 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
     UserDetailsService userDetailsService() {
         return null;
     }
+
+    @Bean
+    ComplimentaryService complimentaryService() { return new ComplimentaryServiceImpl();}
 
     @Bean
     JdbcTemplate jdbcTemplate () { return new JdbcTemplate(dataSource()); }

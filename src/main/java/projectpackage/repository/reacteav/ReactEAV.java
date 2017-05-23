@@ -277,7 +277,7 @@ public class ReactEAV {
         int per = 0;
         for (ReacTask task : currentTask.getInnerObjects()) {
             for (Map.Entry<String, EntityReferenceRelationshipsData> outerData : task.getCurrentEntityReferenceRelations().entrySet()) {
-                if (outerData.getValue().getOuterClass().equals(currentTask.getObjectClass()) && null != task.getReferenceId() && task.getReferenceId().equals(outerData.getKey())) {
+       if (outerData.getValue().getOuterClass().equals(currentTask.getObjectClass()) && null != task.getReferenceId() && task.getReferenceId().equals(outerData.getKey())) {
                     EntityReferenceTaskData newReferenceTask = new EntityReferenceTaskData(currentTask.getObjectClass(), task.getObjectClass(), task.getThisClassObjectTypeName(), outerData.getValue().getOuterFieldName(), outerData.getValue().getInnerIdKey(), outerData.getValue().getOuterIdKey(), outerData.getValue().getReferenceAttrId());
                     currentTask.addCurrentEntityReferenceTasks(per++, newReferenceTask);
                 }
@@ -311,11 +311,7 @@ public class ReactEAV {
                 for (ReactQueryTaskHolder currentHolder : reactQueryTaskHolders) {
                     if (!currentHolder.getNode().getResultList().isEmpty() && holder.getNode().getObjectClass().equals(currentHolder.getNode().getObjectClass())) {
                         result = new ArrayList(currentHolder.getNode().getResultList());
-//                        for (Object object: currentHolder.getNode().getResultList()){
-//                            ReactEntityWithId entity = (ReactEntityWithId) object;
-//                            result.add(entity.clone());
-//                        }
-//                        cloned = true;
+
                     }
                 }
                 if (!cloned) {

@@ -62,9 +62,8 @@ public class ReactEntityRowMapper implements RowMapper {
                     for (Map.Entry<Integer, EntityReferenceTaskData> data : referenceData.entrySet()) {
                         Integer referenceLinkName = resultSet.getInt(data.getValue().getInnerIdParameterNameForQueryParametersMap());
                         Integer objectKeyId = resultSet.getInt(objectParameterKey);
-                        Integer mapKey = data.getKey();
                         EntityReferenceIdRelation relation = new EntityReferenceIdRelation(data.getKey(), objectKeyId, referenceLinkName, data.getValue().getInnerClass());
-                        task.addReferenceIdRelations(mapKey, relation);
+                        task.addReferenceIdRelations(task.getReferenceIdRelations().size()+1, relation);
                     }
                 }
                 if (newObjectClass.equals(Integer.class)) {
