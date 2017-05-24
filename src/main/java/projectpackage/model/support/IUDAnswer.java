@@ -18,5 +18,6 @@ public class IUDAnswer {
 
     public IUDAnswer(boolean successful) {
         this.successful = successful;
+
     }
 }
