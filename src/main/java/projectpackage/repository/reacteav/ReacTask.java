@@ -1,6 +1,9 @@
 package projectpackage.repository.reacteav;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
+import projectpackage.repository.reacteav.conditions.ReactCondition;
+import projectpackage.repository.reacteav.conditions.ReactConditionData;
 import projectpackage.repository.reacteav.exceptions.WrongFetchException;
 import projectpackage.repository.reacteav.relationsdata.*;
 import projectpackage.repository.reacteav.support.ReactEntityValidator;
@@ -165,6 +168,12 @@ public class ReacTask {
         return referenceId;
     }
 
+    public ReacTask addCondition(ReactCondition condition, ConditionExecutionMoment moment) {
+        ReactConditionData data = new ReactConditionData(condition, this, moment);
+        reactEAV.generateCondition(data);
+        return this;
+    }
+
     public ReacTask fetchInnerChild(Class innerEntityClass) {
         ReacTask newTask = fetchingOrderCreation(innerEntityClass, false, null, null, false, null);
         checkInnerRelations(this.objectClass, newTask.getCurrentEntityOuterLinks().keySet());
@@ -176,6 +185,7 @@ public class ReacTask {
         boolean innerHasIt = false;
         for (EntityReferenceRelationshipsData data : newTask.getCurrentEntityReferenceRelations().values()) {
             if (data.getOuterClass().equals(this.objectClass)) {
+                System.out.println("REFERENCE VALIDATION="+data.getOuterClass()+" is in reference of task "+newTask+" of class "+innerEntityClass);
                 innerHasIt = true;
             }
         }

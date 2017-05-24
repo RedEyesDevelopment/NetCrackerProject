@@ -18,6 +18,7 @@ import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.reacteav.ReactEAVManager;
+import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -245,6 +246,20 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getNotificationsWithUserRole(){
+        List<Notification> nots = null;
+        try {
+            nots = manager.createReactEAV(Notification.class).fetchRootReference(User.class, "UserToNotificationAsAuthor").fetchInnerReference(Role.class, "RoleToUser").closeAllFetches().fetchRootReference(NotificationType.class, "NotificationTypeToNotification").closeAllFetches().fetchRootReference(User.class, "UserToNotificationAsExecutor").closeAllFetches().fetchRootReference(Order.class, "OrderToNotification").closeAllFetches().getEntityCollection();
+            for (Notification not:nots){
+                System.out.println(not);
+            }
+            System.out.println(SEPARATOR);
+        } catch (ResultEntityNullException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
     public void getNotifications2(){
         Notification nots = null;
         try {
@@ -301,7 +316,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     public void getRooms1(){
         List<Room> rooms = null;
         try {
-            rooms = manager.createReactEAV(Room.class).fetchRootReference(RoomType.class, "RoomTypeToRoom").fetchInnerChild(Rate.class).fetchInnerChild(Price.class).closeAllFetches().addCondition(PriceEqualsToRoomCondition.class).getEntityCollection();
+            rooms = manager.createReactEAV(Room.class).addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY).fetchRootReference(RoomType.class, "RoomTypeToRoom").fetchInnerChild(Rate.class).fetchInnerChild(Price.class).closeAllFetches().getEntityCollection();
         } catch (ResultEntityNullException e) {
             e.printStackTrace();
         }

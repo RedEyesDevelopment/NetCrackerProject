@@ -13,6 +13,7 @@ import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.ratesdao.RateDAOImpl;
+import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -29,10 +30,10 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     public Room getRoom(Integer id) {
         if (null==id) return null;
         try {
-            return (Room) manager.createReactEAV(Room.class)
+            return (Room) manager.createReactEAV(Room.class).addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
                     .fetchRootReference(RoomType.class, "RoomTypeToRoom")
                     .fetchInnerChild(Rate.class).fetchInnerChild(Price.class).closeAllFetches()
-                    .addCondition(PriceEqualsToRoomCondition.class).getSingleEntityWithId(id);
+                    .getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);
             return null;
@@ -42,10 +43,9 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     @Override
     public List<Room> getAllRooms() {
         try {
-            return manager.createReactEAV(Room.class)
+            return manager.createReactEAV(Room.class).addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
                     .fetchRootReference(RoomType.class, "RoomTypeToRoom")
-                    .fetchInnerChild(Rate.class).fetchInnerChild(Price.class).closeAllFetches()
-                    .addCondition(PriceEqualsToRoomCondition.class).getEntityCollection();
+                    .fetchInnerChild(Rate.class).fetchInnerChild(Price.class).closeAllFetches().getEntityCollection();
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);
             return null;
