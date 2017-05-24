@@ -7,7 +7,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
-import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
+import projectpackage.repository.reacteav.conditions.ConditionExecutor;
 import projectpackage.repository.reacteav.conditions.ReactCondition;
 import projectpackage.repository.reacteav.conditions.ReactConditionData;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
@@ -31,7 +31,7 @@ public class ReactEAV {
     private ReactConstantConfiguration config;
     private ReactConnectionsDataBucket dataBucket;
     private ReacTask rootNode;
-    private List<ReactConditionData> conditions;
+    private Set<ConditionExecutor> executors;
     private List<ReactQueryTaskHolder> reactQueryTaskHolders;
 
     @Autowired
@@ -46,7 +46,7 @@ public class ReactEAV {
         this.dataBucket = dataBucket;
         this.rootNode = new ReacTask(null, this, entityClass, true, null, null, false, null);
         this.rootNode.setObjectClass(entityClass);
-        this.conditions = new ArrayList<>();
+        this.executors =new HashSet<>();
     }
 
     ReactConnectionsDataBucket getDataBucket() {
@@ -86,7 +86,6 @@ public class ReactEAV {
         }
     }
 
-
     private ReacTask fetchingOrderCreation(Class innerEntityClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend, String referenceId) {
         validator.isTargetClassAReactEntity(innerEntityClass);
         ReacTask childNode = new ReacTask(rootNode, this, innerEntityClass, forSingleObject, targetId, orderingParameter, ascend, referenceId);
@@ -94,23 +93,36 @@ public class ReactEAV {
         return childNode;
     }
 
-    public ReactEAV addCondition(Class<? extends ReactCondition> conditionClass) {
-        ReactCondition condition = null;
-        try {
-            condition = conditionClass.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        ReactConditionData data = null;
-        ConditionExecutionMoment moment = null;
-        if (conditionClass.equals(PriceEqualsToRoomCondition.class)) {
-            moment = ConditionExecutionMoment.AFTER_QUERY;
-        }
-        data = new ReactConditionData(condition, moment);
-        this.conditions.add(data);
+    void generateCondition(ReactConditionData data){
+        addConditionExecutor(data);
+    }
+
+    public ReactEAV addCondition(ReactCondition condition, ConditionExecutionMoment moment) {
+        ReactConditionData data = new ReactConditionData(condition, rootNode, moment);
+        addConditionExecutor(data);
         return this;
+    }
+
+    void addConditionExecutor(ReacTask task, Class<ConditionExecutor> executorClass){
+        for (ConditionExecutor existingExecutor:executors){
+            boolean executorAlreadyExists = false;
+            if (!existingExecutor.getClass().equals(executorClass)){
+                existingExecutor.addTask(task);
+                executorAlreadyExists = true;
+            }
+            if (!executorAlreadyExists){
+                    try {
+                        ConditionExecutor executor = (ConditionExecutor) executorClass.newInstance();
+                        executor.addTask(task);
+                        executors.add(executor);
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                }
+            }
+        }
+
     }
 
     public Object getSingleEntityWithId(int targetId) throws ResultEntityNullException {
@@ -125,9 +137,7 @@ public class ReactEAV {
         } catch (NullPointerException e) {
             throw new ResultEntityNullException();
         }
-        if (null != conditions && !conditions.isEmpty()) {
             conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
-        }
         return result;
     }
 
@@ -142,9 +152,7 @@ public class ReactEAV {
         if (null == result) {
             throw new ResultEntityNullException();
         }
-        if (null != conditions && !conditions.isEmpty()) {
-            conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
-        }
+        conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
         return result;
     }
 
@@ -159,28 +167,15 @@ public class ReactEAV {
         if (null == result) {
             throw new ResultEntityNullException();
         }
-        if (null != conditions && !conditions.isEmpty()) {
-            conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
-        }
+        conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
         return result;
     }
 
     private void conditionExecution(ConditionExecutionMoment moment) {
-        for (ReactConditionData data : conditions) {
-            ReacTask searcheable;
-            if (!data.getCondition().getTargetClass().equals(rootNode.getObjectClass())) {
-                searcheable = recursionConditionTaskSearching(rootNode, data.getClass());
-            } else {
-                searcheable = rootNode;
-            }
-            if (data.getMoment().equals(moment)) {
-                ReactCondition condition = data.getCondition();
-                condition.loadDataToParse(searcheable.getResultList());
-                condition.execute();
-            }
+        for (ConditionExecutor executor:executors){
+            executor.executeAll(moment);
         }
     }
-
 
     //TODO RECURSIVE SEARCHING FOR CONDITION TARGET OBJECT
     private ReacTask recursionConditionTaskSearching(ReacTask currentTask, Class searcheableClass) {

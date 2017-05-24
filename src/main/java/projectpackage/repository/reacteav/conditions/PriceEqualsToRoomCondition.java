@@ -14,6 +14,11 @@ public class PriceEqualsToRoomCondition implements ReactCondition {
     private List<Object> objects;
 
     @Override
+    public Class getNeededConditionExecutor() {
+        return TaskToTaskConditionExecutor.class;
+    }
+
+    @Override
     public Class getTargetClass() {
         return Room.class;
     }

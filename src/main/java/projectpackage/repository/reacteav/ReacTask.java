@@ -1,6 +1,9 @@
 package projectpackage.repository.reacteav;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
+import projectpackage.repository.reacteav.conditions.ReactCondition;
+import projectpackage.repository.reacteav.conditions.ReactConditionData;
 import projectpackage.repository.reacteav.exceptions.WrongFetchException;
 import projectpackage.repository.reacteav.relationsdata.*;
 import projectpackage.repository.reacteav.support.ReactEntityValidator;
@@ -163,6 +166,12 @@ public class ReacTask {
 
     String getReferenceId() {
         return referenceId;
+    }
+
+    public ReacTask addCondition(ReactCondition condition, ConditionExecutionMoment moment) {
+        ReactConditionData data = new ReactConditionData(condition, this, moment);
+        reactEAV.generateCondition(data);
+        return this;
     }
 
     public ReacTask fetchInnerChild(Class innerEntityClass) {
