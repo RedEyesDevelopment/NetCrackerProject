@@ -103,17 +103,20 @@ public class ReactEAV {
         return this;
     }
 
-    void addConditionExecutor(ReacTask task, Class<ConditionExecutor> executorClass){
+    private void addConditionExecutor(ReactConditionData data){
+        Class<ConditionExecutor> executorClass = data.getCondition().getNeededConditionExecutor();
+        System.out.println("EXECUTORCLASS="+executorClass);
+        boolean executorAlreadyExists = false;
         for (ConditionExecutor existingExecutor:executors){
-            boolean executorAlreadyExists = false;
-            if (!existingExecutor.getClass().equals(executorClass)){
-                existingExecutor.addTask(task);
+            if (existingExecutor.getClass().equals(executorClass)){
+                existingExecutor.addReactConditionData(data);
                 executorAlreadyExists = true;
             }
+        }
             if (!executorAlreadyExists){
                     try {
                         ConditionExecutor executor = (ConditionExecutor) executorClass.newInstance();
-                        executor.addTask(task);
+                        executor.addReactConditionData(data);
                         executors.add(executor);
                     } catch (InstantiationException e) {
                         e.printStackTrace();
@@ -121,8 +124,6 @@ public class ReactEAV {
                         e.printStackTrace();
                 }
             }
-        }
-
     }
 
     public Object getSingleEntityWithId(int targetId) throws ResultEntityNullException {
@@ -172,22 +173,11 @@ public class ReactEAV {
     }
 
     private void conditionExecution(ConditionExecutionMoment moment) {
-        for (ConditionExecutor executor:executors){
-            executor.executeAll(moment);
-        }
-    }
-
-    //TODO RECURSIVE SEARCHING FOR CONDITION TARGET OBJECT
-    private ReacTask recursionConditionTaskSearching(ReacTask currentTask, Class searcheableClass) {
-        System.out.println("RECURSION CONDITION ");
-        if (!currentTask.getObjectClass().equals(searcheableClass)) {
-            for (ReacTask task : currentTask.getInnerObjects()) {
-                return recursionConditionTaskSearching(task, searcheableClass);
+        if (!executors.isEmpty()){
+            for (ConditionExecutor executor:executors){
+                executor.executeAll(moment);
             }
-        } else {
-            return currentTask;
         }
-        return null;
     }
 
     private List<ReactQueryTaskHolder> reacTaskPreparator() {

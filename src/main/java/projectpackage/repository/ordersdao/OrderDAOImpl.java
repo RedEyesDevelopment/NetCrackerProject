@@ -20,6 +20,7 @@ import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -49,7 +50,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                     .fetchInnerReference(Role.class, "RoleToUser").closeFetch()
                     .fetchInnerChild(Phone.class)
                     .closeAllFetches()
-                    .fetchRootReference(Room.class, "RoomToOrder")
+                    .fetchRootReference(Room.class, "RoomToOrder").addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
                     .fetchInnerReference(RoomType.class, "RoomTypeToRoom")
                     .fetchInnerChild(Rate.class)
                     .fetchInnerChild(Price.class)
@@ -61,7 +62,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                     .fetchInnerChild(Complimentary.class)
                     .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
                     .closeAllFetches()
-                    .addCondition(PriceEqualsToRoomCondition.class)
                     .getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);
@@ -81,7 +81,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                     .fetchInnerReference(Role.class, "RoleToUser").closeFetch()
                     .fetchInnerChild(Phone.class)
                     .closeAllFetches()
-                    .fetchRootReference(Room.class, "RoomToOrder")
+                    .fetchRootReference(Room.class, "RoomToOrder").addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
                     .fetchInnerReference(RoomType.class, "RoomTypeToRoom")
                     .fetchInnerChild(Rate.class)
                     .fetchInnerChild(Price.class)
@@ -93,7 +93,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                     .fetchInnerChild(Complimentary.class)
                     .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
                     .closeAllFetches()
-                    .addCondition(PriceEqualsToRoomCondition.class)
                     .getEntityCollection();
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);

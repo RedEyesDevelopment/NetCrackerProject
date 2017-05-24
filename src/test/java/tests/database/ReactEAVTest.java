@@ -18,6 +18,7 @@ import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.reacteav.ReactEAVManager;
+import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -315,7 +316,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     public void getRooms1(){
         List<Room> rooms = null;
         try {
-            rooms = manager.createReactEAV(Room.class).fetchRootReference(RoomType.class, "RoomTypeToRoom").fetchInnerChild(Rate.class).fetchInnerChild(Price.class).closeAllFetches().addCondition(PriceEqualsToRoomCondition.class).getEntityCollection();
+            rooms = manager.createReactEAV(Room.class).addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY).fetchRootReference(RoomType.class, "RoomTypeToRoom").fetchInnerChild(Rate.class).fetchInnerChild(Price.class).closeAllFetches().getEntityCollection();
         } catch (ResultEntityNullException e) {
             e.printStackTrace();
         }
