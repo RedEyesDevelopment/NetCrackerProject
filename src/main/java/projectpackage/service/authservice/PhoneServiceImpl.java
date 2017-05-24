@@ -12,6 +12,7 @@ import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.support.PhoneRegexService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,7 +38,15 @@ public class PhoneServiceImpl implements PhoneService{
 
     @Override
     public List<Phone> getAllPhonesByUser(User user) {
-        return null;
+        List<Phone> answer = new ArrayList<>();
+        String email = user.getEmail();
+        List<Phone> allUser = getAllPhones();
+        for (Phone phone : allUser) {
+            if (user.getPhones().contains(phone)) {
+                answer.add(phone);
+            }
+        }
+        return answer;
     }
 
     @Override

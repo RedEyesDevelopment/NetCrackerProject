@@ -18,7 +18,7 @@ public interface OrderService {
     public List<Order> getOrdersBySum(long minSum, long maxSum);
     public List<Order> getCurrentOrders();//livingStartDate < SYSDATE < livingFinishDate ясно?
     public List<Order> getPreviousOrders();//livingFinishDate < SYSDATE
-    public List<Order> getFutureOrders();//SYSDATE < livingStartDate
+    public List<Order> getFutureOrders();//livingStartDate > SYSDATE
     public List<Order> getOrdersForPayConfirme();
     public List<Order> getOrdersInRange(Date startDate, Date finishDate);
     public List<Order> getOrdersConfirmed(boolean isConfirmed);

@@ -11,6 +11,8 @@ import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.roomsdao.RoomDAO;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -19,7 +21,7 @@ import java.util.List;
  */
 @Log4j
 @Service
-public class RoomServiceImpl implements RoomService{
+public class RoomServiceImpl implements RoomService {
     private static final Logger LOGGER = Logger.getLogger(RoomServiceImpl.class);
 
     @Autowired
@@ -27,12 +29,27 @@ public class RoomServiceImpl implements RoomService{
 
     @Override
     public List<Room> getRoomsByNumberOfResidents(int count) {
-        return null;
+        List<Room> anwer = new ArrayList<Room>();
+        List<Room> allRooms = getAllRooms();
+        for (Room room : allRooms) {
+            if (room.getNumberOfResidents().equals(count)) {
+                anwer.add(room);
+            }
+        }
+        return anwer;
     }
 
     @Override
     public List<Room> getRoomsByType(RoomType roomType) {
-        return null;
+        List<Room> answer = new ArrayList<Room>();
+        String roomTypeTitle = roomType.getRoomTypeTitle();
+        List<Room> allRooms = getAllRooms();
+        for (Room room : allRooms) {
+            if (room.getRoomType().getRoomTypeTitle().equals(roomTypeTitle)) {
+                answer.add(room);
+            }
+        }
+        return answer;
     }
 
     @Override
@@ -52,6 +69,11 @@ public class RoomServiceImpl implements RoomService{
         Room room = roomDAO.getRoom(id);
         if (room == null) LOGGER.info("Returned NULL!!!");
         return room;
+    }
+
+    @Override
+    public List<Room> doesBlockedRoomOnDay(Room room, Date date) {
+        return null;
     }
 
     @Override
