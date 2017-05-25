@@ -85,6 +85,7 @@ public class BlockRepositoryTests extends AbstractDatabaseTest{
             LOGGER.info(block);
         }
         LOGGER.info(SEPARATOR);
+
     }
 
     @Test
