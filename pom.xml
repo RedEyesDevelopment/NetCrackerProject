@@ -28,16 +28,16 @@
 
     <repositories>
         <repository>
-            <id>ojdbc6</id>
-            <url>http://www.datanucleus.org/downloads/maven2/</url>
-        </repository>
-        <repository>
             <id>EBI-REPO</id>
             <url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
         </repository>
         <repository>
             <id>ADOBE</id>
             <url>https://repo.adobe.com/nexus/content/repositories/public/</url>
+        </repository>
+        <repository>
+            <id>DATANUCLEUS</id>
+            <url>http://www.datanucleus.org/downloads/maven2/</url>
         </repository>
     </repositories>
 
