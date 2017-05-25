@@ -28,6 +28,10 @@
 
     <repositories>
         <repository>
+            <id>ojdbc6</id>
+            <url>http://www.datanucleus.org/downloads/maven2/</url>
+        </repository>
+        <repository>
             <id>EBI-REPO</id>
             <url>http://www.ebi.ac.uk/intact/maven/nexus/content/repositories/ebi-repo/</url>
         </repository>
@@ -157,11 +161,13 @@
         </dependency>
 
         <!--Oracle driver for jdbc -->
+        <!-- https://mvnrepository.com/artifact/oracle/ojdbc6 -->
         <dependency>
             <groupId>oracle</groupId>
-            <artifactId>ojdbc</artifactId>
-            <version>1.4</version>
+            <artifactId>ojdbc6</artifactId>
+            <version>11.2.0.3</version>
         </dependency>
+
 
         <!-- C3P0 connections pool-->
         <dependency>
