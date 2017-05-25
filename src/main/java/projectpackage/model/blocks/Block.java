@@ -29,6 +29,7 @@ public class Block implements ReactEntityWithId, Cloneable {
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
