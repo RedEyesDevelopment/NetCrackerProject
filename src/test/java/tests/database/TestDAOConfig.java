@@ -1,9 +1,12 @@
 package tests.database;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import net.sf.log4jdbc.Log4jdbcProxyDataSource;
 import net.sf.log4jdbc.tools.Log4JdbcCustomFormatter;
 import net.sf.log4jdbc.tools.LoggingType;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -120,6 +123,33 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
         log4JdbcCustomFormatter.setSqlPrefix("SQL:::");
         dataSource.setLogFormatter(log4JdbcCustomFormatter);
         return dataSource;
+    }
+
+    @Bean
+    public DataSource realDataSource3(){
+        BasicDataSource ds = new BasicDataSource();
+        ds.setUrl(url);
+        ds.setUsername(username);
+        ds.setPassword(password);
+        ds.setDriverClassName(driver);
+        ds.setMinIdle(50);
+        ds.setMaxIdle(100);
+        ds.setMaxOpenPreparedStatements(100);
+        return ds;
+    }
+
+    @Bean
+    public DataSource realDataSource2() {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(url);
+        config.setUsername(username);
+        config.setPassword(password);
+        config.setDriverClassName(driver);
+        config.setMaximumPoolSize(40);
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        return new HikariDataSource(config);
     }
 
     @Bean

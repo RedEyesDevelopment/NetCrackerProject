@@ -197,7 +197,19 @@
             <version>1.0.0</version>
         </dependency>
 
+
+
+        <!-- POOLS FOR TESTS -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+
     </dependencies>
-
-
 </project>
