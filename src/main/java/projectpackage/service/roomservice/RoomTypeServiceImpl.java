@@ -46,7 +46,9 @@ public class RoomTypeServiceImpl implements RoomTypeService{
 
     @Override
     public List<RoomType> getAllRoomTypes() {
-        return null;
+        List<RoomType> roomTypes = roomTypeDAO.getAllRoomTypes();
+        if (roomTypes == null) LOGGER.info("Returned NULL!!!");
+        return roomTypes;
     }
 
     @Override
@@ -56,7 +58,9 @@ public class RoomTypeServiceImpl implements RoomTypeService{
 
     @Override
     public RoomType getSingleRoomTypeById(int id) {
-        return null;
+        RoomType roomType = roomTypeDAO.getRoomType(id);
+        if (roomType == null) LOGGER.info("Returned NULL!!!");
+        return roomType;
     }
 
     @Override

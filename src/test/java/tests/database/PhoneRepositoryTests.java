@@ -34,7 +34,7 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
     public void crudPhoneTest() {
         Phone insertPhone = new Phone();
         insertPhone.setPhoneNumber("0638509108");
-        insertPhone.setUserId(901);
+        insertPhone.setUserId(900);
         IUDAnswer insertAnswer = phoneService.insertPhone(insertPhone);
         assertTrue(insertAnswer.isSuccessful());
         LOGGER.info("Create phone result = " + insertAnswer.isSuccessful());

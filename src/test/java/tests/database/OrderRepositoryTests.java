@@ -33,7 +33,7 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
         Room insertRoom = new Room();
         insertRoom.setObjectId(127);
         User insertUser = new User();
-        insertUser.setObjectId(900);
+        insertUser.setObjectId(901);
         Order insertOrder = new Order();
         insertOrder.setRegistrationDate(new Date());
         insertOrder.setIsPaidFor(false);
@@ -165,7 +165,7 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getSingleOrderById(){
-        Order order = orderService.getSingleOrderById(2109);
+        Order order = orderService.getSingleOrderById(300);
         LOGGER.info(order);
         LOGGER.info(SEPARATOR);
     }

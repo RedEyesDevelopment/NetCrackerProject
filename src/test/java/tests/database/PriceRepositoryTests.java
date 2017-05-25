@@ -31,7 +31,7 @@ public class PriceRepositoryTests extends AbstractDatabaseTest{
         Price insertPrice = new Price();
         insertPrice.setNumberOfPeople(2);
         insertPrice.setRate(7897493L);
-        insertPrice.setRateId(31);
+        insertPrice.setRateId(32);
         IUDAnswer insertAnswer = priceService.insertPrice(insertPrice);
         assertTrue(insertAnswer.isSuccessful());
         LOGGER.info("Create price result = " + insertAnswer.isSuccessful());

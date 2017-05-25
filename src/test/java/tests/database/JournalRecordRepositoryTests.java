@@ -32,10 +32,13 @@ public class JournalRecordRepositoryTests extends AbstractDatabaseTest{
     public void crudJournalRecordTest() {
         Maintenance insertMaintenance = new Maintenance();
         insertMaintenance.setObjectId(1500);
+        insertMaintenance.setMaintenanceType("odezhda");
+        insertMaintenance.setMaintenanceTitle("washing");
+        insertMaintenance.setMaintenancePrice(300L);
         JournalRecord insertJournalRecord = new JournalRecord();
         insertJournalRecord.setCost(3234L);
         insertJournalRecord.setCount(34);
-        insertJournalRecord.setUsedDate(new Date());
+        insertJournalRecord.setUsedDate(new Date(16000L));
         insertJournalRecord.setOrderId(300);
         insertJournalRecord.setMaintenance(insertMaintenance);
         IUDAnswer insertAnswer = journalRecordService.insertJournalRecord(insertJournalRecord);
@@ -50,11 +53,14 @@ public class JournalRecordRepositoryTests extends AbstractDatabaseTest{
 
         Maintenance updateMaintenance = new Maintenance();
         updateMaintenance.setObjectId(1501);
+        updateMaintenance.setMaintenancePrice(400L);
+        updateMaintenance.setMaintenanceTitle("breakfast");
+        updateMaintenance.setMaintenanceType("food");
         JournalRecord updateJournalRecord = new JournalRecord();
         updateJournalRecord.setCost(4000L);
         updateJournalRecord.setCount(50);
-        updateJournalRecord.setUsedDate(new Date());
-        updateJournalRecord.setOrderId(301);
+        updateJournalRecord.setUsedDate(new Date(17000L));
+        updateJournalRecord.setOrderId(300);
         updateJournalRecord.setMaintenance(updateMaintenance);
         IUDAnswer iudAnswer = journalRecordService.updateJournalRecord(journalRecordId, updateJournalRecord);
         assertTrue(iudAnswer.isSuccessful());

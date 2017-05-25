@@ -103,7 +103,7 @@ public class ModificationHistoryRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getSingleModificationHistoryById(){
-        ModificationHistory modificationHistory = modificationHistoryService.getSingleModificationHistoryById(4234);
+        ModificationHistory modificationHistory = modificationHistoryService.getSingleModificationHistoryById(2181);
         LOGGER.info(modificationHistory);
         LOGGER.info(SEPARATOR);
     }

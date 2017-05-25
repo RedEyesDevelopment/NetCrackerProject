@@ -32,6 +32,9 @@ public class ComplimentaryRepositoryTests extends  AbstractDatabaseTest{
     public void crudComplimentaryTest() {
         Maintenance maintenance = new Maintenance();
         maintenance.setObjectId(1500);
+        maintenance.setMaintenanceType("odezhda");
+        maintenance.setMaintenanceTitle("washing");
+        maintenance.setMaintenancePrice(300L);
         Complimentary insertComplimentary = new Complimentary();
         insertComplimentary.setCategoryId(32);
         insertComplimentary.setMaintenance(maintenance);
@@ -48,6 +51,9 @@ public class ComplimentaryRepositoryTests extends  AbstractDatabaseTest{
 
         Maintenance updateMaintenance = new Maintenance();
         updateMaintenance.setObjectId(1501);
+        updateMaintenance.setMaintenancePrice(400L);
+        updateMaintenance.setMaintenanceTitle("breakfast");
+        updateMaintenance.setMaintenanceType("food");
         Complimentary updateComplimentary = new Complimentary();
         updateComplimentary.setCategoryId(32);
         updateComplimentary.setMaintenance(updateMaintenance);

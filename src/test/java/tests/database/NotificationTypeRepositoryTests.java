@@ -27,7 +27,7 @@ public class NotificationTypeRepositoryTests extends AbstractDatabaseTest {
     @Rollback(true)
     public void crudNotificationTypeTest() {
         Role insertRole = new Role();
-        insertRole.setRoleName("Admin");
+        insertRole.setRoleName("ADMIN");
         insertRole.setObjectId(1);
         NotificationType insertNotificationType = new NotificationType();
         insertNotificationType.setNotificationTypeTitle("TestNotificationType");
@@ -44,7 +44,7 @@ public class NotificationTypeRepositoryTests extends AbstractDatabaseTest {
 
         Role newRole = new Role();
         newRole.setObjectId(2);
-        newRole.setRoleName("Reception");
+        newRole.setRoleName("RECEPTION");
         NotificationType updateNotificationType = new NotificationType();
         updateNotificationType.setOrientedRole(newRole);
         updateNotificationType.setNotificationTypeTitle("UpdateNotifTypeTEST");

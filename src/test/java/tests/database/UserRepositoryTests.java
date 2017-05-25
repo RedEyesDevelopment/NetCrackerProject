@@ -32,7 +32,7 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
     @Rollback(true)
     public void crudUserTest() {
         Role insertRole = new Role();
-        insertRole.setRoleName("Admin");
+        insertRole.setRoleName("ADMIN");
         insertRole.setObjectId(1);
         User insertUser = new User();
         insertUser.setEmail("random@mail.ru");
@@ -54,7 +54,7 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
 
         Role updateRole = new Role();
         updateRole.setObjectId(2);
-        updateRole.setRoleName("Reception");
+        updateRole.setRoleName("RECEPTION");
         User updateUser = new User();
         updateUser.setEmail("fsdf@gmail.com");
         updateUser.setPassword("4324668");

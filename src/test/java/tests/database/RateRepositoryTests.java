@@ -29,9 +29,9 @@ public class RateRepositoryTests extends AbstractDatabaseTest{
     @Rollback(true)
     public void crudRateTest() {
         Rate insertRate = new Rate();
-        insertRate.setRateFromDate(new Date());
-        insertRate.setRateToDate(new Date());
-        insertRate.setRoomTypeId(7);
+        insertRate.setRateFromDate(new Date(16000L));
+        insertRate.setRateToDate(new Date(16000L));
+        insertRate.setRoomTypeId(8);
         IUDAnswer insertAnswer = rateService.insertRate(insertRate);
         assertTrue(insertAnswer.isSuccessful());
         LOGGER.info("Create rate result = " + insertAnswer.isSuccessful());
@@ -42,12 +42,9 @@ public class RateRepositoryTests extends AbstractDatabaseTest{
         Rate insertedRate = rateService.getSingleRateById(rateId);
         assertEquals(insertRate, insertedRate);
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(2012, Calendar.JANUARY, 1);
-        Date date = cal.getTime();
         Rate updateRate = new Rate();
-        updateRate.setRateFromDate(new Date());
-        updateRate.setRateToDate(new Date());
+        updateRate.setRateFromDate(new Date(17000L));
+        updateRate.setRateToDate(new Date(17000L));
         updateRate.setRoomTypeId(8);
         IUDAnswer updateAnswer = rateService.updateRate(rateId, updateRate);
         assertTrue(updateAnswer.isSuccessful());

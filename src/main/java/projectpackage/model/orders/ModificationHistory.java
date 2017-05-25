@@ -15,7 +15,7 @@ import java.util.Date;
 public class ModificationHistory implements ReactEntityWithId, Cloneable {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
-    @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "modifDate")
+    @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Modif_date")
     private Date modifiDate;
 
     private User modifAuthor;
