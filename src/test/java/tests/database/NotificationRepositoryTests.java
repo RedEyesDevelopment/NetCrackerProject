@@ -15,6 +15,8 @@ import projectpackage.service.notificationservice.NotificationServiceImpl;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -26,6 +28,70 @@ public class NotificationRepositoryTests extends AbstractDatabaseTest{
 
     @Autowired
     NotificationService notificationService;
+
+    @Test
+    @Rollback(true)
+    public void crudNotificationTest() {
+        User insertAuthor = new User();
+        insertAuthor.setObjectId(900);
+
+        NotificationType insertNotificationType = new NotificationType();
+        insertNotificationType.setObjectId(11);
+
+        Order insertOrder = new Order();
+        insertOrder.setObjectId(300);
+
+        Notification insertNotification = new Notification();
+        insertNotification.setExecutedDate(new Date());
+        insertNotification.setExecutedBy(insertAuthor);
+        insertNotification.setAuthor(insertAuthor);
+        insertNotification.setNotificationType(insertNotificationType);
+        insertNotification.setMessage("some message");
+        insertNotification.setSendDate(new Date());
+        insertNotification.setOrder(insertOrder);
+        IUDAnswer insertAnswer = notificationService.insertNotification(insertNotification);
+        assertTrue(insertAnswer.isSuccessful());
+        LOGGER.info("Create notification result = " + insertAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        int notId = insertAnswer.getObjectId();
+        Notification insertedNotification = notificationService.getSingleNotificationById(notId);
+        insertNotification.setObjectId(notId);
+        assertEquals(insertNotification, insertedNotification);
+
+        User updateAuthor = new User();
+        updateAuthor.setObjectId(901);
+
+        NotificationType notificationType = new NotificationType();
+        notificationType.setObjectId(10);
+
+        Order updateOrder = new Order();
+        updateOrder.setObjectId(300);
+
+        Notification updateNotification = new Notification();
+        updateNotification.setExecutedDate(new Date());
+        updateNotification.setExecutedBy(updateAuthor);
+        updateNotification.setAuthor(updateAuthor);
+        updateNotification.setNotificationType(notificationType);
+        updateNotification.setMessage("new some message");
+        updateNotification.setSendDate(new Date());
+        updateNotification.setOrder(updateOrder);
+        IUDAnswer iudAnswer = notificationService.updateNotification(notId, updateNotification);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Create notification result = " + iudAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Notification updatedNotification = notificationService.getSingleNotificationById(notId);
+        assertEquals(updateNotification, updatedNotification);
+
+        IUDAnswer deleteAnswer = notificationService.deleteNotification(notId);
+        assertTrue(deleteAnswer.isSuccessful());
+        LOGGER.info("Delete notification result = " + deleteAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Notification deletedNotification = notificationService.getSingleNotificationById(notId);
+        assertNull(deletedNotification);
+    }
 
     @Test
     @Rollback(true)

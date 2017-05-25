@@ -47,21 +47,22 @@ public class RateServiceImpl implements RateService{
         try {
             rateDAO.deleteRate(id);
         } catch (ReferenceBreakException e) {
-            return new IUDAnswer(false, e.printReferencesEntities());
+            return new IUDAnswer(id,false, e.printReferencesEntities());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 
     @Override
     public IUDAnswer insertRate(Rate rate) {
+        Integer rateId = null;
         try {
-            int rateId = rateDAO.insertRate(rate);
+            rateId = rateDAO.insertRate(rate);
             LOGGER.info("Get from DB rateId = " + rateId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(rateId,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(rateId,true);
     }
 
     @Override
@@ -72,8 +73,8 @@ public class RateServiceImpl implements RateService{
             rateDAO.updateRate(newRate, oldRate);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(id,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 }

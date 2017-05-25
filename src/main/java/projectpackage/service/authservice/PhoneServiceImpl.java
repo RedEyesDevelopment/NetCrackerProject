@@ -59,22 +59,22 @@ public class PhoneServiceImpl implements PhoneService{
         } catch (ReferenceBreakException e) {
             return new IUDAnswer(false, e.printReferencesEntities());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 
     @Override
     public IUDAnswer insertPhone(Phone phone) {
         boolean isValid = phoneRegexService.match(phone.getPhoneNumber());
         if (!isValid) return new IUDAnswer(false, "Incorrect phone number!");
-
+        Integer phoneId = null;
         try {
-            int phoneId = phoneDAO.insertPhone(phone);
+            phoneId = phoneDAO.insertPhone(phone);
             LOGGER.info("Get from DB phoneId = " + phoneId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(phoneId, false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(phoneId,true);
     }
 
     @Override
@@ -86,10 +86,10 @@ public class PhoneServiceImpl implements PhoneService{
             newPhone.setObjectId(id);
             Phone oldPhone = phoneDAO.getPhone(id);
             phoneDAO.updatePhone(newPhone, oldPhone);
-            return new IUDAnswer(true);
+            return new IUDAnswer(id,true);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(id,false, e.getMessage());
         }
     }
 }

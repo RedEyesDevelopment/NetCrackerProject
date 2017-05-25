@@ -12,6 +12,8 @@ import projectpackage.service.roomservice.RoomService;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -23,6 +25,48 @@ public class RoomRepositoryTests extends AbstractDatabaseTest{
 
     @Autowired
     RoomService roomService;
+
+    @Test
+    @Rollback(true)
+    public void crudRoomTest() {
+        RoomType insertRoomType = new RoomType();
+        Room insertRoom = new Room();
+        insertRoom.setRoomNumber(111);
+        insertRoom.setNumberOfResidents(1);
+        insertRoomType.setObjectId(8);
+        insertRoom.setRoomType(insertRoomType);
+        IUDAnswer insertAnswer = roomService.insertRoom(insertRoom);
+        assertTrue(insertAnswer.isSuccessful());
+        LOGGER.info("Create room result = " + insertAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        int roomId = insertAnswer.getObjectId();
+        insertRoom.setObjectId(roomId);
+        Room insertedRoom = roomService.getSingleRoomById(roomId);
+        assertEquals(insertRoom, insertedRoom);
+
+        RoomType updateRoomType = new RoomType();
+        Room updateRoom = new Room();
+        updateRoom.setRoomNumber(112);
+        updateRoom.setNumberOfResidents(2);
+        updateRoomType.setObjectId(7);
+        updateRoom.setRoomType(updateRoomType);
+        IUDAnswer iudAnswer = roomService.updateRoom(roomId, updateRoom);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Update room result = " + iudAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Room updatedRoom = roomService.getSingleRoomById(roomId);
+        assertEquals(updateRoom, updatedRoom);
+
+        IUDAnswer deleteAnswer = roomService.deleteRoom(roomId);
+        assertTrue(deleteAnswer.isSuccessful());
+        LOGGER.info("Delete room result = " + deleteAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Room deletedRoom = roomService.getSingleRoomById(roomId);
+        assertNull(deletedRoom);
+    }
 
     @Test
     @Rollback(true)

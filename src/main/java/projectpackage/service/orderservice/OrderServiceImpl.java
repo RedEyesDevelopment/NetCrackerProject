@@ -103,21 +103,22 @@ public class OrderServiceImpl implements OrderService{
         try {
             orderDAO.deleteOrder(id);
         } catch (ReferenceBreakException e) {
-            return new IUDAnswer(false, e.printReferencesEntities());
+            return new IUDAnswer(id,false, e.printReferencesEntities());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 
     @Override
     public IUDAnswer insertOrder(Order order) {
+        Integer orderId = null;
         try {
-            int orderId = orderDAO.insertOrder(order);
+            orderId = orderDAO.insertOrder(order);
             LOGGER.info("Get from DB orderId = " + orderId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(orderId,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(orderId,true);
     }
 
     @Override
@@ -128,8 +129,8 @@ public class OrderServiceImpl implements OrderService{
             orderDAO.updateOrder(newOrder, oldOrder);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(id,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 }

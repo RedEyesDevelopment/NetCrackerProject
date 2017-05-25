@@ -13,6 +13,8 @@ import projectpackage.service.maintenanceservice.JournalRecordService;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -24,6 +26,52 @@ public class JournalRecordRepositoryTests extends AbstractDatabaseTest{
 
     @Autowired
     JournalRecordService journalRecordService;
+
+    @Test
+    @Rollback
+    public void crudJournalRecordTest() {
+        Maintenance insertMaintenance = new Maintenance();
+        insertMaintenance.setObjectId(1500);
+        JournalRecord insertJournalRecord = new JournalRecord();
+        insertJournalRecord.setCost(3234L);
+        insertJournalRecord.setCount(34);
+        insertJournalRecord.setUsedDate(new Date());
+        insertJournalRecord.setOrderId(300);
+        insertJournalRecord.setMaintenance(insertMaintenance);
+        IUDAnswer insertAnswer = journalRecordService.insertJournalRecord(insertJournalRecord);
+        assertTrue(insertAnswer.isSuccessful());
+        LOGGER.info("Insert journalRecord result = " + insertAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        int journalRecordId = insertAnswer.getObjectId();
+        JournalRecord insertedJournalRecord = journalRecordService.getSingleEntityById(journalRecordId);
+        insertJournalRecord.setObjectId(journalRecordId);
+        assertEquals(insertJournalRecord, insertedJournalRecord);
+
+        Maintenance updateMaintenance = new Maintenance();
+        updateMaintenance.setObjectId(1501);
+        JournalRecord updateJournalRecord = new JournalRecord();
+        updateJournalRecord.setCost(4000L);
+        updateJournalRecord.setCount(50);
+        updateJournalRecord.setUsedDate(new Date());
+        updateJournalRecord.setOrderId(301);
+        updateJournalRecord.setMaintenance(updateMaintenance);
+        IUDAnswer iudAnswer = journalRecordService.updateJournalRecord(journalRecordId, updateJournalRecord);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Update journalRecord result = " + iudAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        JournalRecord updatedJournalRecord = journalRecordService.getSingleEntityById(journalRecordId);
+        assertEquals(updateJournalRecord, updatedJournalRecord);
+
+        IUDAnswer deleteAnswer = journalRecordService.deleteJournalRecord(journalRecordId);
+        assertTrue(deleteAnswer.isSuccessful());
+        LOGGER.info("Delete journalRecord result = " + deleteAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        JournalRecord deletedJournalRecord = journalRecordService.getSingleEntityById(journalRecordId);
+        assertNull(deletedJournalRecord);
+    }
 
     @Test
     @Rollback(true)

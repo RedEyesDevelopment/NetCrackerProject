@@ -47,21 +47,22 @@ public class MaintenanceServiceImpl implements MaintenanceService {
         try {
             maintenanceDAO.deleteMaintenance(id);
         } catch (ReferenceBreakException e) {
-            return new IUDAnswer(false, e.printReferencesEntities());
+            return new IUDAnswer(id,false, e.printReferencesEntities());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 
     @Override
     public IUDAnswer insertMaintenance(Maintenance maintenance) {
+        Integer maintenanceId = null;
         try {
-            int maintenanceId = maintenanceDAO.insertMaintenance(maintenance);
+            maintenanceId = maintenanceDAO.insertMaintenance(maintenance);
             LOGGER.info("Get from DB maintenanceId = " + maintenanceId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(maintenanceId,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(maintenanceId,true);
     }
 
     @Override
@@ -72,8 +73,8 @@ public class MaintenanceServiceImpl implements MaintenanceService {
             maintenanceDAO.updateMaintenance(newMaintenance, oldMaintenance);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(id,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 }

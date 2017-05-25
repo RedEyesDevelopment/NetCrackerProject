@@ -18,6 +18,7 @@ import projectpackage.service.orderservice.ModificationHistoryService;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -29,6 +30,59 @@ public class ModificationHistoryRepositoryTests extends AbstractDatabaseTest{
 
     @Autowired
     ModificationHistoryService modificationHistoryService;
+
+    @Test
+    @Rollback(true)
+    public void crudModificationHistoryTest() {
+        Room room = new Room();
+        room.setObjectId(127);
+        User user = new User();
+        user.setObjectId(900);
+        Order order = new Order();
+        order.setObjectId(300);
+        order.setRegistrationDate(new Date());
+        order.setIsPaidFor(false);
+        order.setIsConfirmed(false);
+        order.setLivingStartDate(new Date());
+        order.setLivingFinishDate(new Date());
+        order.setSum(7478L);
+        order.setComment("Comment");
+        order.setRoom(room);
+        order.setClient(user);
+        order.setLastModificator(user);
+
+
+        Room room1 = new Room();
+        room.setObjectId(128);
+        User user1 = new User();
+        user1.setObjectId(901);
+        Order order1 = new Order();
+        order1.setObjectId(300);
+        order1.setRegistrationDate(new Date());
+        order1.setIsPaidFor(true);
+        order1.setIsConfirmed(true);
+        order1.setLivingStartDate(new Date());
+        order1.setLivingFinishDate(new Date());
+        order1.setSum(10000L);
+        order1.setComment("new Comment");
+        order1.setRoom(room1);
+        order1.setClient(user1);
+        order1.setLastModificator(user1);
+
+        IUDAnswer insertAnswer = modificationHistoryService.insertModificationHistory(order1, order);
+        assertTrue(insertAnswer.isSuccessful());
+        LOGGER.info("Update modificationHistory result = " + insertAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        int modificationHistoryId = insertAnswer.getObjectId();
+        IUDAnswer deleteAnswer = modificationHistoryService.deleteModificationHistory(modificationHistoryId);
+        assertTrue(deleteAnswer.isSuccessful());
+        LOGGER.info("Delete modificationHistory result = " + deleteAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        ModificationHistory deleteModificationHistory = modificationHistoryService.getSingleModificationHistoryById(modificationHistoryId);
+        assertNull(deleteModificationHistory);
+    }
 
     @Test
     @Rollback(true)
@@ -66,7 +120,7 @@ public class ModificationHistoryRepositoryTests extends AbstractDatabaseTest{
 
     @Test
     @Rollback(true)
-    public void insertModificationHistory() throws TransactionException {
+    public void insertModificationHistory() {
         Room room = new Room();
         room.setObjectId(127);
         User user = new User();

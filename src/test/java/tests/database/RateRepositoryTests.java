@@ -12,6 +12,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -22,6 +24,47 @@ public class RateRepositoryTests extends AbstractDatabaseTest{
 
     @Autowired
     RateService rateService;
+
+    @Test
+    @Rollback(true)
+    public void crudRateTest() {
+        Rate insertRate = new Rate();
+        insertRate.setRateFromDate(new Date());
+        insertRate.setRateToDate(new Date());
+        insertRate.setRoomTypeId(7);
+        IUDAnswer insertAnswer = rateService.insertRate(insertRate);
+        assertTrue(insertAnswer.isSuccessful());
+        LOGGER.info("Create rate result = " + insertAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        int rateId = insertAnswer.getObjectId();
+        insertRate.setObjectId(rateId);
+        Rate insertedRate = rateService.getSingleRateById(rateId);
+        assertEquals(insertRate, insertedRate);
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(2012, Calendar.JANUARY, 1);
+        Date date = cal.getTime();
+        Rate updateRate = new Rate();
+        updateRate.setRateFromDate(new Date());
+        updateRate.setRateToDate(new Date());
+        updateRate.setRoomTypeId(8);
+        IUDAnswer updateAnswer = rateService.updateRate(rateId, updateRate);
+        assertTrue(updateAnswer.isSuccessful());
+        LOGGER.info("Update rate result = " + updateAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Rate updatedRate = rateService.getSingleRateById(rateId);
+        assertEquals(updateRate, updatedRate);
+
+        IUDAnswer deleteAnswer = rateService.deleteRate(rateId);
+        assertTrue(deleteAnswer.isSuccessful());
+        LOGGER.info("Delete rate result = " + deleteAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Rate deletedRate = rateService.getSingleRateById(rateId);
+        assertNull(deletedRate);
+    }
 
     @Test
     @Rollback(true)

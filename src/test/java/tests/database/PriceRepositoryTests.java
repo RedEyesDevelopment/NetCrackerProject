@@ -12,6 +12,8 @@ import projectpackage.service.rateservice.PriceServiceImpl;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -22,6 +24,44 @@ public class PriceRepositoryTests extends AbstractDatabaseTest{
 
     @Autowired
     PriceService priceService;
+
+    @Test
+    @Rollback(true)
+    public void crudPriceTest() {
+        Price insertPrice = new Price();
+        insertPrice.setNumberOfPeople(2);
+        insertPrice.setRate(7897493L);
+        insertPrice.setRateId(31);
+        IUDAnswer insertAnswer = priceService.insertPrice(insertPrice);
+        assertTrue(insertAnswer.isSuccessful());
+        LOGGER.info("Create price result = " + insertAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        int priceId = insertAnswer.getObjectId();
+        Price insertedPrice = priceService.getSinglePriceById(priceId);
+        insertPrice.setObjectId(priceId);
+        assertEquals(insertPrice, insertedPrice);
+
+        Price updatePrice = new Price();
+        updatePrice.setNumberOfPeople(1);
+        updatePrice.setRate(7897494L);
+        updatePrice.setRateId(32);
+        IUDAnswer updateAnswer = priceService.updatePrice(priceId, updatePrice);
+        assertTrue(updateAnswer.isSuccessful());
+        LOGGER.info("Update price result = " + updateAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Price updatedPrice = priceService.getSinglePriceById(priceId);
+        assertEquals(updatePrice, updatedPrice);
+
+        IUDAnswer deleteAnswer = priceService.deletePrice(priceId);
+        assertTrue(deleteAnswer.isSuccessful());
+        LOGGER.info("Delete price result = " + deleteAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Price deletedPrice = priceService.getSinglePriceById(priceId);
+        assertNull(deletedPrice);
+    }
 
     @Test
     @Rollback(true)

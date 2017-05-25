@@ -82,21 +82,22 @@ public class NotificationServiceImpl implements NotificationService{
         try {
             notificationDAO.deleteNotification(id);
         } catch (ReferenceBreakException e) {
-            return new IUDAnswer(false, e.printReferencesEntities());
+            return new IUDAnswer(id,false, e.printReferencesEntities());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 
     @Override
     public IUDAnswer insertNotification(Notification notification) {
+        Integer notifId = null;
         try {
-            int notifId = notificationDAO.insertNotification(notification);
+            notifId = notificationDAO.insertNotification(notification);
             LOGGER.info("Get from DB notificationId = " + notifId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(notifId,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(notifId,true);
     }
 
     @Override
@@ -107,8 +108,8 @@ public class NotificationServiceImpl implements NotificationService{
             notificationDAO.updateNotification(newNotification, oldNotification);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(id,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 }

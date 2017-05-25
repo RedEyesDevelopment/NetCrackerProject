@@ -15,6 +15,8 @@ import projectpackage.service.blockservice.BlockService;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 /**
  * Created by Arizel on 16.05.2017.
@@ -25,6 +27,54 @@ public class BlockRepositoryTests extends AbstractDatabaseTest{
 
     @Autowired
     BlockService blockService;
+
+    @Test
+    @Rollback(true)
+    public void crudBlockTest() {
+        Block block = new Block();
+        block.setBlockStartDate(new Date(14954L));
+        block.setBlockFinishDate(new Date(14954L));
+        block.setReason("Reason");
+        Room room = new Room();
+        room.setObjectId(127);
+        room.setNumberOfResidents(1);
+        room.setRoomNumber(101);
+        block.setRoom(room);
+        IUDAnswer iudAnswerInsert = blockService.insertBlock(block);
+        assertTrue(iudAnswerInsert.isSuccessful());
+        LOGGER.info("Insert block result = " + iudAnswerInsert.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        int blockId = iudAnswerInsert.getObjectId();
+        Block insertedBlock = blockService.getSingleBlockById(blockId);
+
+        block.setObjectId(blockId);
+        assertEquals(block, insertedBlock);
+
+        Block newBlock = new Block();
+        newBlock.setBlockStartDate(new Date(16546L));
+        newBlock.setBlockFinishDate(new Date(16546L));
+        newBlock.setReason("Updated Reason");
+        Room newRoom = new Room();
+        newRoom.setObjectId(128);
+        newRoom.setNumberOfResidents(2);
+        newRoom.setRoomNumber(102);
+        newBlock.setRoom(newRoom);
+        IUDAnswer iudAnswerUpdate = blockService.updateBlock(blockId, newBlock);
+        assertTrue(iudAnswerUpdate.isSuccessful());
+        LOGGER.info("Update block result = " + iudAnswerUpdate.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Block updatedBlock = blockService.getSingleBlockById(blockId);
+        assertEquals(newBlock, updatedBlock);
+
+        IUDAnswer iudAnswerDelete = blockService.deleteBlock(blockId);
+        assertTrue(iudAnswerDelete.isSuccessful());
+        LOGGER.info("Delete block result = " + iudAnswerDelete.isSuccessful());
+        LOGGER.info(SEPARATOR);
+        Block deletedBlock = blockService.getSingleBlockById(blockId);
+        assertNull(deletedBlock);
+    }
 
     @Test
     @Rollback(true)
@@ -39,7 +89,7 @@ public class BlockRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getSingleBlockById(){
-        Block block = blockService.getSingleBlockById(2007);
+        Block block = blockService.getSingleBlockById(2107);
         LOGGER.info(block);
         LOGGER.info(SEPARATOR);
     }
@@ -48,7 +98,7 @@ public class BlockRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void deleteBlock(){
-        int blockId = 2047;
+        int blockId = 2107;
         IUDAnswer iudAnswer = blockService.deleteBlock(blockId);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Delete block result = " + iudAnswer.isSuccessful());
@@ -85,7 +135,7 @@ public class BlockRepositoryTests extends AbstractDatabaseTest{
         room.setNumberOfResidents(2);
         room.setRoomNumber(102);
         block.setRoom(room);
-        IUDAnswer iudAnswer = blockService.updateBlock(2047, block);
+        IUDAnswer iudAnswer = blockService.updateBlock(2107, block);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Update block result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);

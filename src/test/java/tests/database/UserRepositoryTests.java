@@ -13,8 +13,7 @@ import projectpackage.service.authservice.UserService;
 
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by Gvozd on 06.01.2017.
@@ -28,6 +27,58 @@ public class UserRepositoryTests extends AbstractDatabaseTest {
 
     @Autowired
     UserService userService;
+
+    @Test
+    @Rollback(true)
+    public void crudUserTest() {
+        Role insertRole = new Role();
+        insertRole.setRoleName("Admin");
+        insertRole.setObjectId(1);
+        User insertUser = new User();
+        insertUser.setEmail("random@mail.ru");
+        insertUser.setPassword("4324325fa");
+        insertUser.setFirstName("Alex");
+        insertUser.setLastName("Merlyan");
+        insertUser.setAdditionalInfo("nothing");
+        insertUser.setRole(insertRole);
+        insertUser.setEnabled(true);
+        IUDAnswer insertAnswer = userService.insertUser(insertUser);
+        assertTrue(insertAnswer.isSuccessful());
+        LOGGER.info("Create user result = " + insertAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        int userId = insertAnswer.getObjectId();
+        User insertedUser = userService.getSingleUserById(userId);
+        insertUser.setObjectId(userId);
+        assertEquals(insertUser, insertedUser);
+
+        Role updateRole = new Role();
+        updateRole.setObjectId(2);
+        updateRole.setRoleName("Reception");
+        User updateUser = new User();
+        updateUser.setEmail("fsdf@gmail.com");
+        updateUser.setPassword("4324668");
+        updateUser.setFirstName("Alexander");
+        updateUser.setLastName("Merl");
+        updateUser.setAdditionalInfo("My new INFO");
+        updateUser.setRole(updateRole);
+        updateUser.setEnabled(false);
+        IUDAnswer iudAnswer = userService.updateUser(userId, updateUser);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Update user result = " + iudAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        User updatedUser = userService.getSingleUserById(userId);
+        assertEquals(updateUser, updatedUser);
+
+        IUDAnswer deleteAnswer = userService.deleteUser(userId);
+        assertTrue(deleteAnswer.isSuccessful());
+        LOGGER.info("Delete user result = " + deleteAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        User deletedUser = userService.getSingleUserById(userId);
+        assertNull(deletedUser);
+    }
 
     @Test
     @Rollback(true)

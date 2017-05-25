@@ -12,6 +12,8 @@ import projectpackage.service.maintenanceservice.ComplimentaryService;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 
@@ -24,6 +26,47 @@ public class ComplimentaryRepositoryTests extends  AbstractDatabaseTest{
 
     @Autowired
     ComplimentaryService complimentaryService;
+
+    @Test
+    @Rollback
+    public void crudComplimentaryTest() {
+        Maintenance maintenance = new Maintenance();
+        maintenance.setObjectId(1500);
+        Complimentary insertComplimentary = new Complimentary();
+        insertComplimentary.setCategoryId(32);
+        insertComplimentary.setMaintenance(maintenance);
+        IUDAnswer insertAnswer = complimentaryService.insertComplimentary(insertComplimentary);
+        assertTrue(insertAnswer.isSuccessful());
+        LOGGER.info("Insert complimentary result = " + insertAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        int complimentaryId = insertAnswer.getObjectId();
+
+        Complimentary insertedComplimentary = complimentaryService.getSingleComplimentaryById(complimentaryId);
+        insertComplimentary.setObjectId(complimentaryId);
+        assertEquals(insertComplimentary, insertedComplimentary);
+
+        Maintenance updateMaintenance = new Maintenance();
+        updateMaintenance.setObjectId(1501);
+        Complimentary updateComplimentary = new Complimentary();
+        updateComplimentary.setCategoryId(32);
+        updateComplimentary.setMaintenance(updateMaintenance);
+        IUDAnswer updateAnswer = complimentaryService.updateComplimentary(complimentaryId, updateComplimentary);
+        assertTrue(updateAnswer.isSuccessful());
+        LOGGER.info("Update complimentary result = " + updateAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Complimentary updatedComplimentary = complimentaryService.getSingleComplimentaryById(complimentaryId);
+        assertEquals(updateComplimentary, updatedComplimentary);
+
+        IUDAnswer deleteAnswer = complimentaryService.deleteComplimentary(complimentaryId);
+        assertTrue(deleteAnswer.isSuccessful());
+        LOGGER.info("Delete complimentary result = " + deleteAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Complimentary deletedComplimentary = complimentaryService.getSingleComplimentaryById(complimentaryId);
+        assertNull(deletedComplimentary);
+    }
 
     @Test
     @Rollback(true)

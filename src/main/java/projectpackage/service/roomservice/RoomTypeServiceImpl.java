@@ -64,21 +64,22 @@ public class RoomTypeServiceImpl implements RoomTypeService{
         try {
             roomTypeDAO.deleteRoomType(id);
         } catch (ReferenceBreakException e) {
-            return new IUDAnswer(false, e.printReferencesEntities());
+            return new IUDAnswer(id,false, e.printReferencesEntities());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 
     @Override
     public IUDAnswer insertRoomType(RoomType roomType) {
+        Integer roomTypeId = null;
         try {
-            int roomTypeId = roomTypeDAO.insertRoomType(roomType);
+            roomTypeId = roomTypeDAO.insertRoomType(roomType);
             LOGGER.info("Get from DB roomId = " + roomTypeId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(roomTypeId,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(roomTypeId,true);
     }
 
     @Override
@@ -89,8 +90,8 @@ public class RoomTypeServiceImpl implements RoomTypeService{
             roomTypeDAO.updateRoomType(newRoomType, oldRoomType);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(id,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 }

@@ -14,6 +14,8 @@ import projectpackage.service.orderservice.CategoryService;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -25,6 +27,42 @@ public class CategoryRepositoryTests extends AbstractDatabaseTest {
 
     @Autowired
     CategoryService categoryService;
+
+    @Test
+    @Rollback
+    public void crudCategoryTest() {
+        Category insertCategory = new Category();
+        insertCategory.setCategoryPrice(5345534L);
+        insertCategory.setCategoryTitle("Title");
+        IUDAnswer insertAnswer = categoryService.insertCategory(insertCategory);
+        assertTrue(insertAnswer.isSuccessful());
+        LOGGER.info("Insert category result = " + insertAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        int categoryId = insertAnswer.getObjectId();
+
+        Category insertedCategory = categoryService.getSingleCategoryById(categoryId);
+        insertCategory.setObjectId(categoryId);
+        assertEquals(insertCategory, insertedCategory);
+
+        Category updateCategory = new Category();
+        updateCategory.setCategoryPrice(4L);
+        updateCategory.setCategoryTitle("new Title");
+        IUDAnswer updateAnswer = categoryService.updateCategory(categoryId, updateCategory);
+        assertTrue(updateAnswer.isSuccessful());
+        LOGGER.info("Update category result = " + updateAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Category updatedCategory = categoryService.getSingleCategoryById(categoryId);
+        assertEquals(updateCategory, updatedCategory);
+
+        IUDAnswer iudAnswer = categoryService.deleteCategory(categoryId);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Delete category result = " + iudAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+        Category deletedCategory = categoryService.getSingleCategoryById(categoryId);
+        assertNull(deletedCategory);
+    }
 
     @Test
     @Rollback(true)

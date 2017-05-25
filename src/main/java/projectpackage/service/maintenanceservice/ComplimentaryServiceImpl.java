@@ -42,21 +42,22 @@ public class ComplimentaryServiceImpl implements ComplimentaryService {
         try {
             complimentaryDAO.deleteComplimentary(id);
         } catch (ReferenceBreakException e) {
-            return new IUDAnswer(false, e.printReferencesEntities());
+            return new IUDAnswer(id,false, e.printReferencesEntities());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 
     @Override
     public IUDAnswer insertComplimentary(Complimentary complimentary) {
+        Integer complimentaryId = null;
         try {
-            int complimentaryId = complimentaryDAO.insertComplimentary(complimentary);
+            complimentaryId = complimentaryDAO.insertComplimentary(complimentary);
             LOGGER.info("Get from DB complimentaryId = " + complimentaryId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(complimentaryId,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(complimentaryId,true);
     }
 
     @Override
@@ -67,8 +68,8 @@ public class ComplimentaryServiceImpl implements ComplimentaryService {
             complimentaryDAO.updateComplimentary(newComplimentary, oldComplimentary);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(id,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 }
