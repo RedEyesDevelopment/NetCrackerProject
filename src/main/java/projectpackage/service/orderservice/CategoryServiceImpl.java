@@ -51,21 +51,22 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             categoryDAO.deleteCategory(id);
         } catch (ReferenceBreakException e) {
-            return new IUDAnswer(false, e.printReferencesEntities());
+            return new IUDAnswer(id,false, e.printReferencesEntities());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 
     @Override
     public IUDAnswer insertCategory(Category category) {
+        Integer categoryId = null;
         try {
-            int categoryId = categoryDAO.insertCategory(category);
+            categoryId = categoryDAO.insertCategory(category);
             LOGGER.info("Get from DB categoryId = " + categoryId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(categoryId,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(categoryId,true);
     }
 
     @Override
@@ -76,8 +77,8 @@ public class CategoryServiceImpl implements CategoryService {
             categoryDAO.updateCategory(newCategory, oldCategory);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(id,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 }

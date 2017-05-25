@@ -11,8 +11,7 @@ import projectpackage.service.notificationservice.NotificationTypeService;
 
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by Arizel on 16.05.2017.
@@ -23,6 +22,47 @@ public class NotificationTypeRepositoryTests extends AbstractDatabaseTest {
 
     @Autowired
     NotificationTypeService notificationTypeService;
+
+    @Test
+    @Rollback(true)
+    public void crudNotificationTypeTest() {
+        Role insertRole = new Role();
+        insertRole.setRoleName("Admin");
+        insertRole.setObjectId(1);
+        NotificationType insertNotificationType = new NotificationType();
+        insertNotificationType.setNotificationTypeTitle("TestNotificationType");
+        insertNotificationType.setOrientedRole(insertRole);
+        IUDAnswer insertAnswer = notificationTypeService.insertNotificationType(insertNotificationType);
+        assertTrue(insertAnswer.isSuccessful());
+        LOGGER.info("Create notification result = " + insertAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        int notifTypeId = insertAnswer.getObjectId();
+        insertNotificationType.setObjectId(notifTypeId);
+        NotificationType insertedNotificationType = notificationTypeService.getSingleNotificationTypeById(notifTypeId);
+        assertEquals(insertNotificationType, insertedNotificationType);
+
+        Role newRole = new Role();
+        newRole.setObjectId(2);
+        newRole.setRoleName("Reception");
+        NotificationType updateNotificationType = new NotificationType();
+        updateNotificationType.setOrientedRole(newRole);
+        updateNotificationType.setNotificationTypeTitle("UpdateNotifTypeTEST");
+        IUDAnswer updateAnswer = notificationTypeService.updateNotificationType(notifTypeId, updateNotificationType);
+        assertTrue(updateAnswer.isSuccessful());
+        LOGGER.info("Update notification result = " + updateAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        NotificationType updatedNotificationType = notificationTypeService.getSingleNotificationTypeById(notifTypeId);
+        assertEquals(updateNotificationType, updatedNotificationType);
+
+        IUDAnswer deleteAnswer = notificationTypeService.deleteNotificationType(notifTypeId);
+        assertTrue(deleteAnswer.isSuccessful());
+        LOGGER.info("Delete notifType result = " + deleteAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+        NotificationType deleteNotificationType = notificationTypeService.getSingleNotificationTypeById(notifTypeId);
+        assertNull(deleteNotificationType);
+    }
 
     @Test
     @Rollback(true)

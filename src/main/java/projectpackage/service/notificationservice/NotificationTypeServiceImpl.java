@@ -54,21 +54,22 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
         try {
             notificationTypeDAO.deleteNotificationType(id);
         } catch (ReferenceBreakException e) {
-            return new IUDAnswer(false, e.printReferencesEntities());
+            return new IUDAnswer(id,false, e.printReferencesEntities());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 
     @Override
     public IUDAnswer insertNotificationType(NotificationType notificationType) {
+        Integer notifTypeId = null;
         try {
-            int notifTypeId = notificationTypeDAO.insertNotificationType(notificationType);
+            notifTypeId = notificationTypeDAO.insertNotificationType(notificationType);
             LOGGER.info("Get from DB notificationTypeId = " + notifTypeId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(notifTypeId,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(notifTypeId,true);
     }
 
     @Override
@@ -79,8 +80,8 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
             notificationTypeDAO.updateNotificationType(newNotificationType, oldNotificationType);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(id,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 }

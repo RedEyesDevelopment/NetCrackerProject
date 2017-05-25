@@ -48,21 +48,22 @@ public class JournalRecordServiceImpl implements JournalRecordService{
         try {
             journalRecordDAO.deleteJournalRecord(id);
         } catch (ReferenceBreakException e) {
-            return new IUDAnswer(false, e.printReferencesEntities());
+            return new IUDAnswer(id,false, e.printReferencesEntities());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 
     @Override
     public IUDAnswer insertJournalRecord(JournalRecord journalRecord) {
+        Integer journalRecordId = null;
         try {
-            int journalRecordId = journalRecordDAO.insertJournalRecord(journalRecord);
+            journalRecordId = journalRecordDAO.insertJournalRecord(journalRecord);
             LOGGER.info("Get from DB journalRecordId = " + journalRecordId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(journalRecordId,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(journalRecordId,true);
     }
 
     @Override
@@ -73,8 +74,8 @@ public class JournalRecordServiceImpl implements JournalRecordService{
             journalRecordDAO.updateJournalRecord(newJournalRecord, oldJournalRecord);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(id,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 }

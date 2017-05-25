@@ -74,21 +74,22 @@ public class BlockServiceImpl implements BlockService{
         try {
             blockDAO.deleteBlock(id);
         } catch (ReferenceBreakException e) {
-            return new IUDAnswer(false, e.printReferencesEntities());
+            return new IUDAnswer(id, false, e.printReferencesEntities());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id, true);
     }
 
     @Override
     public IUDAnswer insertBlock(Block block) {
+        Integer blockId = null;
         try {
-            int blockId = blockDAO.insertBlock(block);
+            blockId = blockDAO.insertBlock(block);
             LOGGER.info("Get from DB blockId = " + blockId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(blockId, false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(blockId,true);
     }
 
     @Override
@@ -100,8 +101,8 @@ public class BlockServiceImpl implements BlockService{
             blockDAO.updateBlock(newBlock, oldBlock);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(id, false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id, true);
     }
 }

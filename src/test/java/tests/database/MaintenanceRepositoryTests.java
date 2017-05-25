@@ -11,6 +11,8 @@ import projectpackage.service.maintenanceservice.MaintenanceService;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -22,6 +24,44 @@ public class MaintenanceRepositoryTests extends AbstractDatabaseTest{
 
     @Autowired
     MaintenanceService maintenanceService;
+
+    @Test
+    @Rollback
+    public void crudMaintenanceTest() {
+        Maintenance insertMaintenance = new Maintenance();
+        insertMaintenance.setMaintenancePrice(534L);
+        insertMaintenance.setMaintenanceTitle("title main");
+        insertMaintenance.setMaintenanceType("type of main");
+        IUDAnswer insertAnswer = maintenanceService.insertMaintenance(insertMaintenance);
+        assertTrue(insertAnswer.isSuccessful());
+        LOGGER.info("Insert maintenance result = " + insertAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        int maintenanceId = insertAnswer.getObjectId();
+        Maintenance insertedMaintenance = maintenanceService.getSingleMaintenanceById(maintenanceId);
+        insertMaintenance.setObjectId(maintenanceId);
+        assertEquals(insertMaintenance, insertedMaintenance);
+
+        Maintenance updateMaintenance = new Maintenance();
+        updateMaintenance.setMaintenancePrice(600L);
+        updateMaintenance.setMaintenanceTitle("new title main");
+        updateMaintenance.setMaintenanceType("new type of main");
+        IUDAnswer updateAnswer = maintenanceService.updateMaintenance(maintenanceId, updateMaintenance);
+        assertTrue(updateAnswer.isSuccessful());
+        LOGGER.info("Update maintenance result = " + updateAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Maintenance updatedMaintenance = maintenanceService.getSingleMaintenanceById(maintenanceId);
+        assertEquals(updateMaintenance, updatedMaintenance);
+
+        IUDAnswer deleteAnswer = maintenanceService.deleteMaintenance(maintenanceId);
+        assertTrue(deleteAnswer.isSuccessful());
+        LOGGER.info("Delete maintenance result = " + deleteAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Maintenance deletedMaintenance = maintenanceService.getSingleMaintenanceById(maintenanceId);
+        assertNull(deletedMaintenance);
+    }
 
     @Test
     @Rollback(true)

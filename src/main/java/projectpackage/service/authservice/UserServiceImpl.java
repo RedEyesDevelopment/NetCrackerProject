@@ -40,21 +40,22 @@ public class UserServiceImpl implements UserService {
         try {
             userDAO.deleteUser(id);
         } catch (ReferenceBreakException e) {
-            return new IUDAnswer(false, e.printReferencesEntities());
+            return new IUDAnswer(id,false, e.printReferencesEntities());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 
     @Override
     public IUDAnswer insertUser(User user) {
+        Integer userId = null;
         try {
-            int userId = userDAO.insertUser(user);
+            userId = userDAO.insertUser(user);
             LOGGER.info("Get from DB userId = " + userId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            new IUDAnswer(false, e.getMessage());
+            new IUDAnswer(userId,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(userId,true);
     }
 
     @Override
@@ -65,8 +66,8 @@ public class UserServiceImpl implements UserService {
             userDAO.updateUser(newUser, oldUser);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(id,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 }

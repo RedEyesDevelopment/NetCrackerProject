@@ -41,7 +41,8 @@ public class PdfServiceImpl implements PdfService{
         Chapter chapter = new Chapter(1);
         //chapter.setNumberDepth(0);
 
-        Paragraph dearUser = new Paragraph("Dear " + order.getClient().getFirstName() + " " + order.getClient().getLastName() + "!");
+        Paragraph dearUser = new Paragraph("Dear " + order.getClient().getFirstName() +
+                " " + order.getClient().getLastName() + "!");
         dearUser.setIndentationLeft(100);
 
         Paragraph acceptanceOrder = new Paragraph("Your order accepted!");

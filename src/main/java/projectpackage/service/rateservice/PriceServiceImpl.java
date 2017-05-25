@@ -47,21 +47,22 @@ public class PriceServiceImpl implements PriceService{
         try {
             priceDAO.deletePrice(id);
         } catch (ReferenceBreakException e) {
-            return new IUDAnswer(false, e.printReferencesEntities());
+            return new IUDAnswer(id,false, e.printReferencesEntities());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 
     @Override
     public IUDAnswer insertPrice(Price price) {
+        Integer priceId = null;
         try {
-            int priceId = priceDAO.insertPrice(price);
+            priceId = priceDAO.insertPrice(price);
             LOGGER.info("Get from DB phoneId = " + priceId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(priceId,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(priceId,true);
     }
 
     @Override
@@ -72,8 +73,8 @@ public class PriceServiceImpl implements PriceService{
             priceDAO.updatePrice(newPrice, oldPrice);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(id,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 }

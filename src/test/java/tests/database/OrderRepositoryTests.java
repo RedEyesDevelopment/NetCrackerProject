@@ -14,6 +14,8 @@ import projectpackage.service.orderservice.OrderService;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -24,6 +26,65 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
 
     @Autowired
     OrderService orderService;
+
+    @Test
+    @Rollback(true)
+    public void crudOrderTest() {
+        Room insertRoom = new Room();
+        insertRoom.setObjectId(127);
+        User insertUser = new User();
+        insertUser.setObjectId(900);
+        Order insertOrder = new Order();
+        insertOrder.setRegistrationDate(new Date());
+        insertOrder.setIsPaidFor(false);
+        insertOrder.setIsConfirmed(false);
+        insertOrder.setLivingStartDate(new Date());
+        insertOrder.setLivingFinishDate(new Date());
+        insertOrder.setSum(7478L);
+        insertOrder.setComment("Comment");
+        insertOrder.setRoom(insertRoom);
+        insertOrder.setClient(insertUser);
+        insertOrder.setLastModificator(insertUser);
+        IUDAnswer insertAnswer = orderService.insertOrder(insertOrder);
+        assertTrue(insertAnswer.isSuccessful());
+        LOGGER.info("Create order result = " + insertAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        int orderId = insertAnswer.getObjectId();
+        Order insertedOrder = orderService.getSingleOrderById(orderId);
+        insertOrder.setObjectId(orderId);
+        assertEquals(insertOrder, insertedOrder);
+
+        Room updateRoom = new Room();
+        updateRoom.setObjectId(128);
+        User updateUser = new User();
+        updateUser.setObjectId(901);
+        Order updateOrder = new Order();
+        updateOrder.setRegistrationDate(new Date());
+        updateOrder.setIsPaidFor(true);
+        updateOrder.setIsConfirmed(true);
+        updateOrder.setLivingStartDate(new Date());
+        updateOrder.setLivingFinishDate(new Date());
+        updateOrder.setSum(10000L);
+        updateOrder.setComment("new Comment");
+        updateOrder.setRoom(updateRoom);
+        updateOrder.setClient(updateUser);
+        updateOrder.setLastModificator(updateUser);
+        IUDAnswer iudAnswer = orderService.updateOrder(orderId, updateOrder);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Create order result = " + iudAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Order updatedOrder = orderService.getSingleOrderById(orderId);
+        assertEquals(updateOrder, updatedOrder);
+        IUDAnswer updateAnswer = orderService.deleteOrder(orderId);
+        assertTrue(updateAnswer.isSuccessful());
+        LOGGER.info("Delete order result = " + updateAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Order deletedOrder = orderService.getSingleOrderById(orderId);
+        assertNull(deletedOrder);
+    }
 
     @Test
     @Rollback(true)
@@ -104,7 +165,7 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getSingleOrderById(){
-        Order order = orderService.getSingleOrderById(534);
+        Order order = orderService.getSingleOrderById(2109);
         LOGGER.info(order);
         LOGGER.info(SEPARATOR);
     }

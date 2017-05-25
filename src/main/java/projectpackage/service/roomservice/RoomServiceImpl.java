@@ -59,21 +59,22 @@ public class RoomServiceImpl implements RoomService{
         try {
             roomDAO.deleteRoom(id);
         } catch (ReferenceBreakException e) {
-            return new IUDAnswer(false, e.printReferencesEntities());
+            return new IUDAnswer(id,false, e.printReferencesEntities());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 
     @Override
     public IUDAnswer insertRoom(Room room) {
+        Integer roomId = null;
         try {
-            int roomId = roomDAO.insertRoom(room);
+            roomId = roomDAO.insertRoom(room);
             LOGGER.info("Get from DB roomId = " + roomId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(roomId,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(roomId,true);
     }
 
     @Override
@@ -84,8 +85,8 @@ public class RoomServiceImpl implements RoomService{
             roomDAO.updateRoom(newRoom, oldRoom);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(false, e.getMessage());
+            return new IUDAnswer(id,false, e.getMessage());
         }
-        return new IUDAnswer(true);
+        return new IUDAnswer(id,true);
     }
 }
