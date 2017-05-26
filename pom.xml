@@ -6,7 +6,10 @@
 
     <groupId>org.yakimovdenis</groupId>
     <artifactId>NCProject</artifactId>
+    <name>Hotels</name>
+    <description>RedEyesDevelopment group NetCracker project (spring 2017)</description>
     <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
 
     <build>
         <testResources>
@@ -85,6 +88,13 @@
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+
         <!-- SPRING SECURITY-->
 
         <dependency>
@@ -95,6 +105,13 @@
 
 
         <!--Testing deps-->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -196,7 +213,6 @@
             <artifactId>cache-api</artifactId>
             <version>1.0.0</version>
         </dependency>
-
 
 
         <!-- POOLS FOR TESTS -->
