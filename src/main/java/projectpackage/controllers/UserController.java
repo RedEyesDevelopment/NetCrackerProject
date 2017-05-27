@@ -12,6 +12,7 @@ import projectpackage.service.authservice.UserService;
 
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class UserController {
         for (User user:users){
             Resource<User> userResource = new Resource<User>(user);
             //Add GET link for each user
-            userResource.add(linkTo(methodOn(UserController.class).getUser(user.getObjectId())).withSelfRel());
+            userResource.add(linkTo(methodOn(UserController.class).getUser(user.getObjectId(), null)).withSelfRel());
             resources.add(userResource);
         }
         return resources;
@@ -46,12 +47,13 @@ public class UserController {
     //Get single User by id
     @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public Resource<User> getUser(@PathVariable("id") Integer id){
+    public Resource<User> getUser(@PathVariable("id") Integer id, HttpServletRequest request){
+        User thisUser = (User) request.getSession().getAttribute("USER");
         //PATHVARIABLE is not optional, so every times it returns a value
         User user = userService.getSingleUserById(id);
         //Create resource for user and add links to delete and update
         Resource<User> resource = new Resource<>(user);
-        resource.add(linkTo(methodOn(UserController.class).deleteUser(user.getObjectId())).withRel("delete"));
+        if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(UserController.class).deleteUser(user.getObjectId())).withRel("delete"));
         resource.add(linkTo(methodOn(UserController.class).updateUser(user.getObjectId(), user)).withRel("update"));
         return resource;
     }
@@ -73,7 +75,7 @@ public class UserController {
     }
 
     //Update user method
-    //	@Secured("ROLE_ADMIN")
+//    	@Secured("ROLE_ADMIN")
     @CacheRemoveAll(cacheName = "userList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Boolean> updateUser(@PathVariable("id") Integer id, @RequestBody User changedUser){
