@@ -5,6 +5,8 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
+import projectpackage.model.rates.Price;
+import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.model.support.IUDAnswer;
@@ -12,9 +14,7 @@ import projectpackage.service.roomservice.RoomService;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by Arizel on 16.05.2017.
@@ -30,10 +30,14 @@ public class RoomRepositoryTests extends AbstractDatabaseTest{
     @Rollback(true)
     public void crudRoomTest() {
         RoomType insertRoomType = new RoomType();
+        insertRoomType.setObjectId(8);
+        Rate insertRate = new Rate();
+        insertRate.setObjectId(43);
+        Price insertPrice = new Price();
+        insertPrice.setObjectId(91);
         Room insertRoom = new Room();
         insertRoom.setRoomNumber(111);
         insertRoom.setNumberOfResidents(1);
-        insertRoomType.setObjectId(8);
         insertRoom.setRoomType(insertRoomType);
         IUDAnswer insertAnswer = roomService.insertRoom(insertRoom);
         assertTrue(insertAnswer.isSuccessful());
@@ -47,10 +51,14 @@ public class RoomRepositoryTests extends AbstractDatabaseTest{
 
         RoomType updateRoomType = new RoomType();
         Room updateRoom = new Room();
+        Rate updateRate = new Rate();
+        Price updatePrice = new Price();
         updateRoom.setRoomNumber(112);
         updateRoom.setNumberOfResidents(2);
         updateRoomType.setObjectId(7);
         updateRoom.setRoomType(updateRoomType);
+        updateRate.setObjectId(39);
+        updatePrice.setObjectId(79);
         IUDAnswer iudAnswer = roomService.updateRoom(roomId, updateRoom);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Update room result = " + iudAnswer.isSuccessful());
