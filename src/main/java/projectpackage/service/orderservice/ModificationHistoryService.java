@@ -3,8 +3,8 @@ package projectpackage.service.orderservice;
 import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
 import projectpackage.model.support.IUDAnswer;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
 
 import java.util.List;
 

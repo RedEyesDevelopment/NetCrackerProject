@@ -8,9 +8,8 @@ import projectpackage.model.blocks.Block;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.support.IUDAnswer;
 import projectpackage.repository.blocksdao.BlockDAO;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
-import projectpackage.service.roomservice.RoomService;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
 
 import java.util.ArrayList;
 import java.util.Date;

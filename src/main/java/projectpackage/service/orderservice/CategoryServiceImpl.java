@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.orders.Category;
 import projectpackage.model.support.IUDAnswer;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.maintenancedao.ComplimentaryDAO;
 import projectpackage.repository.ordersdao.CategoryDAO;
 

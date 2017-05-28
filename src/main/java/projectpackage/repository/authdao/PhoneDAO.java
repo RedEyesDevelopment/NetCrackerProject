@@ -1,7 +1,7 @@
 package projectpackage.repository.authdao;
 
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.model.auth.Phone;
 
 import java.util.List;

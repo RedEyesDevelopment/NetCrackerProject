@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import projectpackage.model.auth.Role;
 import projectpackage.model.notifications.NotificationType;
 import projectpackage.model.support.IUDAnswer;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.notificationsdao.NotificationTypeDAO;
 
 import java.util.List;

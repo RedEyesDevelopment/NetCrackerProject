@@ -8,8 +8,8 @@ import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;

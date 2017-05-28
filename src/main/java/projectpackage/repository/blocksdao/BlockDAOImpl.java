@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 import projectpackage.model.blocks.Block;
 import projectpackage.model.rooms.Room;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;

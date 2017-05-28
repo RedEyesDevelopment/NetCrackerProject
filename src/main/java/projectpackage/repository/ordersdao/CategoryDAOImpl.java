@@ -8,8 +8,8 @@ import projectpackage.model.maintenances.Complimentary;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.model.orders.Category;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;

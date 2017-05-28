@@ -1,8 +1,8 @@
 package projectpackage.repository.ratesdao;
 
 import projectpackage.model.rates.Rate;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
 
 import java.util.List;
 

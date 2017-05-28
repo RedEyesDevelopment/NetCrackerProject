@@ -1,8 +1,8 @@
 package projectpackage.repository.ordersdao;
 
 import projectpackage.model.orders.Order;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
 
 import java.util.List;
 
