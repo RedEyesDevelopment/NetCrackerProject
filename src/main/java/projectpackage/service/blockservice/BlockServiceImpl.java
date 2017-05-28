@@ -6,12 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.blocks.Block;
 import projectpackage.model.rooms.Room;
-import projectpackage.dto.IUDAnswer;
+import projectpackage.model.support.IUDAnswer;
 import projectpackage.repository.blocksdao.BlockDAO;
-import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
-import projectpackage.repository.daoexceptions.WrongEntityIdException;
 
 import java.util.Date;
 import java.util.List;
@@ -41,14 +39,24 @@ public class BlockServiceImpl implements BlockService{
 
     @Override
     public List<Block> getBlocksByRoom(Room room) {
-        return null;
+        List<Block> answer = new ArrayList<>();
+        Integer roomNumber = room.getRoomNumber();
+        List<Block> allBlocks = getAllBlocks();
+        for (Block block : allBlocks) {
+            if (block.getRoom().getRoomNumber().equals(roomNumber)) {
+                answer.add(block);
+            }
+        }
+        return answer;
     }
 
+    // todo нужно ли это?
     @Override
     public List<Block> getBlocksInRange(Date startDate, Date finishDate) {
         return null;
     }
 
+    // todo подумать можно ли использовать готовую реализацию из OrderService
     @Override
     public List<Block> getCurrentBlocks() {
         return null;

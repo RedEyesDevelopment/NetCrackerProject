@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.reacteav.ReactEAVManager;
 
 import java.sql.Types;

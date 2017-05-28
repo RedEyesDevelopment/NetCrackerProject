@@ -2,7 +2,6 @@ package projectpackage.repository.ordersdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.Complimentary;
@@ -11,8 +10,6 @@ import projectpackage.model.orders.Category;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
-import projectpackage.repository.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -45,7 +42,6 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
 
     @Override
     public List<Category> getAllCategories() {
-        System.out.println("ALLMAINTENANCES");
         try {
             return manager.createReactEAV(Category.class)
                     .fetchRootChild(Complimentary.class)

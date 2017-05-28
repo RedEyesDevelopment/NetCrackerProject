@@ -6,14 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.User;
-import projectpackage.dto.IUDAnswer;
+import projectpackage.model.support.IUDAnswer;
 import projectpackage.repository.authdao.PhoneDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
-import projectpackage.repository.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.support.PhoneRegexService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,7 +38,15 @@ public class PhoneServiceImpl implements PhoneService{
 
     @Override
     public List<Phone> getAllPhonesByUser(User user) {
-        return null;
+        List<Phone> answer = new ArrayList<>();
+        String email = user.getEmail();
+        List<Phone> allUser = getAllPhones();
+        for (Phone phone : allUser) {
+            if (user.getPhones().contains(phone)) {
+                answer.add(phone);
+            }
+        }
+        return answer;
     }
 
     @Override
