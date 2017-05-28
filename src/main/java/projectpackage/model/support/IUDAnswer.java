@@ -15,7 +15,6 @@ public class IUDAnswer {
     static {
         ANSWERS.put("wrongId", "Cannot update with wrong id! Updated entity id not equals original entity id, but id cannot be changed!");
         ANSWERS.put("wrongDelete", "Cannot delete entity with inadequate id! Entity id does not match entity class! Check your request!");
-
     }
 
     private Integer objectId;
