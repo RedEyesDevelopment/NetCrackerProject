@@ -32,7 +32,7 @@ public class PhoneController {
 
     @ResponseStatus(HttpStatus.OK)
     @CacheResult(cacheName = "phoneList")
-    @GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public List<Resource<Phone>> getPhoneList() {
         List<Phone> phones = phoneService.getAllPhones();
         List<Resource<Phone>> resources = new ArrayList<>(phones.size());
@@ -46,20 +46,27 @@ public class PhoneController {
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public Resource<Phone> getPhone(@PathVariable("id") Integer id, HttpServletRequest request) {
+    public ResponseEntity<Resource<Phone>> getPhone(@PathVariable("id") Integer id, HttpServletRequest request) {
         User thisUser = (User) request.getSession().getAttribute("USER");
         Phone phone = phoneService.getSinglePhoneById(id);
         Resource<Phone> resource = new Resource<>(phone);
-        if (thisUser.getRole().equals("ADMIN")) {
-            resource.add(linkTo(methodOn(PhoneController.class).deletePhone(phone.getObjectId())).withRel("delete"));
+        HttpStatus status;
+        if (null != phone) {
+            if (thisUser.getRole().equals("ADMIN")) {
+                resource.add(linkTo(methodOn(PhoneController.class).deletePhone(phone.getObjectId())).withRel("delete"));
+            }
+            resource.add(linkTo(methodOn(PhoneController.class).updatePhone(phone.getObjectId(), phone)).withRel("update"));
+            status = HttpStatus.ACCEPTED;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
         }
-        resource.add(linkTo(methodOn(PhoneController.class).updatePhone(phone.getObjectId(), phone)).withRel("update"));
-        return resource;
+        ResponseEntity<Resource<Phone>> response = new ResponseEntity<Resource<Phone>>(resource, status);
+        return response;
     }
 
     @CacheRemoveAll(cacheName = "phoneList")
-    @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<Boolean> createPhone(@RequestBody Phone newPhone) {
+    @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<IUDAnswer> createPhone(@RequestBody Phone newPhone) {
         IUDAnswer result = phoneService.insertPhone(newPhone);
         HttpStatus status;
         if (result.isSuccessful()) {
@@ -68,15 +75,15 @@ public class PhoneController {
             status = HttpStatus.BAD_REQUEST;
         }
 
-        ResponseEntity<Boolean> responseEntity = new ResponseEntity<Boolean>(result.isSuccessful(), status);
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
     }
 
     @CacheRemoveAll(cacheName = "phoneList")
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<Boolean> updatePhone(@PathVariable("id") Integer id, @RequestBody Phone changedPhone) {
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<IUDAnswer> updatePhone(@PathVariable("id") Integer id, @RequestBody Phone changedPhone) {
         if (!id.equals(changedPhone.getObjectId())) {
-            return new ResponseEntity<Boolean>(false, HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, "wrongId"), HttpStatus.NOT_ACCEPTABLE);
         }
 
         IUDAnswer result = phoneService.updatePhone(id, changedPhone);
@@ -88,17 +95,17 @@ public class PhoneController {
             status = HttpStatus.BAD_REQUEST;
         }
 
-        ResponseEntity<Boolean> responseEntity = new ResponseEntity<Boolean>(result.isSuccessful(), status);
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
     }
 
     @CacheRemoveAll(cacheName = "phoneList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<Boolean> deletePhone(@PathVariable("id") Integer id) {
+    public ResponseEntity<IUDAnswer> deletePhone(@PathVariable("id") Integer id) {
         IUDAnswer result = phoneService.deletePhone(id);
 
         HttpStatus status = result.isSuccessful() ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND;
 
-        return new ResponseEntity<Boolean>(result.isSuccessful(), status);
+        return new ResponseEntity<IUDAnswer>(result, status);
     }
 }
