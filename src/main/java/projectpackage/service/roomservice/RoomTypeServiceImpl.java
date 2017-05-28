@@ -4,12 +4,10 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import projectpackage.model.orders.Category;
-import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.model.support.IUDAnswer;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.roomsdao.RoomTypeDAO;
 import projectpackage.service.orderservice.CategoryService;
 
@@ -51,18 +49,22 @@ public class RoomTypeServiceImpl implements RoomTypeService{
 
     @Override
     public List<Map<String, Object>> getRoomTypes(Date startDate, Date finishDate, int numberOfPeople, int categoryId) {
-        List<Map<String, Object>> answer = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> answer = new ArrayList<>();
+        Set<Integer> availableRoomTypes = roomTypeDAO.getAvailableRoomTypes(numberOfPeople, startDate, finishDate);
         List<RoomType> allRoomTypes = getAllRoomTypes();
         for (RoomType roomType : allRoomTypes) {
-            Map<String, Object> map = new HashMap<String, Object>();
+            Map<String, Object> map = new HashMap<>();
             map.put("roomTypeTitle", roomType.getRoomTypeTitle());
             map.put("content", roomType.getContent());
             long categotyPrice = categoryService.getSingleCategoryById(categoryId).getCategoryPrice();
             long days = (finishDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000);
             Long categoryCost = categotyPrice * days;
-            map.put(" ", categoryCost);
-            // todo тут ещё много чего надо доделать
-
+            map.put("categoryCost", categoryCost);
+            boolean available = availableRoomTypes.contains(roomType.getObjectId());
+            map.put("available", available);
+            if (available) {
+                map.put("livingCost", roomTypeDAO.getCostForLiving(roomType, numberOfPeople, startDate, finishDate));
+            }
         }
         return answer;
     }
