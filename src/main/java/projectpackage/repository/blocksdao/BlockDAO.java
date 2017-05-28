@@ -1,6 +1,8 @@
 package projectpackage.repository.blocksdao;
 
 import projectpackage.model.blocks.Block;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
 

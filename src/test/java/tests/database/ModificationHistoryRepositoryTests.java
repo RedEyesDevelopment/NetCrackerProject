@@ -10,7 +10,7 @@ import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
 import projectpackage.dto.IUDAnswer;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.service.orderservice.ModificationHistoryService;
 
 import java.util.Date;

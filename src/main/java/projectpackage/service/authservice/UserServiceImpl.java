@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 import projectpackage.model.auth.User;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.repository.authdao.UserDAO;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 

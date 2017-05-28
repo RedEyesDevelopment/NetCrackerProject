@@ -10,9 +10,9 @@ import java.util.List;
  * Created by Lenovo on 15.05.2017.
  */
 public interface PhoneService {
-    public List<Phone> getAllPhonesByUser(User user);//TODO Denis
+    public List<Phone> getAllPhonesByUser(User user);
 
-    public List<Phone> getAllPhones();//TODO Merlyan
+    public List<Phone> getAllPhones();
     public List<Phone> getAllPhones(String orderingParameter, boolean ascend);
     public Phone getSinglePhoneById(int id);
     public IUDAnswer deletePhone(int id);
