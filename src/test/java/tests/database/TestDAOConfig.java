@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -15,12 +18,12 @@ import org.springframework.transaction.annotation.TransactionManagementConfigure
 import projectpackage.repository.authdao.*;
 import projectpackage.repository.blocksdao.BlockDAO;
 import projectpackage.repository.blocksdao.BlockDAOImpl;
+import projectpackage.repository.maintenancedao.*;
 import projectpackage.repository.notificationsdao.NotificationDAO;
 import projectpackage.repository.notificationsdao.NotificationDAOImpl;
 import projectpackage.repository.notificationsdao.NotificationTypeDAO;
 import projectpackage.repository.notificationsdao.NotificationTypeDAOImpl;
-import projectpackage.repository.ordersdao.OrderDAO;
-import projectpackage.repository.ordersdao.OrderDAOImpl;
+import projectpackage.repository.ordersdao.*;
 import projectpackage.repository.ratesdao.PriceDAO;
 import projectpackage.repository.ratesdao.PriceDAOImpl;
 import projectpackage.repository.ratesdao.RateDAO;
@@ -31,16 +34,31 @@ import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
 import projectpackage.repository.reacteav.support.ReactEntityValidator;
 import projectpackage.repository.roomsdao.RoomDAO;
 import projectpackage.repository.roomsdao.RoomDAOImpl;
-import projectpackage.service.authservice.PhoneService;
-import projectpackage.service.authservice.PhoneServiceImpl;
-import projectpackage.service.authservice.RoleService;
-import projectpackage.service.authservice.RoleServiceImpl;
+import projectpackage.repository.roomsdao.RoomTypeDAO;
+import projectpackage.repository.roomsdao.RoomTypeDAOImpl;
+import projectpackage.repository.securitydao.AuthCredentialsDAO;
+import projectpackage.repository.securitydao.AuthCredentialsDAOImpl;
+import projectpackage.service.authservice.*;
+import projectpackage.service.blockservice.BlockService;
+import projectpackage.service.blockservice.BlockServiceImpl;
+import projectpackage.service.maintenanceservice.*;
 import projectpackage.service.notificationservice.NotificationService;
 import projectpackage.service.notificationservice.NotificationServiceImpl;
-import projectpackage.service.orderservice.OrderService;
-import projectpackage.service.orderservice.OrderServiceImpl;
+import projectpackage.service.notificationservice.NotificationTypeService;
+import projectpackage.service.notificationservice.NotificationTypeServiceImpl;
+import projectpackage.service.orderservice.*;
 import projectpackage.service.rateservice.PriceService;
 import projectpackage.service.rateservice.PriceServiceImpl;
+import projectpackage.service.rateservice.RateService;
+import projectpackage.service.rateservice.RateServiceImpl;
+import projectpackage.service.roomservice.RoomService;
+import projectpackage.service.roomservice.RoomServiceImpl;
+import projectpackage.service.roomservice.RoomTypeService;
+import projectpackage.service.roomservice.RoomTypeServiceImpl;
+import projectpackage.service.securityservice.SecurityService;
+import projectpackage.service.securityservice.SecurityServiceImpl;
+import projectpackage.support.PhoneRegexService;
+import projectpackage.support.PhoneRegexServiceImpl;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -60,7 +78,7 @@ import java.util.Properties;
  */
 @ContextConfiguration
 @EnableTransactionManagement
-public class TestJPAConfig implements TransactionManagementConfigurer {
+public class TestDAOConfig implements TransactionManagementConfigurer {
 
     private String driver;
     private String url;
@@ -68,7 +86,7 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     private String password;
     private String modelPackage;
 
-    public TestJPAConfig() {
+    public TestDAOConfig() {
         Locale.setDefault(Locale.ENGLISH);
         Properties props = new Properties();
         FileInputStream fis = null;
@@ -103,6 +121,33 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         dataSource.setLogFormatter(log4JdbcCustomFormatter);
         return dataSource;
     }
+//
+//    @Bean
+//    public DataSource realDataSource3(){
+//        BasicDataSource ds = new BasicDataSource();
+//        ds.setUrl(url);
+//        ds.setUsername(username);
+//        ds.setPassword(password);
+//        ds.setDriverClassName(driver);
+//        ds.setMinIdle(50);
+//        ds.setMaxIdle(100);
+//        ds.setMaxOpenPreparedStatements(100);
+//        return ds;
+//    }
+//
+//    @Bean
+//    public DataSource realDataSource2() {
+//        HikariConfig config = new HikariConfig();
+//        config.setJdbcUrl(url);
+//        config.setUsername(username);
+//        config.setPassword(password);
+//        config.setDriverClassName(driver);
+//        config.setMaximumPoolSize(40);
+//        config.addDataSourceProperty("cachePrepStmts", "true");
+//        config.addDataSourceProperty("prepStmtCacheSize", "250");
+//        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+//        return new HikariDataSource(config);
+//    }
 
     @Bean
     public DataSource realDataSource() {
@@ -164,6 +209,16 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     }
 
     @Bean
+    AuthenticationManager authenticationManager() {
+        return null;
+    }
+
+    @Bean
+    UserDetailsService userDetailsService() {
+        return null;
+    }
+
+    @Bean
     JdbcTemplate jdbcTemplate () { return new JdbcTemplate(dataSource()); }
 
     @Bean
@@ -180,6 +235,12 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     RoleDAO roleDAO() { return new RoleDAOImpl();}
 
     @Bean
+    ModificationHistoryDAO modificationHistoryDAO() {return new ModificationHistoryDAOImpl();}
+
+    @Bean
+    JournalRecordDAO journalRecordDAO() {return new JournalRecordDAOImpl();}
+
+    @Bean
     NotificationDAO notificationDAO(){
         return new NotificationDAOImpl();
     }
@@ -194,10 +255,10 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         return new RoomDAOImpl();
     }
 
-//    @Bean
-//    RoomTypeDAO roomTypeDAO(){
-//        return new RoomTypeDAOImpl();
-//    }
+    @Bean
+    RoomTypeDAO roomTypeDAO(){
+        return new RoomTypeDAOImpl();
+    }
 
     @Bean
     PriceDAO priceDAO(){
@@ -219,10 +280,31 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         return new BlockDAOImpl();
     }
 
-//    @Bean
-//    UserService userService() {
-//        return new UserServiceImpl();
-//    }
+    @Bean
+    CategoryDAO categoryDAO() { return new CategoryDAOImpl(); }
+
+    @Bean
+    ComplimentaryDAO complimentaryDAO() { return new ComplimentaryDAOImpl(); }
+
+    @Bean
+    MaintenanceDAO maintenanceDAO() { return new MaintenanceDAOImpl(); }
+
+    @Bean
+    MaintenanceService maintenanceService() { return new MaintenanceServiceImpl(); }
+
+    @Bean
+    ComplimentaryService complimentaryService() { return new ComplimentaryServiceImpl(); }
+
+    @Bean
+    CategoryService categoryService() { return new CategoryServiceImpl(); }
+
+    @Bean
+    JournalRecordService journalRecordService() { return new JournalRecordServiceImpl(); }
+
+    @Bean
+    UserService userService() {
+        return new UserServiceImpl();
+    }
 
     @Bean
     RoleService roleService() {
@@ -234,50 +316,53 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
         return new PhoneServiceImpl();
     }
 
-//    @Bean
-//    BlockService blockService() {
-//        return new BlockServiceImpl();
-//    }
+    @Bean
+    BlockService blockService() {
+        return new BlockServiceImpl();
+    }
 
     @Bean
     NotificationService notificationService() {
         return new NotificationServiceImpl();
     }
 
-//    @Bean
-//    NotificationTypeService notificationTypeService() {
-//        return new NotificationTypeServiceImpl();
-//    }
+    @Bean
+    NotificationTypeService notificationTypeService() {
+        return new NotificationTypeServiceImpl();
+    }
 
     @Bean
     OrderService orderService() {
         return new OrderServiceImpl();
     }
 
-//    @Bean
-//    ModificationHistoryService modificationHistoryService() {
-//        return new ModificationHistoryServiceImpl();
-//    }
+    @Bean
+    ModificationHistoryService modificationHistoryService() {
+        return new ModificationHistoryServiceImpl();
+    }
 
-//    @Bean
-//    RoomService roomService() {
-//        return new RoomServiceImpl();
-//    }
-//
-//    @Bean
-//    RoomTypeService roomTypeService() {
-//        return new RoomTypeServiceImpl();
-//    }
+    @Bean
+    RoomService roomService() {
+        return new RoomServiceImpl();
+    }
+
+    @Bean
+    RoomTypeService roomTypeService() {
+        return new RoomTypeServiceImpl();
+    }
 
     @Bean
     PriceService priceService() {
         return new PriceServiceImpl();
     }
 
-//    @Bean
-//    RateService rateService() {
-//        return new RateServiceImpl();
-//    }
+    @Bean
+    RateService rateService() {
+        return new RateServiceImpl();
+    }
+
+    @Bean
+    PhoneRegexService phoneRegexService() { return new PhoneRegexServiceImpl();}
 
     @Bean
     ReactConstantConfiguration reactConstantConfiguration() { return new ReactConstantConfiguration(); }
@@ -296,4 +381,16 @@ public class TestJPAConfig implements TransactionManagementConfigurer {
     ReactEntityValidator reactEntityValidator(){
         return new ReactEntityValidator();
     }
+
+    @Bean
+    BCryptPasswordEncoder bCryptPasswordEncoder() {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(11);
+        return encoder;
+    }
+
+    @Bean
+    AuthCredentialsDAO authCredentialsDAO() { return new AuthCredentialsDAOImpl(); }
+
+    @Bean
+    SecurityService securityService() {return new SecurityServiceImpl(); }
 }

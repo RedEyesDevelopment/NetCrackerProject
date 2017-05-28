@@ -6,7 +6,7 @@
 //import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 //import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 //import org.springframework.stereotype.Repository;
-//import projectpackage.support.ModelRowMapper;
+//import projectpackage.support.AuthCredentialsRowMapper;
 //
 //import java.util.List;
 //
@@ -23,7 +23,7 @@
 //    public Model getModel(int id) {
 //        String sqlQuery = "select IN_ID \"IN_ID\", IN_DATA \"IN_DATA\", MO_ID \"M_ID\", DATEOFREG \"M_DATE\" from MODEL M join INNER_OBJ I on M.INNER_ID = I.IN_ID where M.MO_ID = :mid";
 //        SqlParameterSource namedParameters = new MapSqlParameterSource("mid", id);
-//        RowMapperResultSetExtractor<Model> resultSetExtractor = new RowMapperResultSetExtractor<Model>(new ModelRowMapper());
+//        RowMapperResultSetExtractor<Model> resultSetExtractor = new RowMapperResultSetExtractor<Model>(new AuthCredentialsRowMapper());
 //        List<Model> result = namedParameterJdbcTemplate.query(sqlQuery, namedParameters, resultSetExtractor);
 //        if (!result.isEmpty()) {
 //            Model model = result.get(0);

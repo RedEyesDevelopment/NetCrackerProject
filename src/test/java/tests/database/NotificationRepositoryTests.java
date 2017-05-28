@@ -41,7 +41,6 @@ public class NotificationRepositoryTests extends AbstractDatabaseTest{
         Order insertOrder = new Order();
         insertOrder.setObjectId(300);
 
-
         Notification insertNotification = new Notification();
         insertNotification.setExecutedDate(new Date());
         insertNotification.setExecutedBy(insertAuthor);

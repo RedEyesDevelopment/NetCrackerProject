@@ -5,11 +5,15 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import projectpackage.model.rates.Rate;
+import projectpackage.model.support.IUDAnswer;
 import projectpackage.service.rateservice.RateService;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -23,24 +27,68 @@ public class RateRepositoryTests extends AbstractDatabaseTest{
 
     @Test
     @Rollback(true)
-    public void getAllRates() {
+    public void crudRateTest() {
+        Rate insertRate = new Rate();
+        insertRate.setRateFromDate(new Date(16000L));
+        insertRate.setRateToDate(new Date(16000L));
+        insertRate.setRoomTypeId(8);
+        IUDAnswer insertAnswer = rateService.insertRate(insertRate);
+        assertTrue(insertAnswer.isSuccessful());
+        LOGGER.info("Create rate result = " + insertAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
 
+        int rateId = insertAnswer.getObjectId();
+        insertRate.setObjectId(rateId);
+        Rate insertedRate = rateService.getSingleRateById(rateId);
+        assertEquals(insertRate, insertedRate);
+
+        Rate updateRate = new Rate();
+        updateRate.setRateFromDate(new Date(17000L));
+        updateRate.setRateToDate(new Date(17000L));
+        updateRate.setRoomTypeId(8);
+        IUDAnswer updateAnswer = rateService.updateRate(rateId, updateRate);
+        assertTrue(updateAnswer.isSuccessful());
+        LOGGER.info("Update rate result = " + updateAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Rate updatedRate = rateService.getSingleRateById(rateId);
+        assertEquals(updateRate, updatedRate);
+
+        IUDAnswer deleteAnswer = rateService.deleteRate(rateId);
+        assertTrue(deleteAnswer.isSuccessful());
+        LOGGER.info("Delete rate result = " + deleteAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Rate deletedRate = rateService.getSingleRateById(rateId);
+        assertNull(deletedRate);
+    }
+
+    @Test
+    @Rollback(true)
+    public void getAllRates() {
+        List<Rate> rates = rateService.getAllRates();
+        for (Rate rate : rates) {
+            LOGGER.info(rate);
+        }
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void getSingleRateById(){
-
+        Rate rate = rateService.getSingleRateById(5435);
+        LOGGER.info(rate);
+        LOGGER.info(SEPARATOR);
     }
 
 
     @Test
     @Rollback(true)
     public void deleteRate(){
-        int rateId = 2036;
-        boolean result = rateService.deleteRate(rateId);
-        assertTrue(result);
-        LOGGER.info("Delete rate result = " + result);
+        int rateId = 2072;
+        IUDAnswer iudAnswer = rateService.deleteRate(rateId);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Delete rate result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
@@ -50,11 +98,10 @@ public class RateRepositoryTests extends AbstractDatabaseTest{
         Rate rate = new Rate();
         rate.setRateFromDate(new Date());
         rate.setRateToDate(new Date());
-//        rate.setCreationDate(new Date());
         rate.setRoomTypeId(7);
-        boolean result = rateService.insertRate(rate);
-        assertTrue(result);
-        LOGGER.info("Create rate result = " + result);
+        IUDAnswer iudAnswer = rateService.insertRate(rate);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Create rate result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
@@ -67,11 +114,10 @@ public class RateRepositoryTests extends AbstractDatabaseTest{
         Rate rate = new Rate();
         rate.setRateFromDate(new Date());
         rate.setRateToDate(new Date());
-//        rate.setCreationDate(date);
         rate.setRoomTypeId(8);
-        boolean result = rateService.updateRate(2036, rate);
-        assertTrue(result);
-        LOGGER.info("Update rate result = " + result);
+        IUDAnswer iudAnswer = rateService.updateRate(2072, rate);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Update rate result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 }

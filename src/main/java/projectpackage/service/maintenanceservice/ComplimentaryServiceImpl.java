@@ -5,6 +5,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.maintenances.Complimentary;
+import projectpackage.model.support.IUDAnswer;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.maintenancedao.ComplimentaryDAO;
 
@@ -36,35 +38,38 @@ public class ComplimentaryServiceImpl implements ComplimentaryService {
     }
 
     @Override
-    public boolean deleteComplimentary(int id) {
-        int count = complimentaryDAO.deleteComplimentary(id);
-        LOGGER.info("Deleted rows : " + count);
-        if (count == 0) return false;
-        return true;
+    public IUDAnswer deleteComplimentary(int id) {
+        try {
+            complimentaryDAO.deleteComplimentary(id);
+        } catch (ReferenceBreakException e) {
+            return new IUDAnswer(id,false, e.printReferencesEntities());
+        }
+        return new IUDAnswer(id,true);
     }
 
     @Override
-    public boolean insertComplimentary(Complimentary complimentary) {
+    public IUDAnswer insertComplimentary(Complimentary complimentary) {
+        Integer complimentaryId = null;
         try {
-            int complimentaryId = complimentaryDAO.insertComplimentary(complimentary);
+            complimentaryId = complimentaryDAO.insertComplimentary(complimentary);
             LOGGER.info("Get from DB complimentaryId = " + complimentaryId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(complimentaryId,false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(complimentaryId,true);
     }
 
     @Override
-    public boolean updateComplimentary(int id, Complimentary newComplimentary) {
+    public IUDAnswer updateComplimentary(int id, Complimentary newComplimentary) {
         try {
             newComplimentary.setObjectId(id);
             Complimentary oldComplimentary = complimentaryDAO.getComplimentary(id);
             complimentaryDAO.updateComplimentary(newComplimentary, oldComplimentary);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(id,false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(id,true);
     }
 }

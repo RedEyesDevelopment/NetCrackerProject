@@ -12,7 +12,7 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 @ReactEntity(entityTypeName = "Room")
 @ReactReference(referenceName = "RoomToBlock", outerEntityClass = Block.class, outerFieldName = "room", outerFieldKey = "objectId", innerFieldKey = "objectId")
 @ReactReference(referenceName = "RoomToOrder", outerEntityClass = Order.class, outerFieldName = "room", outerFieldKey = "objectId", innerFieldKey = "objectId")
-public class Room implements ReactEntityWithId {
+public class Room implements ReactEntityWithId, Cloneable {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "Room_number")
@@ -22,4 +22,13 @@ public class Room implements ReactEntityWithId {
 
     private RoomType roomType;
 
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

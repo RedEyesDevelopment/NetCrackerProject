@@ -4,6 +4,7 @@ import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
+import projectpackage.repository.reacteav.TaskToTaskConditionExecutor;
 
 import java.util.*;
 
@@ -12,6 +13,11 @@ import java.util.*;
  */
 public class PriceEqualsToRoomCondition implements ReactCondition {
     private List<Object> objects;
+
+    @Override
+    public Class getNeededConditionExecutor() {
+        return TaskToTaskConditionExecutor.class;
+    }
 
     @Override
     public Class getTargetClass() {
@@ -51,7 +57,6 @@ public class PriceEqualsToRoomCondition implements ReactCondition {
             Room room = (Room) obj;
             for (Map.Entry<Integer, Set<Rate>> entry:newRates.entrySet()){
                 if (entry.getKey().equals(room.getObjectId())){
-                    System.out.println("CURRENT ROOM ROOMTYPE ID="+room.getRoomType().getObjectId());
                     RoomType newRoomType = (RoomType) room.getRoomType().clone();
                     newRoomType.setRates(entry.getValue());
                     room.setRoomType(newRoomType);

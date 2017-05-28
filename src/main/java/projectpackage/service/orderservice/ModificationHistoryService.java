@@ -2,6 +2,7 @@ package projectpackage.service.orderservice;
 
 import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
+import projectpackage.model.support.IUDAnswer;
 
 import java.util.List;
 
@@ -9,9 +10,11 @@ import java.util.List;
  * Created by Arizel on 16.05.2017.
  */
 public interface ModificationHistoryService {
-    public List<ModificationHistory> getAllModificationHistoryByOrder(Order order);//TODO Denis
+    public List<ModificationHistory> getAllModificationHistoryByOrder(Order order);
 
-    public List<ModificationHistory> getAllModificationHistory();//TODO Pacanu
-    public List<ModificationHistory> getAllModificationHistory(String orderingParameter, boolean ascend);//TODO Pacanu
-    public ModificationHistory getSingleModificationHistoryById(int id);//TODO Pacanu
+    public List<ModificationHistory> getAllModificationHistory();
+    public List<ModificationHistory> getAllModificationHistory(String orderingParameter, boolean ascend);
+    public ModificationHistory getSingleModificationHistoryById(int id);
+    public IUDAnswer insertModificationHistory(Order newOrder, Order oldOrder);
+    public IUDAnswer deleteModificationHistory(int id);
 }

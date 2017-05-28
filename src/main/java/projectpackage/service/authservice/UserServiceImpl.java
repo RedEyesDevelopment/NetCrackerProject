@@ -4,11 +4,10 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import projectpackage.model.auth.Phone;
-import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
-import projectpackage.repository.authdao.PhoneDAO;
+import projectpackage.model.support.IUDAnswer;
 import projectpackage.repository.authdao.UserDAO;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 
 import java.util.List;
@@ -22,24 +21,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserDAO userDAO;
 
-    @Autowired
-    PhoneDAO phoneDAO;
-
-    @Override
-    public List<User> getUsersByRole(Role role) {
-        return null;
-    }
-
     @Override
     public List<User> getAllUsers() {
         List<User> users = userDAO.getAllUsers();
         if (users == null) LOGGER.info("Returned NULL!!!");
         return users;
-    }
-
-    @Override
-    public List<User> getAllUsers(String orderingParameter, boolean ascend) {
-        return null;
     }
 
     @Override
@@ -50,41 +36,38 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteUser(int id) {
-        User user = userDAO.getUser(id);
-        int count = 0;
-        if (null != user.getPhones()) {
-            for (Phone phone : user.getPhones()) {
-                count = count + phoneDAO.deletePhone(phone.getObjectId());
-            }
+    public IUDAnswer deleteUser(int id) {
+        try {
+            userDAO.deleteUser(id);
+        } catch (ReferenceBreakException e) {
+            return new IUDAnswer(id,false, e.printReferencesEntities());
         }
-        count = count + userDAO.deleteUser(id);
-        if (count == 0) return false;
-        return true;
+        return new IUDAnswer(id,true);
     }
 
     @Override
-    public boolean insertUser(User user) {
+    public IUDAnswer insertUser(User user) {
+        Integer userId = null;
         try {
-            int userId = userDAO.insertUser(user);
+            userId = userDAO.insertUser(user);
             LOGGER.info("Get from DB userId = " + userId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            new IUDAnswer(userId,false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(userId,true);
     }
 
     @Override
-    public boolean updateUser(int id, User newUser) {
+    public IUDAnswer updateUser(int id, User newUser) {
         try {
             newUser.setObjectId(id);
             User oldUser = userDAO.getUser(id);
             userDAO.updateUser(newUser, oldUser);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return false;
+            return new IUDAnswer(id,false, e.getMessage());
         }
-        return true;
+        return new IUDAnswer(id,true);
     }
 }

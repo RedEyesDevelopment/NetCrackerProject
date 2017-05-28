@@ -41,7 +41,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role getSingleRoleByRoleName(String rolename) {
-        if (null==rolename) return null;
+        if (null == rolename) return null;
         List<Role> roles = getAllRoles("objectId", true);
         for (Role role:roles){
             if (rolename.equals(role.getRoleName())){

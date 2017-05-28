@@ -7,17 +7,21 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
-import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
+import projectpackage.repository.reacteav.conditions.ConditionExecutor;
 import projectpackage.repository.reacteav.conditions.ReactCondition;
 import projectpackage.repository.reacteav.conditions.ReactConditionData;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+import projectpackage.repository.reacteav.exceptions.WrongFetchException;
 import projectpackage.repository.reacteav.querying.ReactQueryBuilder;
 import projectpackage.repository.reacteav.querying.ReactQueryTaskHolder;
 import projectpackage.repository.reacteav.relationsdata.EntityAttrIdType;
 import projectpackage.repository.reacteav.relationsdata.EntityReferenceRelationshipsData;
 import projectpackage.repository.reacteav.relationsdata.EntityReferenceTaskData;
 import projectpackage.repository.reacteav.relationsdata.EntityVariablesData;
-import projectpackage.repository.reacteav.support.*;
+import projectpackage.repository.reacteav.support.ObjectTableNameGenerator;
+import projectpackage.repository.reacteav.support.ReactConnectionsDataBucket;
+import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
+import projectpackage.repository.reacteav.support.ReactEntityValidator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -27,7 +31,7 @@ public class ReactEAV {
     private ReactConstantConfiguration config;
     private ReactConnectionsDataBucket dataBucket;
     private ReacTask rootNode;
-    private List<ReactConditionData> conditions;
+    private Set<ConditionExecutor> executors;
     private List<ReactQueryTaskHolder> reactQueryTaskHolders;
 
     @Autowired
@@ -42,23 +46,45 @@ public class ReactEAV {
         this.dataBucket = dataBucket;
         this.rootNode = new ReacTask(null, this, entityClass, true, null, null, false, null);
         this.rootNode.setObjectClass(entityClass);
-        this.conditions = new ArrayList<>();
+        this.executors =new HashSet<>();
     }
 
     ReactConnectionsDataBucket getDataBucket() {
         return dataBucket;
     }
 
-    public ReacTask fetchChildEntityCollection(Class innerEntityClass) {
+    public ReacTask fetchRootChild(Class innerEntityClass) {
+        System.out.println();
+        checkInnerRelations(rootNode.getObjectClass(), dataBucket.getOuterRelationsMap().get(innerEntityClass).keySet());
         ReacTask newReacTask = fetchingOrderCreation(innerEntityClass, false, null, null, false, null);
         return newReacTask;
     }
 
-    public ReacTask fetchReferenceEntityCollection(Class innerEntityClass, String referenceName) {
+    public ReacTask fetchRootReference(Class innerEntityClass, String referenceName) {
+        boolean innerHasIt = false;
+        for (EntityReferenceRelationshipsData data:dataBucket.getEntityReferenceRelationsMap().get(innerEntityClass).values()){
+            if (data.getOuterClass().equals(rootNode.getObjectClass())){
+                innerHasIt = true;
+            }
+        }
+        if (!innerHasIt) {
+            WrongFetchException exception = new WrongFetchException(rootNode.getObjectClass(), innerEntityClass, "root");
+            throw exception;
+        }
         ReacTask newReacTask = fetchingOrderCreation(innerEntityClass, false, null, null, false, referenceName);
         return newReacTask;
     }
 
+    private void checkInnerRelations(Class clazz, Set<Class> set){
+        boolean rootHasIt=false;
+        for (Class currentClass: set){
+            if (currentClass.equals(clazz)) rootHasIt = true;
+        }
+        if (!rootHasIt) {
+            WrongFetchException exception = new WrongFetchException(clazz, rootNode.getObjectClass(), "root");
+            throw exception;
+        }
+    }
 
     private ReacTask fetchingOrderCreation(Class innerEntityClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend, String referenceId) {
         validator.isTargetClassAReactEntity(innerEntityClass);
@@ -67,23 +93,37 @@ public class ReactEAV {
         return childNode;
     }
 
-    public ReactEAV addCondition(Class<? extends ReactCondition> conditionClass) {
-        ReactCondition condition = null;
-        try {
-            condition = conditionClass.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        ReactConditionData data = null;
-        ConditionExecutionMoment moment = null;
-        if (conditionClass.equals(PriceEqualsToRoomCondition.class)) {
-            moment = ConditionExecutionMoment.AFTER_QUERY;
-        }
-        data = new ReactConditionData(condition, moment);
-        this.conditions.add(data);
+    void generateCondition(ReactConditionData data){
+        addConditionExecutor(data);
+    }
+
+    public ReactEAV addCondition(ReactCondition condition, ConditionExecutionMoment moment) {
+        ReactConditionData data = new ReactConditionData(condition, rootNode, moment);
+        addConditionExecutor(data);
         return this;
+    }
+
+    private void addConditionExecutor(ReactConditionData data){
+        Class<ConditionExecutor> executorClass = data.getCondition().getNeededConditionExecutor();
+        System.out.println("EXECUTORCLASS="+executorClass);
+        boolean executorAlreadyExists = false;
+        for (ConditionExecutor existingExecutor:executors){
+            if (existingExecutor.getClass().equals(executorClass)){
+                existingExecutor.addReactConditionData(data);
+                executorAlreadyExists = true;
+            }
+        }
+            if (!executorAlreadyExists){
+                    try {
+                        ConditionExecutor executor = (ConditionExecutor) executorClass.newInstance();
+                        executor.addReactConditionData(data);
+                        executors.add(executor);
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                }
+            }
     }
 
     public Object getSingleEntityWithId(int targetId) throws ResultEntityNullException {
@@ -98,9 +138,7 @@ public class ReactEAV {
         } catch (NullPointerException e) {
             throw new ResultEntityNullException();
         }
-        if (null != conditions && !conditions.isEmpty()) {
             conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
-        }
         return result;
     }
 
@@ -115,9 +153,7 @@ public class ReactEAV {
         if (null == result) {
             throw new ResultEntityNullException();
         }
-        if (null != conditions && !conditions.isEmpty()) {
-            conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
-        }
+        conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
         return result;
     }
 
@@ -132,37 +168,16 @@ public class ReactEAV {
         if (null == result) {
             throw new ResultEntityNullException();
         }
-        if (null != conditions && !conditions.isEmpty()) {
-            conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
-        }
+        conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
         return result;
     }
 
     private void conditionExecution(ConditionExecutionMoment moment) {
-        for (ReactConditionData data : conditions) {
-            ReacTask searcheable;
-            if (!data.getCondition().getTargetClass().equals(rootNode.getObjectClass())) {
-                searcheable = recursionConditionTaskSearching(rootNode, data.getClass());
-            } else {
-                searcheable = rootNode;
-            }
-            if (data.getMoment().equals(moment)) {
-                ReactCondition condition = data.getCondition();
-                condition.loadDataToParse(searcheable.getResultList());
-                condition.execute();
+        if (!executors.isEmpty()){
+            for (ConditionExecutor executor:executors){
+                executor.executeAll(moment);
             }
         }
-    }
-
-    private ReacTask recursionConditionTaskSearching(ReacTask currentTask, Class searcheableClass) {
-        if (currentTask.getObjectClass().equals(searcheableClass)) {
-            return currentTask;
-        } else {
-            for (ReacTask task : currentTask.getInnerObjects()) {
-                return recursionConditionTaskSearching(task, searcheableClass);
-            }
-        }
-        return null;
     }
 
     private List<ReactQueryTaskHolder> reacTaskPreparator() {
@@ -250,7 +265,7 @@ public class ReactEAV {
         int per = 0;
         for (ReacTask task : currentTask.getInnerObjects()) {
             for (Map.Entry<String, EntityReferenceRelationshipsData> outerData : task.getCurrentEntityReferenceRelations().entrySet()) {
-                if (outerData.getValue().getOuterClass().equals(currentTask.getObjectClass()) && null != task.getReferenceId() && task.getReferenceId().equals(outerData.getKey())) {
+       if (outerData.getValue().getOuterClass().equals(currentTask.getObjectClass()) && null != task.getReferenceId() && task.getReferenceId().equals(outerData.getKey())) {
                     EntityReferenceTaskData newReferenceTask = new EntityReferenceTaskData(currentTask.getObjectClass(), task.getObjectClass(), task.getThisClassObjectTypeName(), outerData.getValue().getOuterFieldName(), outerData.getValue().getInnerIdKey(), outerData.getValue().getOuterIdKey(), outerData.getValue().getReferenceAttrId());
                     currentTask.addCurrentEntityReferenceTasks(per++, newReferenceTask);
                 }
@@ -279,12 +294,12 @@ public class ReactEAV {
                     }
                 }
             } else {
-                List result = null;
+                List result;
                 boolean cloned = false;
                 for (ReactQueryTaskHolder currentHolder : reactQueryTaskHolders) {
                     if (!currentHolder.getNode().getResultList().isEmpty() && holder.getNode().getObjectClass().equals(currentHolder.getNode().getObjectClass())) {
                         result = new ArrayList(currentHolder.getNode().getResultList());
-                        cloned = true;
+                        holder.getNode().setResultList(result);
                     }
                 }
                 if (!cloned) {

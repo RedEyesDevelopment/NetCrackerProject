@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projectpackage.model.auth.User;
+import projectpackage.model.support.IUDAnswer;
 import projectpackage.service.authservice.UserService;
 
 import javax.cache.annotation.CacheRemoveAll;
@@ -17,21 +18,20 @@ import java.util.List;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-@RestController(value = "/users")
+@RestController
+@RequestMapping("/users")
 public class UserController {
 
     @Autowired
     UserService userService;
 
-    //Get User List with Sortings
+    //Get User List
     @ResponseStatus(HttpStatus.OK)
     @CacheResult(cacheName = "userList")
-    @GetMapping(value = "/{sortingParameter}&{sortingOrder}",produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public List<Resource<User>> getUserList(@PathVariable("sortingParameter") String sortingParameter, @PathVariable("sortingOrder") String sortingOrderString){
-        //Parse boolean String "ASCEND"
-        Boolean sortingOrder = Boolean.parseBoolean(sortingOrderString);
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public List<Resource<User>> getUserList(){
         //Get users from service
-        List<User> users = userService.getAllUsers(sortingParameter,sortingOrder);
+        List<User> users = userService.getAllUsers();
         //Create Resources for usersList
         List<Resource<User>> resources = new ArrayList<>();
         for (User user:users){
@@ -44,9 +44,8 @@ public class UserController {
     }
 
     //Get single User by id
-    //	@Secured("ROLE_ADMIN")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public Resource<User> getUser(@PathVariable("id") Integer id){
         //PATHVARIABLE is not optional, so every times it returns a value
         User user = userService.getSingleUserById(id);
@@ -59,55 +58,55 @@ public class UserController {
 
     //Create user, fetch into database
     @CacheRemoveAll(cacheName = "userList")
-    @PostMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Boolean> createUser(@RequestBody User newUser){
         //Creating RESPONSEENTITY - special class for responsing with object and HttpStatusCode
-        Boolean result = userService.insertUser(newUser);
+        IUDAnswer result = userService.insertUser(newUser);
         //Making status object for result boolean
         HttpStatus status;
-        if (result) {
+        if (result.isSuccessful()) {
             status = HttpStatus.CREATED;
         } else status = HttpStatus.BAD_REQUEST;
         //Creating simple ResponseEntity
-        ResponseEntity<Boolean> responseEntity = new ResponseEntity<Boolean>(result, status);
+        ResponseEntity<Boolean> responseEntity = new ResponseEntity<Boolean>(result.isSuccessful(), status);
         return responseEntity;
     }
 
     //Update user method
     //	@Secured("ROLE_ADMIN")
     @CacheRemoveAll(cacheName = "userList")
-    @PutMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Boolean> updateUser(@PathVariable("id") Integer id, @RequestBody User changedUser){
         //Validating link pathVariable ID is equal to changedUser ID
         if (!id.equals(changedUser.getObjectId())){
             return new ResponseEntity<Boolean>(false, HttpStatus.NOT_ACCEPTABLE);
         }
         //Creating RESPONSEENTITY - special class for responsing with object and HttpStatusCode
-        Boolean result = userService.updateUser(id, changedUser);
+        IUDAnswer result = userService.updateUser(id, changedUser);
         //Making status object for result boolean
         HttpStatus status;
-        if (result) {
+        if (result.isSuccessful()) {
             status = HttpStatus.ACCEPTED;
         } else status = HttpStatus.BAD_REQUEST;
         //Creating simple ResponseEntity
-        ResponseEntity<Boolean> responseEntity = new ResponseEntity<Boolean>(result, status);
+        ResponseEntity<Boolean> responseEntity = new ResponseEntity<Boolean>(result.isSuccessful(), status);
         return responseEntity;
     }
 
     //Delete user method
     //	@Secured("ROLE_ADMIN")
     @CacheRemoveAll(cacheName = "userList")
-    @DeleteMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Boolean> deleteUser(@PathVariable("id") Integer id){
         //Creating RESPONSEENTITY - special class for responsing with object and HttpStatusCode
-        Boolean result = userService.deleteUser(id);
+        IUDAnswer result = userService.deleteUser(id);
         //Making status object for result boolean
         HttpStatus status;
-        if (result) {
+        if (result.isSuccessful()) {
             status = HttpStatus.ACCEPTED;
         } else status = HttpStatus.NOT_FOUND;
         //Creating simple ResponseEntity
-        ResponseEntity<Boolean> responseEntity = new ResponseEntity<Boolean>(result, status);
+        ResponseEntity<Boolean> responseEntity = new ResponseEntity<Boolean>(result.isSuccessful(), status);
         return responseEntity;
     }
 }

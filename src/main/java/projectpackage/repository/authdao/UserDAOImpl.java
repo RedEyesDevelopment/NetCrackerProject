@@ -2,12 +2,14 @@ package projectpackage.repository.authdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -25,8 +27,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     public User getUser(Integer id) {
         if (id == null) return null;
         try {
-            return (User) manager.createReactEAV(User.class).fetchChildEntityCollection(Phone.class).closeFetch()
-                    .fetchReferenceEntityCollectionForInnerObject(Role.class, "RoleToUser").closeAllFetches()
+            return (User) manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches()
+                    .fetchRootReference(Role.class, "RoleToUser").closeAllFetches()
                     .getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);
@@ -37,8 +39,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     @Override
     public List<User> getAllUsers() {
         try {
-            return manager.createReactEAV(User.class).fetchChildEntityCollection(Phone.class).closeFetch()
-                    .fetchReferenceEntityCollectionForInnerObject(Role.class, "RoleToUser").closeAllFetches()
+            return manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches()
+                    .fetchRootReference(Role.class, "RoleToUser").closeAllFetches()
                     .getEntityCollection();
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);
@@ -57,10 +59,15 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
             jdbcTemplate.update(insertAttribute, 17, objectId, user.getFirstName(), null);         //first_name
             jdbcTemplate.update(insertAttribute, 18, objectId, user.getLastName(), null);          //last_name
             jdbcTemplate.update(insertAttribute, 19, objectId, user.getAdditionalInfo(), null);    //additional_info
+            if (user.getEnabled()) {
+                jdbcTemplate.update(insertAttribute, 3, objectId, "true", null);
+            } else {
+                jdbcTemplate.update(insertAttribute, 3, objectId, "false", null);
+            }
 
             jdbcTemplate.update(insertObjReference, 20, objectId, user.getRole().getObjectId());    //hasRole
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
         return objectId;
     }
@@ -86,18 +93,26 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
             if (!oldUser.getAdditionalInfo().equals(newUser.getAdditionalInfo())) {
                 jdbcTemplate.update(updateAttribute, newUser.getAdditionalInfo(), null, newUser.getObjectId(), 19);
             }
+            if (!oldUser.getEnabled().equals(newUser.getEnabled())) {
+                if (newUser.getEnabled()) {
+                    jdbcTemplate.update(updateAttribute, "true", null, newUser.getObjectId(), 3);
+                } else {
+                    jdbcTemplate.update(updateAttribute, "false", null, newUser.getObjectId(), 3);
+                }
+            }
+            System.out.println("OLDUSER ROLE ID: " + oldUser.getRole().getObjectId());
+            System.out.println("NEWUSER ROLE ID: " + newUser.getRole().getObjectId());
             if (oldUser.getRole().getObjectId() != newUser.getRole().getObjectId()) {
                 jdbcTemplate.update(updateReference, newUser.getRole().getObjectId(), newUser.getObjectId(), 20);
             }
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
     }
 
     @Override
-    public int deleteUser(int id) {
-        //TODO доделать проверки на связи ModificationHistory
-        return deleteSingleEntityById(id);
+    public void deleteUser(int id) throws ReferenceBreakException {
+        deleteSingleEntityById(id);
     }
 
 }

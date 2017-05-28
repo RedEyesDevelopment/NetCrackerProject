@@ -1,6 +1,8 @@
 package projectpackage.repository.roomsdao;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.rates.Price;
@@ -8,7 +10,10 @@ import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.ratesdao.RateDAOImpl;
+import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
@@ -16,6 +21,8 @@ import java.util.List;
 
 @Repository
 public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
+    private static final Logger LOGGER = Logger.getLogger(RateDAOImpl.class);
+
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -23,8 +30,12 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     public Room getRoom(Integer id) {
         if (null==id) return null;
         try {
-            return (Room) manager.createReactEAV(Room.class).fetchReferenceEntityCollection(RoomType.class, "RoomTypeToRoom").fetchChildEntityCollectionForInnerObject(Rate.class).fetchChildEntityCollectionForInnerObject(Price.class).closeAllFetches().addCondition(PriceEqualsToRoomCondition.class).getSingleEntityWithId(id);
+            return (Room) manager.createReactEAV(Room.class).addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
+                    .fetchRootReference(RoomType.class, "RoomTypeToRoom")
+                    .fetchInnerChild(Rate.class).fetchInnerChild(Price.class).closeAllFetches()
+                    .getSingleEntityWithId(id);
         } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
             return null;
         }
     }
@@ -32,8 +43,11 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     @Override
     public List<Room> getAllRooms() {
         try {
-            return manager.createReactEAV(Room.class).fetchReferenceEntityCollection(RoomType.class, "RoomTypeToRoom").fetchChildEntityCollectionForInnerObject(Rate.class).fetchChildEntityCollectionForInnerObject(Price.class).closeAllFetches().addCondition(PriceEqualsToRoomCondition.class).getEntityCollection();
+            return manager.createReactEAV(Room.class).addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
+                    .fetchRootReference(RoomType.class, "RoomTypeToRoom")
+                    .fetchInnerChild(Rate.class).fetchInnerChild(Price.class).closeAllFetches().getEntityCollection();
         } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
             return null;
         }
     }
@@ -48,8 +62,8 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
             jdbcTemplate.update(insertAttribute, 2, objectId, room.getNumberOfResidents(), null);
 
             jdbcTemplate.update(insertObjReference, 4, objectId, room.getRoomType().getObjectId());
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
         return objectId;
     }
@@ -66,13 +80,13 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
             if (oldRoom.getRoomType().getObjectId() != newRoom.getRoomType().getObjectId()) {
                 jdbcTemplate.update(updateReference, newRoom.getRoomType().getObjectId(), newRoom.getObjectId(), 4);
             }
-        } catch (NullPointerException e) {
-            throw new TransactionException(this);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
         }
     }
 
     @Override
-    public int deleteRoom(int id) {
-        return deleteSingleEntityById(id);
+    public void deleteRoom(int id) throws ReferenceBreakException {
+        deleteSingleEntityById(id);
     }
 }

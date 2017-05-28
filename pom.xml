@@ -6,7 +6,10 @@
 
     <groupId>org.yakimovdenis</groupId>
     <artifactId>NCProject</artifactId>
+    <name>Hotels</name>
+    <description>RedEyesDevelopment group NetCracker project (spring 2017)</description>
     <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
 
     <build>
         <testResources>
@@ -34,6 +37,10 @@
         <repository>
             <id>ADOBE</id>
             <url>https://repo.adobe.com/nexus/content/repositories/public/</url>
+        </repository>
+        <repository>
+            <id>DATANUCLEUS</id>
+            <url>http://www.datanucleus.org/downloads/maven2/</url>
         </repository>
     </repositories>
 
@@ -81,16 +88,30 @@
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+
         <!-- SPRING SECURITY-->
 
-        <!--<dependency>-->
-            <!--<groupId>org.springframework.security</groupId>-->
-            <!--<artifactId>spring-security-test</artifactId>-->
-            <!--<version>4.2.2.RELEASE</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <version>4.2.2.RELEASE</version>
+        </dependency>
 
 
         <!--Testing deps-->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -157,11 +178,13 @@
         </dependency>
 
         <!--Oracle driver for jdbc -->
+        <!-- https://mvnrepository.com/artifact/oracle/ojdbc6 -->
         <dependency>
             <groupId>oracle</groupId>
-            <artifactId>ojdbc</artifactId>
-            <version>1.4</version>
+            <artifactId>ojdbc6</artifactId>
+            <version>11.2.0.3</version>
         </dependency>
+
 
         <!-- C3P0 connections pool-->
         <dependency>
@@ -191,7 +214,18 @@
             <version>1.0.0</version>
         </dependency>
 
+
+        <!-- POOLS FOR TESTS -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+
     </dependencies>
-
-
 </project>

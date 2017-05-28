@@ -7,12 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
-import projectpackage.model.rates.Rate;
-import projectpackage.model.rates.Price;
 import projectpackage.model.support.IUDAnswer;
 import projectpackage.service.roomservice.RoomService;
 
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -30,64 +27,45 @@ public class RoomRepositoryTests extends AbstractDatabaseTest{
     RoomService roomService;
 
     @Test
-        @Rollback(true)
-        public void crudRoomTest() {
-            RoomType insertRoomType = new RoomType();
-            insertRoomType.setObjectId(8);
-            insertRoomType.setRoomTypeTitle("Super-Luxe");
-            insertRoomType.setContent("Что-то есть");
-            insertRoomType.setRates();
+    @Rollback(true)
+    public void crudRoomTest() {
+        RoomType insertRoomType = new RoomType();
+        Room insertRoom = new Room();
+        insertRoom.setRoomNumber(111);
+        insertRoom.setNumberOfResidents(1);
+        insertRoomType.setObjectId(8);
+        insertRoom.setRoomType(insertRoomType);
+        IUDAnswer insertAnswer = roomService.insertRoom(insertRoom);
+        assertTrue(insertAnswer.isSuccessful());
+        LOGGER.info("Create room result = " + insertAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
 
-            Rate insertRate = new Rate();
-            insertRate.setObjectId(43);
-            insertRate.setRateFromDate(new Date());
-            insertRate.setRateToDate(new Date());
+        int roomId = insertAnswer.getObjectId();
+        insertRoom.setObjectId(roomId);
+        Room insertedRoom = roomService.getSingleRoomById(roomId);
+        assertEquals(insertRoom, insertedRoom);
 
-            Price insertPrice = new Price();
-            insertPrice.setObjectId(91);
-            insertPrice.setNumberOfPeople(1);
-            insertPrice.setRate((long) 1000);
+        RoomType updateRoomType = new RoomType();
+        Room updateRoom = new Room();
+        updateRoom.setRoomNumber(112);
+        updateRoom.setNumberOfResidents(2);
+        updateRoomType.setObjectId(7);
+        updateRoom.setRoomType(updateRoomType);
+        IUDAnswer iudAnswer = roomService.updateRoom(roomId, updateRoom);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Update room result = " + iudAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
 
-            Room insertRoom = new Room();
-            insertRoom.setRoomNumber(111);
-            insertRoom.setNumberOfResidents(1);
-            insertRoom.setRoomType(insertRoomType);
-            insertRoomType.setRates();
-            IUDAnswer insertAnswer = roomService.insertRoom(insertRoom);
-            assertTrue(insertAnswer.isSuccessful());
-            LOGGER.info("Create room result = " + insertAnswer.isSuccessful());
-            LOGGER.info(SEPARATOR);
+        Room updatedRoom = roomService.getSingleRoomById(roomId);
+        assertEquals(updateRoom, updatedRoom);
 
-            int roomId = insertAnswer.getObjectId();
-            insertRoom.setObjectId(roomId);
-            Room insertedRoom = roomService.getSingleRoomById(roomId);
-            assertEquals(insertRoom, insertedRoom);
+        IUDAnswer deleteAnswer = roomService.deleteRoom(roomId);
+        assertTrue(deleteAnswer.isSuccessful());
+        LOGGER.info("Delete room result = " + deleteAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
 
-            RoomType updateRoomType = new RoomType();
-            Room updateRoom = new Room();
-            Rate updateRate = new Rate();
-            Price updatePrice = new Price();
-            updateRoom.setRoomNumber(112);
-            updateRoom.setNumberOfResidents(2);
-            updateRoomType.setObjectId(7);
-            updateRoom.setRoomType(updateRoomType);
-            updateRate.setObjectId(39);
-            updatePrice.setObjectId(79);
-            IUDAnswer iudAnswer = roomService.updateRoom(roomId, updateRoom);
-            assertTrue(iudAnswer.isSuccessful());
-            LOGGER.info("Update room result = " + iudAnswer.isSuccessful());
-            LOGGER.info(SEPARATOR);
-
-            Room updatedRoom = roomService.getSingleRoomById(roomId);
-            assertEquals(updateRoom, updatedRoom);
-
-            IUDAnswer deleteAnswer = roomService.deleteRoom(roomId);
-            assertTrue(deleteAnswer.isSuccessful());
-            LOGGER.info("Delete room result = " + deleteAnswer.isSuccessful());
-            LOGGER.info(SEPARATOR);
-
-            Room deletedRoom = roomService.getSingleRoomById(roomId);
-            assertNull(deletedRoom);
+        Room deletedRoom = roomService.getSingleRoomById(roomId);
+        assertNull(deletedRoom);
     }
 
     @Test

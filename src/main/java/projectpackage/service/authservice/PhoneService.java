@@ -2,6 +2,7 @@ package projectpackage.service.authservice;
 
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.User;
+import projectpackage.model.support.IUDAnswer;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface PhoneService {
     public List<Phone> getAllPhones();//TODO Merlyan
     public List<Phone> getAllPhones(String orderingParameter, boolean ascend);
     public Phone getSinglePhoneById(int id);
-    public boolean deletePhone(int id);
-    public boolean insertPhone(Phone phone);
-    public boolean updatePhone(int id, Phone newPhone);
+    public IUDAnswer deletePhone(int id);
+    public IUDAnswer insertPhone(Phone phone);
+    public IUDAnswer updatePhone(int id, Phone newPhone);
 }

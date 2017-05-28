@@ -5,6 +5,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -17,11 +19,11 @@ import java.util.Arrays;
 
 @SpringBootApplication(exclude = {MultipartAutoConfiguration.class})
 @EnableCaching
-public class Application {
+public class Application extends SpringBootServletInitializer {
     private static final Logger log = Logger.getLogger(Application.class);
     public static void main(String[] args) throws Exception {
         SpringApplication.run(new Class<?>[] {Application.class}, args);
-        log.info("Vse ok!");
+        log.info("Started!");
     }
 
     @Bean
@@ -34,5 +36,11 @@ public class Application {
                 System.out.println(beanName);
             }
         };
+    }
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+//        return super.configure(builder);
+        return builder.sources(Application.class);
     }
 }

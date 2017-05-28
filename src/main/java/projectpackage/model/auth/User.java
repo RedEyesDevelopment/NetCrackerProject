@@ -20,7 +20,7 @@ import java.util.Set;
         outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "7")
 @ReactReference(referenceName = "UserToOrderAsLastModificator", outerEntityClass = Order.class, outerFieldName = "lastModificator",
         outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "44")
-public class User implements ReactEntityWithId {
+public class User implements ReactEntityWithId, Cloneable {
 
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
@@ -40,4 +40,13 @@ public class User implements ReactEntityWithId {
     private Role role;
     private Set<Phone> phones;
 
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

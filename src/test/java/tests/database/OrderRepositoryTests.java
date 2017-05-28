@@ -6,8 +6,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import projectpackage.model.auth.User;
-import projectpackage.model.maintenances.JournalRecord;
-import projectpackage.model.orders.Category;
 import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.support.IUDAnswer;
@@ -36,10 +34,6 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
         insertRoom.setObjectId(127);
         User insertUser = new User();
         insertUser.setObjectId(901);
-        Category insertCategory = new Category();
-        insertCategory.setObjectId(451);
-        JournalRecord insertJournalRecord = new JournalRecord();
-        insertJournalRecord.setObjectId(1702);
         Order insertOrder = new Order();
         insertOrder.setRegistrationDate(new Date());
         insertOrder.setIsPaidFor(false);
@@ -51,7 +45,6 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
         insertOrder.setRoom(insertRoom);
         insertOrder.setClient(insertUser);
         insertOrder.setLastModificator(insertUser);
-        insertOrder.setCategory(insertCategory);
         IUDAnswer insertAnswer = orderService.insertOrder(insertOrder);
         assertTrue(insertAnswer.isSuccessful());
         LOGGER.info("Create order result = " + insertAnswer.isSuccessful());

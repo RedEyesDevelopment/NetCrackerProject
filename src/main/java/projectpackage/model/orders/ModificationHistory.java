@@ -12,12 +12,22 @@ import java.util.Date;
 @Data
 @ReactEntity(entityTypeName = "Modification_history")
 @ReactChild(outerEntityClass = Order.class, outerFieldName = "historys", outerFieldKey = "objectId", innerFieldKey = "savedOrder")
-public class ModificationHistory implements ReactEntityWithId {
+public class ModificationHistory implements ReactEntityWithId, Cloneable {
     @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
     private int objectId;
-    @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "modifDate")
+    @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Modif_date")
     private Date modifiDate;
 
     private User modifAuthor;
     private Order savedOrder;
+
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

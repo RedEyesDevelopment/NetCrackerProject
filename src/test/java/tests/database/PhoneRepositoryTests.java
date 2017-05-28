@@ -9,10 +9,13 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.Phone;
+import projectpackage.model.support.IUDAnswer;
 import projectpackage.service.authservice.PhoneService;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -25,6 +28,42 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
 
     @Autowired
     PhoneService phoneService;
+
+    @Test
+    @Rollback(true)
+    public void crudPhoneTest() {
+        Phone insertPhone = new Phone();
+        insertPhone.setPhoneNumber("0638509108");
+        insertPhone.setUserId(900);
+        IUDAnswer insertAnswer = phoneService.insertPhone(insertPhone);
+        assertTrue(insertAnswer.isSuccessful());
+        LOGGER.info("Create phone result = " + insertAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        int phoneId = insertAnswer.getObjectId();
+        Phone insertedPhone = phoneService.getSinglePhoneById(phoneId);
+        insertPhone.setObjectId(phoneId);
+        assertEquals(insertPhone, insertedPhone);
+
+        Phone updatePhone = new Phone();
+        updatePhone.setUserId(900);
+        updatePhone.setPhoneNumber("0638509180");
+        IUDAnswer updateAnswer = phoneService.updatePhone(phoneId, updatePhone);
+        assertTrue(updateAnswer.isSuccessful());
+        LOGGER.info("Update phone result = " + updateAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Phone updatedPhone = phoneService.getSinglePhoneById(phoneId);
+        assertEquals(updatePhone, updatedPhone);
+
+        IUDAnswer deleteAnswer = phoneService.deletePhone(phoneId);
+        assertTrue(deleteAnswer.isSuccessful());
+        LOGGER.info("Delete phone result = " + deleteAnswer.isSuccessful());
+        LOGGER.info(SEPARATOR);
+
+        Phone deletedPhone = phoneService.getSinglePhoneById(phoneId);
+        assertNull(deletedPhone);
+    }
 
     @Test
     @Rollback(true)
@@ -50,10 +89,10 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
     @Test
     @Rollback(true)
     public void deletePhone(){
-        int phoneId = 2009;
-        boolean result = phoneService.deletePhone(phoneId);
-        assertTrue(result);
-        LOGGER.info("Delete phone result = " + result);
+        int phoneId = 2070;
+        IUDAnswer iudAnswer = phoneService.deletePhone(phoneId);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Delete phone result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
@@ -61,11 +100,11 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
     @Rollback(true)
     public void createPhone(){
         Phone phone = new Phone();
-        phone.setPhoneNumber("7583475543");
-        phone.setUserId(1404);
-        boolean result = phoneService.insertPhone(phone);
-        assertTrue(result);
-        LOGGER.info("Create phone result = " + result);
+        phone.setPhoneNumber("0638509108");
+        phone.setUserId(901);
+        IUDAnswer iudAnswer = phoneService.insertPhone(phone);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Create phone result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 
@@ -75,9 +114,9 @@ public class PhoneRepositoryTests extends AbstractDatabaseTest {
         Phone phone = new Phone();
         phone.setUserId(1406);
         phone.setPhoneNumber("0638509180");
-        boolean result = phoneService.updatePhone(2009, phone);
-        assertTrue(result);
-        LOGGER.info("Update phone result = " + result);
+        IUDAnswer iudAnswer = phoneService.updatePhone(2070, phone);
+        assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info("Update phone result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
 

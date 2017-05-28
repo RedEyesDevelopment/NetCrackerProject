@@ -1,6 +1,7 @@
 package projectpackage.repository.notificationsdao;
 
 import projectpackage.model.notifications.NotificationType;
+import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 
 import java.util.List;
@@ -13,5 +14,5 @@ public interface NotificationTypeDAO {
     public List<NotificationType> getAllNotificationTypes();
     public int insertNotificationType(NotificationType notificationType) throws TransactionException;
     public void updateNotificationType(NotificationType newNotificationType, NotificationType oldNotificationType) throws TransactionException;
-    public int deleteNotificationType(int id);
+    public void deleteNotificationType(int id) throws ReferenceBreakException;
 }

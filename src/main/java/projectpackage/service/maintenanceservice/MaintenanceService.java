@@ -1,6 +1,7 @@
 package projectpackage.service.maintenanceservice;
 
 import projectpackage.model.maintenances.Maintenance;
+import projectpackage.model.support.IUDAnswer;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface MaintenanceService {
     public List<Maintenance> getAllMaintenances();
     public List<Maintenance> getAllMaintenances(String orderingParameter, boolean ascend);
     public Maintenance getSingleMaintenanceById(int id);
-    public boolean deleteMaintenance(int id);
-    public boolean insertMaintenance(Maintenance maintenance);
-    public boolean updateMaintenance(int id, Maintenance newMaintenance);
+    public IUDAnswer deleteMaintenance(int id);
+    public IUDAnswer insertMaintenance(Maintenance maintenance);
+    public IUDAnswer updateMaintenance(int id, Maintenance newMaintenance);
 }
