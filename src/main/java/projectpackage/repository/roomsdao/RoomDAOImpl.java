@@ -12,6 +12,8 @@ import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.ratesdao.RateDAOImpl;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
@@ -86,7 +88,15 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     }
 
     @Override
-    public void deleteRoom(int id) throws ReferenceBreakException {
+    public void deleteRoom(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        Room room = null;
+        try {
+            room = getRoom(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == room) throw new DeletedObjectNotExistsException(this);
+
         deleteSingleEntityById(id);
     }
 }

@@ -11,6 +11,8 @@ import projectpackage.model.orders.Category;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -85,7 +87,15 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
     }
 
     @Override
-    public void deleteCategory(int id) throws ReferenceBreakException {
+    public void deleteCategory(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        Category category = null;
+        try {
+            category = getCategory(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == category) throw new DeletedObjectNotExistsException(this);
+
         deleteSingleEntityById(id);
     }
 }

@@ -9,6 +9,8 @@ import projectpackage.model.maintenances.Maintenance;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -78,7 +80,15 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
     }
 
     @Override
-    public void deleteMaintenance(int id) throws ReferenceBreakException {
+    public void deleteMaintenance(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        Maintenance maintenance = null;
+        try {
+            maintenance = getMaintenance(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == maintenance) throw new DeletedObjectNotExistsException(this);
+
         deleteSingleEntityById(id);
     }
 }

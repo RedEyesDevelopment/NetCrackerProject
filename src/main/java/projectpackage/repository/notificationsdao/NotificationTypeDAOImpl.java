@@ -10,6 +10,8 @@ import projectpackage.model.notifications.NotificationType;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -81,7 +83,15 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     }
 
     @Override
-    public void deleteNotificationType(int id) throws ReferenceBreakException {
+    public void deleteNotificationType(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        NotificationType notificationType = null;
+        try {
+            notificationType = getNotificationType(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == notificationType) throw new DeletedObjectNotExistsException(this);
+
         deleteSingleEntityById(id);
     }
 }

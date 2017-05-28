@@ -4,7 +4,7 @@ import projectpackage.model.blocks.Block;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.daoexceptions.WrongIdException;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 
 import java.util.List;
 
@@ -16,5 +16,5 @@ public interface BlockDAO {
     public List<Block> getAllBlocks();
     public int insertBlock(Block block) throws TransactionException;
     public void updateBlock(Block newBlock, Block oldBlock) throws TransactionException;
-    public void deleteBlock(int id) throws ReferenceBreakException, WrongEntityIdException, WrongIdException;
+    public void deleteBlock(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

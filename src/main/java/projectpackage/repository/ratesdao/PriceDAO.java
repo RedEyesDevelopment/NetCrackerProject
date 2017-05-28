@@ -3,6 +3,8 @@ package projectpackage.repository.ratesdao;
 import projectpackage.model.rates.Price;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 
 import java.util.List;
 
@@ -14,5 +16,5 @@ public interface PriceDAO {
     public List<Price> getAllPrices();
     public int insertPrice(Price price) throws TransactionException;
     public void updatePrice(Price newPrice, Price oldPrice) throws TransactionException;
-    public void deletePrice(int id) throws ReferenceBreakException;
+    public void deletePrice(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

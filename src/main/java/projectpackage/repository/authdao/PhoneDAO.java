@@ -4,7 +4,7 @@ import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.model.auth.Phone;
 import projectpackage.repository.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.daoexceptions.WrongIdException;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 
 import java.util.List;
 
@@ -16,5 +16,5 @@ public interface PhoneDAO {
     public List<Phone> getAllPhones();
     public int insertPhone(Phone phone) throws TransactionException;
     public void updatePhone(Phone newPhone, Phone oldPhone) throws TransactionException;
-    public void deletePhone(int id) throws ReferenceBreakException, WrongEntityIdException, WrongIdException;
+    public void deletePhone(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

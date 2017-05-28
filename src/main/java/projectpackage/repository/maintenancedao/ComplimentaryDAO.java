@@ -3,6 +3,8 @@ package projectpackage.repository.maintenancedao;
 import projectpackage.model.maintenances.Complimentary;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 
 import java.util.List;
 
@@ -14,5 +16,5 @@ public interface ComplimentaryDAO {
     public List<Complimentary> getAllComplimentaries();
     public int insertComplimentary(Complimentary complimentary) throws TransactionException;
     public void updateComplimentary(Complimentary newComplimentary, Complimentary oldComplimentary) throws TransactionException;
-    public void deleteComplimentary(int id) throws ReferenceBreakException;
+    public void deleteComplimentary(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

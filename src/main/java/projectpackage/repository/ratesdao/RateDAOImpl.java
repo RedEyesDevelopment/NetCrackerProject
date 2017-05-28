@@ -10,6 +10,8 @@ import projectpackage.model.rates.Rate;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -73,7 +75,15 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
     }
 
     @Override
-    public void deleteRate(int id) throws ReferenceBreakException {
+    public void deleteRate(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        Rate rate = null;
+        try {
+            rate = getRate(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == rate) throw new DeletedObjectNotExistsException(this);
+
         deleteSingleEntityById(id);
     }
 }

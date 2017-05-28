@@ -8,8 +8,10 @@ import projectpackage.model.blocks.Block;
 import projectpackage.model.rooms.Room;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.repository.blocksdao.BlockDAO;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
 
 import java.util.Date;
 import java.util.List;
@@ -74,7 +76,14 @@ public class BlockServiceImpl implements BlockService{
         try {
             blockDAO.deleteBlock(id);
         } catch (ReferenceBreakException e) {
-            return new IUDAnswer(id, false, e.printReferencesEntities());
+            LOGGER.warn("Entity has references on self", e);
+            return new IUDAnswer(id,false, e.printReferencesEntities());
+        } catch (DeletedObjectNotExistsException e) {
+            LOGGER.warn("Entity with that id does not exist!", e);
+            return new IUDAnswer(id, "deletedObjectNotExists");
+        } catch (WrongEntityIdException e) {
+            LOGGER.warn("This id belong another entity class!", e);
+            return new IUDAnswer(id, "wrongDeleteId");
         }
         return new IUDAnswer(id, true);
     }

@@ -10,6 +10,8 @@ import projectpackage.dto.IUDAnswer;
 import projectpackage.repository.authdao.PhoneDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.support.PhoneRegexService;
 
 import java.util.List;
@@ -57,7 +59,14 @@ public class PhoneServiceImpl implements PhoneService{
         try {
             phoneDAO.deletePhone(id);
         } catch (ReferenceBreakException e) {
+            LOGGER.warn("Entity has references on self", e);
             return new IUDAnswer(id,false, e.printReferencesEntities());
+        } catch (DeletedObjectNotExistsException e) {
+            LOGGER.warn("Entity with that id does not exist!", e);
+            return new IUDAnswer(id, "deletedObjectNotExists");
+        } catch (WrongEntityIdException e) {
+            LOGGER.warn("This id belong another entity class!", e);
+            return new IUDAnswer(id, "wrongDeleteId");
         }
         return new IUDAnswer(id, true);
     }

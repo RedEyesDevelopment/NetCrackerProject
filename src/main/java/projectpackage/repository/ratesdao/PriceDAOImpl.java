@@ -9,6 +9,8 @@ import projectpackage.model.rates.Price;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -74,7 +76,15 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
     }
 
     @Override
-    public void deletePrice(int id) throws ReferenceBreakException {
+    public void deletePrice(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        Price price = null;
+        try {
+            price = getPrice(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == price) throw new DeletedObjectNotExistsException(this);
+
         deleteSingleEntityById(id);
     }
 }

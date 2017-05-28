@@ -3,6 +3,8 @@ package projectpackage.repository.maintenancedao;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 
 import java.util.List;
 
@@ -14,5 +16,5 @@ public interface MaintenanceDAO {
     public List<Maintenance> getAllMaintenances();
     public int insertMaintenance(Maintenance maintenance) throws TransactionException;
     public void updateMaintenance(Maintenance newMaintenance, Maintenance oldMaintenance) throws TransactionException;
-    public void deleteMaintenance(int id) throws ReferenceBreakException;//TODO доделать проверки на связи
+    public void deleteMaintenance(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;//TODO доделать проверки на связи
 }

@@ -11,6 +11,8 @@ import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -74,7 +76,15 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO{
     }
 
     @Override
-    public void deleteRoomType(int id) throws ReferenceBreakException {
+    public void deleteRoomType(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        RoomType roomType = null;
+        try {
+            roomType = getRoomType(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == roomType) throw new DeletedObjectNotExistsException(this);
+
         deleteSingleEntityById(id);
     }
 }

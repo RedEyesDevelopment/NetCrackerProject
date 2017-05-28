@@ -12,6 +12,8 @@ import projectpackage.model.orders.Order;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.Date;
@@ -107,7 +109,15 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
     }
 
     @Override
-    public void deleteModificationHistory(int id) throws ReferenceBreakException {
+    public void deleteModificationHistory(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        ModificationHistory modificationHistory = null;
+        try {
+            modificationHistory = getModificationHistory(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == modificationHistory) throw new DeletedObjectNotExistsException(this);
+
         deleteSingleEntityById(id);
     }
 }

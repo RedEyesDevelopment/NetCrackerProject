@@ -3,6 +3,8 @@ package projectpackage.repository.roomsdao;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 
 import java.util.List;
 
@@ -14,5 +16,5 @@ public interface RoomTypeDAO {
     public List<RoomType> getAllRoomTypes();
     public int insertRoomType(RoomType roomType) throws TransactionException;
     public void updateRoomType(RoomType newRoomType, RoomType oldRoomType) throws TransactionException;
-    public void deleteRoomType(int id) throws ReferenceBreakException;
+    public void deleteRoomType(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

@@ -3,6 +3,8 @@ package projectpackage.repository.notificationsdao;
 import projectpackage.model.notifications.Notification;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 
 import java.util.List;
 
@@ -14,5 +16,5 @@ public interface NotificationDAO {
     public List<Notification> getAllNotifications();
     public int insertNotification(Notification notification) throws TransactionException;
     public void updateNotification(Notification newNotification, Notification oldNotification) throws TransactionException;
-    public void deleteNotification(int id) throws ReferenceBreakException;
+    public void deleteNotification(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

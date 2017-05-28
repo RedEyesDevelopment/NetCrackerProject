@@ -11,7 +11,7 @@ import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.daoexceptions.WrongIdException;
+import projectpackage.repository.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -88,14 +88,14 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     }
 
     @Override
-    public void deleteBlock(int id) throws ReferenceBreakException, WrongEntityIdException, WrongIdException {
+    public void deleteBlock(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
         Block block = null;
         try {
             block = getBlock(id);
         } catch (ClassCastException e) {
             throw new WrongEntityIdException(this, e.getMessage());
         }
-        if (null == block) throw new WrongIdException(this);
+        if (null == block) throw new DeletedObjectNotExistsException(this);
 
         deleteSingleEntityById(id);
     }
