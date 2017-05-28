@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
             LOGGER.info("Get from DB userId = " + userId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            new IUDAnswer(userId,false, e.getMessage());
+            new IUDAnswer(userId,false, "transactionInterrupt");
         }
         return new IUDAnswer(userId,true);
     }
@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
             userDAO.updateUser(newUser, oldUser);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, e.getMessage());
+            return new IUDAnswer(id,false, "transactionInterrupt");
         }
         return new IUDAnswer(id,true);
     }

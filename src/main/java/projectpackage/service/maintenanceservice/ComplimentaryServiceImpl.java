@@ -55,7 +55,7 @@ public class ComplimentaryServiceImpl implements ComplimentaryService {
             LOGGER.info("Get from DB complimentaryId = " + complimentaryId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(complimentaryId,false, e.getMessage());
+            return new IUDAnswer(complimentaryId,false, "transactionInterrupt");
         }
         return new IUDAnswer(complimentaryId,true);
     }
@@ -68,7 +68,7 @@ public class ComplimentaryServiceImpl implements ComplimentaryService {
             complimentaryDAO.updateComplimentary(newComplimentary, oldComplimentary);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, e.getMessage());
+            return new IUDAnswer(id,false, "transactionInterrupt");
         }
         return new IUDAnswer(id,true);
     }

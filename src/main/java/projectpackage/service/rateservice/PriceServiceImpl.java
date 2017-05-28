@@ -60,7 +60,7 @@ public class PriceServiceImpl implements PriceService{
             LOGGER.info("Get from DB phoneId = " + priceId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(priceId,false, e.getMessage());
+            return new IUDAnswer(priceId,false, "transactionInterrupt");
         }
         return new IUDAnswer(priceId,true);
     }
@@ -73,7 +73,7 @@ public class PriceServiceImpl implements PriceService{
             priceDAO.updatePrice(newPrice, oldPrice);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, e.getMessage());
+            return new IUDAnswer(id,false, "transactionInterrupt");
         }
         return new IUDAnswer(id,true);
     }

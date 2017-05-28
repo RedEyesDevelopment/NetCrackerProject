@@ -56,7 +56,7 @@ public class ModificationHistoryServiceImpl implements ModificationHistoryServic
             LOGGER.info("Get from DB modificationHistoryId = " + modificationId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(modificationId,false, e.getMessage());
+            return new IUDAnswer(modificationId,false, "transactionInterrupt");
         }
         return new IUDAnswer(modificationId,true);
     }

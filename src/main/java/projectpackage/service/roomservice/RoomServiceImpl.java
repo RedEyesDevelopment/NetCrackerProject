@@ -72,7 +72,7 @@ public class RoomServiceImpl implements RoomService{
             LOGGER.info("Get from DB roomId = " + roomId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(roomId,false, e.getMessage());
+            return new IUDAnswer(roomId,false, "transactionInterrupt");
         }
         return new IUDAnswer(roomId,true);
     }
@@ -85,7 +85,7 @@ public class RoomServiceImpl implements RoomService{
             roomDAO.updateRoom(newRoom, oldRoom);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, e.getMessage());
+            return new IUDAnswer(id,false, "transactionInterrupt");
         }
         return new IUDAnswer(id,true);
     }

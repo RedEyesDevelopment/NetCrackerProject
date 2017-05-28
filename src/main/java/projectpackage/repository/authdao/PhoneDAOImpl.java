@@ -9,6 +9,8 @@ import projectpackage.model.auth.Phone;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.daoexceptions.WrongIdException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -65,7 +67,15 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
     }
 
     @Override
-    public void deletePhone(int id) throws ReferenceBreakException {
+    public void deletePhone(int id) throws ReferenceBreakException, WrongEntityIdException, WrongIdException {
+        Phone phone = null;
+        try{
+            phone = getPhone(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == phone) throw new WrongIdException(this);
+
         deleteSingleEntityById(id);
     }
 }

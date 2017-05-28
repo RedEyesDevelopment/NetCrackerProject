@@ -60,7 +60,7 @@ public class RateServiceImpl implements RateService{
             LOGGER.info("Get from DB rateId = " + rateId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(rateId,false, e.getMessage());
+            return new IUDAnswer(rateId,false, "transactionInterrupt");
         }
         return new IUDAnswer(rateId,true);
     }
@@ -73,7 +73,7 @@ public class RateServiceImpl implements RateService{
             rateDAO.updateRate(newRate, oldRate);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, e.getMessage());
+            return new IUDAnswer(id,false, "transactionInterrupt");
         }
         return new IUDAnswer(id,true);
     }

@@ -57,22 +57,22 @@ public class PhoneServiceImpl implements PhoneService{
         try {
             phoneDAO.deletePhone(id);
         } catch (ReferenceBreakException e) {
-            return new IUDAnswer(false, e.printReferencesEntities());
+            return new IUDAnswer(id,false, e.printReferencesEntities());
         }
-        return new IUDAnswer(id,true);
+        return new IUDAnswer(id, true);
     }
 
     @Override
     public IUDAnswer insertPhone(Phone phone) {
         boolean isValid = phoneRegexService.match(phone.getPhoneNumber());
-        if (!isValid) return new IUDAnswer(false, "Incorrect phone number!");
+        if (!isValid) return new IUDAnswer(false, "wrongPhoneNumber");
         Integer phoneId = null;
         try {
             phoneId = phoneDAO.insertPhone(phone);
             LOGGER.info("Get from DB phoneId = " + phoneId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(phoneId, false, e.getMessage());
+            return new IUDAnswer(phoneId, false, "transactionInterrupt");
         }
         return new IUDAnswer(phoneId,true);
     }
@@ -80,7 +80,7 @@ public class PhoneServiceImpl implements PhoneService{
     @Override
     public IUDAnswer updatePhone(int id, Phone newPhone) {
         boolean isValid = phoneRegexService.match(newPhone.getPhoneNumber());
-        if (!isValid) return new IUDAnswer(false, "Incorrect phone number!");
+        if (!isValid) return new IUDAnswer(false, "wrongPhoneNumber");
 
         try {
             newPhone.setObjectId(id);
@@ -89,7 +89,7 @@ public class PhoneServiceImpl implements PhoneService{
             return new IUDAnswer(id,true);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, e.getMessage());
+            return new IUDAnswer(id,false, "transactionInterrupt");
         }
     }
 }

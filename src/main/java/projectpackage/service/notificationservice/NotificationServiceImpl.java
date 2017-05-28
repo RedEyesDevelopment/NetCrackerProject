@@ -95,7 +95,7 @@ public class NotificationServiceImpl implements NotificationService{
             LOGGER.info("Get from DB notificationId = " + notifId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(notifId,false, e.getMessage());
+            return new IUDAnswer(notifId,false, "transactionInterrupt");
         }
         return new IUDAnswer(notifId,true);
     }
@@ -108,7 +108,7 @@ public class NotificationServiceImpl implements NotificationService{
             notificationDAO.updateNotification(newNotification, oldNotification);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, e.getMessage());
+            return new IUDAnswer(id,false, "transactionInterrupt");
         }
         return new IUDAnswer(id,true);
     }

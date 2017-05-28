@@ -11,6 +11,8 @@ import projectpackage.model.auth.User;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.daoexceptions.WrongIdException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -111,7 +113,15 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     }
 
     @Override
-    public void deleteUser(int id) throws ReferenceBreakException {
+    public void deleteUser(int id) throws ReferenceBreakException, WrongEntityIdException, WrongIdException {
+        User user = null;
+        try {
+            user = getUser(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == user) throw new WrongIdException(this);
+
         deleteSingleEntityById(id);
     }
 

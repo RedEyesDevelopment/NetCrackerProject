@@ -67,7 +67,7 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
             LOGGER.info("Get from DB notificationTypeId = " + notifTypeId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(notifTypeId,false, e.getMessage());
+            return new IUDAnswer(notifTypeId,false, "transactionInterrupt");
         }
         return new IUDAnswer(notifTypeId,true);
     }
@@ -80,7 +80,7 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
             notificationTypeDAO.updateNotificationType(newNotificationType, oldNotificationType);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, e.getMessage());
+            return new IUDAnswer(id,false, "transactionInterrupt");
         }
         return new IUDAnswer(id,true);
     }

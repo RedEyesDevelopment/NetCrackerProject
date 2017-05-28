@@ -15,6 +15,8 @@ public class IUDAnswer {
     static {
         ANSWERS.put("wrongId", "Cannot update with wrong id! Updated entity id not equals original entity id, but id cannot be changed!");
         ANSWERS.put("wrongDelete", "Cannot delete entity with inadequate id! Entity id does not match entity class! Check your request!");
+        ANSWERS.put("wrongPhoneNumber", "Cannot insert or update incorrect phone number!");
+        ANSWERS.put("transactionInterrupt", "The transaction was aborted from add operation!");
     }
 
     private Integer objectId;
@@ -26,9 +28,20 @@ public class IUDAnswer {
         this.successful = successful;
     }
 
+    public IUDAnswer(Integer objectId, boolean successful, String message) {
+        this.objectId = objectId;
+        this.successful = successful;
+        this.message = message;
+    }
+
     public IUDAnswer(Integer objectId, String messageKey) {
         this.objectId = objectId;
         this.successful = false;
+        this.message = IUDAnswer.ANSWERS.get(messageKey);
+    }
+
+    public IUDAnswer(boolean successful, String messageKey) {
+        this.successful = successful;
         this.message = IUDAnswer.ANSWERS.get(messageKey);
     }
 }

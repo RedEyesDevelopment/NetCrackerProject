@@ -64,7 +64,7 @@ public class CategoryServiceImpl implements CategoryService {
             LOGGER.info("Get from DB categoryId = " + categoryId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(categoryId,false, e.getMessage());
+            return new IUDAnswer(categoryId,false, "transactionInterrupt");
         }
         return new IUDAnswer(categoryId,true);
     }
@@ -77,7 +77,7 @@ public class CategoryServiceImpl implements CategoryService {
             categoryDAO.updateCategory(newCategory, oldCategory);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, e.getMessage());
+            return new IUDAnswer(id,false, "transactionInterrupt");
         }
         return new IUDAnswer(id,true);
     }

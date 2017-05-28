@@ -61,7 +61,7 @@ public class JournalRecordServiceImpl implements JournalRecordService{
             LOGGER.info("Get from DB journalRecordId = " + journalRecordId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(journalRecordId,false, e.getMessage());
+            return new IUDAnswer(journalRecordId,false, "transactionInterrupt");
         }
         return new IUDAnswer(journalRecordId,true);
     }
@@ -74,7 +74,7 @@ public class JournalRecordServiceImpl implements JournalRecordService{
             journalRecordDAO.updateJournalRecord(newJournalRecord, oldJournalRecord);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, e.getMessage());
+            return new IUDAnswer(id,false, "transactionInterrupt");
         }
         return new IUDAnswer(id,true);
     }

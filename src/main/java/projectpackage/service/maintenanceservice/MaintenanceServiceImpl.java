@@ -60,7 +60,7 @@ public class MaintenanceServiceImpl implements MaintenanceService {
             LOGGER.info("Get from DB maintenanceId = " + maintenanceId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(maintenanceId,false, e.getMessage());
+            return new IUDAnswer(maintenanceId,false, "transactionInterrupt");
         }
         return new IUDAnswer(maintenanceId,true);
     }
@@ -73,7 +73,7 @@ public class MaintenanceServiceImpl implements MaintenanceService {
             maintenanceDAO.updateMaintenance(newMaintenance, oldMaintenance);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, e.getMessage());
+            return new IUDAnswer(id,false, "transactionInterrupt");
         }
         return new IUDAnswer(id,true);
     }

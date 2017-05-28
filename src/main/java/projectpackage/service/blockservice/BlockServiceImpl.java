@@ -87,7 +87,7 @@ public class BlockServiceImpl implements BlockService{
             LOGGER.info("Get from DB blockId = " + blockId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(blockId, false, e.getMessage());
+            return new IUDAnswer(blockId, false, "transactionInterrupt");
         }
         return new IUDAnswer(blockId,true);
     }
@@ -101,7 +101,7 @@ public class BlockServiceImpl implements BlockService{
             blockDAO.updateBlock(newBlock, oldBlock);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id, false, e.getMessage());
+            return new IUDAnswer(id, false, "transactionInterrupt");
         }
         return new IUDAnswer(id, true);
     }

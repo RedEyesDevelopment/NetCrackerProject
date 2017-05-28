@@ -10,6 +10,8 @@ import projectpackage.model.rooms.Room;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.daoexceptions.WrongIdException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -86,7 +88,15 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     }
 
     @Override
-    public void deleteBlock(int id) throws ReferenceBreakException {
+    public void deleteBlock(int id) throws ReferenceBreakException, WrongEntityIdException, WrongIdException {
+        Block block = null;
+        try {
+            block = getBlock(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == block) throw new WrongIdException(this);
+
         deleteSingleEntityById(id);
     }
 }

@@ -116,7 +116,7 @@ public class OrderServiceImpl implements OrderService{
             LOGGER.info("Get from DB orderId = " + orderId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(orderId,false, e.getMessage());
+            return new IUDAnswer(orderId,false, "transactionInterrupt");
         }
         return new IUDAnswer(orderId,true);
     }
@@ -129,7 +129,7 @@ public class OrderServiceImpl implements OrderService{
             orderDAO.updateOrder(newOrder, oldOrder);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, e.getMessage());
+            return new IUDAnswer(id,false, "transactionInterrupt");
         }
         return new IUDAnswer(id,true);
     }

@@ -81,7 +81,7 @@ public class RoomTypeServiceImpl implements RoomTypeService{
             LOGGER.info("Get from DB roomId = " + roomTypeId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(roomTypeId,false, e.getMessage());
+            return new IUDAnswer(roomTypeId,false, "transactionInterrupt");
         }
         return new IUDAnswer(roomTypeId,true);
     }
@@ -94,7 +94,7 @@ public class RoomTypeServiceImpl implements RoomTypeService{
             roomTypeDAO.updateRoomType(newRoomType, oldRoomType);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, e.getMessage());
+            return new IUDAnswer(id,false, "transactionInterrupt");
         }
         return new IUDAnswer(id,true);
     }
