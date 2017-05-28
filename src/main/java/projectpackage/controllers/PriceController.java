@@ -7,8 +7,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projectpackage.model.auth.User;
+import projectpackage.model.rates.Price;
 import projectpackage.model.support.IUDAnswer;
-import projectpackage.service.authservice.UserService;
+import projectpackage.service.rateservice.PriceService;
 
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
@@ -19,52 +20,54 @@ import java.util.List;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+/**
+ * Created by Lenovo on 28.05.2017.
+ */
 @RestController
-@RequestMapping("/users")
-public class UserController {
-
+@RequestMapping("/prices")
+public class PriceController {
     @Autowired
-    UserService userService;
+    PriceService priceService;
 
-    //Get User List
+    //Get Price List
     @ResponseStatus(HttpStatus.OK)
-    @CacheResult(cacheName = "userList")
+    @CacheResult(cacheName = "priceList")
     @GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public List<Resource<User>> getUserList(){
-        List<User> users = userService.getAllUsers();
-        List<Resource<User>> resources = new ArrayList<>();
-        for (User user:users){
-            Resource<User> userResource = new Resource<User>(user);
-            userResource.add(linkTo(methodOn(UserController.class).getUser(user.getObjectId(), null)).withSelfRel());
-            resources.add(userResource);
+    public List<Resource<Price>> getPriceList(){
+        List<Price> prices = priceService.getAllPrices();
+        List<Resource<Price>> resources = new ArrayList<>();
+        for (Price price:prices){
+            Resource<Price> priceResource = new Resource<Price>(price);
+            priceResource.add(linkTo(methodOn(PriceController.class).getPrice(price.getObjectId(), null)).withSelfRel());
+            resources.add(priceResource);
         }
         return resources;
     }
 
-    //Get single User by id
+    //Get single Price by id
     @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<Resource<User>> getUser(@PathVariable("id") Integer id, HttpServletRequest request){
+    public ResponseEntity<Resource<Price>> getPrice(@PathVariable("id") Integer id, HttpServletRequest request){
         User thisUser = (User) request.getSession().getAttribute("USER");
-        User user = userService.getSingleUserById(id);
-        Resource<User> resource = new Resource<>(user);
+        Price price = priceService.getSinglePriceById(id);
+        Resource<Price> resource = new Resource<>(price);
         HttpStatus status;
-        if (null != user){
-            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(UserController.class).deleteUser(user.getObjectId())).withRel("delete"));
-            resource.add(linkTo(methodOn(UserController.class).updateUser(user.getObjectId(), user)).withRel("update"));
+        if (null!=price){
+            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(PriceController.class).deletePrice(price.getObjectId())).withRel("delete"));
+            resource.add(linkTo(methodOn(PriceController.class).updatePrice(price.getObjectId(), price)).withRel("update"));
             status = HttpStatus.ACCEPTED;
         } else {
             status = HttpStatus.BAD_REQUEST;
         }
-        ResponseEntity<Resource<User>> response = new ResponseEntity<Resource<User>>(resource, status);
+        ResponseEntity<Resource<Price>> response = new ResponseEntity<Resource<Price>>(resource, status);
         return response;
     }
 
-    //Create user, fetch into database
-    @CacheRemoveAll(cacheName = "userList")
+    //Create price, fetch into database
+    @CacheRemoveAll(cacheName = "priceList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> createUser(@RequestBody User newUser){
-        IUDAnswer result = userService.insertUser(newUser);
+    public ResponseEntity<IUDAnswer> createPrice(@RequestBody Price newPrice){
+        IUDAnswer result = priceService.insertPrice(newPrice);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.CREATED;
@@ -73,14 +76,14 @@ public class UserController {
         return responseEntity;
     }
 
-    //Update user method
-    @CacheRemoveAll(cacheName = "userList")
+    //Update price method
+    @CacheRemoveAll(cacheName = "priceList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> updateUser(@PathVariable("id") Integer id, @RequestBody User changedUser){
-        if (!id.equals(changedUser.getObjectId())){
+    public ResponseEntity<IUDAnswer> updatePrice(@PathVariable("id") Integer id, @RequestBody Price changedPrice){
+        if (!id.equals(changedPrice.getObjectId())){
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, "wrongId"), HttpStatus.NOT_ACCEPTABLE);
         }
-        IUDAnswer result = userService.updateUser(id, changedUser);
+        IUDAnswer result = priceService.updatePrice(id, changedPrice);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.ACCEPTED;
@@ -89,11 +92,11 @@ public class UserController {
         return responseEntity;
     }
 
-    //Delete user method
-    @CacheRemoveAll(cacheName = "userList")
+    //Delete price method
+    @CacheRemoveAll(cacheName = "priceList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> deleteUser(@PathVariable("id") Integer id){
-        IUDAnswer result = userService.deleteUser(id);
+    public ResponseEntity<IUDAnswer> deletePrice(@PathVariable("id") Integer id){
+        IUDAnswer result = priceService.deletePrice(id);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.ACCEPTED;

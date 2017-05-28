@@ -7,8 +7,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projectpackage.model.auth.User;
+import projectpackage.model.rooms.Room;
 import projectpackage.model.support.IUDAnswer;
-import projectpackage.service.authservice.UserService;
+import projectpackage.service.roomservice.RoomService;
 
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
@@ -19,52 +20,55 @@ import java.util.List;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+/**
+ * Created by Lenovo on 28.05.2017.
+ */
 @RestController
-@RequestMapping("/users")
-public class UserController {
+@RequestMapping("/rooms")
+public class RoomController {
 
     @Autowired
-    UserService userService;
+    RoomService roomService;
 
-    //Get User List
+    //Get Room List
     @ResponseStatus(HttpStatus.OK)
-    @CacheResult(cacheName = "userList")
+    @CacheResult(cacheName = "roomList")
     @GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public List<Resource<User>> getUserList(){
-        List<User> users = userService.getAllUsers();
-        List<Resource<User>> resources = new ArrayList<>();
-        for (User user:users){
-            Resource<User> userResource = new Resource<User>(user);
-            userResource.add(linkTo(methodOn(UserController.class).getUser(user.getObjectId(), null)).withSelfRel());
-            resources.add(userResource);
+    public List<Resource<Room>> getRoomList(){
+        List<Room> rooms = roomService.getAllRooms();
+        List<Resource<Room>> resources = new ArrayList<>();
+        for (Room room:rooms){
+            Resource<Room> roomResource = new Resource<Room>(room);
+            roomResource.add(linkTo(methodOn(RoomController.class).getRoom(room.getObjectId(), null)).withSelfRel());
+            resources.add(roomResource);
         }
         return resources;
     }
 
-    //Get single User by id
+    //Get single Room by id
     @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<Resource<User>> getUser(@PathVariable("id") Integer id, HttpServletRequest request){
+    public ResponseEntity<Resource<Room>> getRoom(@PathVariable("id") Integer id, HttpServletRequest request){
         User thisUser = (User) request.getSession().getAttribute("USER");
-        User user = userService.getSingleUserById(id);
-        Resource<User> resource = new Resource<>(user);
+        Room room = roomService.getSingleRoomById(id);
+        Resource<Room> resource = new Resource<>(room);
         HttpStatus status;
-        if (null != user){
-            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(UserController.class).deleteUser(user.getObjectId())).withRel("delete"));
-            resource.add(linkTo(methodOn(UserController.class).updateUser(user.getObjectId(), user)).withRel("update"));
+        if (null != room){
+            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(RoomController.class).deleteRoom(room.getObjectId())).withRel("delete"));
+            resource.add(linkTo(methodOn(RoomController.class).updateRoom(room.getObjectId(), room)).withRel("update"));
             status = HttpStatus.ACCEPTED;
         } else {
             status = HttpStatus.BAD_REQUEST;
         }
-        ResponseEntity<Resource<User>> response = new ResponseEntity<Resource<User>>(resource, status);
+        ResponseEntity<Resource<Room>> response = new ResponseEntity<Resource<Room>>(resource, status);
         return response;
     }
 
-    //Create user, fetch into database
-    @CacheRemoveAll(cacheName = "userList")
+    //Create room, fetch into database
+    @CacheRemoveAll(cacheName = "roomList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> createUser(@RequestBody User newUser){
-        IUDAnswer result = userService.insertUser(newUser);
+    public ResponseEntity<IUDAnswer> createRoom(@RequestBody Room newRoom){
+        IUDAnswer result = roomService.insertRoom(newRoom);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.CREATED;
@@ -73,14 +77,14 @@ public class UserController {
         return responseEntity;
     }
 
-    //Update user method
-    @CacheRemoveAll(cacheName = "userList")
+    //Update room method
+    @CacheRemoveAll(cacheName = "roomList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> updateUser(@PathVariable("id") Integer id, @RequestBody User changedUser){
-        if (!id.equals(changedUser.getObjectId())){
+    public ResponseEntity<IUDAnswer> updateRoom(@PathVariable("id") Integer id, @RequestBody Room changedRoom){
+        if (!id.equals(changedRoom.getObjectId())){
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, "wrongId"), HttpStatus.NOT_ACCEPTABLE);
         }
-        IUDAnswer result = userService.updateUser(id, changedUser);
+        IUDAnswer result = roomService.updateRoom(id, changedRoom);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.ACCEPTED;
@@ -89,11 +93,11 @@ public class UserController {
         return responseEntity;
     }
 
-    //Delete user method
-    @CacheRemoveAll(cacheName = "userList")
+    //Delete room method
+    @CacheRemoveAll(cacheName = "roomList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> deleteUser(@PathVariable("id") Integer id){
-        IUDAnswer result = userService.deleteUser(id);
+    public ResponseEntity<IUDAnswer> deleteRoom(@PathVariable("id") Integer id){
+        IUDAnswer result = roomService.deleteRoom(id);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.ACCEPTED;

@@ -1,7 +1,7 @@
 package projectpackage.repository;
 
-import projectpackage.repository.reacdao.exceptions.TransactionException;
 import projectpackage.model.auth.Role;
+import projectpackage.repository.reacdao.exceptions.TransactionException;
 
 /**
  * Created by Lenovo on 15.05.2017.

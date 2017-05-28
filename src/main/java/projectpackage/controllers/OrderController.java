@@ -7,8 +7,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projectpackage.model.auth.User;
+import projectpackage.model.orders.Order;
 import projectpackage.model.support.IUDAnswer;
-import projectpackage.service.authservice.UserService;
+import projectpackage.service.orderservice.OrderService;
 
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
@@ -19,52 +20,55 @@ import java.util.List;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+/**
+ * Created by Lenovo on 28.05.2017.
+ */
 @RestController
-@RequestMapping("/users")
-public class UserController {
+@RequestMapping("/orders")
+public class OrderController {
 
     @Autowired
-    UserService userService;
+    OrderService orderService;
 
-    //Get User List
+    //Get Order List
     @ResponseStatus(HttpStatus.OK)
-    @CacheResult(cacheName = "userList")
+    @CacheResult(cacheName = "orderList")
     @GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public List<Resource<User>> getUserList(){
-        List<User> users = userService.getAllUsers();
-        List<Resource<User>> resources = new ArrayList<>();
-        for (User user:users){
-            Resource<User> userResource = new Resource<User>(user);
-            userResource.add(linkTo(methodOn(UserController.class).getUser(user.getObjectId(), null)).withSelfRel());
-            resources.add(userResource);
+    public List<Resource<Order>> getOrderList(){
+        List<Order> orders = orderService.getAllOrders();
+        List<Resource<Order>> resources = new ArrayList<>();
+        for (Order order:orders){
+            Resource<Order> orderResource = new Resource<Order>(order);
+            orderResource.add(linkTo(methodOn(OrderController.class).getOrder(order.getObjectId(), null)).withSelfRel());
+            resources.add(orderResource);
         }
         return resources;
     }
 
-    //Get single User by id
+    //Get single Order by id
     @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<Resource<User>> getUser(@PathVariable("id") Integer id, HttpServletRequest request){
+    public ResponseEntity<Resource<Order>> getOrder(@PathVariable("id") Integer id, HttpServletRequest request){
         User thisUser = (User) request.getSession().getAttribute("USER");
-        User user = userService.getSingleUserById(id);
-        Resource<User> resource = new Resource<>(user);
+        Order order = orderService.getSingleOrderById(id);
+        Resource<Order> resource = new Resource<>(order);
         HttpStatus status;
-        if (null != user){
-            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(UserController.class).deleteUser(user.getObjectId())).withRel("delete"));
-            resource.add(linkTo(methodOn(UserController.class).updateUser(user.getObjectId(), user)).withRel("update"));
+        if (null!= order){
+            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(OrderController.class).deleteOrder(order.getObjectId())).withRel("delete"));
+            resource.add(linkTo(methodOn(OrderController.class).updateOrder(order.getObjectId(), order)).withRel("update"));
             status = HttpStatus.ACCEPTED;
         } else {
             status = HttpStatus.BAD_REQUEST;
         }
-        ResponseEntity<Resource<User>> response = new ResponseEntity<Resource<User>>(resource, status);
+        ResponseEntity<Resource<Order>> response = new ResponseEntity<Resource<Order>>(resource, status);
         return response;
     }
 
-    //Create user, fetch into database
-    @CacheRemoveAll(cacheName = "userList")
+    //Create order, fetch into database
+    @CacheRemoveAll(cacheName = "orderList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> createUser(@RequestBody User newUser){
-        IUDAnswer result = userService.insertUser(newUser);
+    public ResponseEntity<IUDAnswer> createOrder(@RequestBody Order newOrder){
+        IUDAnswer result = orderService.insertOrder(newOrder);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.CREATED;
@@ -73,14 +77,14 @@ public class UserController {
         return responseEntity;
     }
 
-    //Update user method
-    @CacheRemoveAll(cacheName = "userList")
+    //Update order method
+    @CacheRemoveAll(cacheName = "orderList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> updateUser(@PathVariable("id") Integer id, @RequestBody User changedUser){
-        if (!id.equals(changedUser.getObjectId())){
+    public ResponseEntity<IUDAnswer> updateOrder(@PathVariable("id") Integer id, @RequestBody Order changedOrder){
+        if (!id.equals(changedOrder.getObjectId())){
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, "wrongId"), HttpStatus.NOT_ACCEPTABLE);
         }
-        IUDAnswer result = userService.updateUser(id, changedUser);
+        IUDAnswer result = orderService.updateOrder(id, changedOrder);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.ACCEPTED;
@@ -89,11 +93,11 @@ public class UserController {
         return responseEntity;
     }
 
-    //Delete user method
-    @CacheRemoveAll(cacheName = "userList")
+    //Delete order method
+    @CacheRemoveAll(cacheName = "orderList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> deleteUser(@PathVariable("id") Integer id){
-        IUDAnswer result = userService.deleteUser(id);
+    public ResponseEntity<IUDAnswer> deleteOrder(@PathVariable("id") Integer id){
+        IUDAnswer result = orderService.deleteOrder(id);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.ACCEPTED;

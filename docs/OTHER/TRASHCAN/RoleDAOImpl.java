@@ -3,8 +3,8 @@ package projectpackage.repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import projectpackage.repository.reacdao.exceptions.TransactionException;
 import projectpackage.model.auth.Role;
+import projectpackage.repository.reacdao.exceptions.TransactionException;
 
 /**
  * Created by Lenovo on 15.05.2017.
