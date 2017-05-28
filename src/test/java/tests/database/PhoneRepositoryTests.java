@@ -2,14 +2,12 @@ package tests.database;
 
 import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.Phone;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.service.authservice.PhoneService;
 
 import java.util.List;

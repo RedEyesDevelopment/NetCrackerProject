@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import projectpackage.model.rates.Rate;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.service.rateservice.RateService;
 
 import java.util.Calendar;

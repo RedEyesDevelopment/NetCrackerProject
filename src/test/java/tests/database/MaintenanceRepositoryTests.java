@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import projectpackage.model.maintenances.Maintenance;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.service.maintenanceservice.MaintenanceService;
 
 import java.util.List;

@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Order;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.service.orderservice.OrderService;
 
 import javax.cache.annotation.CacheRemoveAll;

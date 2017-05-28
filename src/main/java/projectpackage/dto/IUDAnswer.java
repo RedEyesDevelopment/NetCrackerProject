@@ -1,4 +1,4 @@
-package projectpackage.model.support;
+package projectpackage.dto;
 
 import lombok.Data;
 

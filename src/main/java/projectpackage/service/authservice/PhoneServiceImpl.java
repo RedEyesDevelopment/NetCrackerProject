@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.User;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.repository.authdao.PhoneDAO;
 import projectpackage.repository.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.daoexceptions.TransactionException;

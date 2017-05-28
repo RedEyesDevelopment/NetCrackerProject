@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.service.orderservice.ModificationHistoryService;
 
 import javax.cache.annotation.CacheRemoveAll;

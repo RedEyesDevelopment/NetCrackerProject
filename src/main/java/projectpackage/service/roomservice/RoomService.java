@@ -2,7 +2,7 @@ package projectpackage.service.roomservice;
 
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 
 import java.util.List;
 

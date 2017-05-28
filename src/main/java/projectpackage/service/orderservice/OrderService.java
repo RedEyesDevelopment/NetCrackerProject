@@ -3,7 +3,7 @@ package projectpackage.service.orderservice;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 
 import java.util.Date;
 import java.util.List;

@@ -1,6 +1,5 @@
 package tests.database;
 
-import com.sun.org.apache.xpath.internal.operations.Or;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +7,7 @@ import org.springframework.test.annotation.Rollback;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.service.orderservice.OrderService;
 
 import java.util.Date;

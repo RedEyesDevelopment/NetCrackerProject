@@ -2,7 +2,7 @@ package projectpackage.service.authservice;
 
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.User;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 
 import java.util.List;
 

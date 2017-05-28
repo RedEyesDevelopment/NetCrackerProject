@@ -1,7 +1,7 @@
 package projectpackage.service.rateservice;
 
 import projectpackage.model.rates.Price;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 
 import java.util.List;
 

@@ -1,17 +1,13 @@
 package tests.database;
 
-import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
-import projectpackage.model.auth.Phone;
-import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.service.roomservice.RoomTypeService;
 
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;

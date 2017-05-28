@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projectpackage.model.auth.User;
 import projectpackage.model.rooms.RoomType;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.service.roomservice.RoomTypeService;
 
 import javax.cache.annotation.CacheRemoveAll;

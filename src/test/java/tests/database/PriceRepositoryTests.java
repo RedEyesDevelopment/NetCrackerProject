@@ -4,11 +4,9 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
-import projectpackage.model.auth.Phone;
 import projectpackage.model.rates.Price;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.service.rateservice.PriceService;
-import projectpackage.service.rateservice.PriceServiceImpl;
 
 import java.util.List;
 

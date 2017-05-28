@@ -6,7 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projectpackage.model.auth.User;
-import projectpackage.model.security.AuthForm;
+import projectpackage.dto.AuthForm;
 import projectpackage.service.authservice.UserService;
 import projectpackage.service.securityservice.SecurityService;
 

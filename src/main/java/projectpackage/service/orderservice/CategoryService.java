@@ -1,7 +1,7 @@
 package projectpackage.service.orderservice;
 
 import projectpackage.model.orders.Category;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 
 import java.util.List;
 

@@ -5,13 +5,10 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
-import projectpackage.model.blocks.Block;
 import projectpackage.model.orders.Category;
-import projectpackage.model.rooms.Room;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.service.orderservice.CategoryService;
 
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;

@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.User;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.service.authservice.PhoneService;
 
 import javax.cache.annotation.CacheRemoveAll;
