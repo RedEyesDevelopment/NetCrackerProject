@@ -13,6 +13,7 @@ import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.repository.notificationsdao.NotificationTypeDAO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,7 +42,14 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
 
     @Override
     public List<NotificationType> getNotificationTypeByRole(Role role) {
-        return null;
+        List<NotificationType> answer = new ArrayList<>();
+        List<NotificationType> allNotificationTypes = getAllNotificationTypes();
+        for (NotificationType notificationType : allNotificationTypes) {
+            if (notificationType.getOrientedRole().equals(role)) {
+                answer.add(notificationType);
+            }
+        }
+        return answer;
     }
 
     @Override

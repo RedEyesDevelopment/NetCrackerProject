@@ -1,9 +1,11 @@
 package projectpackage.service.orderservice;
 
 import projectpackage.model.auth.User;
+import projectpackage.model.orders.Category;
 import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.model.rooms.RoomType;
 
 import java.util.Date;
 import java.util.List;
@@ -23,7 +25,8 @@ public interface OrderService {
     public List<Order> getOrdersInRange(Date startDate, Date finishDate);
     public List<Order> getOrdersConfirmed(boolean isConfirmed);
     public List<Order> getOrdersPaidFor(boolean isConfirmed);
-
+    public IUDAnswer createOrder(User client, int roomTypeId, int numberOfResidents, Date start, Date finish, Category
+            category, long summ);
     public List<Order> getAllOrders();
     public List<Order> getAllOrders(String orderingParameter, boolean ascend);
     public Order getSingleOrderById(int id);

@@ -66,6 +66,8 @@ public class RoomTypeServiceImpl implements RoomTypeService{
             map.put("available", available);
             if (available) {
                 map.put("livingCost", roomTypeDAO.getCostForLiving(roomType, numberOfPeople, startDate, finishDate));
+            } else {
+                map.put("livingCost", null);
             }
         }
         return answer;

@@ -59,20 +59,44 @@ public class BlockServiceImpl implements BlockService{
         return null;
     }
 
-    // todo подумать можно ли использовать готовую реализацию из OrderService
     @Override
     public List<Block> getCurrentBlocks() {
-        return null;
+        List<Block> answer = new ArrayList<>();
+        List<Block> allBlocks = getAllBlocks();
+        Date date = new Date();
+        for (Block block : allBlocks) {
+            if (block.getBlockStartDate().getTime() < date.getTime()
+                    && block.getBlockStartDate().getTime() > date.getTime()) {
+                answer.add(block);
+            }
+        }
+        return answer;
     }
 
     @Override
     public List<Block> getPreviousBlocks() {
-        return null;
+        List<Block> answer = new ArrayList<>();
+        List<Block> allBlocks = getAllBlocks();
+        Date date = new Date();
+        for (Block block : allBlocks) {
+            if (block.getBlockFinishDate().getTime() < date.getTime()) {
+                answer.add(block);
+            }
+        }
+        return answer;
     }
 
     @Override
     public List<Block> getFutureBlocks() {
-        return null;
+        List<Block> answer = new ArrayList<>();
+        List<Block> allBlocks = getAllBlocks();
+        Date date = new Date();
+        for (Block block : allBlocks) {
+            if (block.getBlockStartDate().getTime() > date.getTime()) {
+                answer.add(block);
+            }
+        }
+        return answer;
     }
 
     @Override

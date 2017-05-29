@@ -13,7 +13,7 @@ import java.util.List;
  * Created by Arizel on 16.05.2017.
  */
 public interface NotificationService {
-    public List<Notification> getNotificationsBySendDate(NotificationType notificationType);
+    public List<Notification> getNotificationsBySendDate(Date date);
     public List<Notification> getNotificationsByExecutedDate(Date date);
     public List<Notification> getNotificationsByType(NotificationType notificationType);
     public List<Notification> getNotificationsByAuthor(User user);

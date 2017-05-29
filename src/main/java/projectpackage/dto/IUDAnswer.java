@@ -18,6 +18,7 @@ public class IUDAnswer {
         ANSWERS.put("deletedObjectNotExists", "Cannot execute delete operation because deleted entity does not exists! Check your request!");
         ANSWERS.put("wrongPhoneNumber", "Cannot insert or update incorrect phone number!");
         ANSWERS.put("transactionInterrupt", "The transaction was aborted from add operation!");
+        ANSWERS.put("emptyRoomNotFound", "The room of this type is not available on current date.");
     }
 
     private Integer objectId;
