@@ -222,7 +222,7 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
         order.setRoom(room);
         order.setClient(user);
         order.setLastModificator(user);
-        IUDAnswer iudAnswer = orderService.updateOrder(2069, order);
+        IUDAnswer iudAnswer = orderService.updateOrder(300, order);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Create order result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
