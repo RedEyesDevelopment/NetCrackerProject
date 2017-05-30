@@ -22,7 +22,6 @@ public class ModificationHistoryAspect {
         Order newOrder = null;
         Order oldOrder = null;
         for (Object object : joinPoint.getArgs()) {
-            System.out.println((Order) object);
             if (null == newOrder) {
                 newOrder = (Order) object;
             } else {
