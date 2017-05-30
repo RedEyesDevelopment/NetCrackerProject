@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.dto.OrderDTO;
 import projectpackage.dto.SearchAvailabilityParamsDTO;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Order;
@@ -16,9 +17,8 @@ import projectpackage.service.roomservice.RoomTypeService;
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -112,25 +112,41 @@ public class OrderController {
         return responseEntity;
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET, params = "roomTypeId")
-    public @ResponseBody ResponseEntity<Boolean> createOrderByRoomType(@RequestParam("roomTypeId") Integer roomTypeId,
-                                                                       HttpServletRequest request) {
+    @RequestMapping(value = "/book/{id}", method = RequestMethod.GET)
+    public @ResponseBody ResponseEntity<Order> createOrderByRoomType(@PathVariable("id") Integer id, HttpServletRequest request) {
         User thisUser = (User) request.getSession().getAttribute("USER");
-        //orderService.createOrder(thisUser, roomTypeId, )
-        return new ResponseEntity<Boolean>(true, HttpStatus.CREATED);
+        List<OrderDTO> dtoData = (List<OrderDTO>) request.getSession().getAttribute("ORDERDATA");
+        OrderDTO dto=null;
+        for (OrderDTO order:dtoData){
+            if (id.equals(order.getRoomTypeId())){
+                dto = order;
+                break;
+            }
+        }
+        Order order = orderService.createOrderTemplate(thisUser,dto);
+        request.getSession().removeAttribute("ORDERDATA");
+        request.getSession().setAttribute("NEWORDER", order);
+        return new ResponseEntity<Order>(order, HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(value = "/accept", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<Boolean> acceptOrder(HttpServletRequest request) {
+    public ResponseEntity<IUDAnswer> acceptOrder(HttpServletRequest request) {
         User thisUser = (User) request.getSession().getAttribute("USER");
-        //orderService.createOrder(thisUser, roomTypeId, )
-        return new ResponseEntity<Boolean>(true, HttpStatus.CREATED);
+        Order order = (Order) request.getSession().getAttribute("NEWORDER");
+        request.getSession().removeAttribute("NEWORDER");
+        IUDAnswer answer = orderService.insertOrder(order);
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        if (answer.isSuccessful()){
+            status = HttpStatus.CREATED;
+        }
+        return new ResponseEntity<IUDAnswer>(answer, status);
     }
 
-    @RequestMapping(value = "searchavailability", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<Boolean> searchAvailabilityForOrderCreation(@RequestBody SearchAvailabilityParamsDTO searchDto){
-        List<Map<String, Object>> data = roomTypeService.getRoomTypes(searchDto.getArrival(),searchDto.getDeparture(),searchDto.getLivingPersons(), searchDto.getCategoryId());
-        //PZDC
-        return null;
+    @RequestMapping(value = "searchavailability", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<List<OrderDTO>> searchAvailabilityForOrderCreation(@RequestBody SearchAvailabilityParamsDTO searchDto, HttpServletRequest request){
+        List<OrderDTO> data = roomTypeService.getRoomTypes(searchDto.getArrival(),searchDto.getDeparture(),searchDto.getLivingPersons(), searchDto.getCategoryId());
+        List<OrderDTO> dtoData = data.stream().filter(dto -> dto.isAvailable()).collect(Collectors.toList());
+        request.getSession().setAttribute("ORDERDATA", dtoData);
+        return new ResponseEntity<List<OrderDTO>>(dtoData, HttpStatus.FOUND);
     }
 }

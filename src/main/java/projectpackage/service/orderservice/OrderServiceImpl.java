@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.dto.OrderDTO;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Category;
 import projectpackage.model.orders.Order;
@@ -189,6 +190,8 @@ public class OrderServiceImpl implements OrderService{
         return answer;
     }
 
+
+
     @Override
     public IUDAnswer createOrder(User client, int roomTypeId, int numberOfResidents, Date start, Date finish, Category category, long summ) {
         Room room = roomDAO.getFreeRoom(roomTypeId, numberOfResidents, start, finish);
@@ -208,6 +211,25 @@ public class OrderServiceImpl implements OrderService{
         } else {
             return new IUDAnswer(false, "emptyRoomNotFound");
         }
+    }
+
+    @Override
+    public Order createOrderTemplate(User client, OrderDTO dto) {
+        Room room = roomDAO.getFreeRoom(dto.getRoomTypeId(), dto.getLivingPersons(), dto.getArrival(), dto.getDeparture());
+        Order order = new Order();
+        if (null != room) {
+            order.setRegistrationDate(new Date());
+            order.setIsPaidFor(false);
+            order.setIsConfirmed(false);
+            order.setLivingStartDate(dto.getArrival());
+            order.setLivingFinishDate(dto.getDeparture());
+            order.setSum(dto.getLivingCost()+dto.getCategoryCost());
+            order.setComment("");
+            order.setLastModificator(client);
+            order.setRoom(room);
+            order.setClient(client);
+        }
+        return order;
     }
 
     @Override
@@ -244,7 +266,7 @@ public class OrderServiceImpl implements OrderService{
             LOGGER.warn("Catched transactionException!!!", e);
             return new IUDAnswer(orderId,false, "transactionInterrupt");
         }
-        return new IUDAnswer(orderId,true);
+        return new IUDAnswer(orderId,true, "orderCreated");
     }
 
     @Override

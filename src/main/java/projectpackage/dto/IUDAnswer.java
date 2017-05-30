@@ -19,6 +19,7 @@ public class IUDAnswer {
         ANSWERS.put("wrongPhoneNumber", "Cannot insert or update incorrect phone number!");
         ANSWERS.put("transactionInterrupt", "The transaction was aborted from add operation!");
         ANSWERS.put("emptyRoomNotFound", "The room of this type is not available on current date.");
+        ANSWERS.put("orderCreated", "The order has been confirmed. The message with requisites was sent to your email.");
     }
 
     private Integer objectId;
@@ -33,7 +34,7 @@ public class IUDAnswer {
     public IUDAnswer(Integer objectId, boolean successful, String message) {
         this.objectId = objectId;
         this.successful = successful;
-        this.message = message;
+        this.message = IUDAnswer.ANSWERS.get(message);
     }
 
     public IUDAnswer(Integer objectId, String messageKey) {
