@@ -135,9 +135,9 @@ public class OrderController {
         Order order = (Order) request.getSession().getAttribute("NEWORDER");
         request.getSession().removeAttribute("NEWORDER");
         IUDAnswer answer = orderService.insertOrder(order);
-        HttpStatus status = HttpStatus.BAD_REQUEST;
-        if (answer.isSuccessful()){
-            status = HttpStatus.CREATED;
+        HttpStatus status = HttpStatus.CREATED;
+        if (!answer.isSuccessful()){
+            status = HttpStatus.BAD_REQUEST;
         }
         return new ResponseEntity<IUDAnswer>(answer, status);
     }
