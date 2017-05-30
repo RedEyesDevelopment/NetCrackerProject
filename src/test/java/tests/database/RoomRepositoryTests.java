@@ -5,14 +5,17 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
-import projectpackage.dto.IUDAnswer;
 import projectpackage.service.roomservice.RoomService;
 
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -29,16 +32,81 @@ public class RoomRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void crudRoomTest() {
+
         RoomType insertRoomType = new RoomType();
         insertRoomType.setObjectId(8);
+        insertRoomType.setRoomTypeTitle("President");
+        insertRoomType.setContent("President content");
+
         Rate insertRate = new Rate();
         insertRate.setObjectId(43);
+        insertRate.setRateFromDate(new Date(16000L));
+        insertRate.setRateToDate(new Date(16000L));
+        insertRate.setRoomTypeId(8);
+
+        Rate insertRate1 = new Rate();
+        insertRate1.setObjectId(44);
+        insertRate1.setRateFromDate(new Date(16000L));
+        insertRate1.setRateToDate(new Date(16000L));
+        insertRate1.setRoomTypeId(8);
+
+        Rate insertRate2 = new Rate();
+        insertRate2.setObjectId(45);
+        insertRate2.setRateFromDate(new Date(16000L));
+        insertRate2.setRateToDate(new Date(16000L));
+        insertRate2.setRoomTypeId(8);
+
+        Rate insertRate3 = new Rate();
+        insertRate3.setObjectId(46);
+        insertRate3.setRateFromDate(new Date(16000L));
+        insertRate3.setRateToDate(new Date(16000L));
+        insertRate3.setRoomTypeId(8);
+
+        Set<Rate> rates = new HashSet<>();
+        rates.add(insertRate);
+        rates.add(insertRate1);
+        rates.add(insertRate2);
+        rates.add(insertRate3);
+
         Price insertPrice = new Price();
         insertPrice.setObjectId(91);
+        insertPrice.setNumberOfPeople(1);
+        insertPrice.setRate((long)10000);
+        insertPrice.setRateId(43);
+
+        Price insertPrice1 = new Price();
+        insertPrice1.setObjectId(94);
+        insertPrice1.setNumberOfPeople(1);
+        insertPrice1.setRate((long)10000);
+        insertPrice1.setRateId(44);
+
+        Price insertPrice2 = new Price();
+        insertPrice2.setObjectId(97);
+        insertPrice2.setNumberOfPeople(1);
+        insertPrice2.setRate((long)10000);
+        insertPrice2.setRateId(45);
+
+        Price insertPrice3 = new Price();
+        insertPrice3.setObjectId(100);
+        insertPrice3.setNumberOfPeople(1);
+        insertPrice3.setRate((long)10000);
+        insertPrice3.setRateId(46);
+
+        Set<Price> prices = new HashSet<>();
+        prices.add(insertPrice);
+        prices.add(insertPrice1);
+        prices.add(insertPrice2);
+        prices.add(insertPrice3);
+
+
         Room insertRoom = new Room();
         insertRoom.setRoomNumber(111);
         insertRoom.setNumberOfResidents(1);
+
         insertRoom.setRoomType(insertRoomType);
+        insertRoomType.setRates(rates);
+        insertRate.setPrices(prices);
+
         IUDAnswer insertAnswer = roomService.insertRoom(insertRoom);
         assertTrue(insertAnswer.isSuccessful());
         LOGGER.info("Create room result = " + insertAnswer.isSuccessful());
@@ -50,15 +118,69 @@ public class RoomRepositoryTests extends AbstractDatabaseTest{
         assertEquals(insertRoom, insertedRoom);
 
         RoomType updateRoomType = new RoomType();
-        Room updateRoom = new Room();
+
+
+        insertRoomType.setObjectId(7);
+        insertRoomType.setRoomTypeTitle("Econom");
+        insertRoomType.setContent("Econom content");
+
         Rate updateRate = new Rate();
+        updateRate.setObjectId(39);
+        updateRate.setRateFromDate(new Date(16000L));
+        updateRate.setRateToDate(new Date(16000L));
+        updateRate.setRoomTypeId(7);
+
+        Rate updateRate1 = new Rate();
+        updateRate1.setObjectId(40);
+        updateRate1.setRateFromDate(new Date(16000L));
+        updateRate1.setRateToDate(new Date(16000L));
+        updateRate1.setRoomTypeId(7);
+
+        Rate updateRate2 = new Rate();
+        updateRate2.setObjectId(41);
+        updateRate2.setRateFromDate(new Date(16000L));
+        updateRate2.setRateToDate(new Date(16000L));
+        updateRate2.setRoomTypeId(7);
+
+        Rate updateRate3 = new Rate();
+        updateRate3.setObjectId(42);
+        updateRate3.setRateFromDate(new Date(16000L));
+        updateRate3.setRateToDate(new Date(16000L));
+        updateRate3.setRoomTypeId(7);
+
         Price updatePrice = new Price();
+        updatePrice.setObjectId(80);
+        updatePrice.setNumberOfPeople(1);
+        updatePrice.setRate((long)10000);
+        updatePrice.setRateId(39);
+
+        Price updatePrice1 = new Price();
+        updatePrice1.setObjectId(83);
+        updatePrice1.setNumberOfPeople(1);
+        updatePrice1.setRate((long)10000);
+        updatePrice1.setRateId(40);
+
+        Price updatePrice2 = new Price();
+        updatePrice2.setObjectId(86);
+        updatePrice2.setNumberOfPeople(1);
+        updatePrice2.setRate((long)10000);
+        updatePrice2.setRateId(41);
+
+        Price updatePrice3 = new Price();
+        updatePrice3.setObjectId(89);
+        updatePrice3.setNumberOfPeople(1);
+        updatePrice3.setRate((long)10000);
+        updatePrice3.setRateId(42);
+
+        Room updateRoom = new Room();
         updateRoom.setRoomNumber(112);
         updateRoom.setNumberOfResidents(2);
         updateRoomType.setObjectId(7);
+
         updateRoom.setRoomType(updateRoomType);
-        updateRate.setObjectId(39);
-        updatePrice.setObjectId(79);
+        updateRoomType.setRates(rates);
+        updateRate.setPrices(prices);
+
         IUDAnswer iudAnswer = roomService.updateRoom(roomId, updateRoom);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Update room result = " + iudAnswer.isSuccessful());
