@@ -6,16 +6,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projectpackage.dto.IUDAnswer;
+import projectpackage.dto.SearchAvailabilityParamsDTO;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Order;
-import projectpackage.dto.IUDAnswer;
 import projectpackage.service.orderservice.OrderService;
+import projectpackage.service.roomservice.RoomTypeService;
 
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -29,6 +32,9 @@ public class OrderController {
 
     @Autowired
     OrderService orderService;
+
+    @Autowired
+    RoomTypeService roomTypeService;
 
     //Get Order List
     @ResponseStatus(HttpStatus.OK)
@@ -119,5 +125,12 @@ public class OrderController {
         User thisUser = (User) request.getSession().getAttribute("USER");
         //orderService.createOrder(thisUser, roomTypeId, )
         return new ResponseEntity<Boolean>(true, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "searchavailability", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<Boolean> searchAvailabilityForOrderCreation(@RequestBody SearchAvailabilityParamsDTO searchDto){
+        List<Map<String, Object>> data = roomTypeService.getRoomTypes(searchDto.getArrival(),searchDto.getDeparture(),searchDto.getLivingPersons(), searchDto.getCategoryId());
+        //PZDC
+        return null;
     }
 }
