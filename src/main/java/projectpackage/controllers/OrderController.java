@@ -120,7 +120,7 @@ public class OrderController {
         return new ResponseEntity<Boolean>(true, HttpStatus.CREATED);
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @RequestMapping(value = "/accept", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Boolean> acceptOrder(HttpServletRequest request) {
         User thisUser = (User) request.getSession().getAttribute("USER");
         //orderService.createOrder(thisUser, roomTypeId, )

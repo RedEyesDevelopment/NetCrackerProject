@@ -5,15 +5,20 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.dto.OrderDTO;
 import projectpackage.model.rooms.RoomType;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.repository.roomsdao.RoomTypeDAO;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.service.orderservice.CategoryService;
 
-import java.util.*;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 
 /**
  * Created by Arizel on 16.05.2017.
@@ -50,27 +55,31 @@ public class RoomTypeServiceImpl implements RoomTypeService{
     }
 
     @Override
-    public List<Map<String, Object>> getRoomTypes(Date startDate, Date finishDate, int numberOfPeople, int categoryId) {
-        List<Map<String, Object>> answer = new ArrayList<>();
+    public List<OrderDTO> getRoomTypes(Date startDate, Date finishDate, int numberOfPeople, int categoryId) {
+        List<OrderDTO> list = new ArrayList<>();
         Set<Integer> availableRoomTypes = roomTypeDAO.getAvailableRoomTypes(numberOfPeople, startDate, finishDate);
         List<RoomType> allRoomTypes = getAllRoomTypes();
         for (RoomType roomType : allRoomTypes) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("roomTypeTitle", roomType.getRoomTypeTitle());
-            map.put("content", roomType.getContent());
-            long categotyPrice = categoryService.getSingleCategoryById(categoryId).getCategoryPrice();
+            OrderDTO orderDTO = new OrderDTO();
+            orderDTO.setRoomTypeName(roomType.getRoomTypeTitle());
+            orderDTO.setRoomTypeDescription(roomType.getContent());
+            long categoryPrice = categoryService.getSingleCategoryById(categoryId).getCategoryPrice();
             long days = (finishDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000);
-            Long categoryCost = categotyPrice * days;
-            map.put("categoryCost", categoryCost);
+            Long categoryCost = categoryPrice * days;
+            orderDTO.setCategoryCost(categoryCost);
             boolean available = availableRoomTypes.contains(roomType.getObjectId());
-            map.put("available", available);
+            orderDTO.setAvailable(available);
             if (available) {
-                map.put("livingCost", roomTypeDAO.getCostForLiving(roomType, numberOfPeople, startDate, finishDate));
-            } else {
-                map.put("livingCost", null);
+                orderDTO.setLivingCost(roomTypeDAO.getCostForLiving(roomType, numberOfPeople, startDate, finishDate));
             }
+            orderDTO.setLivingPersons(numberOfPeople);
+            orderDTO.setRoomTypeId(roomType.getObjectId());
+            orderDTO.setArrival(startDate);
+            orderDTO.setDeparture(finishDate);
+            orderDTO.setCategoryId(categoryId);
+            list.add(orderDTO);
         }
-        return answer;
+        return list;
     }
 
     @Override

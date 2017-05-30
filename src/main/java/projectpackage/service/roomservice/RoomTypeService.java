@@ -1,11 +1,11 @@
 package projectpackage.service.roomservice;
 
 import projectpackage.dto.IUDAnswer;
+import projectpackage.dto.OrderDTO;
 import projectpackage.model.rooms.RoomType;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Arizel on 16.05.2017.
@@ -17,7 +17,7 @@ public interface RoomTypeService {
     //возвращает типы номеров которые стоят не более maxRate и numberOfPeople человек на указанную date
     public List<RoomType> getRoomTypes(Date date, long maxRate, int numberOfPeople);
 
-    public List<Map<String, Object>> getRoomTypes(Date startDate, Date finishDate, int numberOfPeople, int categoryId);
+    public List<OrderDTO> getRoomTypes(Date startDate, Date finishDate, int numberOfPeople, int categoryId);
 
     public List<RoomType> getAllRoomTypes();
     public List<RoomType> getAllRoomTypes(String orderingParameter, boolean ascend);
