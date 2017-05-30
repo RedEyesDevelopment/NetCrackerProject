@@ -31,14 +31,14 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public List<Room> getRoomsByNumberOfResidents(int count) {
-        List<Room> anwer = new ArrayList<Room>();
+        List<Room> answer = new ArrayList<Room>();
         List<Room> allRooms = getAllRooms();
         for (Room room : allRooms) {
             if (room.getNumberOfResidents().equals(count)) {
-                anwer.add(room);
+                answer.add(room);
             }
         }
-        return anwer;
+        return answer;
     }
 
     @Override

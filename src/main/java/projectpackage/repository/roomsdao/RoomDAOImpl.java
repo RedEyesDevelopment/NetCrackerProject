@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
@@ -18,8 +19,9 @@ import projectpackage.repository.ratesdao.RateDAOImpl;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+import projectpackage.repository.support.rowmappers.IdRowMapper;
 
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
@@ -27,6 +29,9 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
 
     @Autowired
     JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
     public Room getRoom(Integer id) {
@@ -50,6 +55,22 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
                     .fetchInnerChild(Rate.class).fetchInnerChild(Price.class).closeAllFetches().getEntityCollection();
         } catch (ResultEntityNullException e) {
             LOGGER.warn(e);
+            return null;
+        }
+    }
+
+    @Override
+    public Room getFreeRoom(int roomTypeId, int numberOfResidents, Date start, Date finish) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("room_type_id", roomTypeId);
+        parameters.put("num_of_res", numberOfResidents);
+        parameters.put("d_start", start);
+        parameters.put("d_finish", finish);
+        List ids = namedParameterJdbcTemplate.query("SELECT * FROM TABLE(Room_tools.get_free_rooms(" +
+                ":room_type_id, :num_of_res, :d_start, :d_finish))", parameters, new IdRowMapper());
+        if (!ids.isEmpty()) {
+            return getRoom((int) ids.get(0));
+        } else {
             return null;
         }
     }

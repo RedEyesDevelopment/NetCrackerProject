@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.model.auth.User;
+import projectpackage.model.orders.Category;
 import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
 import projectpackage.repository.ordersdao.OrderDAO;
+import projectpackage.repository.roomsdao.RoomDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
@@ -27,6 +29,9 @@ public class OrderServiceImpl implements OrderService{
     @Autowired
     OrderDAO orderDAO;
 
+    @Autowired
+    RoomDAO roomDAO;
+
     @Override
     public List<Order> getAllOrders(String orderingParameter, boolean ascend) {
         return null;
@@ -41,40 +46,40 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public List<Order> getOrdersByRoom(Room room) {
-        List<Order> anwer = new ArrayList<>();
+        List<Order> answer = new ArrayList<>();
         List<Order> allOrders = getAllOrders();
         Integer roomNumber = room.getRoomNumber();
         for (Order order : allOrders) {
             if (order.getRoom().getRoomNumber().equals(roomNumber)) {
-                anwer.add(order);
+                answer.add(order);
             }
         }
-        return anwer;
+        return answer;
     }
 
     @Override
     public List<Order> getOrdersByClient(User user) {
-        List<Order> anwer = new ArrayList<>();
+        List<Order> answer = new ArrayList<>();
         List<Order> allOrders = getAllOrders();
         String email = user.getEmail();
         for (Order order : allOrders) {
             if (order.getClient().getEmail().equals(email)) {
-                anwer.add(order);
+                answer.add(order);
             }
         }
-        return anwer;
+        return answer;
     }
 
     @Override
     public List<Order> getOrdersByRegistrationDate(Date date) {
-        List<Order> anwer = new ArrayList<>();
+        List<Order> answer = new ArrayList<>();
         List<Order> allOrders = getAllOrders();
         for (Order order : allOrders) {
             if (order.getRegistrationDate().equals(date)) {
-                anwer.add(order);
+                answer.add(order);
             }
         }
-        return anwer;
+        return answer;
     }
 
     // todo необходимо пояснение что должен делать этот метод
@@ -85,59 +90,59 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public List<Order> getCurrentOrders() {
-        List<Order> anwer = new ArrayList<>();
+        List<Order> answer = new ArrayList<>();
         List<Order> allOrders = getAllOrders();
         Date date = new Date();
         for (Order order : allOrders) {
             if (order.getLivingStartDate().getTime() < date.getTime()
                     && order.getLivingFinishDate().getTime() > date.getTime()) {
-                anwer.add(order);
+                answer.add(order);
             }
         }
-        return anwer;
+        return answer;
     }
 
     @Override
     public List<Order> getPreviousOrders() {
-        List<Order> anwer = new ArrayList<>();
+        List<Order> answer = new ArrayList<>();
         List<Order> allOrders = getAllOrders();
         Date date = new Date();
         for (Order order : allOrders) {
             if (order.getLivingFinishDate().getTime() < date.getTime()) {
-                anwer.add(order);
+                answer.add(order);
             }
         }
-        return anwer;
+        return answer;
     }
 
     @Override
     public List<Order> getFutureOrders() {
-        List<Order> anwer = new ArrayList<>();
+        List<Order> answer = new ArrayList<>();
         List<Order> allOrders = getAllOrders();
         Date date = new Date();
         for (Order order : allOrders) {
             if (order.getLivingStartDate().getTime() > date.getTime()) {
-                anwer.add(order);
+                answer.add(order);
             }
         }
-        return anwer;
+        return answer;
     }
 
     @Override
     public List<Order> getOrdersForPayConfirme() {
-        List<Order> anwer = new ArrayList<>();
+        List<Order> answer = new ArrayList<>();
         List<Order> allOrders = getAllOrders();
         for (Order order : allOrders) {
             if (order.getIsPaidFor() && !order.getIsConfirmed()) {
-                anwer.add(order);
+                answer.add(order);
             }
         }
-        return anwer;
+        return answer;
     }
 
     @Override
     public List<Order> getOrdersInRange(Date startDate, Date finishDate) {
-        List<Order> anwer = new ArrayList<>();
+        List<Order> answer = new ArrayList<>();
         List<Order> allOrders = getAllOrders();
         Date date = new Date();
         for (Order order : allOrders) {
@@ -153,35 +158,56 @@ public class OrderServiceImpl implements OrderService{
                     (startDate.getTime() > order.getLivingStartDate().getTime()
                     && finishDate.getTime() < order.getLivingFinishDate().getTime())
                 ) {
-                anwer.add(order);
+                answer.add(order);
             }
         }
         // todo хорошо потестить правильно ли выборка работает
-        return anwer;
+        return answer;
     }
 
     @Override
     public List<Order> getOrdersConfirmed(boolean isConfirmed) {
-        List<Order> anwer = new ArrayList<>();
+        List<Order> answer = new ArrayList<>();
         List<Order> allOrders = getAllOrders();
         for (Order order : allOrders) {
             if (order.getIsConfirmed()) {
-                anwer.add(order);
+                answer.add(order);
             }
         }
-        return anwer;
+        return answer;
     }
 
     @Override
     public List<Order> getOrdersPaidFor(boolean isConfirmed) {
-        List<Order> anwer = new ArrayList<>();
+        List<Order> answer = new ArrayList<>();
         List<Order> allOrders = getAllOrders();
         for (Order order : allOrders) {
             if (order.getIsPaidFor()) {
-                anwer.add(order);
+                answer.add(order);
             }
         }
-        return anwer;
+        return answer;
+    }
+
+    @Override
+    public IUDAnswer createOrder(User client, int roomTypeId, int numberOfResidents, Date start, Date finish, Category category, long summ) {
+        Room room = roomDAO.getFreeRoom(roomTypeId, numberOfResidents, start, finish);
+        if (null != room) {
+            Order order = new Order();
+            order.setRegistrationDate(new Date());
+            order.setIsPaidFor(false);
+            order.setIsConfirmed(false);
+            order.setLivingStartDate(start);
+            order.setLivingFinishDate(finish);
+            order.setSum(summ);
+            order.setComment("");
+            order.setLastModificator(client);
+            order.setRoom(room);
+            order.setClient(client);
+            return insertOrder(order);
+        } else {
+            return new IUDAnswer(false, "emptyRoomNotFound");
+        }
     }
 
     @Override

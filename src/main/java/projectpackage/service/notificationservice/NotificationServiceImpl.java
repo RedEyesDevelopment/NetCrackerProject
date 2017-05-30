@@ -15,6 +15,7 @@ import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.repository.notificationsdao.NotificationDAO;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -43,33 +44,75 @@ public class NotificationServiceImpl implements NotificationService{
     }
 
     @Override
-    public List<Notification> getNotificationsBySendDate(NotificationType notificationType) {
-        return null;
+    public List<Notification> getNotificationsBySendDate(Date date) {
+        List<Notification> answer = new ArrayList<>();
+        List<Notification> allNotifications = getAllNotifications();
+        for (Notification notification : allNotifications) {
+            if (notification.getSendDate().getTime() == date.getTime()) {
+                answer.add(notification);
+            }
+        }
+        return answer;
     }
 
     @Override
     public List<Notification> getNotificationsByExecutedDate(Date date) {
-        return null;
+        List<Notification> answer = new ArrayList<>();
+        List<Notification> allNotifications = getAllNotifications();
+        for (Notification notification : allNotifications) {
+            if (notification.getExecutedDate().getTime() == date.getTime()) {
+                answer.add(notification);
+            }
+        }
+        return answer;
     }
 
     @Override
     public List<Notification> getNotificationsByType(NotificationType notificationType) {
-        return null;
+        List<Notification> answer = new ArrayList<>();
+        List<Notification> allNotifications = getAllNotifications();
+        for (Notification notification : allNotifications) {
+            if (notification.getNotificationType().equals(notificationType)) {
+                answer.add(notification);
+            }
+        }
+        return answer;
     }
 
     @Override
     public List<Notification> getNotificationsByAuthor(User user) {
-        return null;
+        List<Notification> answer = new ArrayList<>();
+        List<Notification> allNotifications = getAllNotifications();
+        for (Notification notification : allNotifications) {
+            if (notification.getAuthor().equals(user)) {
+                answer.add(notification);
+            }
+        }
+        return answer;
     }
 
     @Override
     public List<Notification> getNotificationsByExecutor(User user) {
-        return null;
+        List<Notification> answer = new ArrayList<>();
+        List<Notification> allNotifications = getAllNotifications();
+        for (Notification notification : allNotifications) {
+            if (notification.getExecutedBy().equals(user)) {
+                answer.add(notification);
+            }
+        }
+        return answer;
     }
 
     @Override
     public List<Notification> getNotificationsForRole(Role role) {
-        return null;
+        List<Notification> answer = new ArrayList<>();
+        List<Notification> allNotifications = getAllNotifications();
+        for (Notification notification : allNotifications) {
+            if (notification.getNotificationType().getOrientedRole().equals(role)) {
+                answer.add(notification);
+            }
+        }
+        return answer;
     }
 
     @Override
