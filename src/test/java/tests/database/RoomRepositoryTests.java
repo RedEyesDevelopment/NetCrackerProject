@@ -36,7 +36,7 @@ public class RoomRepositoryTests extends AbstractDatabaseTest{
         RoomType insertRoomType = new RoomType();
         insertRoomType.setObjectId(8);
         insertRoomType.setRoomTypeTitle("President");
-        insertRoomType.setContent("President content");
+        insertRoomType.setContent("Content president");
 
         Rate insertRate = new Rate();
         insertRate.setObjectId(43);
@@ -71,25 +71,25 @@ public class RoomRepositoryTests extends AbstractDatabaseTest{
         Price insertPrice = new Price();
         insertPrice.setObjectId(91);
         insertPrice.setNumberOfPeople(1);
-        insertPrice.setRate((long)10000);
+        insertPrice.setRate((long) 10000);
         insertPrice.setRateId(43);
 
         Price insertPrice1 = new Price();
         insertPrice1.setObjectId(94);
         insertPrice1.setNumberOfPeople(1);
-        insertPrice1.setRate((long)10000);
+        insertPrice1.setRate((long) 10000);
         insertPrice1.setRateId(44);
 
         Price insertPrice2 = new Price();
         insertPrice2.setObjectId(97);
         insertPrice2.setNumberOfPeople(1);
-        insertPrice2.setRate((long)10000);
+        insertPrice2.setRate((long) 10000);
         insertPrice2.setRateId(45);
 
         Price insertPrice3 = new Price();
         insertPrice3.setObjectId(100);
         insertPrice3.setNumberOfPeople(1);
-        insertPrice3.setRate((long)10000);
+        insertPrice3.setRate((long) 10000);
         insertPrice3.setRateId(46);
 
         Set<Price> prices = new HashSet<>();
@@ -106,6 +106,9 @@ public class RoomRepositoryTests extends AbstractDatabaseTest{
         insertRoom.setRoomType(insertRoomType);
         insertRoomType.setRates(rates);
         insertRate.setPrices(prices);
+        insertRate1.setPrices(prices);
+        insertRate2.setPrices(prices);
+        insertRate3.setPrices(prices);
 
         IUDAnswer insertAnswer = roomService.insertRoom(insertRoom);
         assertTrue(insertAnswer.isSuccessful());
@@ -151,25 +154,25 @@ public class RoomRepositoryTests extends AbstractDatabaseTest{
         Price updatePrice = new Price();
         updatePrice.setObjectId(80);
         updatePrice.setNumberOfPeople(1);
-        updatePrice.setRate((long)10000);
+        updatePrice.setRate((long) 10000);
         updatePrice.setRateId(39);
 
         Price updatePrice1 = new Price();
         updatePrice1.setObjectId(83);
         updatePrice1.setNumberOfPeople(1);
-        updatePrice1.setRate((long)10000);
+        updatePrice1.setRate((long) 10000);
         updatePrice1.setRateId(40);
 
         Price updatePrice2 = new Price();
         updatePrice2.setObjectId(86);
         updatePrice2.setNumberOfPeople(1);
-        updatePrice2.setRate((long)10000);
+        updatePrice2.setRate((long) 10000);
         updatePrice2.setRateId(41);
 
         Price updatePrice3 = new Price();
         updatePrice3.setObjectId(89);
         updatePrice3.setNumberOfPeople(1);
-        updatePrice3.setRate((long)10000);
+        updatePrice3.setRate((long) 10000);
         updatePrice3.setRateId(42);
 
         Room updateRoom = new Room();
@@ -180,6 +183,9 @@ public class RoomRepositoryTests extends AbstractDatabaseTest{
         updateRoom.setRoomType(updateRoomType);
         updateRoomType.setRates(rates);
         updateRate.setPrices(prices);
+        updateRate1.setPrices(prices);
+        updateRate2.setPrices(prices);
+        updateRate3.setPrices(prices);
 
         IUDAnswer iudAnswer = roomService.updateRoom(roomId, updateRoom);
         assertTrue(iudAnswer.isSuccessful());

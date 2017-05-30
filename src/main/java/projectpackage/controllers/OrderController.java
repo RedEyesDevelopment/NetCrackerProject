@@ -105,4 +105,19 @@ public class OrderController {
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
     }
+
+    @RequestMapping(value = "/create", method = RequestMethod.GET, params = "roomTypeId")
+    public @ResponseBody ResponseEntity<Boolean> createOrderByRoomType(@RequestParam("roomTypeId") Integer roomTypeId,
+                                                                       HttpServletRequest request) {
+        User thisUser = (User) request.getSession().getAttribute("USER");
+        //orderService.createOrder(thisUser, roomTypeId, )
+        return new ResponseEntity<Boolean>(true, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<Boolean> acceptOrder(HttpServletRequest request) {
+        User thisUser = (User) request.getSession().getAttribute("USER");
+        //orderService.createOrder(thisUser, roomTypeId, )
+        return new ResponseEntity<Boolean>(true, HttpStatus.CREATED);
+    }
 }
