@@ -2,7 +2,7 @@ package projectpackage.dto;
 
 import lombok.Data;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Data
 public class OrderDTO {

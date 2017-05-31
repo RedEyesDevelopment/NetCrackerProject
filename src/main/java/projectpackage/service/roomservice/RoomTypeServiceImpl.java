@@ -14,7 +14,7 @@ import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.service.orderservice.CategoryService;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -57,7 +57,7 @@ public class RoomTypeServiceImpl implements RoomTypeService{
     @Override
     public List<OrderDTO> getRoomTypes(Date startDate, Date finishDate, int numberOfPeople, int categoryId) {
         List<OrderDTO> list = new ArrayList<>();
-        Set<Integer> availableRoomTypes = roomTypeDAO.getAvailableRoomTypes(numberOfPeople, startDate, finishDate);
+        Set<Integer> availableRoomTypes = roomTypeDAO.getAvailableRoomTypes(numberOfPeople, new java.sql.Date(startDate.getTime()), new java.sql.Date(finishDate.getTime()));
         List<RoomType> allRoomTypes = getAllRoomTypes();
         for (RoomType roomType : allRoomTypes) {
             OrderDTO orderDTO = new OrderDTO();
@@ -67,18 +67,21 @@ public class RoomTypeServiceImpl implements RoomTypeService{
             long days = (finishDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000);
             Long categoryCost = categoryPrice * days;
             orderDTO.setCategoryCost(categoryCost);
-            boolean available = availableRoomTypes.contains(roomType.getObjectId());
-            orderDTO.setAvailable(available);
-            if (available) {
-                orderDTO.setLivingCost(roomTypeDAO.getCostForLiving(roomType, numberOfPeople, startDate, finishDate));
-            }
+            //LOGGER.info( + "****************************************************");
             orderDTO.setLivingPersons(numberOfPeople);
             orderDTO.setRoomTypeId(roomType.getObjectId());
             orderDTO.setArrival(startDate);
             orderDTO.setDeparture(finishDate);
             orderDTO.setCategoryId(categoryId);
+            boolean available = availableRoomTypes.contains(roomType.getObjectId());
+            orderDTO.setAvailable(available);
+            if (available) {
+                orderDTO.setLivingCost(roomTypeDAO.getCostForLiving(roomType, numberOfPeople, startDate, finishDate));
+            }
+
             list.add(orderDTO);
         }
+        LOGGER.info(list);
         return list;
     }
 
