@@ -12,7 +12,7 @@ public interface PriceService {
     public List<Price> getAllPrices();
     public List<Price> getAllPrices(String orderingParameter, boolean ascend);
     public Price getSinglePriceById(int id);
-    public IUDAnswer deletePrice(int id);
-    public IUDAnswer insertPrice(Price price);
+//    public IUDAnswer deletePrice(int id);
+//    public IUDAnswer insertPrice(Price price);
     public IUDAnswer updatePrice(int id, Price newPrice);
 }

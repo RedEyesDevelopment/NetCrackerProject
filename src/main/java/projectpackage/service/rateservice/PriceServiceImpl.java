@@ -44,35 +44,35 @@ public class PriceServiceImpl implements PriceService{
         return price;
     }
 
-    @Override
-    public IUDAnswer deletePrice(int id) {
-        try {
-            priceDAO.deletePrice(id);
-        } catch (ReferenceBreakException e) {
-            LOGGER.warn("Entity has references on self", e);
-            return new IUDAnswer(id,false, e.printReferencesEntities());
-        } catch (DeletedObjectNotExistsException e) {
-            LOGGER.warn("Entity with that id does not exist!", e);
-            return new IUDAnswer(id, "deletedObjectNotExists");
-        } catch (WrongEntityIdException e) {
-            LOGGER.warn("This id belong another entity class!", e);
-            return new IUDAnswer(id, "wrongDeleteId");
-        }
-        return new IUDAnswer(id, true);
-    }
+//    @Override
+//    public IUDAnswer deletePrice(int id) {
+//        try {
+//            priceDAO.deletePrice(id);
+//        } catch (ReferenceBreakException e) {
+//            LOGGER.warn("Entity has references on self", e);
+//            return new IUDAnswer(id,false, e.printReferencesEntities());
+//        } catch (DeletedObjectNotExistsException e) {
+//            LOGGER.warn("Entity with that id does not exist!", e);
+//            return new IUDAnswer(id, "deletedObjectNotExists");
+//        } catch (WrongEntityIdException e) {
+//            LOGGER.warn("This id belong another entity class!", e);
+//            return new IUDAnswer(id, "wrongDeleteId");
+//        }
+//        return new IUDAnswer(id, true);
+//    }
 
-    @Override
-    public IUDAnswer insertPrice(Price price) {
-        Integer priceId = null;
-        try {
-            priceId = priceDAO.insertPrice(price);
-            LOGGER.info("Get from DB phoneId = " + priceId);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(priceId,false, "transactionInterrupt");
-        }
-        return new IUDAnswer(priceId,true);
-    }
+//    @Override
+//    public IUDAnswer insertPrice(Price price) {
+//        Integer priceId = null;
+//        try {
+//            priceId = priceDAO.insertPrice(price);
+//            LOGGER.info("Get from DB phoneId = " + priceId);
+//        } catch (TransactionException e) {
+//            LOGGER.warn("Catched transactionException!!!", e);
+//            return new IUDAnswer(priceId,false, "transactionInterrupt");
+//        }
+//        return new IUDAnswer(priceId,true);
+//    }
 
     @Override
     public IUDAnswer updatePrice(int id, Price newPrice) {

@@ -14,7 +14,7 @@ import java.util.List;
 public interface PriceDAO {
     public Price getPrice(Integer id);
     public List<Price> getAllPrices();
-    public int insertPrice(Price price) throws TransactionException;
+//    public int insertPrice(Price price) throws TransactionException;
     public void updatePrice(Price newPrice, Price oldPrice) throws TransactionException;
-    public void deletePrice(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
+//    public void deletePrice(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

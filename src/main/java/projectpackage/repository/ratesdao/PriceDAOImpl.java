@@ -46,18 +46,18 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
         }
     }
 
-    @Override
-    public int insertPrice(Price price) throws TransactionException {
-        Integer objectId = nextObjectId();
-        try {
-            jdbcTemplate.update(insertObject, objectId, price.getRateId(), 7, null, null);
-            jdbcTemplate.update(insertAttribute, 32, objectId, price.getNumberOfPeople(), null);
-            jdbcTemplate.update(insertAttribute, 33, objectId, price.getRate(), null);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
-        return objectId;
-    }
+//    @Override
+//    public int insertPrice(Price price) throws TransactionException {
+//        Integer objectId = nextObjectId();
+//        try {
+//            jdbcTemplate.update(insertObject, objectId, price.getRateId(), 7, null, null);
+//            jdbcTemplate.update(insertAttribute, 32, objectId, price.getNumberOfPeople(), null);
+//            jdbcTemplate.update(insertAttribute, 33, objectId, price.getRate(), null);
+//        } catch (DataIntegrityViolationException e) {
+//            throw new TransactionException(this, e.getMessage());
+//        }
+//        return objectId;
+//    }
 
     @Override
     public void updatePrice(Price newPrice, Price oldPrice) throws TransactionException {
@@ -75,16 +75,16 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
         }
     }
 
-    @Override
-    public void deletePrice(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
-        Price price = null;
-        try {
-            price = getPrice(id);
-        } catch (ClassCastException e) {
-            throw new WrongEntityIdException(this, e.getMessage());
-        }
-        if (null == price) throw new DeletedObjectNotExistsException(this);
-
-        deleteSingleEntityById(id);
-    }
+//    @Override
+//    public void deletePrice(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+//        Price price = null;
+//        try {
+//            price = getPrice(id);
+//        } catch (ClassCastException e) {
+//            throw new WrongEntityIdException(this, e.getMessage());
+//        }
+//        if (null == price) throw new DeletedObjectNotExistsException(this);
+//
+//        deleteSingleEntityById(id);
+//    }
 }
