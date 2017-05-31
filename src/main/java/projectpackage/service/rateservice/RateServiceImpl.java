@@ -44,8 +44,7 @@ public class RateServiceImpl implements RateService{
         return rate;
     }
 
-    @Override
-    public IUDAnswer deleteRate(int id) {
+    private IUDAnswer deleteRate(int id) {
         try {
             rateDAO.deleteRate(id);
         } catch (ReferenceBreakException e) {
