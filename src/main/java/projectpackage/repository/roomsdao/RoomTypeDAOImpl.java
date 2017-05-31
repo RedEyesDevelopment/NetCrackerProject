@@ -77,6 +77,7 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
         in.addValue("in_date_start", start);
         in.addValue("in_date_finish", finish);
         BigDecimal bigDecimal = call.executeFunction(BigDecimal.class, in);
+
         return bigDecimal.longValue();
     }
 
