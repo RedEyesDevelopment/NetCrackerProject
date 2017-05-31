@@ -74,16 +74,16 @@ public class RateServiceImpl implements RateService{
         return new IUDAnswer(rateId,true);
     }
 
-    @Override
-    public IUDAnswer updateRate(int id, Rate newRate) {
-        try {
-            newRate.setObjectId(id);
-            Rate oldRate = rateDAO.getRate(id);
-            rateDAO.updateRate(newRate, oldRate);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, "transactionInterrupt");
-        }
-        return new IUDAnswer(id,true);
-    }
+//    @Override
+//    public IUDAnswer updateRate(int id, Rate newRate) {
+//        try {
+//            newRate.setObjectId(id);
+//            Rate oldRate = rateDAO.getRate(id);
+//            rateDAO.updateRate(newRate, oldRate);
+//        } catch (TransactionException e) {
+//            LOGGER.warn("Catched transactionException!!!", e);
+//            return new IUDAnswer(id,false, "transactionInterrupt");
+//        }
+//        return new IUDAnswer(id,true);
+//    }
 }

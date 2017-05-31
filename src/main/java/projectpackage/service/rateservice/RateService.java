@@ -14,5 +14,5 @@ public interface RateService {
     public Rate getSingleRateById(int id);
     public IUDAnswer deleteRate(int id);
     public IUDAnswer insertRate(Rate rate);
-    public IUDAnswer updateRate(int id, Rate newRate);
+//    public IUDAnswer updateRate(int id, Rate newRate);
 }
