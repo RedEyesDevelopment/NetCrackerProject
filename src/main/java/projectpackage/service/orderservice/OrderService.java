@@ -23,8 +23,8 @@ public interface OrderService {
     public List<Order> getFutureOrders();//livingStartDate > SYSDATE
     public List<Order> getOrdersForPayConfirme();
     public List<Order> getOrdersInRange(Date startDate, Date finishDate);
-    public List<Order> getOrdersConfirmed(boolean isConfirmed);
-    public List<Order> getOrdersPaidFor(boolean isConfirmed);
+    public List<Order> getOrdersConfirmed();
+    public List<Order> getOrdersMustToBePaid();
     public IUDAnswer createOrder(User client, int roomTypeId, int numberOfResidents, Date start, Date finish, Category
             category, long summ);
     public Order createOrderTemplate(User client, OrderDTO dto);

@@ -130,6 +130,31 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
+    public List<Order> getOrdersInRange(Date startDate, Date finishDate) {
+        List<Order> answer = new ArrayList<>();
+        List<Order> allOrders = getAllOrders();
+        Date date = new Date();
+        for (Order order : allOrders) {
+            if (    (startDate.getTime() > order.getLivingStartDate().getTime()
+                    && startDate.getTime() < order.getLivingFinishDate().getTime())
+                    ||
+                    (finishDate.getTime() > order.getLivingStartDate().getTime()
+                            && finishDate.getTime() < order.getLivingFinishDate().getTime())
+                    ||
+                    (startDate.getTime() < order.getLivingStartDate().getTime()
+                            && finishDate.getTime() > order.getLivingFinishDate().getTime())
+                    ||
+                    (startDate.getTime() > order.getLivingStartDate().getTime()
+                            && finishDate.getTime() < order.getLivingFinishDate().getTime())
+                    ) {
+                answer.add(order);
+            }
+        }
+        // todo хорошо потестить правильно ли выборка работает
+        return answer;
+    }
+
+    @Override
     public List<Order> getOrdersForPayConfirme() {
         List<Order> answer = new ArrayList<>();
         List<Order> allOrders = getAllOrders();
@@ -142,32 +167,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public List<Order> getOrdersInRange(Date startDate, Date finishDate) {
-        List<Order> answer = new ArrayList<>();
-        List<Order> allOrders = getAllOrders();
-        Date date = new Date();
-        for (Order order : allOrders) {
-            if (    (startDate.getTime() > order.getLivingStartDate().getTime()
-                    && startDate.getTime() < order.getLivingFinishDate().getTime())
-                ||
-                    (finishDate.getTime() > order.getLivingStartDate().getTime()
-                    && finishDate.getTime() < order.getLivingFinishDate().getTime())
-                ||
-                    (startDate.getTime() < order.getLivingStartDate().getTime()
-                    && finishDate.getTime() > order.getLivingFinishDate().getTime())
-                ||
-                    (startDate.getTime() > order.getLivingStartDate().getTime()
-                    && finishDate.getTime() < order.getLivingFinishDate().getTime())
-                ) {
-                answer.add(order);
-            }
-        }
-        // todo хорошо потестить правильно ли выборка работает
-        return answer;
-    }
-
-    @Override
-    public List<Order> getOrdersConfirmed(boolean isConfirmed) {
+    public List<Order> getOrdersConfirmed() {
         List<Order> answer = new ArrayList<>();
         List<Order> allOrders = getAllOrders();
         for (Order order : allOrders) {
@@ -179,11 +179,11 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public List<Order> getOrdersPaidFor(boolean isConfirmed) {
+    public List<Order> getOrdersMustToBePaid() {
         List<Order> answer = new ArrayList<>();
         List<Order> allOrders = getAllOrders();
         for (Order order : allOrders) {
-            if (order.getIsPaidFor()) {
+            if (!order.getIsPaidFor()) {
                 answer.add(order);
             }
         }
