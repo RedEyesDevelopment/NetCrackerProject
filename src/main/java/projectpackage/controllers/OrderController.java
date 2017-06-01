@@ -112,7 +112,7 @@ public class OrderController {
         return responseEntity;
     }
 
-    @RequestMapping(value = "/book/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/book/{id}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<Order> createOrderByRoomType(@PathVariable("id") Integer id, HttpServletRequest request) {
         User thisUser = (User) request.getSession().getAttribute("USER");
         List<OrderDTO> dtoData = (List<OrderDTO>) request.getSession().getAttribute("ORDERDATA");

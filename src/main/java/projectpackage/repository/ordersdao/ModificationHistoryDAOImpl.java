@@ -10,11 +10,11 @@ import projectpackage.model.auth.User;
 import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.Date;
 import java.util.List;
@@ -61,7 +61,6 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
         try {
             jdbcTemplate.update(insertObject, objectId, oldOrder.getObjectId(), 12, null, null);
 
-            jdbcTemplate.update(insertAttribute, 43, objectId, null, new Date());
             if (oldOrder.getRegistrationDate().getTime() != newOrder.getRegistrationDate().getTime()) {
                 jdbcTemplate.update(insertAttribute, 8, objectId, null, oldOrder.getRegistrationDate());
             }
@@ -100,7 +99,7 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
             if (oldOrder.getClient().getObjectId() != newOrder.getClient().getObjectId()) {
                 jdbcTemplate.update(insertObjReference, 7, objectId, oldOrder.getClient().getObjectId());
             }
-
+            jdbcTemplate.update(insertAttribute, 43, objectId, null, new Date());
             jdbcTemplate.update(insertObjReference, 42, objectId, oldOrder.getLastModificator().getObjectId());
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());

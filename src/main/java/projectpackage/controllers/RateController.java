@@ -54,8 +54,8 @@ public class RateController {
         Resource<Rate> resource = new Resource<>(rate);
         HttpStatus status;
         if (null != rate){
-            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(RateController.class).deleteRate(rate.getObjectId())).withRel("delete"));
-            resource.add(linkTo(methodOn(RateController.class).updateRate(rate.getObjectId(), rate)).withRel("update"));
+//            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(RateController.class).deleteRate(rate.getObjectId())).withRel("delete"));
+//            resource.add(linkTo(methodOn(RateController.class).updateRate(rate.getObjectId(), rate)).withRel("update"));
             status = HttpStatus.ACCEPTED;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -77,32 +77,32 @@ public class RateController {
         return responseEntity;
     }
 
-    //Update rate method
-    @CacheRemoveAll(cacheName = "rateList")
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> updateRate(@PathVariable("id") Integer id, @RequestBody Rate changedRate){
-        if (!id.equals(changedRate.getObjectId())){
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, "wrongId"), HttpStatus.NOT_ACCEPTABLE);
-        }
-        IUDAnswer result = rateService.updateRate(id, changedRate);
-        HttpStatus status;
-        if (result.isSuccessful()) {
-            status = HttpStatus.ACCEPTED;
-        } else status = HttpStatus.BAD_REQUEST;
-        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
-        return responseEntity;
-    }
+   // //Update rate method
+//    @CacheRemoveAll(cacheName = "rateList")
+//    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+//    public ResponseEntity<IUDAnswer> updateRate(@PathVariable("id") Integer id, @RequestBody Rate changedRate){
+//        if (!id.equals(changedRate.getObjectId())){
+//            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, "wrongId"), HttpStatus.NOT_ACCEPTABLE);
+//        }
+//        IUDAnswer result = rateService.updateRate(id, changedRate);
+//        HttpStatus status;
+//        if (result.isSuccessful()) {
+//            status = HttpStatus.ACCEPTED;
+//        } else status = HttpStatus.BAD_REQUEST;
+//        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
+//        return responseEntity;
+//    }
 
-    //Delete rate method
-    @CacheRemoveAll(cacheName = "rateList")
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> deleteRate(@PathVariable("id") Integer id){
-        IUDAnswer result = rateService.deleteRate(id);
-        HttpStatus status;
-        if (result.isSuccessful()) {
-            status = HttpStatus.ACCEPTED;
-        } else status = HttpStatus.NOT_FOUND;
-        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
-        return responseEntity;
-    }
+//    //Delete rate method
+//    @CacheRemoveAll(cacheName = "rateList")
+//    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+//    public ResponseEntity<IUDAnswer> deleteRate(@PathVariable("id") Integer id){
+//        IUDAnswer result = rateService.deleteRate(id);
+//        HttpStatus status;
+//        if (result.isSuccessful()) {
+//            status = HttpStatus.ACCEPTED;
+//        } else status = HttpStatus.NOT_FOUND;
+//        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
+//        return responseEntity;
+//    }
 }

@@ -81,15 +81,15 @@ public class RateRepositoryTests extends AbstractDatabaseTest{
     }
 
 
-    @Test
-    @Rollback(true)
-    public void deleteRate(){
-        int rateId = 2072;
-        IUDAnswer iudAnswer = rateService.deleteRate(rateId);
-        assertTrue(iudAnswer.isSuccessful());
-        LOGGER.info("Delete rate result = " + iudAnswer.isSuccessful());
-        LOGGER.info(SEPARATOR);
-    }
+//    @Test
+//    @Rollback(true)
+//    public void deleteRate(){
+//        int rateId = 2072;
+//        IUDAnswer iudAnswer = rateService.deleteRate(rateId);
+//        assertTrue(iudAnswer.isSuccessful());
+//        LOGGER.info("Delete rate result = " + iudAnswer.isSuccessful());
+//        LOGGER.info(SEPARATOR);
+//    }
 
     @Test
     @Rollback(true)
