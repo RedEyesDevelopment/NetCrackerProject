@@ -1,7 +1,7 @@
 package projectpackage.service.maintenanceservice;
 
 import projectpackage.model.maintenances.Complimentary;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 
 import java.util.List;
 

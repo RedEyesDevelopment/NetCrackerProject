@@ -1,9 +1,11 @@
 package projectpackage.service.orderservice;
 
+import projectpackage.dto.IUDAnswer;
+import projectpackage.dto.OrderDTO;
 import projectpackage.model.auth.User;
+import projectpackage.model.orders.Category;
 import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
-import projectpackage.model.support.IUDAnswer;
 
 import java.util.Date;
 import java.util.List;
@@ -18,12 +20,14 @@ public interface OrderService {
     public List<Order> getOrdersBySum(long minSum, long maxSum);
     public List<Order> getCurrentOrders();//livingStartDate < SYSDATE < livingFinishDate ясно?
     public List<Order> getPreviousOrders();//livingFinishDate < SYSDATE
-    public List<Order> getFutureOrders();//SYSDATE < livingStartDate
+    public List<Order> getFutureOrders();//livingStartDate > SYSDATE
     public List<Order> getOrdersForPayConfirme();
     public List<Order> getOrdersInRange(Date startDate, Date finishDate);
-    public List<Order> getOrdersConfirmed(boolean isConfirmed);
-    public List<Order> getOrdersPaidFor(boolean isConfirmed);
-
+    public List<Order> getOrdersConfirmed();
+    public List<Order> getOrdersMustToBePaid();
+    public IUDAnswer createOrder(User client, int roomTypeId, int numberOfResidents, Date start, Date finish, Category
+            category, long summ);
+    public Order createOrderTemplate(User client, OrderDTO dto);
     public List<Order> getAllOrders();
     public List<Order> getAllOrders(String orderingParameter, boolean ascend);
     public Order getSingleOrderById(int id);

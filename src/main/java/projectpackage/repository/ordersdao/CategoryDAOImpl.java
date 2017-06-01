@@ -9,9 +9,11 @@ import projectpackage.model.maintenances.Complimentary;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.model.orders.Category;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 
@@ -43,7 +45,6 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
 
     @Override
     public List<Category> getAllCategories() {
-        System.out.println("ALLMAINTENANCES");
         try {
             return manager.createReactEAV(Category.class)
                     .fetchRootChild(Complimentary.class)
@@ -85,7 +86,15 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
     }
 
     @Override
-    public void deleteCategory(int id) throws ReferenceBreakException {
+    public void deleteCategory(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        Category category = null;
+        try {
+            category = getCategory(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == category) throw new DeletedObjectNotExistsException(this);
+
         deleteSingleEntityById(id);
     }
 }

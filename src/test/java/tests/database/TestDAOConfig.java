@@ -5,6 +5,7 @@ import net.sf.log4jdbc.Log4jdbcProxyDataSource;
 import net.sf.log4jdbc.tools.Log4JdbcCustomFormatter;
 import net.sf.log4jdbc.tools.LoggingType;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -15,6 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
+import projectpackage.aspects.ModificationHistoryAspect;
 import projectpackage.repository.authdao.*;
 import projectpackage.repository.blocksdao.BlockDAO;
 import projectpackage.repository.blocksdao.BlockDAOImpl;
@@ -57,8 +59,8 @@ import projectpackage.service.roomservice.RoomTypeService;
 import projectpackage.service.roomservice.RoomTypeServiceImpl;
 import projectpackage.service.securityservice.SecurityService;
 import projectpackage.service.securityservice.SecurityServiceImpl;
-import projectpackage.support.PhoneRegexService;
-import projectpackage.support.PhoneRegexServiceImpl;
+import projectpackage.service.phoneregex.PhoneRegexService;
+import projectpackage.service.phoneregex.PhoneRegexServiceImpl;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -77,6 +79,7 @@ import java.util.Properties;
  * Created by Gvozd on 06.01.2017.
  */
 @ContextConfiguration
+@EnableAspectJAutoProxy
 @EnableTransactionManagement
 public class TestDAOConfig implements TransactionManagementConfigurer {
 
@@ -359,6 +362,11 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
     @Bean
     RateService rateService() {
         return new RateServiceImpl();
+    }
+
+    @Bean
+    ModificationHistoryAspect modificationHistoryAspect(){
+        return new ModificationHistoryAspect();
     }
 
     @Bean

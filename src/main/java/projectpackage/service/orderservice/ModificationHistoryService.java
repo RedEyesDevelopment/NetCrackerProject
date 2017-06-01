@@ -2,7 +2,7 @@ package projectpackage.service.orderservice;
 
 import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 
 import java.util.List;
 

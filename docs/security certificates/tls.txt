@@ -1,0 +1,15 @@
+tls:
+команда: "%JAVA_HOME%\bin\keytool" -genkey -alias tomcat -keyalg RSA
+ALIAS: tomcat
+PASSW for keystore: pkv02zb6l07vkw29z8gjp9jr
+Fin/Lan: Red Eyes
+Org-unit: redeyesdevelopment
+org: redeyes
+city: odessa
+state: ukraine
+country code: ua
+pass4key: ytd[jlbnm
+
+в том месте где применяли команду появится файл .keystore
+смотрите чтобы он явно лежал в папке
+keystoreFile="C:\keystore\.keystore"

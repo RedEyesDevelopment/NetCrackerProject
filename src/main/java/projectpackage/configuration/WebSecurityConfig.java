@@ -36,6 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth").permitAll()
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/users").anonymous()
+                .antMatchers("/orders").permitAll()
                 .antMatchers("/users/**").hasAnyAuthority("CLIENT", "ADMIN");
     }
 

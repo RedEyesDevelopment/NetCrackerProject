@@ -9,9 +9,11 @@ import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
 
 import java.util.List;
 
@@ -100,8 +102,6 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
                     jdbcTemplate.update(updateAttribute, "false", null, newUser.getObjectId(), 3);
                 }
             }
-            System.out.println("OLDUSER ROLE ID: " + oldUser.getRole().getObjectId());
-            System.out.println("NEWUSER ROLE ID: " + newUser.getRole().getObjectId());
             if (oldUser.getRole().getObjectId() != newUser.getRole().getObjectId()) {
                 jdbcTemplate.update(updateReference, newUser.getRole().getObjectId(), newUser.getObjectId(), 20);
             }
@@ -111,7 +111,15 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     }
 
     @Override
-    public void deleteUser(int id) throws ReferenceBreakException {
+    public void deleteUser(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        User user = null;
+        try {
+            user = getUser(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == user) throw new DeletedObjectNotExistsException(this);
+
         deleteSingleEntityById(id);
     }
 

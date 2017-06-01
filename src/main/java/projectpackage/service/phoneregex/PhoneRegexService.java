@@ -1,4 +1,4 @@
-package projectpackage.support;
+package projectpackage.service.phoneregex;
 
 /**
  * Created by Lenovo on 02.05.2017.

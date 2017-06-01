@@ -4,13 +4,16 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.model.blocks.Block;
 import projectpackage.model.rooms.Room;
-import projectpackage.model.support.IUDAnswer;
 import projectpackage.repository.blocksdao.BlockDAO;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -39,9 +42,18 @@ public class BlockServiceImpl implements BlockService{
 
     @Override
     public List<Block> getBlocksByRoom(Room room) {
-        return null;
+        List<Block> answer = new ArrayList<>();
+        Integer roomNumber = room.getRoomNumber();
+        List<Block> allBlocks = getAllBlocks();
+        for (Block block : allBlocks) {
+            if (block.getRoom().getRoomNumber().equals(roomNumber)) {
+                answer.add(block);
+            }
+        }
+        return answer;
     }
 
+    // todo нужно ли это?
     @Override
     public List<Block> getBlocksInRange(Date startDate, Date finishDate) {
         return null;
@@ -49,17 +61,42 @@ public class BlockServiceImpl implements BlockService{
 
     @Override
     public List<Block> getCurrentBlocks() {
-        return null;
+        List<Block> answer = new ArrayList<>();
+        List<Block> allBlocks = getAllBlocks();
+        Date date = new Date();
+        for (Block block : allBlocks) {
+            if (block.getBlockStartDate().getTime() < date.getTime()
+                    && block.getBlockStartDate().getTime() > date.getTime()) {
+                answer.add(block);
+            }
+        }
+        return answer;
     }
 
     @Override
     public List<Block> getPreviousBlocks() {
-        return null;
+        List<Block> answer = new ArrayList<>();
+        List<Block> allBlocks = getAllBlocks();
+        Date date = new Date();
+        for (Block block : allBlocks) {
+            if (block.getBlockFinishDate().getTime() < date.getTime()) {
+                answer.add(block);
+            }
+        }
+        return answer;
     }
 
     @Override
     public List<Block> getFutureBlocks() {
-        return null;
+        List<Block> answer = new ArrayList<>();
+        List<Block> allBlocks = getAllBlocks();
+        Date date = new Date();
+        for (Block block : allBlocks) {
+            if (block.getBlockStartDate().getTime() > date.getTime()) {
+                answer.add(block);
+            }
+        }
+        return answer;
     }
 
     @Override
@@ -74,7 +111,14 @@ public class BlockServiceImpl implements BlockService{
         try {
             blockDAO.deleteBlock(id);
         } catch (ReferenceBreakException e) {
-            return new IUDAnswer(id, false, e.printReferencesEntities());
+            LOGGER.warn("Entity has references on self", e);
+            return new IUDAnswer(id,false, e.printReferencesEntities());
+        } catch (DeletedObjectNotExistsException e) {
+            LOGGER.warn("Entity with that id does not exist!", e);
+            return new IUDAnswer(id, "deletedObjectNotExists");
+        } catch (WrongEntityIdException e) {
+            LOGGER.warn("This id belong another entity class!", e);
+            return new IUDAnswer(id, "wrongDeleteId");
         }
         return new IUDAnswer(id, true);
     }
@@ -87,7 +131,7 @@ public class BlockServiceImpl implements BlockService{
             LOGGER.info("Get from DB blockId = " + blockId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(blockId, false, e.getMessage());
+            return new IUDAnswer(blockId, false, "transactionInterrupt");
         }
         return new IUDAnswer(blockId,true);
     }
@@ -101,7 +145,7 @@ public class BlockServiceImpl implements BlockService{
             blockDAO.updateBlock(newBlock, oldBlock);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id, false, e.getMessage());
+            return new IUDAnswer(id, false, "transactionInterrupt");
         }
         return new IUDAnswer(id, true);
     }

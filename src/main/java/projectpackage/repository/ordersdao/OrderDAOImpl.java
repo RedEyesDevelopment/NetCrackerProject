@@ -18,8 +18,10 @@ import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
@@ -179,7 +181,15 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     }
 
     @Override
-    public void deleteOrder(int id) throws ReferenceBreakException {
+    public void deleteOrder(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        Order order = null;
+        try {
+            order = getOrder(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == order) throw new DeletedObjectNotExistsException(this);
+
         deleteSingleEntityById(id);
     }
 }

@@ -8,9 +8,11 @@ import org.springframework.stereotype.Repository;
 import projectpackage.model.blocks.Block;
 import projectpackage.model.rooms.Room;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
 
 import java.util.List;
 
@@ -86,7 +88,15 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     }
 
     @Override
-    public void deleteBlock(int id) throws ReferenceBreakException {
+    public void deleteBlock(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        Block block = null;
+        try {
+            block = getBlock(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == block) throw new DeletedObjectNotExistsException(this);
+
         deleteSingleEntityById(id);
     }
 }

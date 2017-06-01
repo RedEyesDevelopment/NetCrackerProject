@@ -6,7 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projectpackage.model.auth.User;
-import projectpackage.model.security.AuthForm;
+import projectpackage.dto.AuthForm;
 import projectpackage.service.authservice.UserService;
 import projectpackage.service.securityservice.SecurityService;
 
@@ -33,6 +33,7 @@ public class AuthorizationController {
             return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
         } else {
             User user = userService.getSingleUserById(securityService.getAuthenticatedUserId(form.getLogin()));
+            user.setPassword(null);
             request.getSession().setAttribute("USER", user);
             return new ResponseEntity<Boolean>(true, HttpStatus.OK);
         }
@@ -45,7 +46,8 @@ public class AuthorizationController {
 
     @RequestMapping(value = "/giveSessionData", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public User getSessionData(HttpServletRequest request){
-        return (User) request.getSession().getAttribute("USER");
+        User user = (User) request.getSession().getAttribute("USER");
+        return user;
     }
 
 }

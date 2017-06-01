@@ -2,7 +2,7 @@ package projectpackage.service.notificationservice;
 
 import projectpackage.model.auth.Role;
 import projectpackage.model.notifications.NotificationType;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 
 import java.util.List;
 

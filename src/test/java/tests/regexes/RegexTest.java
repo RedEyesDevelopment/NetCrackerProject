@@ -1,8 +1,8 @@
 package tests.regexes;
 
 import org.junit.Test;
-import projectpackage.support.PhoneRegexService;
-import projectpackage.support.PhoneRegexServiceImpl;
+import projectpackage.service.phoneregex.PhoneRegexService;
+import projectpackage.service.phoneregex.PhoneRegexServiceImpl;
 import tests.AbstractTest;
 
 import static org.junit.Assert.assertEquals;

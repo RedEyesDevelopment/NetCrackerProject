@@ -6,10 +6,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import projectpackage.model.blocks.Block;
-import projectpackage.model.rates.Price;
 import projectpackage.model.rooms.Room;
-import projectpackage.model.rooms.RoomType;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.service.blockservice.BlockService;
 
 import java.util.Date;
@@ -32,8 +30,10 @@ public class BlockRepositoryTests extends AbstractDatabaseTest{
     @Rollback(true)
     public void crudBlockTest() {
         Block block = new Block();
-        block.setBlockStartDate(new Date(16000L));
-        block.setBlockFinishDate(new Date(16000L));
+        //block.setBlockStartDate(new Date(16000L));
+        block.setBlockStartDate(new Date());
+        block.setBlockFinishDate(new Date());
+        //block.setBlockFinishDate(new Date(16000L));
         block.setReason("Reason");
         Room room = new Room();
         room.setObjectId(127);
@@ -53,8 +53,10 @@ public class BlockRepositoryTests extends AbstractDatabaseTest{
         assertEquals(block, insertedBlock);
 
         Block newBlock = new Block();
-        newBlock.setBlockStartDate(new Date(17000L));
-        newBlock.setBlockFinishDate(new Date(17000L));
+        //newBlock.setBlockStartDate(new Date(17000L));
+        newBlock.setBlockStartDate(new Date());
+        newBlock.setBlockFinishDate(new Date());
+        //newBlock.setBlockFinishDate(new Date(17000L));
         newBlock.setReason("Updated Reason");
         Room newRoom = new Room();
         newRoom.setObjectId(128);

@@ -4,7 +4,7 @@ import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.model.notifications.Notification;
 import projectpackage.model.notifications.NotificationType;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 
 import java.util.Date;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  * Created by Arizel on 16.05.2017.
  */
 public interface NotificationService {
-    public List<Notification> getNotificationsBySendDate(NotificationType notificationType);
+    public List<Notification> getNotificationsBySendDate(Date date);
     public List<Notification> getNotificationsByExecutedDate(Date date);
     public List<Notification> getNotificationsByType(NotificationType notificationType);
     public List<Notification> getNotificationsByAuthor(User user);

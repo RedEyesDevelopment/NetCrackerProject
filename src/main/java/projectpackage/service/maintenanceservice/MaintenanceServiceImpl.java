@@ -5,9 +5,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.maintenances.Maintenance;
-import projectpackage.model.support.IUDAnswer;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.dto.IUDAnswer;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.repository.maintenancedao.MaintenanceDAO;
 
 import java.util.List;
@@ -47,9 +49,16 @@ public class MaintenanceServiceImpl implements MaintenanceService {
         try {
             maintenanceDAO.deleteMaintenance(id);
         } catch (ReferenceBreakException e) {
+            LOGGER.warn("Entity has references on self", e);
             return new IUDAnswer(id,false, e.printReferencesEntities());
+        } catch (DeletedObjectNotExistsException e) {
+            LOGGER.warn("Entity with that id does not exist!", e);
+            return new IUDAnswer(id, "deletedObjectNotExists");
+        } catch (WrongEntityIdException e) {
+            LOGGER.warn("This id belong another entity class!", e);
+            return new IUDAnswer(id, "wrongDeleteId");
         }
-        return new IUDAnswer(id,true);
+        return new IUDAnswer(id, true);
     }
 
     @Override
@@ -60,7 +69,7 @@ public class MaintenanceServiceImpl implements MaintenanceService {
             LOGGER.info("Get from DB maintenanceId = " + maintenanceId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(maintenanceId,false, e.getMessage());
+            return new IUDAnswer(maintenanceId,false, "transactionInterrupt");
         }
         return new IUDAnswer(maintenanceId,true);
     }
@@ -73,7 +82,7 @@ public class MaintenanceServiceImpl implements MaintenanceService {
             maintenanceDAO.updateMaintenance(newMaintenance, oldMaintenance);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, e.getMessage());
+            return new IUDAnswer(id,false, "transactionInterrupt");
         }
         return new IUDAnswer(id,true);
     }

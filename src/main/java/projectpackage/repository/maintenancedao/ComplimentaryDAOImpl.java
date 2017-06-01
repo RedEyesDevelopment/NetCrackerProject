@@ -8,8 +8,10 @@ import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.Complimentary;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -73,7 +75,15 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     }
 
     @Override
-    public void deleteComplimentary(int id) throws ReferenceBreakException {
+    public void deleteComplimentary(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        Complimentary complimentary = null;
+        try {
+            complimentary = getComplimentary(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == complimentary) throw new DeletedObjectNotExistsException(this);
+
         deleteSingleEntityById(id);
     }
 }

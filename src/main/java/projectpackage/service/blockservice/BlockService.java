@@ -2,7 +2,7 @@ package projectpackage.service.blockservice;
 
 import projectpackage.model.blocks.Block;
 import projectpackage.model.rooms.Room;
-import projectpackage.model.support.IUDAnswer;
+import projectpackage.dto.IUDAnswer;
 
 import java.util.Date;
 import java.util.List;

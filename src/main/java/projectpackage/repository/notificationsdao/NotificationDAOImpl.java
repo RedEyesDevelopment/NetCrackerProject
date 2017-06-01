@@ -18,8 +18,10 @@ import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -147,7 +149,15 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     }
 
     @Override
-    public void deleteNotification(int id) throws ReferenceBreakException {
+    public void deleteNotification(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        Notification notification = null;
+        try {
+            notification = getNotification(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == notification) throw new DeletedObjectNotExistsException(this);
+
         deleteSingleEntityById(id);
     }
 }

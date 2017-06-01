@@ -8,8 +8,10 @@ import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.JournalRecord;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -91,7 +93,15 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
     }
 
     @Override
-    public void deleteJournalRecord(int id) throws ReferenceBreakException {
+    public void deleteJournalRecord(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        JournalRecord journalRecord = null;
+        try {
+            journalRecord = getJournalRecord(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == journalRecord) throw new DeletedObjectNotExistsException(this);
+
         deleteSingleEntityById(id);
     }
 }

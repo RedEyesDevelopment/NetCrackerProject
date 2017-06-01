@@ -4,14 +4,21 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import projectpackage.dto.IUDAnswer;
+import projectpackage.dto.OrderDTO;
 import projectpackage.model.rooms.RoomType;
-import projectpackage.model.support.IUDAnswer;
-import projectpackage.repository.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.daoexceptions.TransactionException;
 import projectpackage.repository.roomsdao.RoomTypeDAO;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.service.orderservice.CategoryService;
 
 import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
 
 /**
  * Created by Arizel on 16.05.2017.
@@ -23,6 +30,9 @@ public class RoomTypeServiceImpl implements RoomTypeService{
 
     @Autowired
     RoomTypeDAO roomTypeDAO;
+
+    @Autowired
+    CategoryService categoryService;
 
     @Override
     public List<RoomType> getRoomTypes(Date date) {
@@ -42,6 +52,37 @@ public class RoomTypeServiceImpl implements RoomTypeService{
     @Override
     public List<RoomType> getRoomTypes(Date date, long maxRate, int numberOfPeople) {
         return null;
+    }
+
+    @Override
+    public List<OrderDTO> getRoomTypes(Date startDate, Date finishDate, int numberOfPeople, int categoryId) {
+        List<OrderDTO> list = new ArrayList<>();
+        Set<Integer> availableRoomTypes = roomTypeDAO.getAvailableRoomTypes(numberOfPeople, new java.sql.Date(startDate.getTime()), new java.sql.Date(finishDate.getTime()));
+        List<RoomType> allRoomTypes = getAllRoomTypes();
+        for (RoomType roomType : allRoomTypes) {
+            OrderDTO orderDTO = new OrderDTO();
+            orderDTO.setRoomTypeName(roomType.getRoomTypeTitle());
+            orderDTO.setRoomTypeDescription(roomType.getContent());
+            long categoryPrice = categoryService.getSingleCategoryById(categoryId).getCategoryPrice();
+            long days = (finishDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000);
+            Long categoryCost = categoryPrice * days;
+            orderDTO.setCategoryCost(categoryCost);
+            //LOGGER.info( + "****************************************************");
+            orderDTO.setLivingPersons(numberOfPeople);
+            orderDTO.setRoomTypeId(roomType.getObjectId());
+            orderDTO.setArrival(startDate);
+            orderDTO.setDeparture(finishDate);
+            orderDTO.setCategoryId(categoryId);
+            boolean available = availableRoomTypes.contains(roomType.getObjectId());
+            orderDTO.setAvailable(available);
+            if (available) {
+                orderDTO.setLivingCost(roomTypeDAO.getCostForLiving(roomType, numberOfPeople, startDate, finishDate));
+            }
+
+            list.add(orderDTO);
+        }
+        LOGGER.info(list);
+        return list;
     }
 
     @Override
@@ -68,9 +109,16 @@ public class RoomTypeServiceImpl implements RoomTypeService{
         try {
             roomTypeDAO.deleteRoomType(id);
         } catch (ReferenceBreakException e) {
+            LOGGER.warn("Entity has references on self", e);
             return new IUDAnswer(id,false, e.printReferencesEntities());
+        } catch (DeletedObjectNotExistsException e) {
+            LOGGER.warn("Entity with that id does not exist!", e);
+            return new IUDAnswer(id, "deletedObjectNotExists");
+        } catch (WrongEntityIdException e) {
+            LOGGER.warn("This id belong another entity class!", e);
+            return new IUDAnswer(id, "wrongDeleteId");
         }
-        return new IUDAnswer(id,true);
+        return new IUDAnswer(id, true);
     }
 
     @Override
@@ -81,7 +129,7 @@ public class RoomTypeServiceImpl implements RoomTypeService{
             LOGGER.info("Get from DB roomId = " + roomTypeId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(roomTypeId,false, e.getMessage());
+            return new IUDAnswer(roomTypeId,false, "transactionInterrupt");
         }
         return new IUDAnswer(roomTypeId,true);
     }
@@ -94,7 +142,7 @@ public class RoomTypeServiceImpl implements RoomTypeService{
             roomTypeDAO.updateRoomType(newRoomType, oldRoomType);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, e.getMessage());
+            return new IUDAnswer(id,false, "transactionInterrupt");
         }
         return new IUDAnswer(id,true);
     }
