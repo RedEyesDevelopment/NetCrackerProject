@@ -157,6 +157,7 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
         }
         if (null == room) throw new DeletedObjectNotExistsException(this);
 
+
         deleteSingleEntityById(id);
     }
 }
