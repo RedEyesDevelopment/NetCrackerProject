@@ -135,18 +135,12 @@ public class OrderServiceImpl implements OrderService{
         List<Order> allOrders = getAllOrders();
         Date date = new Date();
         for (Order order : allOrders) {
-            if (    (startDate.getTime() > order.getLivingStartDate().getTime()
-                    && startDate.getTime() < order.getLivingFinishDate().getTime())
-                    ||
-                    (finishDate.getTime() > order.getLivingStartDate().getTime()
-                            && finishDate.getTime() < order.getLivingFinishDate().getTime())
-                    ||
-                    (startDate.getTime() < order.getLivingStartDate().getTime()
-                            && finishDate.getTime() > order.getLivingFinishDate().getTime())
-                    ||
-                    (startDate.getTime() > order.getLivingStartDate().getTime()
-                            && finishDate.getTime() < order.getLivingFinishDate().getTime())
-                    ) {
+            if (    !(
+                        order.getLivingStartDate().getTime() > finishDate.getTime()
+                        ||
+                        order.getLivingFinishDate().getTime() < startDate.getTime()
+                    )
+               ) {
                 answer.add(order);
             }
         }

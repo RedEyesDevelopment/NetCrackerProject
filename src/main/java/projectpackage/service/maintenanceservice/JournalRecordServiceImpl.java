@@ -5,15 +5,19 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import projectpackage.model.maintenances.Complimentary;
 import projectpackage.model.maintenances.JournalRecord;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.model.maintenances.Maintenance;
+import projectpackage.model.orders.Order;
+import projectpackage.repository.ordersdao.OrderDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.repository.maintenancedao.JournalRecordDAO;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Dima on 21.05.2017.
@@ -26,6 +30,9 @@ public class JournalRecordServiceImpl implements JournalRecordService{
     @Autowired
     JournalRecordDAO journalRecordDAO;
 
+    @Autowired
+    OrderDAO orderDAO;
+
     @Override
     public List<JournalRecord> getAllJournalRecords() {
         List<JournalRecord> journalRecords = journalRecordDAO.getAllJournalRecords();
@@ -36,6 +43,18 @@ public class JournalRecordServiceImpl implements JournalRecordService{
     @Override
     public List<JournalRecord> getAllJournalRecords(String orderingParameter, boolean ascend) {
         return null;
+    }
+
+    @Override
+    public List<JournalRecord> getJournalRecordsByOrder(int orderId) {
+        List<JournalRecord> answer = new ArrayList<>();
+        List<JournalRecord> allJournalRecords = getAllJournalRecords();
+        for (JournalRecord journalRecord : allJournalRecords) {
+            if (journalRecord.getOrderId() == orderId) {
+                answer.add(journalRecord);
+            }
+        }
+        return answer;
     }
 
     @Override
@@ -64,6 +83,17 @@ public class JournalRecordServiceImpl implements JournalRecordService{
 
     @Override
     public IUDAnswer insertJournalRecord(JournalRecord journalRecord) {
+        Order order = orderDAO.getOrder(journalRecord.getOrderId());
+        Set<Complimentary> freeComplimentaries = order.getCategory().getComplimentaries();
+        Set<Maintenance> freeMaintenances = new HashSet<>();
+        for (Complimentary freeComplimentary : freeComplimentaries) {
+            freeMaintenances.add(freeComplimentary.getMaintenance());
+        }
+        if (freeMaintenances.contains(journalRecord.getMaintenance())) {
+            journalRecord.setCost(0L);
+        } else {
+            journalRecord.setCost(journalRecord.getCount() * journalRecord.getMaintenance().getMaintenancePrice());
+        }
         Integer journalRecordId = null;
         try {
             journalRecordId = journalRecordDAO.insertJournalRecord(journalRecord);

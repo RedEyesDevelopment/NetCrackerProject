@@ -73,11 +73,6 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public RoomStatDTO getAllRoomsOnPeriod(Date start, Date finish) {
-        return null;
-    }
-
-    @Override
     public Room getSingleRoomById(int id) {
         Room room = roomDAO.getRoom(id);
         if (room == null) LOGGER.info("Returned NULL!!!");
