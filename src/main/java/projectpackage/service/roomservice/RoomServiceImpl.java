@@ -9,6 +9,7 @@ import projectpackage.dto.RoomStatDTO;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.roomsdao.RoomDAO;
+import projectpackage.repository.roomsdao.RoomTypeDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
@@ -17,6 +18,7 @@ import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -29,6 +31,9 @@ public class RoomServiceImpl implements RoomService {
 
     @Autowired
     RoomDAO roomDAO;
+
+    @Autowired
+    RoomTypeDAO roomTypeDAO;
 
     @Override
     public List<Room> getRoomsByNumberOfResidents(int count) {
@@ -85,12 +90,49 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public List<Room> getFreeRoomsOnPeriod(Date start, Date finish) {
+        List<Room> list = new ArrayList<>();
+        List<Room> allRooms = getAllRooms();
+        List<RoomType> roomTypes = roomTypeDAO.getAllRoomTypes();
+        for (int i = 0; i < roomTypes.size(); i++) {
+            RoomType roomType = roomTypes.get(i);
+            for (int j = 0; j < 3; j++) {
+                list.addAll(roomDAO.getFreeRooms(roomType.getObjectId(), j, start, finish));
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public List<Room> getBookedRoomsOnPeriod(Date start, Date finish) {
+        List<Room> list = new ArrayList<>();
+        List<Room> allRooms = getAllRooms();
+        List<RoomType> roomTypes = roomTypeDAO.getAllRoomTypes();
+        for (int i = 0; i < roomTypes.size(); i++) {
+            RoomType roomType = roomTypes.get(i);
+            for (int j = 0; j < 3; j++) {
+                list.addAll(roomDAO.getBookedRooms(roomType.getObjectId(), j, start, finish));
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public RoomStatDTO getAllRoomsOnPeriod(Date start, Date finish) {
+        RoomStatDTO roomStatDTO = new RoomStatDTO();
+        roomStatDTO.setFreeRooms(getFreeRoomsOnPeriod(start, finish));
+        roomStatDTO.setBookedRooms(getBookedRoomsOnPeriod(start, finish));
+        return roomStatDTO;
+    }
+
+
+    @Override
     public IUDAnswer deleteRoom(int id) {
         try {
             roomDAO.deleteRoom(id);
         } catch (ReferenceBreakException e) {
             LOGGER.warn("Entity has references on self", e);
-            return new IUDAnswer(id,false, e.printReferencesEntities());
+            return new IUDAnswer(id, false, e.printReferencesEntities());
         } catch (DeletedObjectNotExistsException e) {
             LOGGER.warn("Entity with that id does not exist!", e);
             return new IUDAnswer(id, "deletedObjectNotExists");
@@ -109,9 +151,9 @@ public class RoomServiceImpl implements RoomService {
             LOGGER.info("Get from DB roomId = " + roomId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(roomId,false, "transactionInterrupt");
+            return new IUDAnswer(roomId, false, "transactionInterrupt");
         }
-        return new IUDAnswer(roomId,true);
+        return new IUDAnswer(roomId, true);
     }
 
     @Override
@@ -122,8 +164,8 @@ public class RoomServiceImpl implements RoomService {
             roomDAO.updateRoom(newRoom, oldRoom);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, "transactionInterrupt");
+            return new IUDAnswer(id, false, "transactionInterrupt");
         }
-        return new IUDAnswer(id,true);
+        return new IUDAnswer(id, true);
     }
 }

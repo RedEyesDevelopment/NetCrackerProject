@@ -20,6 +20,9 @@ public interface RoomService {
     public RoomStatDTO getAllRoomsOnPeriod(Date start, Date finish);
     public Room getSingleRoomById(int id);
     public List<Room> doesBlockedRoomOnDay(Room room, Date date);
+    public List<Room> getFreeRoomsOnPeriod(Date start, Date finish);
+    public List<Room> getBookedRoomsOnPeriod(Date start, Date finish);
+    public RoomStatDTO getAllRoomsOnPeriod(Date start, Date finish);
     public IUDAnswer deleteRoom(int id);
     public IUDAnswer insertRoom(Room room);
     public IUDAnswer updateRoom(int id, Room newRoom);

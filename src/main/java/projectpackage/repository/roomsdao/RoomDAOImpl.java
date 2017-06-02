@@ -76,6 +76,45 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     }
 
     @Override
+    public List<Room> getFreeRooms(int roomTypeId, int numberOfResidents, Date start, Date finish) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("room_type_id", roomTypeId);
+        parameters.put("num_of_res", numberOfResidents);
+        parameters.put("d_start", start);
+        parameters.put("d_finish", finish);
+        List ids = namedParameterJdbcTemplate.query("SELECT * FROM TABLE(Room_tools.get_free_rooms(" +
+                ":room_type_id, :num_of_res, :d_start, :d_finish))", parameters, new IdRowMapper());
+        List<Room> allRooms = getAllRooms();
+        List<Room> result = new ArrayList<Room>();
+        for (int i = 0; i < ids.size(); i++){
+            for(int j=0; j < allRooms.size(); j++){
+                Room room = allRooms.get(j);
+                if(room.getObjectId() == (int)ids.get(i)){
+                    result.add(room);
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<Room> getBookedRooms(int roomTypeId, int numberOfResidents, Date start, Date finish) {
+        List<Room> freeRooms = getFreeRooms(roomTypeId, numberOfResidents, start, finish);
+        List<Room> allRooms = getAllRooms();
+        List<Room> result = new ArrayList<Room>();
+        for (int i = 0; i < freeRooms.size(); i++){
+            for(int j=0; j < allRooms.size(); j++){
+                Room room = allRooms.get(j);
+                if(room.getObjectId() != freeRooms.get(i).getObjectId()){
+                    result.add(room);
+                }
+            }
+        }
+        return result;
+    }
+
+
+    @Override
     public int insertRoom(Room room) throws TransactionException {
         Integer objectId = nextObjectId();
         try {
