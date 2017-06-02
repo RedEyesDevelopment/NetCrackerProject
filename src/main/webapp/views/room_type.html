@@ -1,0 +1,68 @@
+
+    <div class="container">
+        <div class="row row-content">
+            <div class="col-xs-12">
+                <ul class="media-list">
+                    <li class="media my-border" ng-repeat="room in list">
+                        <div class="col-sm-4">
+                            <div class="media">
+                                <a href="#">
+                                    <img class="media-object img-thumbnail"
+                                         src='../res/hotel_luxe.jpg' alt="RoomType">
+                                </a>
+                            </div>
+                            <div class="media row">
+                                <div class="col-xs-3"> 
+                                    <a href="#" class="thumbnail">
+                                        <img src="..." alt="...">
+                                    </a>
+                                </div>
+                                <div class="col-xs-3"> 
+                                    <a href="#" class="thumbnail">
+                                        <img src="..." alt="...">
+                                    </a>
+                                </div>
+                                <div class="col-xs-3"> 
+                                    <a href="#" class="thumbnail">
+                                        <img src="..." alt="...">
+                                    </a>
+                                </div>
+                                <div class="col-xs-3"> 
+                                    <a href="#" class="thumbnail">
+                                        <img src="..." alt="...">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="media-body">
+                                <h2 class="media-heading">{{room.roomTypeName}}</h2>
+                                <p>{{room.roomTypeDescription}}</p>
+                                <h1 class="text-center">
+                                                        <span class="label label-success" ng-show="room.available">AVAILABLE</span>
+                                                        <span class="label label-danger" ng-show="!room.available">NOT AVAILABLE</span>
+                                </h1>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="media-body my-border text-center" ng-show="room.available">
+                                <h2 class="media-heading">Accomodation price</h2>
+                                <p class="price">{{(room.livingCost / 100)}}$</p>
+                                <h2 class="media-heading">Service price</h2>
+                                <p class="price">{{(room.categoryCost / 100) }}$</p>
+                                <h2 class="media-heading">Total</h2>
+                                <p class="price">{{ room.livingCost / 100 + room.categoryCost / 100 }}$</p>
+                                <div class="text-center">
+                                    <form name='book'>
+                                        
+                                        <button type="submit" ng-click='bookApartment(room.roomTypeId)'  class="btn btn-lg"><a href="#">BOOK</a></button>
+                                    <form>   
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                 </ul>
+            </div>
+        </div>
+    </div>
+    

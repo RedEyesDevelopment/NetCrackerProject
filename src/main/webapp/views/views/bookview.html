@@ -1,0 +1,143 @@
+ <div id="loginModal" class="modal fade" role="dialog" >
+        <div class="modal-dialog modal-sm">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Log in</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label class="sr-only" for="emailInput">Email address</label>
+                            <input type="email" class="form-control input-sm" id="emailInput" placeholder="Enter email">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="sr-only" for="passwordInput">Password</label>
+                            <input type="password" class="form-control input-sm" id="passwordInput" placeholder="Password">
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox"> Remember me</label>
+                        </div>
+                        <button type="submit" class="btn btn-info btn-sm">Sign in</button>
+                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="signupModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Sign up</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label class="sr-only" for="firstNameInput">First Name</label>
+                            <input type="text" class="form-control input-sm" id="firstNameInput" placeholder="Enter first name">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="lastNameInput">Last Name</label>
+                            <input type="text" class="form-control input-sm" id="lastNameInput" placeholder="Enter last name">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="emailInput">Email address</label>
+                            <input type="email" class="form-control input-sm" id="emailInput" placeholder="Enter email">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="phoneNumberInput">Phone Number</label>
+                            <input type="tel" class="form-control input-sm" id="phoneNumberInput" placeholder="Enter phone number">
+                        </div>
+                        <button type="submit" class="btn btn-info btn-sm">Sign up</button>
+                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+    <header class="jumbotron">
+
+        <!-- Main component for a primary marketing message or call to action -->
+
+        <div class="container">
+            <div class="row row-header">
+                <div class="col-xs-12 col-sm-8">
+                    <h1>404 Hotel</h1>
+                    <p style="padding:40px;"></p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras turpis erat, pellentesque et lectus et, fermentum efficitur eros. Praesent a lacinia mi, at sagittis libero. Donec justo ipsum, viverra eget sem eu, sagittis scelerisque libero. Cras tincidunt convallis felis vitae.</p>
+                </div>
+                <div class="col-xs-12 col-sm-4">
+                    <p style="padding:20px;"></p>
+                    <img src="img/logo.png" class="img-responsive">
+                </div>
+            </div>
+        </div>
+    </header>
+        
+    <div class="container">
+        <div class="row row-content" ng-controller='search-available'>
+            <div class="col-sm-push-1 col-sm-pull-1 col-sm-10">
+                <h2 style="text-align: center; margin: 25px 0px">BOOK NOW</h2>
+                <div>
+                    <form class="form" name='available' novalidate ng-submit='submit($event)'>
+                        <div class="col-sm-7">
+                            <div class="row">
+                                <div class="form-group col-sm-6">
+                                    <label for="arrivalDate">Arrival</label>
+                                    <input type="date" class="form-control"   ng-model='book.from' ng-required="true">
+                                    
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="departureDate">Departure</label>
+                                    <input type="date" class="form-control"  ng-model='book.till' ng-required="true">
+                                    
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-sm-6">
+                                    <label for="adultsNumber">Adults</label>
+                                    <select class="form-control" ng-model='book.adults' ng-required="true" value='1'>
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-sm-6">
+                                    <label for="adultsNumber">Type of meals</label>
+                                    <select class="form-control" ng-model='book.type' ng-required="true" value='Room Only'>
+                                        <option value='Room Only'>Room Only</option>
+                                        <option value='Bed and Breakfast'>Bed and Breakfast</option>
+                                        <option value='Half-board'> Half-board</option>
+                                        <option value='Full-board'>Full-board</option>
+                                        <option value='All-inclusive'>All-inclusive</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <p style="padding: 5px">
+                                <div class='require-fields'>
+                                    <span ng-show="!book.from">Arrival data is required</span>
+                                    <span ng-show="!book.till">Departure data is required</span>
+                                    <span ng-show="!book.adults">Number of adults is required</span>
+                                    <span ng-show="!book.type">Type of meals is required</span>
+                                    <span ng-hide="true">The Difference in years shouldn't be more than 2 years</span>
+                                </div>
+                            </p>
+                        </div>
+                        <div class="col-xs-12 form-group text-center">
+                            <button type="submit" class="btn" ng-disabled='available.$invalid'><a href="#/rooms">SEARCH AVAILABILITY</a></button>   
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>

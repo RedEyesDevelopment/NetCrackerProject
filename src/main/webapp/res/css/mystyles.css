@@ -1,0 +1,54 @@
+.jumbotron {
+  margin: 0px auto;
+  padding: 70px 30px;
+}
+
+.img-thumbnail {
+    max-height: 250px;
+    max-width: 500px;
+}
+
+.my-border {
+    border: 1px solid #dfdfdf;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.media-body {
+    padding: 15px;
+}
+
+.price {
+    font-size: 30px;
+}
+
+.row-content {
+    padding: 60px 0px;
+}
+
+ul.notifications  {
+    padding: 25px 0px;
+    text-align: center;
+}
+
+ul.notifications li {
+    display : inline-block;
+    width : 200px;
+    height: 200px;
+    margin: 10px 15px;
+    vertical-align: top;
+    text-align: center;
+    line-height: normal;
+}
+
+.nav.nav-sidebar li a:hover {
+    background-color: #eeeeee;
+    border: 1px solid #eeeeee;
+    border-radius: 10px;
+}
+
+li.active {
+    background-color: #eeeeee;
+    border: 1px solid #eeeeee;
+    border-radius: 10px;
+}

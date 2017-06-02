@@ -1,0 +1,121 @@
+{
+  "objectId": 0,
+  "registrationDate": 1496272424217,
+  "isPaidFor": false,
+  "isConfirmed": false,
+  "livingStartDate": 1398891600000,
+  "livingFinishDate": 1407013200000,
+  "sum": 2370094,
+  "comment": "",
+  "category": null,
+  "room": {
+    "objectId": 128,
+    "roomNumber": 102,
+    "numberOfResidents": 2,
+    "roomType": {
+      "objectId": 5,
+      "roomTypeTitle": "Luxe",
+      "content": "Content Luxe",
+      "rates": [
+        {
+          "objectId": 34,
+          "rateFromDate": 1409605200000,
+          "rateToDate": 1417384800000,
+          "roomTypeId": 5,
+          "prices": [
+            {
+              "objectId": 65,
+              "numberOfPeople": 2,
+              "rate": 20000,
+              "rateId": 34
+            }
+          ]
+        },
+        {
+          "objectId": 33,
+          "rateFromDate": 1401656400000,
+          "rateToDate": 1409518800000,
+          "roomTypeId": 5,
+          "prices": [
+            {
+              "objectId": 62,
+              "numberOfPeople": 2,
+              "rate": 20000,
+              "rateId": 33
+            }
+          ]
+        },
+        {
+          "objectId": 31,
+          "rateFromDate": 1385935200000,
+          "rateToDate": 1393624800000,
+          "roomTypeId": 5,
+          "prices": [
+            {
+              "objectId": 56,
+              "numberOfPeople": 2,
+              "rate": 20000,
+              "rateId": 31
+            }
+          ]
+        },
+        {
+          "objectId": 32,
+          "rateFromDate": 1393711200000,
+          "rateToDate": 1401570000000,
+          "roomTypeId": 5,
+          "prices": [
+            {
+              "objectId": 59,
+              "numberOfPeople": 2,
+              "rate": 20000,
+              "rateId": 32
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "client": {
+    "objectId": 900,
+    "email": "stephenking@mail.ru",
+    "password": null,
+    "firstName": "Stephen",
+    "lastName": "King",
+    "additionalInfo": null,
+    "enabled": true,
+    "role": {
+      "objectId": 3,
+      "roleName": "CLIENT"
+    },
+    "phones": [
+      {
+        "objectId": 1100,
+        "userId": 900,
+        "phoneNumber": "08001234516"
+      }
+    ]
+  },
+  "lastModificator": {
+    "objectId": 900,
+    "email": "stephenking@mail.ru",
+    "password": null,
+    "firstName": "Stephen",
+    "lastName": "King",
+    "additionalInfo": null,
+    "enabled": true,
+    "role": {
+      "objectId": 3,
+      "roleName": "CLIENT"
+    },
+    "phones": [
+      {
+        "objectId": 1100,
+        "userId": 900,
+        "phoneNumber": "08001234516"
+      }
+    ]
+  },
+  "historys": null,
+  "journalRecords": null
+}
