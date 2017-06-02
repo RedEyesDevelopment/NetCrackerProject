@@ -143,9 +143,30 @@ public class OrderController {
         return new ResponseEntity<IUDAnswer>(answer, status);
     }
 
+    @RequestMapping(value = "/cancel", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<IUDAnswer> cancelOrder(HttpServletRequest request) {
+        User thisUser = (User) request.getSession().getAttribute("USER");
+        request.getSession().removeAttribute("NEWORDER");
+        IUDAnswer answer = new IUDAnswer(false, "orderCanceled");
+
+        return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+    }
+
     @RequestMapping(value = "/searchavailability", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<List<OrderDTO>> searchAvailabilityForOrderCreation(@RequestBody SearchAvailabilityParamsDTO searchDto, HttpServletRequest request){
-        List<OrderDTO> data = roomTypeService.getRoomTypes(searchDto.getArrival(),searchDto.getDeparture(),searchDto.getLivingPersons(), searchDto.getCategoryId());
+        List<OrderDTO> data = null;
+
+        long maxValidTime = 31536000000L;
+        long validStartDate = searchDto.getArrival().getTime() - new Date().getTime();
+        long validFinishDate = searchDto.getArrival().getTime() - new Date().getTime();
+        if ( validStartDate > maxValidTime || validFinishDate > maxValidTime
+                || searchDto.getArrival().getTime() >= searchDto.getDeparture().getTime()) {
+
+            return new ResponseEntity<List<OrderDTO>>( data, HttpStatus.I_AM_A_TEAPOT);
+        }
+
+        data = roomTypeService.getRoomTypes(searchDto.getArrival(),searchDto.getDeparture(),searchDto.getLivingPersons(), searchDto.getCategoryId());
+
         ResponseEntity<List<OrderDTO>> responseEntity = new ResponseEntity<List<OrderDTO>>(data, HttpStatus.FOUND);
         List<OrderDTO> dtoData = data.stream().filter(dto -> dto.isAvailable()).collect(Collectors.toList());
         request.getSession().setAttribute("ORDERDATA", dtoData);

@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.dto.RoomStatDTO;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.roomsdao.RoomDAO;
@@ -63,6 +64,11 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public List<Room> getAllRooms(String orderingParameter, boolean ascend) {
+        return null;
+    }
+
+    @Override
+    public RoomStatDTO getAllRoomsOnPeriod(Date start, Date finish) {
         return null;
     }
 

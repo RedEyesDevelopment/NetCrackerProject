@@ -20,6 +20,7 @@ public class IUDAnswer {
         ANSWERS.put("transactionInterrupt", "The transaction was aborted from add operation!");
         ANSWERS.put("emptyRoomNotFound", "The room of this type is not available on current date.");
         ANSWERS.put("orderCreated", "The order has been confirmed. The message with requisites was sent to your email.");
+        ANSWERS.put("orderCanceled", "The order has been canceled.");
     }
 
     private Integer objectId;

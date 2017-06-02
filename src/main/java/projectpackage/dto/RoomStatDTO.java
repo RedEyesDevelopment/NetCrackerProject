@@ -10,6 +10,6 @@ import java.util.List;
  */
 @Data
 public class RoomStatDTO {
-    List<Room> freeRooms;
-    List<Room> bookedRooms;
+    private List<Room> freeRooms;
+    private List<Room> bookedRooms;
 }

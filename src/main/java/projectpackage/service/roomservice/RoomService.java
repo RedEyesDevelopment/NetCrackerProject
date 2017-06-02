@@ -1,5 +1,6 @@
 package projectpackage.service.roomservice;
 
+import projectpackage.dto.RoomStatDTO;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.dto.IUDAnswer;
@@ -16,6 +17,7 @@ public interface RoomService {
 
     public List<Room> getAllRooms();
     public List<Room> getAllRooms(String orderingParameter, boolean ascend);
+    public RoomStatDTO getAllRoomsOnPeriod(Date start, Date finish);
     public Room getSingleRoomById(int id);
     public List<Room> doesBlockedRoomOnDay(Room room, Date date);
     public IUDAnswer deleteRoom(int id);
