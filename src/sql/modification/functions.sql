@@ -1,6 +1,12 @@
 CREATE SEQUENCE seq_obj_id START WITH 2000;
 
+
+
+
+
+
 SET SERVEROUTPUT ON;
+
 
 CREATE OR REPLACE FUNCTION delete_object_by_id(obj_id IN NUMBER)
 RETURN NUMBER
@@ -30,7 +36,7 @@ BEGIN
     IF (ref_count > 0) THEN
         FOR reference_rec in References_list LOOP
             SELECT DISTINCT Code INTO reference_entity
-                FROM ObjReference, Objects, ObjType
+                FROM Objects, ObjType
                 WHERE   reference_rec.Object_id = Objects.Object_id
                     AND Objects.Object_Type_Id = ObjType.Object_Type_Id;
             error_message := error_message || reference_entity || ' and ';
@@ -55,6 +61,7 @@ BEGIN
 
 END;
 
+
 BEGIN
-DBMS_OUTPUT.PUT_LINE(delete_object_by_id(5));
+    DBMS_OUTPUT.PUT_LINE(delete_object_by_id(228));
 END;
