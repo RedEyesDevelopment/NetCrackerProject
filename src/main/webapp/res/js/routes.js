@@ -1,6 +1,25 @@
 var app = angular.module('app', ['ngRoute', 'ngAnimate']);
 
 
+app.factory('sharedData' , function() {
+    var sharedData = {};
+
+    return {
+        getData: function() {
+            return sharedData;
+        },
+
+        setData: function(data) {
+            sharedData = data;
+
+        }
+
+    }
+
+
+});
+
+
 app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
     $locationProvider.hashPrefix('');
 
@@ -12,7 +31,7 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
 }]);
 
 
-app.controller('search-available', ['$scope', '$http', function ($scope, $http) {
+app.controller('search-available', ['$scope', '$http', '$location' , 'sharedData' , function ($scope, $http, $location, sharedData) {
 
     $http({
         url: 'http://localhost:8080/orders',
@@ -27,20 +46,11 @@ app.controller('search-available', ['$scope', '$http', function ($scope, $http) 
 
     $scope.submit = function (eve) {
 
-
-        console.log({
-            arrival: $scope.book.from.getTime(),
-            departure: $scope.book.till.getTime(),
-            livingPersons: $scope.book.adults,
-            categoryId: $scope.book.type
-        });
-
-
         $http({
             url: 'http://localhost:8080/orders/searchavailability',
             method: 'POST',
             data: {
-                arrival: $scope.book.from.getTime(),
+                arrival:   $scope.book.from.getTime(),
                 departure: $scope.book.till.getTime(),
                 livingPersons: parseInt($scope.book.adults),
                 categoryId: parseInt($scope.book.type)
@@ -53,46 +63,30 @@ app.controller('search-available', ['$scope', '$http', function ($scope, $http) 
 
 
         }).then(function(data) {
-            console.log(data);
+
+            sharedData.setData(data);
+
+
+            $location.path('/rooms');
+
+
         }, function(response) {
             console.log(response);
             console.log("I_AM_TEAPOT!")
         });
 
+
     }
+
 
 
 }]);
 
-app.controller('roomTypeController', ['$scope', '$http', function ($scope, $http) {
+app.controller('roomTypeController', ['$scope', '$http', 'sharedData' , function ($scope, $http, sharedData) {
 
-    console.log({
-        arrival : $scope.book.from.getTime(),
-        departure : $scope.book.till.getTime(),
-        livingPersons: $scope.book.adults,
-        categoryId: $scope.book.type
-    });
+    var book = sharedData.getData();
 
-    $http({
-        url: 'http://localhost:8080/orders/searchavailability',
-        method: 'POST',
-
-        data: {
-            arrival: 1496955600000, departure: 1496955600000, livingPersons: 2, categoryId: 450
-        },
-
-        headers: {
-            'Content-Type': 'application/json; charset=utf-8'
-        }
-    }).then(function (response) {
-        $scope.list = response.data
-    });
-
-    $scope.validateDate = function (date) {
-        console.log(date);
-
-        return false;
-    }
+    $scope.list = book.data;
 
 
     $scope.bookApartment = function (id) {
