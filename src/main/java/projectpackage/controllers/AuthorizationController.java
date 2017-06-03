@@ -39,11 +39,6 @@ public class AuthorizationController {
         }
     }
 
-    @RequestMapping(value = "/giveForm", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public AuthForm getAuthForm(){
-        return new AuthForm();
-    }
-
     @RequestMapping(value = "/giveSessionData", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public User getSessionData(HttpServletRequest request){
         User user = (User) request.getSession().getAttribute("USER");
