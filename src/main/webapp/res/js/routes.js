@@ -1,80 +1,102 @@
-var app = angular.module('app' , ['ngRoute' , 'ngAnimate']);
+var app = angular.module('app', ['ngRoute', 'ngAnimate']);
 
 
-app.config(['$routeProvider' , '$locationProvider' , function($routeProvider , $locationProvider) {
-	$locationProvider.hashPrefix('');
+app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
+    $locationProvider.hashPrefix('');
 
-	$routeProvider
-		.when('/rooms' , {
-			templateUrl: './room_type.html',
-			controller: 'roomTypeController'
-		});
+    $routeProvider
+        .when('/rooms', {
+            templateUrl: './room_type.html',
+            controller: 'roomTypeController'
+        });
 }]);
 
 
-app.controller('search-available' , ['$scope' , function($scope) {
+app.controller('search-available', ['$scope', '$http', function ($scope, $http) {
 
-	
-	$scope.submit = function(eve) {
-		
-		// if ( !$scope.validDate() ) {
-		// 	eve.preventDefault();
-		// 	return;
-		// }
+    $http({
+        url: 'http://localhost:8080/orders',
+        method: 'GET',
 
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 
-	var order = {
-			arrival : $scope.book.from.getTime(),
-			departure : $scope.book.till.getTime(),
-			livingPersons: $scope.book.adults,
-			categoryId: $scope.book.type,
-		}
-
-	$http({
-		url: 'http://localhost:8080/orders/searchavailability',
-		method: 'POST',
-		data : {
-			arrival : $scope.book.from.getTime(),
-			departure : $scope.book.till.getTime(),
-			livingPersons: $scope.book.adults,
-			categoryId: $scope.book.type
-		},
+    }).then(function (data) {
+        console.log(data);
+    });
 
 
-		headers: {
-			'Content-Type': 'application/json; charset=utf-8'
-		}
+    $scope.submit = function (eve) {
 
 
-	})
+        console.log({
+            arrival: $scope.book.from.getTime(),
+            departure: $scope.book.till.getTime(),
+            livingPersons: $scope.book.adults,
+            categoryId: $scope.book.type
+        });
 
-	}
-	
+
+        $http({
+            url: 'http://localhost:8080/orders/searchavailability',
+            method: 'POST',
+            data: {
+                arrival: $scope.book.from.getTime(),
+                departure: $scope.book.till.getTime(),
+                livingPersons: parseInt($scope.book.adults),
+                categoryId: parseInt($scope.book.type)
+            },
+
+
+            headers: {
+                'Content-Type': 'application/json'
+            }
+
+
+        }).then(function(data) {
+            console.log(data);
+        }, function(response) {
+            console.log(response);
+            console.log("I_AM_TEAPOT!")
+        });
+
+    }
+
 
 }]);
 
-app.controller('roomTypeController' , ['$scope', '$http' , function($scope, $http) {
+app.controller('roomTypeController', ['$scope', '$http', function ($scope, $http) {
+
+    console.log({
+        arrival : $scope.book.from.getTime(),
+        departure : $scope.book.till.getTime(),
+        livingPersons: $scope.book.adults,
+        categoryId: $scope.book.type
+    });
 
     $http({
         url: 'http://localhost:8080/orders/searchavailability',
         method: 'POST',
 
+        data: {
+            arrival: 1496955600000, departure: 1496955600000, livingPersons: 2, categoryId: 450
+        },
+
         headers: {
             'Content-Type': 'application/json; charset=utf-8'
         }
-    }).then(function(response) {
-		 $scope.list = response.data
-	});
+    }).then(function (response) {
+        $scope.list = response.data
+    });
 
-	$scope.validateDate = function(date) {
-		console.log(date);
+    $scope.validateDate = function (date) {
+        console.log(date);
 
-		return false;
-	}
+        return false;
+    }
 
 
-	$scope.bookApartment = function(id) {
-		console.log(id);
-	}	
-    
+    $scope.bookApartment = function (id) {
+        console.log(id);
+    }
+
 }]);

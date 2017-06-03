@@ -114,11 +114,11 @@
                                 <div class="form-group col-sm-6">
                                     <label for="adultsNumber">Type of meals</label>
                                     <select class="form-control" ng-model='book.type' ng-required="true" value='Room Only'>
-                                        <option value='Room Only'>Room Only</option>
-                                        <option value='Bed and Breakfast'>Bed and Breakfast</option>
-                                        <option value='Half-board'> Half-board</option>
-                                        <option value='Full-board'>Full-board</option>
-                                        <option value='All-inclusive'>All-inclusive</option>
+                                        <option value='0' >Room Only</option>
+                                        <option value='450'>Bed and Breakfast</option>
+                                        <option value='451'> Half-board</option>
+                                        <option value='452'>Full-board</option>
+                                        <option value='453'>All-inclusive</option>
                                     </select>
                                 </div>
                             </div>
@@ -135,7 +135,7 @@
                             </p>
                         </div>
                         <div class="col-xs-12 form-group text-center">
-                            <button type="submit" class="btn" ng-disabled='available.$invalid'><a href="#/rooms">SEARCH AVAILABILITY</a></button>   
+                            <button type="submit" class="btn" ng-disabled='available.$invalid'>SEARCH AVAILABILITY</button>
                         </div>
                     </form>
                 </div>

@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
@@ -20,4 +21,10 @@ public class WebMVCConfigurer extends WebMvcConfigurerAdapter {
         configurer.enable();
     }
 
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/resources/**").addResourceLocations("/webapp/res/");
+        registry.addResourceHandler("/v/**").addResourceLocations("/webapp/views/");
+        registry.addResourceHandler("/pdf/**").addResourceLocations("/webapp/pdfs/");
+    }
 }

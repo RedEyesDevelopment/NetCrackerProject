@@ -4,7 +4,7 @@
 
 <web-app>
 
-    <display-name>DIE BITCH</display-name>
+    <display-name>DIE BITCH!</display-name>
 
     <welcome-file-list>
         <welcome-file>/v/index.html</welcome-file>
