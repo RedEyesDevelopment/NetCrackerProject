@@ -1,0 +1,12 @@
+Статья:
+www.baeldung.com/spring-channel-security-https
+
+
+1) Выполнить:
+"%JAVA_HOME%\bin\keytool" -genkey -alias tomcat -keyalg RSA -storepass pkv02zb6l -keypass pkv02zb6l -dname 'CN=tomcat'
+
+2) Переместить ключ в C:\keystore
+
+
+
+Изменить место хранения ключа в server.xml с ${user.home}/.keystore на C:\keystore

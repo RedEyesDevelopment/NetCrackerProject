@@ -95,9 +95,13 @@
 	
     <!---->
     <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
-               maxThreads="200" SSLEnabled="true" scheme="https" secure="true"
-           keystoreFile="c:/keystore/.keystore" keystorePass="pkv02zb6l"
+               maxThreads="200" SSLEnabled="true" scheme="https" secure="true"SSLEnabled="true"
+           keystoreFile="${user.home}/.keystore" keystorePass="pkv02zb6l07vkw29z8gjp9jr"
            clientAuth="false" sslProtocol="TLS" >
+        <SSLHostConfig>
+            <Certificate certificateKeystoreFile="conf/localhost-rsa.jks"
+                         type="RSA" />
+        </SSLHostConfig>
     </Connector>
     
     <!-- Define a SSL/TLS HTTP/1.1 Connector on port 8443 with HTTP/2
