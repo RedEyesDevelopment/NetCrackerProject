@@ -39,19 +39,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public IUDAnswer deleteUser(int id) {
-        try {
-            userDAO.deleteUser(id);
-        } catch (ReferenceBreakException e) {
-            LOGGER.warn("Entity has references on self", e);
-            return new IUDAnswer(id,false, e.printReferencesEntities());
-        } catch (DeletedObjectNotExistsException e) {
-            LOGGER.warn("Entity with that id does not exist!", e);
-            return new IUDAnswer(id, "deletedObjectNotExists");
-        } catch (WrongEntityIdException e) {
-            LOGGER.warn("This id belong another entity class!", e);
-            return new IUDAnswer(id, "wrongDeleteId");
-        }
-        return new IUDAnswer(id, true);
+        User user = userDAO.getUser(id);
+        user.setEnabled(false);
+        return updateUser(id, user);
     }
 
     @Override
