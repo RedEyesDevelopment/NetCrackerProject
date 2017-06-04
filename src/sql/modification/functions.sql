@@ -1,13 +1,3 @@
-CREATE SEQUENCE seq_obj_id START WITH 2000;
-
-
-
-
-
-
-SET SERVEROUTPUT ON;
-
-
 CREATE OR REPLACE FUNCTION delete_object_by_id(obj_id IN NUMBER)
 RETURN NUMBER
 IS
@@ -59,9 +49,4 @@ BEGIN
     deleted_rows := deleted_rows + SQL%ROWCOUNT;
     RETURN deleted_rows;
 
-END;
-
-
-BEGIN
-    DBMS_OUTPUT.PUT_LINE(delete_object_by_id(228));
 END;
