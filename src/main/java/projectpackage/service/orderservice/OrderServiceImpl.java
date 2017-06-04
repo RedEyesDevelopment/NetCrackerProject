@@ -95,8 +95,8 @@ public class OrderServiceImpl implements OrderService{
         List<Order> allOrders = getAllOrders();
         Date date = new Date();
         for (Order order : allOrders) {
-            if (order.getLivingStartDate().getTime() < date.getTime()
-                    && order.getLivingFinishDate().getTime() > date.getTime()) {
+            if (order.getLivingStartDate().getTime() <= date.getTime()
+                    && order.getLivingFinishDate().getTime() >= date.getTime()) {
                 answer.add(order);
             }
         }
@@ -133,7 +133,6 @@ public class OrderServiceImpl implements OrderService{
     public List<Order> getOrdersInRange(Date startDate, Date finishDate) {
         List<Order> answer = new ArrayList<>();
         List<Order> allOrders = getAllOrders();
-        Date date = new Date();
         for (Order order : allOrders) {
             if (    !(
                         order.getLivingStartDate().getTime() > finishDate.getTime()
