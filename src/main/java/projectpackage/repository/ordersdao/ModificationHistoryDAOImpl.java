@@ -62,43 +62,63 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
             jdbcTemplate.update(insertObject, objectId, oldOrder.getObjectId(), 12, null, null);
 
             if (oldOrder.getRegistrationDate().getTime() != newOrder.getRegistrationDate().getTime()) {
-                jdbcTemplate.update(insertAttribute, 8, objectId, null, oldOrder.getRegistrationDate());
+                jdbcTemplate.update(insertAttribute, 61, objectId, null, oldOrder.getRegistrationDate());
+            } else {
+                jdbcTemplate.update(insertAttribute, 61, objectId, null, null);
             }
-            if (!oldOrder.getIsPaidFor().equals(newOrder.getIsPaidFor())) {
-                if (oldOrder.getIsPaidFor()) {
-                    jdbcTemplate.update(insertAttribute, 9, objectId, "true", null);
-                } else {
-                    jdbcTemplate.update(insertAttribute, 9, objectId, "false", null);
-                }
+
+            if (oldOrder.getIsPaidFor()) {
+                jdbcTemplate.update(insertAttribute, 62, objectId, "true", null);
+            } else if (!oldOrder.getIsPaidFor()) {
+                jdbcTemplate.update(insertAttribute, 62, objectId, "false", null);
+            } else {
+                jdbcTemplate.update(insertAttribute, 63, objectId, null, null);
             }
-            if (!oldOrder.getIsConfirmed().equals(newOrder.getIsConfirmed())) {
-                if (oldOrder.getIsConfirmed()) {
-                    jdbcTemplate.update(insertAttribute, 10, objectId, "true", null);
-                } else {
-                    jdbcTemplate.update(insertAttribute, 10, objectId, "false", null);
-                }
+
+            if (oldOrder.getIsConfirmed()) {
+                jdbcTemplate.update(insertAttribute, 63, objectId, "true", null);
+            } else if (!oldOrder.getIsConfirmed()){
+                jdbcTemplate.update(insertAttribute, 63, objectId, "false", null);
+            } else {
+                jdbcTemplate.update(insertAttribute, 63, objectId, null, null);
             }
+
             if (oldOrder.getLivingStartDate().getTime() != newOrder.getLivingStartDate().getTime()) {
-                jdbcTemplate.update(insertAttribute, 11, objectId, null, oldOrder.getLivingStartDate());
+                jdbcTemplate.update(insertAttribute, 64, objectId, null, oldOrder.getLivingStartDate());
+            } else {
+                jdbcTemplate.update(insertAttribute, 64, objectId, null, null);
             }
+
             if (oldOrder.getLivingFinishDate().getTime() != newOrder.getLivingFinishDate().getTime()) {
-                jdbcTemplate.update(insertAttribute, 12, objectId, null, oldOrder.getLivingFinishDate());
+                jdbcTemplate.update(insertAttribute, 65, objectId, null, oldOrder.getLivingFinishDate());
+            } else {
+                jdbcTemplate.update(insertAttribute, 65, objectId, null, null);
             }
+
             if (!oldOrder.getSum().equals(newOrder.getSum())) {
-                jdbcTemplate.update(insertAttribute, 13, objectId, oldOrder.getSum(), null);
+                jdbcTemplate.update(insertAttribute, 66, objectId, oldOrder.getSum(), null);
+            } else {
+                jdbcTemplate.update(insertAttribute, 66, objectId, null, null);
             }
+
             if (!oldOrder.getComment().equals(newOrder.getComment())) {
-                jdbcTemplate.update(insertAttribute, 14, objectId, oldOrder.getComment(), null);
+                jdbcTemplate.update(insertAttribute, 67, objectId, oldOrder.getComment(), null);
+            } else {
+                jdbcTemplate.update(insertAttribute, 67, objectId, null, null);
             }
-            if (oldOrder.getLastModificator().getObjectId() != newOrder.getLastModificator().getObjectId()) {
-                jdbcTemplate.update(insertObjReference, 44, objectId, oldOrder.getLastModificator().getObjectId());
+
+            if (oldOrder.getCategory().getObjectId() != newOrder.getCategory().getObjectId()) {
+                jdbcTemplate.update(insertObjReference, 68, objectId, oldOrder.getCategory().getObjectId());
             }
+
             if (oldOrder.getRoom().getObjectId() != newOrder.getRoom().getObjectId()) {
-                jdbcTemplate.update(insertObjReference, 6, objectId, oldOrder.getRoom().getObjectId());
+                jdbcTemplate.update(insertObjReference, 59, objectId, oldOrder.getRoom().getObjectId());
             }
+
             if (oldOrder.getClient().getObjectId() != newOrder.getClient().getObjectId()) {
-                jdbcTemplate.update(insertObjReference, 7, objectId, oldOrder.getClient().getObjectId());
+                jdbcTemplate.update(insertObjReference, 60, objectId, oldOrder.getClient().getObjectId());
             }
+
             jdbcTemplate.update(insertAttribute, 43, objectId, null, new Date());
             jdbcTemplate.update(insertObjReference, 42, objectId, oldOrder.getLastModificator().getObjectId());
         } catch (DataIntegrityViolationException e) {

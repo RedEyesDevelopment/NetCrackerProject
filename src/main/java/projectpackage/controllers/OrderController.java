@@ -158,14 +158,14 @@ public class OrderController {
         System.out.println(searchDto);
         List<OrderDTO> data = null;
 
-        long maxValidTime = 31536000000L;
-        long validStartDate = searchDto.getArrival().getTime() - new Date().getTime();
-        long validFinishDate = searchDto.getDeparture().getTime() - new Date().getTime();
-        if ( validStartDate > maxValidTime || validFinishDate > maxValidTime
-                || searchDto.getArrival().getTime() > searchDto.getDeparture().getTime()) {
-
-            return new ResponseEntity<List<OrderDTO>>(data, HttpStatus.I_AM_A_TEAPOT);
-        }
+//        long maxValidTime = 31536000000L;
+//        long validStartDate = searchDto.getArrival().getTime() - new Date().getTime();
+//        long validFinishDate = searchDto.getDeparture().getTime() - new Date().getTime();
+//        if ( validStartDate > maxValidTime || validFinishDate > maxValidTime
+//                || searchDto.getArrival().getTime() > searchDto.getDeparture().getTime()) {
+//
+//            return new ResponseEntity<List<OrderDTO>>(data, HttpStatus.I_AM_A_TEAPOT);
+//        }
 
         data = roomTypeService.getRoomTypes(searchDto.getArrival(),searchDto.getDeparture(),searchDto.getLivingPersons(), searchDto.getCategoryId());
 
