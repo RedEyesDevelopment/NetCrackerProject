@@ -3,17 +3,18 @@ package projectpackage.repository.authdao;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.support.daoexceptions.*;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
 
 import java.util.List;
 
@@ -51,8 +52,9 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     }
 
     @Override
-    public int insertUser(User user) throws TransactionException {
+    public int insertUser(User user) throws TransactionException, DuplicateEmailException {
         Integer objectId = nextObjectId();
+        checkEmailForDuplicate(user.getEmail());
         try {
             jdbcTemplate.update(insertObject, objectId, null, 3, null, null);                      //3 = User
 
@@ -72,6 +74,22 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
             throw new TransactionException(this, e.getMessage());
         }
         return objectId;
+    }
+
+    private void checkEmailForDuplicate(String email) throws DuplicateEmailException {
+        SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate)
+                .withCatalogName("User_tools").withProcedureName("check_email_for_dupl");
+        MapSqlParameterSource in = new MapSqlParameterSource();
+        in.addValue("in_email", email);
+        try {
+            call.executeFunction(Object.class, in);
+        } catch (UncategorizedSQLException e) {
+            if (e.getSQLException().getErrorCode() == 20002) {
+                throw new DuplicateEmailException(email);
+            } else {
+                throw e;
+            }
+        }
     }
 
     /**

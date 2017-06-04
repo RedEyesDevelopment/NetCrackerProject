@@ -7,10 +7,7 @@ import org.springframework.stereotype.Service;
 import projectpackage.model.auth.User;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.repository.authdao.UserDAO;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.support.daoexceptions.*;
 
 import java.util.List;
 
@@ -53,6 +50,8 @@ public class UserServiceImpl implements UserService {
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
             new IUDAnswer(userId,false, "transactionInterrupt");
+        } catch (DuplicateEmailException e) {
+            return new IUDAnswer(false, "duplicateEmail");
         }
         return new IUDAnswer(userId,true);
     }
