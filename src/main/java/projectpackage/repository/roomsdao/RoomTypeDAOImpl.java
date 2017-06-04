@@ -12,6 +12,7 @@ import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.ratesdao.RateDAO;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
@@ -28,6 +29,10 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    RateDAO rateDAO;
+
 
     @Autowired
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -89,10 +94,42 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
 
             jdbcTemplate.update(insertAttribute, 28, objectId, roomType.getRoomTypeTitle(), null);
             jdbcTemplate.update(insertAttribute, 29, objectId, roomType.getContent(), null);
+
+            createRateForNewRoomType(objectId);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
         return objectId;
+    }
+
+    private void createRateForNewRoomType(Integer objectId) throws TransactionException {
+        Rate rate = new Rate();
+        rate.setRoomTypeId(objectId);
+        Calendar calendar = Calendar.getInstance();
+        int currYear = calendar.get(Calendar.YEAR);
+        rate.setRateFromDate(new GregorianCalendar(currYear,0,1).getTime());
+        rate.setRateToDate(new GregorianCalendar(currYear + 2, 11, 31).getTime());
+
+        Set<Price> prices = new HashSet<>(3);
+
+        Price price1 = new Price();
+        price1.setNumberOfPeople(1);
+        price1.setRate(100000L);
+        prices.add(price1);
+
+        Price price2 = new Price();
+        price2.setNumberOfPeople(2);
+        price2.setRate(200000L);
+        prices.add(price2);
+
+        Price price3 = new Price();
+        price3.setNumberOfPeople(3);
+        price3.setRate(300000L);
+        prices.add(price3);
+
+        rate.setPrices(prices);
+
+        rateDAO.insertRate(rate);
     }
 
     @Override
