@@ -4,14 +4,18 @@ import com.itextpdf.text.DocumentException;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
+import projectpackage.service.adminservice.AdminService;
 import projectpackage.service.pdf.PdfService;
 
 import java.io.IOException;
 import java.util.Date;
+
+import org.junit.Assert;
 
 /**
  * Created by Gvozd on 09.04.2017.
@@ -21,6 +25,9 @@ public class PDFTest extends AbstractPDFTest {
 
     @Autowired
     PdfService pdfService;
+
+    @Autowired
+    AdminService adminService;
 
     @Test
     public void testPDFCreation() throws IOException, DocumentException {
@@ -43,9 +50,16 @@ public class PDFTest extends AbstractPDFTest {
         order.setComment("Comment");
         order.setRoom(room);
         order.setClient(user);
-        String url = pdfService.createPDF(order);
+        String url = pdfService.createOrderPDF(order);
         LOGGER.info(url);
         LOGGER.info(SEPARATOR);
+    }
+
+    @Test
+    public void testStatPDFCreation() {
+        IUDAnswer iudAnswer = adminService.getStatistic();
+        Assert.assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info(iudAnswer.getMessage());
     }
 
     @Test

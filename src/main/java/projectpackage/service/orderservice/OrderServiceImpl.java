@@ -148,7 +148,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public List<Order> getOrdersForPayConfirme() {
+    public List<Order> getOrdersForPayConfirmed() {
         List<Order> answer = new ArrayList<>();
         List<Order> allOrders = getAllOrders();
         for (Order order : allOrders) {

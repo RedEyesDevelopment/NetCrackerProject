@@ -21,7 +21,7 @@ public interface OrderService {
     public List<Order> getCurrentOrders();//livingStartDate < SYSDATE < livingFinishDate ясно?
     public List<Order> getPreviousOrders();//livingFinishDate < SYSDATE
     public List<Order> getFutureOrders();//livingStartDate > SYSDATE
-    public List<Order> getOrdersForPayConfirme();
+    public List<Order> getOrdersForPayConfirmed();
     public List<Order> getOrdersInRange(Date startDate, Date finishDate);
     public List<Order> getOrdersConfirmed();
     public List<Order> getOrdersMustToBePaid();

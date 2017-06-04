@@ -159,4 +159,6 @@ public class ModificationHistoryRepositoryTests extends AbstractDatabaseTest{
         LOGGER.info("Update modificationHistory result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }
+
+
 }
