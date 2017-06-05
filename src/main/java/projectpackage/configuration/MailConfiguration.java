@@ -1,4 +1,4 @@
-package tests.mails;
+package projectpackage.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -7,23 +7,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import projectpackage.service.pdfandmail.*;
 
-/**
- * Created by Gvozd on 06.01.2017.
- */
-
 @Configuration
-public class TestMailConfig {
+public class MailConfiguration {
 
-    @Value("YOUR LOGIN")
+    @Value("${mail.username}")
     private String username;
-    @Value("YOUR PASS\\\\")
+    @Value("${mail.password}")
     private String password;
-
-
-    @Bean
-    MailService mailService(){
-        return new MailServiceImpl(mailConfig(), mailMessagesMap());
-    }
 
     @Bean
     MailConfig mailConfig(){

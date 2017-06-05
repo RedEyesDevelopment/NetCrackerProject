@@ -118,4 +118,5 @@ public class JDBCConfiguration implements TransactionManagementConfigurer {
     ReactEntityValidator reactEntityValidator(){
         return new ReactEntityValidator();
     }
+
 }

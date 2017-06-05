@@ -20,15 +20,17 @@ public class MailServiceImpl implements MailService{
     @Autowired
     private JavaMailSender javaMailSender;
 
+    @Autowired
     private MailConfig mailConfig;
-    private MailMessagesMap messagesMap;
+
+    @Autowired
+    private MailMessagesMap mailMessagesMap;
+
     private String username;
     private String password;
     private Properties mailProperties;
 
-    public MailServiceImpl(MailConfig config, MailMessagesMap map) {
-        this.mailConfig = config;
-        this.messagesMap = map;
+    public MailServiceImpl() {
         mailProperties = new Properties();
         mailProperties.put("mail.smtp.auth", mailConfig.getMailSmtpAuth());
         mailProperties.put("mail.smtp.starttls.enable", mailConfig.getMailSmtpStarttlsEnable());
@@ -63,9 +65,9 @@ public class MailServiceImpl implements MailService{
             messageHelper = new MimeMessageHelper(message, true);
         } else messageHelper = new MimeMessageHelper(message);
         messageHelper.setTo(receiver);
-        messageHelper.setSubject(messagesMap.getMessage(messageKey).getSubject());
+        messageHelper.setSubject(mailMessagesMap.getMessage(messageKey).getSubject());
         messageHelper.setSentDate(new Date(System.currentTimeMillis()));
-        messageHelper.setText(messagesMap.getMessage(messageKey).getMessage());
+        messageHelper.setText(mailMessagesMap.getMessage(messageKey).getMessage());
         if (messageHelper.isMultipart()) {
             messageHelper.addAttachment(attributeFile.getName(), attributeFile);
         }
