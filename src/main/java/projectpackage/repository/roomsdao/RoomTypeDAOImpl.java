@@ -2,6 +2,7 @@ package projectpackage.repository.roomsdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -26,6 +27,9 @@ import java.util.*;
 @Repository
 public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
     private static final Logger LOGGER = Logger.getLogger(RoomTypeDAOImpl.class);
+
+    @Value("${default.price}")
+    private String defaultPrice;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -114,7 +118,7 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
 
         Price price1 = new Price();
         price1.setNumberOfPeople(1);
-        price1.setRate(100000L);
+        price1.setRate(Long.parseLong(defaultPrice));
         prices.add(price1);
 
         Price price2 = new Price();

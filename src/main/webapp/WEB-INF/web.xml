@@ -7,7 +7,7 @@
     <display-name>DIE BITCH!</display-name>
 
     <welcome-file-list>
-        <welcome-file>/v/index.html</welcome-file>
+        <welcome-file>/views/index.html</welcome-file>
     </welcome-file-list>
 
 
