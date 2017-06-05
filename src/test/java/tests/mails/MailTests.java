@@ -19,6 +19,6 @@ public class MailTests extends AbstractMailTest {
     @Test
     public void sendEmail(){
         System.out.println(SEPARATOR);
-        mailService.sendEmail("plnt9996@mail.ru",0);
+        mailService.sendEmail(receiver,0);
     }
 }
