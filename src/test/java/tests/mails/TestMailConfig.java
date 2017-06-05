@@ -16,13 +16,13 @@ public class TestMailConfig {
 
     @Value("YOUR LOGIN")
     private String username;
-    @Value("YOUR PASS\\\\")
+    @Value("YOUR PASS")
     private String password;
 
 
     @Bean
     MailService mailService(){
-        return new MailServiceImpl(mailConfig(), mailMessagesMap());
+        return new MailServiceImpl();
     }
 
     @Bean

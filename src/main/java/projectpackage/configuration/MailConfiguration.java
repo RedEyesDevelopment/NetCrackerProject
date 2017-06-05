@@ -12,6 +12,7 @@ public class MailConfiguration {
 
     @Value("${mail.username}")
     private String username;
+
     @Value("${mail.password}")
     private String password;
 
@@ -29,4 +30,5 @@ public class MailConfiguration {
     JavaMailSender javaMailSender(){
         return new JavaMailSenderImpl();
     }
+
 }

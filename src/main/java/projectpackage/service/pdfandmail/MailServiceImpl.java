@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
@@ -30,7 +31,8 @@ public class MailServiceImpl implements MailService{
     private String password;
     private Properties mailProperties;
 
-    public MailServiceImpl() {
+    @PostConstruct
+    private void init(){
         mailProperties = new Properties();
         mailProperties.put("mail.smtp.auth", mailConfig.getMailSmtpAuth());
         mailProperties.put("mail.smtp.starttls.enable", mailConfig.getMailSmtpStarttlsEnable());
