@@ -173,3 +173,60 @@ padding:0 0 0 15px;
     width: 270px;
     height: 169px
 }
+
+
+/*EDITABLE*/
+input[type="text"] { 
+    padding: 0.4em; 
+    font-family: Arial; 
+    display: inherit;
+    margin: 10px 0;
+    width: 100px;
+  }
+
+/* Inline Edit */
+p.hover { 
+  background: #A9A59F;
+  border-radius: 10px; 
+
+}
+
+form div{
+
+}
+
+form div label{
+    
+
+}
+form div p{
+  color: #5a7391;
+  font-family: roboto;
+  padding: 10px 0;
+}
+
+.add-number{
+  color: green;
+  font-size: 20px;
+  border-radius: 25%;
+  border: none;
+}
+.remove-number{
+  color: red;
+  font-size: 20px;
+  border-radius: 25%;
+  border: none;
+  width: 21px;
+}
+
+.multi-number{
+      display: inline-block;
+}
+
+.multi-number p {
+  display: inherit;
+}
+
+#dat-button {
+    margin: 20px 0;
+}

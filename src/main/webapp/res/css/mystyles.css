@@ -41,14 +41,6 @@ ul.notifications li {
     line-height: normal;
 }
 
-.nav.nav-sidebar li a:hover {
-    background-color: #eeeeee;
-    border: 1px solid #eeeeee;
-    border-radius: 10px;
-}
-
-li.active {
-    background-color: #eeeeee;
-    border: 1px solid #eeeeee;
-    border-radius: 10px;
+#form_subject{
+    height: 40px;
 }

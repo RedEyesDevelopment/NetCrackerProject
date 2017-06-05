@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     
     <!-- My styles !-->
-    <link href="css/mystyles.css" rel="stylesheet">
-    <link href="css/user_settings.css" rel="stylesheet">
+    <link href="../res/css/mystyles.css" rel="stylesheet">
+    <link href="../res/css/user_settings.css" rel="stylesheet">
 </head>
 
 <body>
@@ -28,7 +28,7 @@
                     <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         
-                            <img src="../res/user_photo.jpg" class="img-circle" width="25" height="25">
+                            <img src="img/user_photo.jpg" class="img-circle" width="25" height="25">
                      
                         <strong>Alex</strong>
                     </a>
@@ -39,7 +39,7 @@
                                     <div class="col-lg-4">
                                         <p class="text-center">
                                             <div class="profile-picture">
-                                               <img src="../res/user_photo.jpg" class="img-circle" width="75" height="75">
+                                               <img src="img/user_photo.jpg" class="img-circle" width="75" height="75">
                                             </div>
                                         </p>
                                     </div>
@@ -69,9 +69,9 @@
                         </li>
 
                     <!-- LOG USER END -->
-                    <li><a role="button" id="loginLink">Log in</a></li>
+                    <!-- <li><a role="button" id="loginLink">Log in</a></li>
                     <li><a role="button" id="signupLink">Sign up</a></li>
-
+ -->
                 </ul>
             </div>
         </div>
@@ -157,7 +157,7 @@
                 <!-- SIDEBAR USER TITLE -->
                 <div class="profile-usertitle">
                     <div class="profile-picture">
-                        <img src="../res/user_photo.jpg" class="img-circle" width="250" height="250">
+                        <img src="img/user_photo.jpg" class="img-circle" width="250" height="250">
                     </div>
                     <div class="profile-usertitle-name">
                         <span class="hidden-xs">Alex Murlyan</span>
@@ -179,7 +179,11 @@
                             <i class="glyphicon glyphicon-envelope"></i>
                             <span class="hidden-xs">Send message to administrator<span> </a>
                         </li>
-                        
+                        <li>
+                            <a href="#" >
+                            <i class="glyphicon glyphicon-th"></i>
+                            <span class="hidden-xs">Checklist<span> </a>
+                        </li>
                         
                     </ul>
                 </div>
@@ -202,6 +206,8 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
+                                    <label for="form_message">Message subject *</label>
+                                    <textarea id="form_subject" name="message" class="form-control" placeholder="Message subject *" rows="4" required="required" data-error="Please,leave us a message subject."></textarea> 
                                     <label for="form_message">Message *</label>
                                     <textarea id="form_message" name="message" class="form-control" placeholder="Message for administrator *" rows="4" required="required" data-error="Please,leave us a message."></textarea>
                                     <div class="help-block with-errors"></div>
@@ -240,8 +246,8 @@
     <!-- AngularJS -->
     <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>-->
     <!-- My scripts -->
-    <script src="js/index.js"></script>
-    <script src="js/controllers/bookingController.js"></script>
+    <script src="../res/js/index.js"></script>
+    <script src="../res/js/controllers/bookingController.js"></script>
         
 </body>
 </html>

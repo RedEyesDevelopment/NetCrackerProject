@@ -10,7 +10,7 @@ import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.service.adminservice.AdminService;
-import projectpackage.service.pdf.PdfService;
+import projectpackage.service.pdfandmail.PdfService;
 
 import java.io.IOException;
 import java.util.Date;

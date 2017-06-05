@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     
     <!-- My styles !-->
-    <link href="css/mystyles.css" rel="stylesheet">
-    <link href="css/user_settings.css" rel="stylesheet">
+    <link href="../res/css/mystyles.css" rel="stylesheet">
+    <link href="../res/css/user_settings.css" rel="stylesheet">
 </head>
 
 <body>
@@ -69,8 +69,8 @@
                         </li>
 
                     <!-- LOG USER END -->
-                    <li><a role="button" id="loginLink">Log in</a></li>
-                    <li><a role="button" id="signupLink">Sign up</a></li>
+                    <!-- <li><a role="button" id="loginLink">Log in</a></li>
+                    <li><a role="button" id="signupLink">Sign up</a></li> -->
                 </ul>
             </div>
         </div>
@@ -178,6 +178,11 @@
                             <i class="glyphicon glyphicon-envelope"></i>
                             <span class="hidden-xs">Send message to administrator<span> </a>
                         </li>
+                        <li>
+                            <a href="#" >
+                            <i class="glyphicon glyphicon-th"></i>
+                            <span class="hidden-xs">Checklist<span> </a>
+                        </li>
                         
                         
                     </ul>
@@ -192,11 +197,59 @@
         <div class="form_main col-md-4 col-sm-5 col-xs-7">
                 <h4 class="heading"><strong>User </strong> settings <span></span></h4>
                 <div class="form">
-                <form action="" method="" id="contactFrm" name="contactFrm">
-                    <input type="text" required="" placeholder="Name" value="" name="name" class="txt">
-                    <input type="text" required="" placeholder="Email" value="" name="email" class="txt">
-                    <input type="password" required="" placeholder="Change Pwd" value="" name="password" class="txt"><br>
-                    <button type="button" class="btn btn-default">Update</button>
+                <form class="user-form" action="" method="" id="contactFrm" name="contactFrm">
+                   
+
+                    <!-- Edit --> 
+                        <!-- NAME -->
+                        <div class="firstname">
+                            <label>First Name</label>
+                            <p class="changable">Alex</p>
+                        </div>
+                        <!-- SURNAME -->
+                        <div class="lastname">
+                            <label>Last Name: </label>
+                            <p class="changable">Murlyan</p>
+                        </div>
+                        <!-- MAIL -->
+                        <div class="mail">   
+                             <label>Your Email: </label>
+                            <p class="changable">some@mail.com</p>
+                        </div>
+                        <!-- PWD -->
+                        <div class="yourpass">
+                            <label>Your Password: </label>
+                            <p class="changable">Password</p>
+                        </div>
+                        <!-- NUMBERS -->
+                        <div class="numbers">
+                            <label>Your Numbers: </label>
+                            
+                        
+                   
+                        <!-- ADD DEL NUMBER -->
+                        <form role="form" action="/wohoo" method="POST">
+                            <div class="multi-number-wrapper">
+                          
+                              <div class="multi-numbers">
+
+                                <div class="multi-number">
+                                  <p  class="changable" type="text" name="stuff[]">+3809999999</p>
+                                  <button type="button" class="remove-number">-</button>
+                               
+                                </div>
+                              
+                              </div>
+                           
+                            <button type="button" class="add-number">+</button>
+                            
+                          </div>
+                        </form>
+
+                        </div>
+                        <!-- END DEL NUMBER -->
+                    <!-- End edit -->
+                    <button id="dat-button"  type="button" class="btn btn-default">Update</button>
                 </form>
             </div>
             </div>
@@ -219,8 +272,8 @@
     <!-- AngularJS -->
     <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>-->
     <!-- My scripts -->
-    <script src="js/index.js"></script>
-    <script src="js/controllers/bookingController.js"></script>
+    <script src="../res/js/index.js"></script>
+    <script src="../res/js/controllers/bookingController.js"></script>
         
 </body>
 </html>

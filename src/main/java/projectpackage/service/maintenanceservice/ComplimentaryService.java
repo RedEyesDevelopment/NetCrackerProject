@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface ComplimentaryService {
 
-    public List<Complimentary> getAllComplimentaries();//TODO Merlyan
+    public List<Complimentary> getAllComplimentaries();
     public Complimentary getSingleComplimentaryById(int id);
     public IUDAnswer deleteComplimentary(int id);
     public IUDAnswer insertComplimentary(Complimentary complimentary);
