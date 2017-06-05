@@ -10,7 +10,7 @@ import projectpackage.service.pdfandmail.MailService;
  */
 public class MailTests extends AbstractMailTest {
 
-    @Value("RECEIVER EMAIL")
+    @Value("RECEIVER")
     private String receiver;
 
     @Autowired
@@ -20,5 +20,10 @@ public class MailTests extends AbstractMailTest {
     public void sendEmail(){
         System.out.println(SEPARATOR);
         mailService.sendEmail(receiver,0);
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

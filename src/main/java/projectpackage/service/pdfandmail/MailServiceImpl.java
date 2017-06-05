@@ -2,7 +2,6 @@ package projectpackage.service.pdfandmail;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -52,14 +51,9 @@ public class MailServiceImpl implements MailService{
             } catch (MessagingException e) {
                 LOGGER.error(message, e);
             }
-            System.out.println("config = "+mailConfig);
-            System.out.println("sending message...");
-            try {
-                javaMailSenderImpl.send(message);
-            } catch (MailException e){
-                e.printStackTrace();
-            }
-            System.out.println("message sended");
+            CustomMailSender sender = new CustomMailSender(LOGGER, javaMailSenderImpl,message);
+            Thread thread = new Thread(sender);
+            thread.start();
         }
     }
 

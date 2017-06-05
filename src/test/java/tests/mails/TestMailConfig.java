@@ -14,9 +14,9 @@ import projectpackage.service.pdfandmail.*;
 @Configuration
 public class TestMailConfig {
 
-    @Value("YOUR GMAIL LOGIN")
+    @Value("YOUR LOGIN")
     private String username;
-    @Value("YOUR GMAIL PASS")
+    @Value("YOUR PASS")
     private String password;
 
 
