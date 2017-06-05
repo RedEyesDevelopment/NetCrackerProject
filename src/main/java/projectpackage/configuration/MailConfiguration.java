@@ -5,7 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import projectpackage.service.pdfandmail.*;
+import projectpackage.service.fileservice.mails.MailConfig;
+import projectpackage.service.fileservice.mails.MailMessagesMap;
 
 @Configuration
 public class MailConfiguration {

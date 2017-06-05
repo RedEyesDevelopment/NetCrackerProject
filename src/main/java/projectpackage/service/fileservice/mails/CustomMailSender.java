@@ -1,4 +1,4 @@
-package projectpackage.service.pdfandmail;
+package projectpackage.service.fileservice.mails;
 
 import org.apache.log4j.Priority;
 import org.springframework.mail.MailException;

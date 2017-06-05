@@ -1,4 +1,4 @@
-package projectpackage.service.pdfandmail;
+package projectpackage.service.fileservice.mails;
 
 import lombok.Data;
 

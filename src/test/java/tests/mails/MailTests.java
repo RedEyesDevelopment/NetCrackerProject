@@ -3,14 +3,14 @@ package tests.mails;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import projectpackage.service.pdfandmail.MailService;
+import projectpackage.service.fileservice.mails.MailService;
 
 /**
  * Created by Lenovo on 05.06.2017.
  */
 public class MailTests extends AbstractMailTest {
 
-    @Value("RECEIVER")
+    @Value("denis.yakimov89@gmail.com")
     private String receiver;
 
     @Autowired
@@ -19,9 +19,9 @@ public class MailTests extends AbstractMailTest {
     @Test
     public void sendEmail(){
         System.out.println(SEPARATOR);
-        mailService.sendEmail(receiver,0);
+        mailService.sendEmail(receiver,1);
         try {
-            Thread.sleep(10000);
+            Thread.sleep(20000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

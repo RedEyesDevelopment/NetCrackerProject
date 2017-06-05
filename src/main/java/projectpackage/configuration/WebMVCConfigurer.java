@@ -23,8 +23,8 @@ public class WebMVCConfigurer extends WebMvcConfigurerAdapter {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/resources/**").addResourceLocations("/webapp/res/");
-        registry.addResourceHandler("/v/**").addResourceLocations("/webapp/views/");
-        registry.addResourceHandler("/pdf/**").addResourceLocations("/webapp/pdfs/");
+        registry.addResourceHandler("/webapp/res/**").addResourceLocations("/webapp/res/");
+        registry.addResourceHandler("/webapp/views/**").addResourceLocations("/webapp/views/");
+        registry.addResourceHandler("/webapp/pdfs/**").addResourceLocations("/webapp/pdfs/");
     }
 }

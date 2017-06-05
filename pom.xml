@@ -99,7 +99,6 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
-
         <!-- SPRING SECURITY-->
 
         <dependency>
@@ -107,6 +106,15 @@
             <artifactId>spring-security-test</artifactId>
             <version>4.2.2.RELEASE</version>
         </dependency>
+
+
+        <!--&lt;!&ndash; SPRING INTEGRATION FOR FILES PURPOSES &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.integration</groupId>-->
+            <!--<artifactId>spring-integration-file</artifactId>-->
+            <!--<version>4.3.9.RELEASE</version>-->
+        <!--</dependency>-->
+
 
 
         <!-- ASPECTS -->

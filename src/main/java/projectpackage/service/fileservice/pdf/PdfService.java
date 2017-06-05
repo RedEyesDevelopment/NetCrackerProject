@@ -1,4 +1,4 @@
-package projectpackage.service.pdfandmail;
+package projectpackage.service.fileservice.pdf;
 
 import com.itextpdf.text.DocumentException;
 import projectpackage.model.orders.Order;

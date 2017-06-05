@@ -5,7 +5,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import projectpackage.service.pdfandmail.*;
+import projectpackage.service.fileservice.mails.MailConfig;
+import projectpackage.service.fileservice.mails.MailMessagesMap;
+import projectpackage.service.fileservice.mails.MailService;
+import projectpackage.service.fileservice.mails.MailServiceImpl;
 
 /**
  * Created by Gvozd on 06.01.2017.
@@ -14,9 +17,9 @@ import projectpackage.service.pdfandmail.*;
 @Configuration
 public class TestMailConfig {
 
-    @Value("YOUR LOGIN")
+    @Value("netcrackerhotel17@gmail.com")
     private String username;
-    @Value("YOUR PASS")
+    @Value("pkv02zb6l07vkw29z8gjp9jr")
     private String password;
 
 
