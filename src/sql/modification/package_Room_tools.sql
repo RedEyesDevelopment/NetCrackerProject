@@ -30,7 +30,7 @@ IS
 	RETURN NUMBER;
 
 END Room_tools;
-
+/
 
 CREATE OR REPLACE PACKAGE BODY Room_tools
 IS
@@ -194,3 +194,4 @@ IS
 	END get_cost_living;
 
 END Room_tools;
+/

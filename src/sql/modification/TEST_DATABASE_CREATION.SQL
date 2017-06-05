@@ -898,3 +898,472 @@ CREATE INDEX attrt_ot_ind ON ATTRTYPE (OBJECT_TYPE_ID);
 CREATE INDEX attr_code_ind ON ATTRIBUTES (ATTR_ID);
 
 COMMIT;
+
+CREATE OR REPLACE FUNCTION delete_object_by_id(obj_id IN NUMBER)
+RETURN NUMBER
+IS
+ref_count NUMBER;
+CURSOR References_list IS
+        SELECT Object_id
+        FROM ObjReference
+        WHERE Reference = obj_id;
+reference_rec References_list%ROWTYPE;
+
+reference_entity VARCHAR(20);
+error_message VARCHAR(200);
+
+CURSOR Childs IS
+        SELECT Object_id
+        FROM Objects
+        WHERE Parent_id = obj_id;
+child Childs%ROWTYPE;
+
+deleted_rows NUMBER;
+BEGIN
+
+    ref_count := 0;
+    SELECT COUNT(*) INTO ref_count FROM OBJREFERENCE WHERE REFERENCE = obj_id;
+
+    IF (ref_count > 0) THEN
+        FOR reference_rec in References_list LOOP
+            SELECT DISTINCT Code INTO reference_entity
+                FROM Objects, ObjType
+                WHERE   reference_rec.Object_id = Objects.Object_id
+                    AND Objects.Object_Type_Id = ObjType.Object_Type_Id;
+            error_message := error_message || reference_entity || ' and ';
+        END LOOP;
+        error_message := SUBSTR(error_message, 0, LENGTH(error_message) - 5); -- убираем последний пробел
+        RAISE_APPLICATION_ERROR(-20001, error_message);
+    END IF;
+
+    deleted_rows := 0;
+
+    FOR child in Childs LOOP
+        deleted_rows := deleted_rows + delete_object_by_id(child.Object_id);
+    END LOOP;
+
+    EXECUTE IMMEDIATE 'DELETE FROM OBJREFERENCE WHERE OBJECT_ID = ' || obj_id;
+    deleted_rows := deleted_rows + SQL%ROWCOUNT;
+    EXECUTE IMMEDIATE 'DELETE FROM ATTRIBUTES WHERE OBJECT_ID = ' || obj_id;
+    deleted_rows := deleted_rows + SQL%ROWCOUNT;
+    EXECUTE IMMEDIATE 'DELETE FROM OBJECTS WHERE OBJECT_ID = ' || obj_id;
+    deleted_rows := deleted_rows + SQL%ROWCOUNT;
+    RETURN deleted_rows;
+
+END;
+/
+
+CREATE OR REPLACE PACKAGE Rate_tools
+IS
+	TYPE rate_rec_type IS RECORD (	obj_id NUMBER(20),
+									begin_date DATE,
+									end_date DATE);
+
+	TYPE price_rec_type IS RECORD (	obj_id NUMBER(20),
+									price NUMBER);
+
+	TYPE rates IS TABLE OF rate_rec_type;
+
+
+	FUNCTION new_rate (in_price1_price IN NUMBER,
+						in_price2_price IN NUMBER,
+						in_price3_price IN NUMBER,
+
+						in_room_type_id IN NUMBER,
+						in_new_rate_start IN DATE,
+						in_new_rate_finish IN DATE)
+	RETURN NUMBER;
+
+
+	PROCEDURE clone_rate_on_another_date (	in_rate_obj_id NUMBER,
+											in_rate_parent NUMBER,
+											in_date_start IN DATE,
+											in_date_finish IN DATE);
+
+
+	FUNCTION insert_rate_with_prices (	in_price1_price IN NUMBER,
+									   	in_price2_price IN NUMBER,
+									   	in_price3_price IN NUMBER,
+
+										in_room_type_id IN NUMBER,
+										in_new_rate_start IN DATE,
+										in_new_rate_finish IN DATE)
+	RETURN NUMBER;
+
+
+	PROCEDURE update_rate (	obj_id IN NUMBER,
+							in_room_type_id IN NUMBER,
+							in_new_rate_start IN DATE,
+							in_new_rate_finish IN DATE);
+
+
+	PROCEDURE delete_rate (obj_id IN NUMBER);
+
+
+END Rate_tools;
+/
+
+CREATE OR REPLACE PACKAGE BODY Rate_tools
+IS
+	FUNCTION new_rate
+		(in_price1_price IN NUMBER,
+		 in_price2_price IN NUMBER,
+		 in_price3_price IN NUMBER,
+
+		 in_room_type_id IN NUMBER,
+		 in_new_rate_start IN DATE,
+		 in_new_rate_finish IN DATE)
+	RETURN NUMBER
+	IS
+		cursor_rates SYS_REFCURSOR;
+		rate rate_rec_type;
+		stmt VARCHAR(600) := '
+			SELECT Rates.OBJECT_ID, r_start.DATE_VALUE, r_finish.DATE_VALUE
+			FROM OBJECTS Rates,
+				ATTRIBUTES r_start, ATTRIBUTES r_finish
+			WHERE 	Rates.OBJECT_TYPE_ID = 6
+				AND Rates.PARENT_ID = :1
+				AND r_start.ATTR_ID = 30 AND r_start.OBJECT_ID = Rates.OBJECT_ID
+				AND r_finish.ATTR_ID = 31 AND r_finish.OBJECT_ID = Rates.OBJECT_ID
+				AND NOT (r_start.DATE_VALUE > :2 OR r_finish.DATE_VALUE < :3)';
+		inserted_rate_id NUMBER(20);
+	BEGIN
+		OPEN cursor_rates FOR stmt USING in_room_type_id, in_new_rate_finish, in_new_rate_start;
+		FETCH cursor_rates INTO rate;
+
+		IF cursor_rates%FOUND
+		THEN
+			WHILE cursor_rates%FOUND LOOP
+				-- 2		3		4		5		6
+				-- ____|_______________________|_____
+
+							    ---------
+				IF (rate.begin_date < in_new_rate_start AND in_new_rate_finish < rate.end_date)
+				THEN
+					update_rate(rate.obj_id, in_room_type_id, rate.begin_date, (in_new_rate_start - 1));
+					clone_rate_on_another_date(rate.obj_id, in_room_type_id, (in_new_rate_finish + 1), rate.end_date);
+				END IF;
+
+							--------------------
+							--------------------------
+				IF (rate.begin_date < in_new_rate_start AND rate.end_date <= in_new_rate_finish)
+				THEN
+					update_rate(rate.obj_id, in_room_type_id, rate.begin_date, (in_new_rate_start - 1));
+				END IF;
+
+						--------------------
+					------------------------
+				IF (in_new_rate_start <= rate.begin_date AND in_new_rate_finish < rate.end_date)
+				THEN
+					update_rate(rate.obj_id, in_room_type_id, (in_new_rate_finish + 1), rate.end_date);
+				END IF;
+
+						-------------------------
+						--------------------------------
+				---------------------------------
+				----------------------------------------
+				IF (in_new_rate_start <= rate.begin_date AND rate.end_date <= in_new_rate_finish)
+				THEN
+					delete_rate(rate.obj_id);
+				END IF;
+
+				FETCH cursor_rates INTO rate;
+			END LOOP;
+		END IF;
+
+		inserted_rate_id := Rate_tools.insert_rate_with_prices(	in_price1_price, in_price2_price, in_price3_price,
+																in_room_type_id,
+																in_new_rate_start,
+																in_new_rate_finish);
+		CLOSE cursor_rates;
+		RETURN inserted_rate_id;
+	END new_rate;
+
+	-- клонирует рейс с его прайсами на другие даты
+	PROCEDURE clone_rate_on_another_date (	in_rate_obj_id NUMBER,
+											in_rate_parent NUMBER,
+											in_date_start IN DATE,
+											in_date_finish IN DATE)
+	IS
+		rate_id NUMBER;
+		price price_rec_type;
+	BEGIN
+		SELECT SEQ_OBJ_ID.NEXTVAL INTO rate_id FROM DUAL;
+		INSERT INTO OBJECTS (OBJECT_ID, PARENT_ID, OBJECT_TYPE_ID) VALUES (rate_id, in_rate_parent, 6);
+		INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,DATE_VALUE) VALUES (30, rate_id, in_date_start);
+		INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,DATE_VALUE) VALUES (31, rate_id, in_date_finish);
+
+		FOR i IN 1..3 LOOP
+			SELECT SEQ_OBJ_ID.NEXTVAL, Rate.VALUE INTO price
+			FROM OBJECTS Price, ATTRIBUTES Rate, ATTRIBUTES People
+			WHERE 	Price.OBJECT_TYPE_ID = 7
+				AND Price.PARENT_ID = in_rate_obj_id
+				AND Rate.ATTR_ID = 33 AND Rate.OBJECT_ID = Price.OBJECT_ID
+				AND People.ATTR_ID = 32 AND Price.OBJECT_ID = People.OBJECT_ID AND People.VALUE = i;
+
+			INSERT INTO OBJECTS (OBJECT_ID, PARENT_ID, OBJECT_TYPE_ID) VALUES (price.obj_id, rate_id, 7);
+			INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE) VALUES (32, price.obj_id, i);
+			INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE) VALUES (33, price.obj_id, price.price);
+		END LOOP;
+
+	END clone_rate_on_another_date;
+
+	-- инсёртит рейт вместе с прайсами
+	FUNCTION insert_rate_with_prices ( in_price1_price IN NUMBER,
+									   	in_price2_price IN NUMBER,
+									   	in_price3_price IN NUMBER,
+
+										in_room_type_id IN NUMBER,
+										in_new_rate_start IN DATE,
+										in_new_rate_finish IN DATE)
+	RETURN NUMBER
+	IS
+		rate_id NUMBER;
+		price_id NUMBER;
+	BEGIN
+		SELECT SEQ_OBJ_ID.NEXTVAL INTO rate_id FROM DUAL;
+		INSERT INTO OBJECTS (OBJECT_ID, PARENT_ID, OBJECT_TYPE_ID) VALUES (rate_id, in_room_type_id, 6);
+		INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,DATE_VALUE) VALUES (30, rate_id, in_new_rate_start);
+		INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,DATE_VALUE) VALUES (31, rate_id, in_new_rate_finish);
+
+		SELECT SEQ_OBJ_ID.NEXTVAL INTO price_id FROM DUAL;
+		INSERT INTO OBJECTS (OBJECT_ID, PARENT_ID, OBJECT_TYPE_ID) VALUES (price_id, rate_id, 7);
+		INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE) VALUES (32, price_id, 1);
+		INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE) VALUES (33, price_id, in_price1_price);
+
+		SELECT SEQ_OBJ_ID.NEXTVAL INTO price_id FROM DUAL;
+		INSERT INTO OBJECTS (OBJECT_ID, PARENT_ID, OBJECT_TYPE_ID) VALUES (price_id, rate_id, 7);
+		INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE) VALUES (32, price_id, 2);
+		INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE) VALUES (33, price_id, in_price2_price);
+
+		SELECT SEQ_OBJ_ID.NEXTVAL INTO price_id FROM DUAL;
+		INSERT INTO OBJECTS (OBJECT_ID, PARENT_ID, OBJECT_TYPE_ID) VALUES (price_id, rate_id, 7);
+		INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE) VALUES (32, price_id, 3);
+		INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE) VALUES (33, price_id, in_price3_price);
+
+		RETURN rate_id;
+	END insert_rate_with_prices;
+
+	-- изменяет существующий рейт
+	PROCEDURE update_rate (	obj_id IN NUMBER,
+							in_room_type_id IN NUMBER,
+							in_new_rate_start IN DATE,
+							in_new_rate_finish IN DATE)
+	IS
+	BEGIN
+		UPDATE OBJECTS SET PARENT_ID = in_room_type_id WHERE OBJECT_ID = obj_id;
+		UPDATE ATTRIBUTES SET DATE_VALUE = in_new_rate_start WHERE OBJECT_ID = obj_id AND ATTR_ID = 30;
+		UPDATE ATTRIBUTES SET DATE_VALUE = in_new_rate_finish WHERE OBJECT_ID = obj_id AND ATTR_ID = 31;
+	END update_rate;
+
+	-- удаляет рейт
+	PROCEDURE delete_rate (obj_id IN NUMBER)
+	IS
+		deleted_rows NUMBER;
+	BEGIN
+		deleted_rows := delete_object_by_id(obj_id);
+	END delete_rate;
+
+END Rate_tools;
+/
+
+CREATE OR REPLACE PACKAGE Room_tools
+IS
+	TYPE row_object_id IS RECORD(object_id NUMBER(20));
+	TYPE table_object_id IS TABLE OF row_object_id;
+	TYPE rate_rec_type IS RECORD (	obj_id NUMBER(20),
+									begin_date DATE,
+									end_date DATE,
+									rate_for_day NUMBER);
+
+	FUNCTION get_free_rooms
+		(in_room_type_obj_id IN NUMBER,
+		 in_number_of_residents IN NUMBER,
+		 in_date_start IN DATE,
+	 	 in_date_finish IN DATE)
+	RETURN table_object_id PIPELINED;
+
+
+	FUNCTION get_free_room_types
+		(in_number_of_residents IN NUMBER,
+		 in_date_start IN DATE,
+	 	 in_date_finish IN DATE)
+	RETURN table_object_id PIPELINED;
+
+
+	FUNCTION get_cost_living
+		(in_room_type_obj_id IN NUMBER,
+		 in_number_of_residents IN NUMBER,
+		 in_date_start IN DATE,
+	 	 in_date_finish IN DATE)
+	RETURN NUMBER;
+
+END Room_tools;
+/
+
+CREATE OR REPLACE PACKAGE BODY Room_tools
+IS
+	-- возвращает все свободные комнаты
+	-- OBJECT_ID типа которой равен in_room_type_obj_id,
+	-- с количеством человек равным in_number_of_residents,
+	-- на период с in_date_start до in_date_finish
+	FUNCTION get_free_rooms
+		(in_room_type_obj_id IN NUMBER,
+		 in_number_of_residents IN NUMBER,
+		 in_date_start IN DATE,
+	 	 in_date_finish IN DATE)
+	RETURN table_object_id PIPELINED
+	IS
+		CURSOR Rooms IS
+			SELECT Rooms.OBJECT_ID AS object_id
+			FROM OBJECTS Rooms,
+				 ATTRIBUTES Number_of_residents,
+				 OBJREFERENCE Has_room_type
+			WHERE 	Rooms.OBJECT_TYPE_ID = 1
+				AND Number_of_residents.ATTR_ID = 2 AND Rooms.OBJECT_ID = Number_of_residents.OBJECT_ID AND Number_of_residents.VALUE = in_number_of_residents
+				AND Has_room_type.ATTR_ID = 4 AND Rooms.OBJECT_ID = Has_room_type.OBJECT_ID AND Has_room_type.REFERENCE = in_room_type_obj_id;
+		Orders SYS_REFCURSOR;
+		Order_rec NUMBER(20);
+		bad_orders NUMBER;
+		bad_blocks NUMBER;
+	BEGIN
+		FOR Room_rec IN Rooms
+		LOOP
+			bad_orders := 0;
+			bad_blocks := 0;
+
+			SELECT COUNT(Orders.OBJECT_ID) INTO bad_orders
+			FROM OBJECTS Orders,
+				 ATTRIBUTES L_start, ATTRIBUTES L_finish,
+				 OBJREFERENCE Booked
+			WHERE	Orders.OBJECT_TYPE_ID = 2
+				AND L_start.ATTR_ID = 11 AND Orders.OBJECT_ID = L_start.OBJECT_ID
+				AND L_finish.ATTR_ID = 12 AND Orders.OBJECT_ID = L_finish.OBJECT_ID
+				AND Booked.ATTR_ID = 6 AND Orders.OBJECT_ID = Booked.OBJECT_ID AND Booked.REFERENCE = Room_rec.OBJECT_ID
+				AND NOT (L_start.DATE_VALUE > in_date_finish OR L_finish.DATE_VALUE < in_date_start);
+
+			SELECT COUNT(Blocks.OBJECT_ID) INTO bad_blocks
+			FROM OBJECTS Blocks,
+				 ATTRIBUTES B_start, ATTRIBUTES B_finish,
+				 OBJREFERENCE Blocked
+			WHERE	Blocks.OBJECT_TYPE_ID = 8
+				AND B_start.ATTR_ID = 35 AND Blocks.OBJECT_ID = B_start.OBJECT_ID
+				AND B_finish.ATTR_ID = 36 AND Blocks.OBJECT_ID = B_finish.OBJECT_ID
+				AND Blocked.ATTR_ID = 34 AND Blocks.OBJECT_ID = Blocked.OBJECT_ID AND Blocked.REFERENCE = Room_rec.OBJECT_ID
+				AND NOT (B_start.DATE_VALUE > in_date_finish OR B_finish.DATE_VALUE < in_date_start);
+
+			IF ((bad_orders + bad_blocks) = 0)
+				THEN pipe row(Room_rec);
+			END IF;
+		END LOOP;
+	END get_free_rooms;
+
+
+	-- возвращает все типы комнат, для которых есть хоть одна свободная комната
+	-- с количеством человек равным in_number_of_residents,
+	-- на период с in_date_start до in_date_finish
+	FUNCTION get_free_room_types
+		(in_number_of_residents IN NUMBER,
+		 in_date_start IN DATE,
+	 	 in_date_finish IN DATE)
+	RETURN table_object_id PIPELINED
+	IS
+		CURSOR Room_types IS
+			SELECT Room_types.OBJECT_ID
+			FROM OBJECTS Room_types
+			WHERE Room_types.OBJECT_TYPE_ID = 5;
+		number_of_free_rooms NUMBER;
+	BEGIN
+		FOR Room_types_rec IN Room_types LOOP
+			number_of_free_rooms := 0;
+
+			SELECT COUNT(*) INTO number_of_free_rooms
+				FROM TABLE(ROOM_TOOLS.GET_FREE_ROOMS(Room_types_rec.OBJECT_ID, in_number_of_residents, in_date_start, in_date_finish));
+
+			IF (number_of_free_rooms > 0)
+				THEN pipe row(Room_types_rec);
+			END IF;
+
+		END LOOP;
+	END get_free_room_types;
+
+	-- возвращает стоимость за ПРОЖИВАНИЕ
+	-- в комнате OBJECT_ID типа которой равен in_room_type_obj_id,
+	-- с количеством человек равным in_number_of_residents,
+	-- на период с in_date_start до in_date_finish
+	-- учитывая все рейты, которые находятся внутри этого периода
+	FUNCTION get_cost_living
+		(in_room_type_obj_id IN NUMBER,
+		 in_number_of_residents IN NUMBER,
+		 in_date_start IN DATE,
+	 	 in_date_finish IN DATE)
+	RETURN NUMBER
+	IS
+		start_rate rate_rec_type;
+		finish_rate rate_rec_type;
+		cost_inner_rate NUMBER;
+	BEGIN
+		SELECT Rate.OBJECT_ID, begin_date.DATE_VALUE, end_date.DATE_VALUE, rate_for_day.VALUE INTO start_rate
+		FROM OBJECTS Rate, OBJECTS Price,
+			 ATTRIBUTES begin_date, ATTRIBUTES end_date, ATTRIBUTES number_of_people, ATTRIBUTES rate_for_day
+		WHERE 	Rate.OBJECT_TYPE_ID = 6 AND Rate.PARENT_ID = in_room_type_obj_id
+			AND Price.OBJECT_TYPE_ID = 7
+			AND Price.PARENT_ID = Rate.OBJECT_ID
+			AND begin_date.ATTR_ID = 30 AND Rate.OBJECT_ID = begin_date.OBJECT_ID
+			AND end_date.ATTR_ID = 31 AND Rate.OBJECT_ID = end_date.OBJECT_ID
+			AND number_of_people.ATTR_ID = 32 AND Price.OBJECT_ID = number_of_people.OBJECT_ID
+			AND rate_for_day.ATTR_ID = 33 AND Price.OBJECT_ID = rate_for_day.OBJECT_ID
+			AND begin_date.DATE_VALUE <= in_date_start AND end_date.DATE_VALUE >= in_date_start
+			AND number_of_people.VALUE = in_number_of_residents;
+
+		SELECT Rate.OBJECT_ID, begin_date.DATE_VALUE, end_date.DATE_VALUE, rate_for_day.VALUE INTO finish_rate
+		FROM OBJECTS Rate, OBJECTS Price,
+			 ATTRIBUTES begin_date, ATTRIBUTES end_date, ATTRIBUTES number_of_people, ATTRIBUTES rate_for_day
+		WHERE 	Rate.OBJECT_TYPE_ID = 6 AND Rate.PARENT_ID = in_room_type_obj_id
+			AND Price.OBJECT_TYPE_ID = 7
+			AND Price.PARENT_ID = Rate.OBJECT_ID
+			AND begin_date.ATTR_ID = 30 AND Rate.OBJECT_ID = begin_date.OBJECT_ID
+			AND end_date.ATTR_ID = 31 AND Rate.OBJECT_ID = end_date.OBJECT_ID
+			AND number_of_people.ATTR_ID = 32 AND Price.OBJECT_ID = number_of_people.OBJECT_ID
+			AND rate_for_day.ATTR_ID = 33 AND Price.OBJECT_ID = rate_for_day.OBJECT_ID
+			AND begin_date.DATE_VALUE <= in_date_finish AND end_date.DATE_VALUE >= in_date_finish
+			AND number_of_people.VALUE = in_number_of_residents;
+
+		IF (start_rate.obj_id = finish_rate.obj_id)
+		THEN
+			RETURN (	(TRUNC(in_date_finish) - TRUNC(in_date_start) + 1) * start_rate.rate_for_day 	);
+		ELSE
+			IF (TRUNC(start_rate.end_date) + 1 = TRUNC(finish_rate.begin_date))
+			THEN
+				RETURN
+					(	(TRUNC(start_rate.end_date) - TRUNC(in_date_start) + 1) * start_rate.rate_for_day
+						+
+						(TRUNC(in_date_finish) - TRUNC(finish_rate.begin_date) + 1) * finish_rate.Rate_for_day 	);
+			ELSE
+				SELECT SUM((TRUNC(end_date.DATE_VALUE) - TRUNC(begin_date.DATE_VALUE) + 1) * rate_for_day.VALUE) INTO cost_inner_rate
+				FROM OBJECTS Rate, OBJECTS Price,
+					 ATTRIBUTES begin_date, ATTRIBUTES end_date, ATTRIBUTES number_of_people, ATTRIBUTES rate_for_day
+				WHERE 	Rate.OBJECT_TYPE_ID = 6 AND Rate.PARENT_ID = in_room_type_obj_id
+					AND Price.OBJECT_TYPE_ID = 7
+					AND Price.PARENT_ID = Rate.OBJECT_ID
+					AND begin_date.ATTR_ID = 30 AND Rate.OBJECT_ID = begin_date.OBJECT_ID
+					AND end_date.ATTR_ID = 31 AND Rate.OBJECT_ID = end_date.OBJECT_ID
+					AND number_of_people.ATTR_ID = 32 AND Price.OBJECT_ID = number_of_people.OBJECT_ID
+					AND rate_for_day.ATTR_ID = 33 AND Price.OBJECT_ID = rate_for_day.OBJECT_ID
+					AND number_of_people.VALUE = in_number_of_residents
+					AND (in_date_start < begin_date.DATE_VALUE AND end_date.DATE_VALUE < in_date_finish);
+				RETURN
+					(	(TRUNC(start_rate.end_date) - TRUNC(in_date_start) + 1) * start_rate.rate_for_day
+						+
+						cost_inner_rate
+						+
+						(TRUNC(in_date_finish) - TRUNC(finish_rate.begin_date) + 1) * finish_rate.Rate_for_day 	);
+			END IF;
+		END IF;
+	END get_cost_living;
+
+END Room_tools;
+/
+
+
+

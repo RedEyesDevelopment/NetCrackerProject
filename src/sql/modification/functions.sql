@@ -50,3 +50,4 @@ BEGIN
     RETURN deleted_rows;
 
 END;
+/

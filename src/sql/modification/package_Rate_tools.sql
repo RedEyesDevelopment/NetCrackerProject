@@ -46,7 +46,7 @@ IS
 
 
 END Rate_tools;
-
+/
 
 CREATE OR REPLACE PACKAGE BODY Rate_tools
 IS
@@ -210,3 +210,4 @@ IS
 	END delete_rate;
 
 END Rate_tools;
+/
