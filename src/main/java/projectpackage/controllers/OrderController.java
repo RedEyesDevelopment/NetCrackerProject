@@ -17,7 +17,12 @@ import projectpackage.service.roomservice.RoomTypeService;
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -153,19 +158,27 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/searchavailability", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<List<OrderDTO>> searchAvailabilityForOrderCreation(@RequestBody SearchAvailabilityParamsDTO searchDto, HttpServletRequest request){
+    public ResponseEntity<List<OrderDTO>> searchAvailabilityForOrderCreation(@RequestBody SearchAvailabilityParamsDTO searchDto, HttpServletRequest request) throws ParseException {
         System.out.println("**************************************************");
         System.out.println(searchDto);
+
+
         List<OrderDTO> data = null;
 
-//        long maxValidTime = 31536000000L;
-//        long validStartDate = searchDto.getArrival().getTime() - new Date().getTime();
-//        long validFinishDate = searchDto.getDeparture().getTime() - new Date().getTime();
-//        if ( validStartDate > maxValidTime || validFinishDate > maxValidTime
-//                || searchDto.getArrival().getTime() > searchDto.getDeparture().getTime()) {
-//
-//            return new ResponseEntity<List<OrderDTO>>(data, HttpStatus.I_AM_A_TEAPOT);
-//        }
+        SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+        Date today = sdf.parse(sdf.format(Calendar.getInstance().getTime()));
+
+        long maxValidTime = 31536000000L;
+        long validStartDate = searchDto.getArrival().getTime() - today.getTime();
+        long validFinishDate = searchDto.getDeparture().getTime() - today.getTime();
+
+        ResponseEntity<List<OrderDTO>> answer = new ResponseEntity<List<OrderDTO>>(data, HttpStatus.NOT_FOUND);
+
+        if (validStartDate > maxValidTime) return answer;
+        if (validFinishDate > maxValidTime) return answer;
+        if (searchDto.getArrival().getTime() < today.getTime()) return answer;
+        if (searchDto.getDeparture().getTime() < today.getTime()) return answer;
+        if (searchDto.getArrival().getTime() > searchDto.getDeparture().getTime()) return answer;
 
         data = roomTypeService.getRoomTypes(searchDto.getArrival(),searchDto.getDeparture(),searchDto.getLivingPersons(), searchDto.getCategoryId());
 
