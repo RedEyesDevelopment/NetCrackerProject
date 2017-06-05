@@ -1,279 +1,129 @@
-<!DOCTYPE html>
-<html lang="en" ng-app="hotelApp">
+<div class="col-md-9 order-content">
 
-<head>
-	<meta charset="utf-8">
-    
-    <title>User Settings</title>
+    <div class="form_main col-md-4 col-sm-5 col-xs-7">
+        <h4 class="heading"><strong>User </strong> settings <span></span></h4>
+        <div class="form">
+            <form class="user-form" action="" method="" id="contactFrm" name="contactFrm">
 
-        <!-- Bootstrap -->
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    
-    <!-- My styles !-->
-    <link href="../res/css/mystyles.css" rel="stylesheet">
-    <link href="../res/css/user_settings.css" rel="stylesheet">
-</head>
-
-<body>
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <!-- LOG USER -->
-
-                    <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        
-                            <img src="../res/user_photo.jpg" class="img-circle" width="25" height="25">
-                     
-                        <strong>Alex</strong>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <div class="navbar-login">
-                                <div class="row">
-                                    <div class="col-lg-4">
-                                        <p class="text-center">
-                                            <div class="profile-picture">
-                                               <img src="../res/user_photo.jpg" class="img-circle" width="75" height="75">
-                                            </div>
-                                        </p>
-                                    </div>
-                                    <div class="col-lg-8">
-                                        <p class="text-left"><strong>Alex Murlyan</strong></p>
-                                        <p class="text-left small">some@email.com</p>
-                                        <p class="text-left">
-                                            <a href="#" class="btn btn-primary btn-block btn-sm">Update data</a>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <div class="navbar-login navbar-login-session">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <p>
-                                            <a href="#" class="btn btn-danger btn-block">Sign off</a>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        </ul>
-                        </li>
-
-                    <!-- LOG USER END -->
-                    <!-- <li><a role="button" id="loginLink">Log in</a></li>
-                    <li><a role="button" id="signupLink">Sign up</a></li> -->
-                </ul>
-            </div>
-        </div>
-    </nav>
-        
-    <div id="loginModal" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-sm">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Log in</h4>
+                <!-- Edit -->
+                <!-- NAME -->
+                <div class="firstname">
+                    <label>First Name</label>
+                    <p class="changable">Alex</p>
                 </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label class="sr-only" for="emailInput">Email address</label>
-                            <input type="email" class="form-control input-sm" id="emailInput" placeholder="Enter email">
-                        </div>
-                        <div class="form-group">
-                            <label class="sr-only" for="passwordInput">Password</label>
-                            <input type="password" class="form-control input-sm" id="passwordInput" placeholder="Password">
-                        </div>
-                        <div class="checkbox">
-                            <label><input type="checkbox"> Remember me</label>
-                        </div>
-                        <button type="submit" class="btn btn-info btn-sm">Sign in</button>
-                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-                    </form>
+                <!-- SURNAME -->
+                <div class="lastname">
+                    <label>Last Name: </label>
+                    <p class="changable">Murlyan</p>
                 </div>
-            </div>
-        </div>
-    </div>
-  
-    
-    <div id="signupModal" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-sm">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Sign up</h4>
+                <!-- MAIL -->
+                <div class="mail">
+                    <label>Your Email: </label>
+                    <p class="changable">some@mail.com</p>
                 </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label class="sr-only" for="firstNameInput">First Name</label>
-                            <input type="text" class="form-control input-sm" id="firstNameInput" placeholder="Enter first name">
-                        </div>
-                        <div class="form-group">
-                            <label class="sr-only" for="lastNameInput">Last Name</label>
-                            <input type="text" class="form-control input-sm" id="lastNameInput" placeholder="Enter last name">
-                        </div>
-                        <div class="form-group">
-                            <label class="sr-only" for="emailInput">Email address</label>
-                            <input type="email" class="form-control input-sm" id="emailInput" placeholder="Enter email">
-                        </div>
-                        <div class="form-group">
-                            <label class="sr-only" for="phoneNumberInput">Phone Number</label>
-                            <input type="tel" class="form-control input-sm" id="phoneNumberInput" placeholder="Enter phone number">
-                        </div>
-                        <button type="submit" class="btn btn-info btn-sm">Sign up</button>
-                        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-                    </form>
+                <!-- PWD -->
+                <div class="yourpass">
+                    <label>Your Password: </label>
+                    <p class="changable">Password</p>
                 </div>
-            </div>
-        </div>
-    </div>
-        
-    <!-- DICH START -->
+                <!-- NUMBERS -->
+                <div class="numbers">
+                    <label>Your Numbers: </label>
 
-    <div class="container">
-    <div class="row profile">
-        <div class="col-md-3">
-            <div class="profile-sidebar">
-                <!-- SIDEBAR USERPIC -->
-                <div class="profile-userpic">
-                    <!-- <img src="http://keenthemes.com/preview/metronic/theme/assets/admin/pages/media/profile/profile_user.jpg" class="img-responsive" alt=""> -->
-                   
-                    
-                </div>
-                <!-- END SIDEBAR USERPIC -->
-                <!-- SIDEBAR USER TITLE -->
-                <div class="profile-usertitle">
-                    <div class="profile-picture">
-                        <img src="../res/user_photo.jpg" class="img-circle" width="250" height="250">
-                    </div>
-                    <div class="profile-usertitle-name">
-                        <span class="hidden-xs">Alex Murlyan</span>
-                    </div>
-                    <div class="profile-usertitle-job">Java Developer
-                    </div>
-                </div>
-                <!-- END SIDEBAR USER TITLE -->
-                <!-- SIDEBAR MENU -->
-                <div class="profile-usermenu">
-                    <ul class="nav">
-                        <li class="active">
-                            <a href="#">
-                            <i class="glyphicon glyphicon-cog"></i>
-                            <span class="hidden-xs">User settings<span> </a>
-                        </li>
-                        <li>
-                            <a href="#" >
-                            <i class="glyphicon glyphicon-envelope"></i>
-                            <span class="hidden-xs">Send message to administrator<span> </a>
-                        </li>
-                        <li>
-                            <a href="#" >
-                            <i class="glyphicon glyphicon-th"></i>
-                            <span class="hidden-xs">Checklist<span> </a>
-                        </li>
-                        
-                        
-                    </ul>
-                </div>
-                <!-- END MENU -->
-              
-    
-            </div>
-        </div>
-        <div class="col-md-9 order-content">
-          
-        <div class="form_main col-md-4 col-sm-5 col-xs-7">
-                <h4 class="heading"><strong>User </strong> settings <span></span></h4>
-                <div class="form">
-                <form class="user-form" action="" method="" id="contactFrm" name="contactFrm">
-                   
 
-                    <!-- Edit --> 
-                        <!-- NAME -->
-                        <div class="firstname">
-                            <label>First Name</label>
-                            <p class="changable">Alex</p>
-                        </div>
-                        <!-- SURNAME -->
-                        <div class="lastname">
-                            <label>Last Name: </label>
-                            <p class="changable">Murlyan</p>
-                        </div>
-                        <!-- MAIL -->
-                        <div class="mail">   
-                             <label>Your Email: </label>
-                            <p class="changable">some@mail.com</p>
-                        </div>
-                        <!-- PWD -->
-                        <div class="yourpass">
-                            <label>Your Password: </label>
-                            <p class="changable">Password</p>
-                        </div>
-                        <!-- NUMBERS -->
-                        <div class="numbers">
-                            <label>Your Numbers: </label>
-                            
-                        
-                   
-                        <!-- ADD DEL NUMBER -->
-                        <form role="form" action="/wohoo" method="POST">
-                            <div class="multi-number-wrapper">
-                          
-                              <div class="multi-numbers">
+                    <!-- ADD DEL NUMBER -->
+                    <form role="form" action="/wohoo" method="POST">
+                        <div class="multi-number-wrapper">
+
+                            <div class="multi-numbers">
 
                                 <div class="multi-number">
-                                  <p  class="changable" type="text" name="stuff[]">+3809999999</p>
-                                  <button type="button" class="remove-number">-</button>
-                               
+                                    <p class="changable" type="text" name="stuff[]">+3809999999</p>
+                                    <button type="button" class="remove-number">-</button>
+
                                 </div>
-                              
-                              </div>
-                           
+
+                            </div>
+
                             <button type="button" class="add-number">+</button>
-                            
-                          </div>
-                        </form>
 
                         </div>
-                        <!-- END DEL NUMBER -->
-                    <!-- End edit -->
-                    <button id="dat-button"  type="button" class="btn btn-default">Update</button>
-                </form>
-            </div>
-            </div>
-            
+                    </form>
+
+                </div>
+                <!-- END DEL NUMBER -->
+                <!-- End edit -->
+                <button id="dat-button" type="button" class="btn btn-default">Update</button>
+            </form>
+        </div>
     </div>
-        
-        
-    </div>
+
 </div>
+<script>
+    $(document).ready(function(){
+    $("#loginLink").click(function(){
+        $('#loginModal').modal('show');
+    });
+
+    $("#signupLink").click(function(){
+        $('#signupModal').modal('show');
+    });
 
 
-    <!-- DICH END -->
-        
-    
-        
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <!-- AngularJS -->
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>-->
-    <!-- My scripts -->
-    <script src="../res/js/index.js"></script>
-    <script src="../res/js/controllers/bookingController.js"></script>
-        
-</body>
-</html>
+    //EDIT FIELDS
+
+    $.fn.inlineEdit = function(replaceWith, connectWith) {
+
+        $(this).hover(function() {
+            $(this).addClass('hover');
+        }, function() {
+            $(this).removeClass('hover');
+        });
+
+        $(this).click(function() {
+
+            var elem = $(this);
+
+            elem.hide();
+            elem.after(replaceWith);
+            replaceWith.focus();
+
+            replaceWith.blur(function() {
+
+                if ($(this).val() != "") {
+                    connectWith.val($(this).val()).change();
+                    elem.text($(this).val());
+                }
+
+                $(this).remove();
+                elem.show();
+            });
+        });
+    };
+
+    var replaceWith = $('<input name="temp" type="text"  />'),
+        connectWith = $('input[name="hiddenField"]');
+
+    $('.changable').inlineEdit(replaceWith, connectWith);
+
+    //END EDIIT
+
+    //ADD NUMBER
+    $('.multi-number-wrapper').each(function() {
+        var $wrapper = $('.multi-numbers', this);
+        $(".add-number", $(this)).click(function(e) {
+            if ($('.multi-number', $wrapper).length < 5)
+                $('.multi-number:first-child', $wrapper).clone(true).appendTo($wrapper).find('p').val('').focus();
+        });
+        $('.multi-number .remove-number', $wrapper).click(function() {
+            if ($('.multi-number', $wrapper).length > 1)
+                $(this).parent('.multi-number').remove();
+        });
+    });
+    //END NUMBER
+
+});
+
+
+</script>
