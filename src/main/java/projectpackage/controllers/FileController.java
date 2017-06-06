@@ -39,16 +39,14 @@ public class FileController {
         String path = request.getServletContext().getRealPath("/").toString();
         Order order = orderService.getSingleOrderById(300);
         File file = pdfService.createOrderPDF(order, path);
-
         mailService.sendEmailWithAttachment("sashamerlyan@gmail.com", 1, file);
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public void getStatistic(HttpServletRequest request){
+    public File getStatistic(HttpServletRequest request){
         String path = request.getServletContext().getRealPath("/").toString();
-
         File file = adminService.getStatistic(path);
-
-        mailService.sendEmailWithAttachment("sashamerlyan@gmail.com", 3, file);
+        mailService.sendEmailWithAttachment("fiendes03@gmail.com", 3, file);
+        return file;
     }
 }

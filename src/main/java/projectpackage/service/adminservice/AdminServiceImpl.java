@@ -41,7 +41,6 @@ public class AdminServiceImpl implements AdminService{
 
         List<Order> orders = orderService.getOrdersInRange(today, today);
         orders.sort((o1, o2) -> (int) (o1.getRegistrationDate().getTime() - o2.getRegistrationDate().getTime()));
-        System.out.println(orders);
         File statisticPDF = pdfService.createRoomStatisticPDF(freeRoom, orders, path);
 
         return statisticPDF;

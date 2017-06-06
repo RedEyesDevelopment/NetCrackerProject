@@ -64,7 +64,7 @@ public class InMemoryNotifServiceImpl implements InMemoryNotifService{
     }
 
     @Override
-    public void removeNewNotification(Notification notif) {
+    public void removeOldNotification(Notification notif) {
         int targetId = notif.getObjectId();
         Predicate<Notification> notificationPredicate = (s)-> s.getObjectId()==targetId;
         if (notif.getNotificationType().getOrientedRole().getRoleName().equals(ADMINROLETYPE)){

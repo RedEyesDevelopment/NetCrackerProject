@@ -105,7 +105,6 @@ public class ReactEAV {
 
     private void addConditionExecutor(ReactConditionData data){
         Class<ConditionExecutor> executorClass = data.getCondition().getNeededConditionExecutor();
-        System.out.println("EXECUTORCLASS="+executorClass);
         boolean executorAlreadyExists = false;
         for (ConditionExecutor existingExecutor:executors){
             if (existingExecutor.getClass().equals(executorClass)){

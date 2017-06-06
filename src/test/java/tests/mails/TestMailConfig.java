@@ -3,8 +3,8 @@ package tests.mails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
+import projectpackage.service.fileservice.files.DateFileNameGenerator;
+import projectpackage.service.fileservice.files.OrderFileNameGenerator;
 import projectpackage.service.fileservice.mails.MailConfig;
 import projectpackage.service.fileservice.mails.MailMessagesMap;
 import projectpackage.service.fileservice.mails.MailService;
@@ -39,7 +39,12 @@ public class TestMailConfig {
     }
 
     @Bean
-    JavaMailSender javaMailSender(){
-        return new JavaMailSenderImpl();
+    DateFileNameGenerator dateFileNameGenerator(){
+        return new DateFileNameGenerator("NCHotel");
+    }
+
+    @Bean
+    OrderFileNameGenerator orderFileNameGenerator(){
+        return new OrderFileNameGenerator("NCHotel");
     }
 }

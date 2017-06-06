@@ -17,6 +17,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 import projectpackage.aspects.ModificationHistoryAspect;
+import projectpackage.aspects.NotificationInsertOrChangeAspect;
 import projectpackage.repository.authdao.*;
 import projectpackage.repository.blocksdao.BlockDAO;
 import projectpackage.repository.blocksdao.BlockDAOImpl;
@@ -40,6 +41,8 @@ import projectpackage.repository.roomsdao.RoomTypeDAO;
 import projectpackage.repository.roomsdao.RoomTypeDAOImpl;
 import projectpackage.repository.securitydao.AuthCredentialsDAO;
 import projectpackage.repository.securitydao.AuthCredentialsDAOImpl;
+import projectpackage.service.adminservice.InMemoryNotifService;
+import projectpackage.service.adminservice.InMemoryNotifServiceImpl;
 import projectpackage.service.authservice.*;
 import projectpackage.service.blockservice.BlockService;
 import projectpackage.service.blockservice.BlockServiceImpl;
@@ -370,6 +373,11 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
     }
 
     @Bean
+    NotificationInsertOrChangeAspect notificationInsertOrChangeAspect() {
+        return new NotificationInsertOrChangeAspect();
+    }
+
+    @Bean
     PhoneRegexService phoneRegexService() { return new PhoneRegexServiceImpl();}
 
     @Bean
@@ -401,4 +409,10 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
 
     @Bean
     SecurityService securityService() {return new SecurityServiceImpl(); }
+
+
+    @Bean
+    InMemoryNotifService inMemoryNotifService(){
+        return new InMemoryNotifServiceImpl();
+    }
 }

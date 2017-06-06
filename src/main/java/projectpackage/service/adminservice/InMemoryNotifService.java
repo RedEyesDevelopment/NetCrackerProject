@@ -10,5 +10,5 @@ import java.util.Set;
 public interface InMemoryNotifService {
     public Set<Notification> getNotificationsForUserole(String roleName);
     public void insertNewNotification(Notification notif);
-    public void removeNewNotification(Notification notif);
+    public void removeOldNotification(Notification notif);
 }
