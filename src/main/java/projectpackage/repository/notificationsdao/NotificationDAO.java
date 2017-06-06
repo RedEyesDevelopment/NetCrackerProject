@@ -12,6 +12,7 @@ import java.util.List;
  * Created by Arizel on 16.05.2017.
  */
 public interface NotificationDAO {
+    public List<Notification> getAllNotificationsForInMemoryService();
     public Notification getNotification(Integer id);
     public List<Notification> getAllNotifications();
     public int insertNotification(Notification notification) throws TransactionException;

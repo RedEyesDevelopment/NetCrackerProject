@@ -37,6 +37,18 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     JdbcTemplate jdbcTemplate;
 
     @Override
+    public List<Notification> getAllNotificationsForInMemoryService() {
+        List<Notification> notifs = null;
+        try {
+            notifs = (List<Notification>) manager.createReactEAV(Notification.class).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class,"RoleToNotificationType").closeAllFetches().getEntityCollection();
+        } catch (ResultEntityNullException e) {
+            LOGGER.warn(e);
+            return null;
+        }
+        return notifs;
+    }
+
+    @Override
     public Notification getNotification(Integer id) {
         if (id == null) return null;
         try {

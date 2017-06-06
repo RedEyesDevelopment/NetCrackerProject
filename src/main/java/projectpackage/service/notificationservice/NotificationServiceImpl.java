@@ -116,6 +116,11 @@ public class NotificationServiceImpl implements NotificationService{
     }
 
     @Override
+    public List<Notification> getAllNotificationsForInMemoryService() {
+        return notificationDAO.getAllNotificationsForInMemoryService();
+    }
+
+    @Override
     public Notification getSingleNotificationById(int id) {
         Notification notification = notificationDAO.getNotification(id);
         if (notification == null) LOGGER.info("Returned NULL!!!");

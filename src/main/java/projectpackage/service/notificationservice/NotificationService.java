@@ -20,6 +20,7 @@ public interface NotificationService {
     public List<Notification> getNotificationsByExecutor(User user);
     public List<Notification> getNotificationsForRole(Role role);
 
+    public List<Notification> getAllNotificationsForInMemoryService();
     public List<Notification> getAllNotifications();
     public List<Notification> getAllNotifications(String orderingParameter, boolean ascend);
     public Notification getSingleNotificationById(int id);
