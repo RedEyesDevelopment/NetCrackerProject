@@ -5,11 +5,13 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Category;
 import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
+import projectpackage.service.fileservice.files.OrderFileNameGenerator;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,22 +30,26 @@ public class PdfServiceImpl implements PdfService{
     private final String URL_PHOTOS = "D:\\AndProjects\\Netcracker\\NetCrackerProject\\src\\main\\resources\\photos\\";//ЮРЛ всех наших фоток
     private final SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 
+    @Autowired
+    OrderFileNameGenerator orderFileNameGenerator;
+
     @Override
-    public String createOrderPDF(Order order) throws DocumentException, IOException {
+    public File createOrderPDF(Order order, String path) throws DocumentException, IOException {
         String urlPhoto;
         if (order.getRoom().getRoomType().getRoomTypeTitle().equals("Luxe")) {
-         urlPhoto = URL_PHOTOS + "Luxe.jpg";
+         urlPhoto = "photos/Luxe.jpg";
         } else if (order.getRoom().getRoomType().getRoomTypeTitle().equals("Semi-Luxe")) {
-         urlPhoto = URL_PHOTOS + "Luxe.jpg";
+         urlPhoto = "photos/Luxe.jpg";
         } else if (order.getRoom().getRoomType().getRoomTypeTitle().equals("Economy")) {
-         urlPhoto = URL_PHOTOS + "Luxe.jpg";
+         urlPhoto = "photos/Luxe.jpg";
         } else if (order.getRoom().getRoomType().getRoomTypeTitle().equals("President")) {
-         urlPhoto = URL_PHOTOS + "Luxe.jpg";
+         urlPhoto = "photos/Luxe.jpg";
         } else {
-         urlPhoto = URL_PHOTOS + "NotFound.jpg";
+         urlPhoto = "photos/NotFound.jpg";
         }
 
-        String pathToPDF = "D:\\Order#" + order.getObjectId() + ".pdf";
+//        String pathToPDF = "D:\\Order#" + order.getObjectId() + ".pdf";
+        String pathToPDF = path+"\\pdfs\\"+orderFileNameGenerator.generateFileName("OrderPayment",order.getObjectId())+".pdf";
         Document document = new Document(PageSize.A4, 50, 50, 50, 50);
         PdfWriter.getInstance(document, new FileOutputStream(pathToPDF));
         document.open();
@@ -94,7 +100,8 @@ public class PdfServiceImpl implements PdfService{
         document.add(chapter);
         document.close();
 
-        return pathToPDF;
+        File file = new File(pathToPDF);
+        return file;
     }
 
     @Override
