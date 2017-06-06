@@ -18,7 +18,6 @@ import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -91,7 +90,7 @@ public class RoomServiceImpl implements RoomService {
         List<RoomType> roomTypes = roomTypeDAO.getAllRoomTypes();
         for (int i = 0; i < roomTypes.size(); i++) {
             RoomType roomType = roomTypes.get(i);
-            for (int j = 0; j < 3; j++) {
+            for (int j = 1; j <= 3; j++) {
                 list.addAll(roomDAO.getFreeRooms(roomType.getObjectId(), j, start, finish));
             }
         }
@@ -105,7 +104,7 @@ public class RoomServiceImpl implements RoomService {
         List<RoomType> roomTypes = roomTypeDAO.getAllRoomTypes();
         for (int i = 0; i < roomTypes.size(); i++) {
             RoomType roomType = roomTypes.get(i);
-            for (int j = 0; j < 3; j++) {
+            for (int j = 1; j <= 3; j++) {
                 list.addAll(roomDAO.getBookedRooms(roomType.getObjectId(), j, start, finish));
             }
         }
