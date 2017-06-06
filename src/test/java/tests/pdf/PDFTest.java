@@ -12,6 +12,7 @@ import projectpackage.model.rooms.RoomType;
 import projectpackage.service.adminservice.AdminService;
 import projectpackage.service.fileservice.pdf.PdfService;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
@@ -50,16 +51,16 @@ public class PDFTest extends AbstractPDFTest {
         order.setComment("Comment");
         order.setRoom(room);
         order.setClient(user);
-        String url = pdfService.createOrderPDF(order);
-        LOGGER.info(url);
+        File file = pdfService.createOrderPDF(order, "");
+        LOGGER.info(file);
         LOGGER.info(SEPARATOR);
     }
 
     @Test
     public void testStatPDFCreation() {
-        IUDAnswer iudAnswer = adminService.getStatistic();
-        Assert.assertTrue(iudAnswer.isSuccessful());
-        LOGGER.info(iudAnswer.getMessage());
+        File file = adminService.getStatistic("");
+        Assert.assertNotNull(file);
+        LOGGER.info(file);
     }
 
     @Test

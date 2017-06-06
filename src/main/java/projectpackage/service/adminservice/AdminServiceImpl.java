@@ -1,17 +1,15 @@
 package projectpackage.service.adminservice;
 
-import com.itextpdf.text.DocumentException;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import projectpackage.dto.IUDAnswer;
 import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
-import projectpackage.service.orderservice.OrderService;
 import projectpackage.service.fileservice.pdf.PdfService;
+import projectpackage.service.orderservice.OrderService;
 import projectpackage.service.roomservice.RoomService;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -33,7 +31,7 @@ public class AdminServiceImpl implements AdminService{
     PdfService pdfService;
 
     @Override
-    public IUDAnswer getStatistic() {
+    public File getStatistic(String path) {
         Date today = Calendar.getInstance().getTime();
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, 1);
@@ -44,14 +42,8 @@ public class AdminServiceImpl implements AdminService{
         List<Order> orders = orderService.getOrdersInRange(today, today);
         orders.sort((o1, o2) -> (int) (o1.getRegistrationDate().getTime() - o2.getRegistrationDate().getTime()));
         System.out.println(orders);
-        String urlPdf = null;
-        try {
-            urlPdf = pdfService.createRoomStatisticPDF(freeRoom, orders);
-        } catch (IOException e) {
-            new IUDAnswer(false, "statWrong");
-        } catch (DocumentException e) {
-            new IUDAnswer(false, "statWrong");
-        }
-        return new IUDAnswer(true, urlPdf);
+        File statisticPDF = pdfService.createRoomStatisticPDF(freeRoom, orders, path);
+
+        return statisticPDF;
     }
 }

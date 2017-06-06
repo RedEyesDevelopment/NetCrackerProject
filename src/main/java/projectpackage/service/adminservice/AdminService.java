@@ -1,10 +1,10 @@
 package projectpackage.service.adminservice;
 
-import projectpackage.dto.IUDAnswer;
+import java.io.File;
 
 /**
  * Created by Arizel on 04.06.2017.
  */
 public interface AdminService {
-    public IUDAnswer getStatistic();
+    public File getStatistic(String path);
 }

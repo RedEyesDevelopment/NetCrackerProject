@@ -16,7 +16,7 @@ public class DateFileNameGenerator {
     private String prefix;
 
     private DateFormat targetDateFormat = new SimpleDateFormat("MM-dd-yyyy");
-    private DateFormat currentTimeFormat = new SimpleDateFormat("HH:mm:ss_MM-dd-yyyy");
+    private DateFormat currentTimeFormat = new SimpleDateFormat("HH-mm-ss_MM-dd-yyyy");
 
     public DateFileNameGenerator() {
     }
