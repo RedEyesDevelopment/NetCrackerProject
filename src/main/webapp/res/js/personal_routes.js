@@ -63,7 +63,7 @@ app.controller('userSettingsController', ['$scope', '$http', '$location' , 'shar
     var user;
 
     $http({
-        url: 'http://localhost:8080/users/903',
+        url: 'http://localhost:8080/users/901',
         method: 'GET',
 
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -75,29 +75,34 @@ app.controller('userSettingsController', ['$scope', '$http', '$location' , 'shar
     });
 
 
-    $scope.userUpdate = function (eve) {
+    $scope.updateUser = function (eve) {
         console.log('I am into user update');
 
         $http({
-            url: 'http://localhost:8080/users/'+ user.data.objectId,
+            url: 'http://localhost:8080/users/901',
             method: 'PUT',
             data: {
-                "objectId": user.data.objectId,
-                "email": $scope.userEmail,
-                "password": $scope.userPassword,
-                "firstName": $scope.userFirstName,
-                "lastName": $scope.userLastName,
-                "additionalInfo": "Something",
-                "enabled": user.data.enabled,
+                "objectId": 901,
+                "email": "krasavchik@gmail.com",
+                "password": "lkjaytuayiaaotwiuy",
+                "firstName": "Johnny",
+                "lastName": "Depp",
+                "additionalInfo": "Капитан!",
+                "enabled": true,
                 "role": {
-                    "objectId": user.data.role.objectId,
-                    "roleName": user.data.role.roleName
+                    "objectId": 3,
+                    "roleName": "CLIENT"
                 },
                 "phones": [
                     {
-                        "objectId": user.data.phones[0].objectId,
-                        "userId": user.data.phones[0].userId,
-                        "phoneNumber": user.data.phones[0].phoneNumber
+                        "objectId": 1102,
+                        "userId": 901,
+                        "phoneNumber": "08001234518"
+                    },
+                    {
+                        "objectId": 1101,
+                        "userId": 901,
+                        "phoneNumber": "08001234517"
                     }
                 ]
             },

@@ -3,7 +3,7 @@
     <div class="form_main col-md-4 col-sm-5 col-xs-7">
         <h4 class="heading"><strong>User </strong> settings <span></span></h4>
         <div class="form">
-            <form class="user-form" action="" method="" id="contactFrm" name="contactFrm" ng-submit='userUpdate($event)'>
+            <form class="user-form" action="" method="" id="contactFrm" name="contactFrm" ng-controller="userSettingsController" novalidate ng-submit='updateUser($event)'>
 
 
                 <!-- Edit -->
@@ -55,7 +55,7 @@
                 </div>
                 <!-- END DEL NUMBER -->
                 <!-- End edit -->
-                <button id="dat-button" type="submit" class="btn btn-default">Update</button>
+                <button id="dat-button" type="submit" class="btn btn-default" ng-click='updateUser($event)'>Update</button>
             </form>
         </div>
     </div>

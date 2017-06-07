@@ -72,7 +72,6 @@ app.controller('search-available', ['$scope', '$http', '$location' , 'sharedData
 
         }, function(response) {
             console.log(response);
-            console.log("I_AM_TEAPOT!")
         });
 
 
