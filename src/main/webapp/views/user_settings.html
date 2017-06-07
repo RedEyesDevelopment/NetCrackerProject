@@ -3,29 +3,29 @@
     <div class="form_main col-md-4 col-sm-5 col-xs-7">
         <h4 class="heading"><strong>User </strong> settings <span></span></h4>
         <div class="form">
-            <form class="user-form" action="" method="" id="contactFrm" name="contactFrm">
+            <form class="user-form" action="" method="" id="contactFrm" name="contactFrm" ng-submit='userUpdate($event)'>
 
 
                 <!-- Edit -->
                 <!-- NAME -->
                 <div class="firstname">
                     <label>First Name</label>
-                    <p class="changable">Alex</p>
+                    <p class="changable" ng-model="userFirstName">{{yourData.data.firstName}}</p>
                 </div>
                 <!-- SURNAME -->
                 <div class="lastname">
                     <label>Last Name: </label>
-                    <p class="changable">Murlyan</p>
+                    <p class="changable" ng-model="userLastName">{{yourData.data.lastName}}</p>
                 </div>
                 <!-- MAIL -->
                 <div class="mail">
                     <label>Your Email: </label>
-                    <p class="changable">some@mail.com</p>
+                    <p class="changable" ng-model="userEmail">{{yourData.data.email}}</p>
                 </div>
                 <!-- PWD -->
                 <div class="yourpass">
                     <label>Your Password: </label>
-                    <p class="changable">Password</p>
+                    <p class="changable" ng-model="userPassword">{{yourData.data.password}}</p>
                 </div>
                 <!-- NUMBERS -->
                 <div class="numbers">
@@ -38,9 +38,10 @@
 
                             <div class="multi-numbers">
 
-                                <div class="multi-number">
-                                    <p class="changable" type="text" name="stuff[]">+3809999999</p>
+                                <div class="multi-number" ng-repeat="phones in yourData.data.phones">
+                                    <p class="changable" type="text" name="stuff[]">{{phones.phoneNumber}}</p>
                                     <button type="button" class="remove-number">-</button>
+
 
                                 </div>
 
@@ -54,7 +55,7 @@
                 </div>
                 <!-- END DEL NUMBER -->
                 <!-- End edit -->
-                <button id="dat-button" type="button" class="btn btn-default">Update</button>
+                <button id="dat-button" type="submit" class="btn btn-default">Update</button>
             </form>
         </div>
     </div>

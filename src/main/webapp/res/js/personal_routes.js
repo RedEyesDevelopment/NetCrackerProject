@@ -31,7 +31,10 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
             templateUrl: 'user_settings.html',
             controller: 'userSettingsController'
         })
-        .otherwise({templateUrl: 'user_settings.html'})
+        .otherwise({
+            templateUrl: 'user_settings.html',
+            controller: 'userSettingsController'
+        })
 }]);
 
 app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
@@ -42,7 +45,6 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
             templateUrl: 'send_message.html',
             controller: 'sendMessageController'
         })
-        .otherwise({templateUrl: 'user_settings.html'})
 }]);
 
 app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
@@ -53,11 +55,78 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
             templateUrl: 'checklist.html',
             controller: 'orderListController'
         })
-        .otherwise({templateUrl: 'user_settings.html'})
 }]);
 
 
 app.controller('userSettingsController', ['$scope', '$http', '$location' , 'sharedData' , function ($scope, $http, $location, sharedData) {
+
+    var user;
+
+    $http({
+        url: 'http://localhost:8080/users/903',
+        method: 'GET',
+
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+
+    }).then(function (data) {
+        $scope.yourData = data;
+        user = data;
+        console.log(data);
+    });
+
+
+    $scope.userUpdate = function (eve) {
+        console.log('I am into user update');
+
+        $http({
+            url: 'http://localhost:8080/users/'+ user.data.objectId,
+            method: 'PUT',
+            data: {
+                "objectId": user.data.objectId,
+                "email": $scope.userEmail,
+                "password": $scope.userPassword,
+                "firstName": $scope.userFirstName,
+                "lastName": $scope.userLastName,
+                "additionalInfo": "Something",
+                "enabled": user.data.enabled,
+                "role": {
+                    "objectId": user.data.role.objectId,
+                    "roleName": user.data.role.roleName
+                },
+                "phones": [
+                    {
+                        "objectId": user.data.phones[0].objectId,
+                        "userId": user.data.phones[0].userId,
+                        "phoneNumber": user.data.phones[0].phoneNumber
+                    }
+                ]
+            },
+
+
+            headers: {
+                'Content-Type': 'application/json'
+            }
+
+
+        }).then(function(data) {
+
+            sharedData.setData(data);
+
+
+            $location.path('/rooms');
+
+
+        }, function(response) {
+            console.log(response);
+            console.log("I_AM_TEAPOT!")
+        });
+
+
+    }
+
+
+
+
 
     $(document).ready(function(){
         $("#loginLink").click(function(){

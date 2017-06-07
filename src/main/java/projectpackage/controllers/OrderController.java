@@ -63,14 +63,14 @@ public class OrderController {
         User thisUser = (User) request.getSession().getAttribute("USER");
         Order order = orderService.getSingleOrderById(id);
         Resource<Order> resource = new Resource<>(order);
-        HttpStatus status;
-        if (null!= order){
-            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(OrderController.class).deleteOrder(order.getObjectId())).withRel("delete"));
-            resource.add(linkTo(methodOn(OrderController.class).updateOrder(order.getObjectId(), order)).withRel("update"));
-            status = HttpStatus.ACCEPTED;
-        } else {
-            status = HttpStatus.BAD_REQUEST;
-        }
+        HttpStatus status = HttpStatus.ACCEPTED;
+//        if (null!= order){
+//            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(OrderController.class).deleteOrder(order.getObjectId())).withRel("delete"));
+//            resource.add(linkTo(methodOn(OrderController.class).updateOrder(order.getObjectId(), order)).withRel("update"));
+//            status = HttpStatus.ACCEPTED;
+//        } else {
+//            status = HttpStatus.BAD_REQUEST;
+//        }
         ResponseEntity<Resource<Order>> response = new ResponseEntity<Resource<Order>>(resource, status);
         return response;
     }

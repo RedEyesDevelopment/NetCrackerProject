@@ -42,20 +42,22 @@ public class UserController {
     }
 
     //Get single User by id
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Resource<User>> getUser(@PathVariable("id") Integer id, HttpServletRequest request){
-        User thisUser = (User) request.getSession().getAttribute("USER");
+        //User thisUser = (User) request.getSession().getAttribute("USER");
+        //System.out.println(id);
         User user = userService.getSingleUserById(id);
         Resource<User> resource = new Resource<>(user);
-        HttpStatus status;
-        if (null != user){
-            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(UserController.class).deleteUser(user.getObjectId())).withRel("delete"));
-            resource.add(linkTo(methodOn(UserController.class).updateUser(user.getObjectId(), user)).withRel("update"));
-            status = HttpStatus.ACCEPTED;
-        } else {
-            status = HttpStatus.BAD_REQUEST;
-        }
+        //HttpStatus status = null;
+        HttpStatus status = HttpStatus.OK;
+//        if (null != user){
+//            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(UserController.class).deleteUser(user.getObjectId())).withRel("delete"));
+//            resource.add(linkTo(methodOn(UserController.class).updateUser(user.getObjectId(), user)).withRel("update"));
+//            status = HttpStatus.OK;
+//        } else {
+//            status = HttpStatus.BAD_REQUEST;
+//        }
         ResponseEntity<Resource<User>> response = new ResponseEntity<Resource<User>>(resource, status);
         return response;
     }
@@ -77,6 +79,7 @@ public class UserController {
     @CacheRemoveAll(cacheName = "userList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateUser(@PathVariable("id") Integer id, @RequestBody User changedUser){
+        System.out.println("*******************************************************");
         if (!id.equals(changedUser.getObjectId())){
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, "wrongId"), HttpStatus.NOT_ACCEPTABLE);
         }
@@ -86,6 +89,7 @@ public class UserController {
             status = HttpStatus.ACCEPTED;
         } else status = HttpStatus.BAD_REQUEST;
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
+        System.out.println("*******************************************************");
         return responseEntity;
     }
 
