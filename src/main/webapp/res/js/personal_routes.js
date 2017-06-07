@@ -65,7 +65,6 @@ app.controller('userSettingsController', ['$scope', '$http', '$location' , 'shar
     $http({
         url: 'http://localhost:8080/users/901',
         method: 'GET',
-
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 
     }).then(function (data) {
