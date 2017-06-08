@@ -49,7 +49,9 @@ public class OrderController {
     @ResponseStatus(HttpStatus.OK)
     @CacheResult(cacheName = "orderList")
     @GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public List<Resource<Order>> getOrderList(){
+    public List<Resource<Order>> getOrderList(HttpServletRequest request){
+        System.out.println("orders SESSION="+request.getSession().toString()+" FROM DATE "+request.getSession().getCreationTime());
+
         List<Order> orders = orderService.getAllOrders();
         List<Resource<Order>> resources = new ArrayList<>();
         for (Order order:orders){
@@ -66,6 +68,10 @@ public class OrderController {
     public ResponseEntity<Resource<Order>> getOrder(@PathVariable("id") Integer id, HttpServletRequest request){
         User thisUser = (User) request.getSession().getAttribute("USER");
         Order order = orderService.getSingleOrderById(id);
+        System.out.println("order/id SESSION="+request.getSession().toString()+" FROM DATE "+request.getSession().getCreationTime());
+
+        System.out.println("USERFROMSESSION="+thisUser);
+        System.out.println("ORDER FROM DB="+order);
         Resource<Order> resource = new Resource<>(order);
         HttpStatus status = HttpStatus.ACCEPTED;
 //        if (null!= order){

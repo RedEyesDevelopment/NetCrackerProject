@@ -1,12 +1,13 @@
 Статья:
 www.baeldung.com/spring-channel-security-https
+https://www.digitalocean.com/community/tutorials/java-keytool-essentials-working-with-java-keystores
+
+0) создать папку C:\keystore
+1) Выполнить  в этой папке:
+"%JAVA_HOME%\bin\keytool" -genkeypair -alias tomcat -keyalg RSA -keystore keystore.jks -storepass pkv02zb6l -keypass pkv02zb6l
+2)Выполнить там-же:
+"%JAVA_HOME%\bin\keytool" -certreq -alias tomcat -file tomcat.csr -keystore keystore.jks
 
 
-1) Выполнить:
-"%JAVA_HOME%\bin\keytool" -genkey -alias tomcat -keyalg RSA -storepass pkv02zb6l -keypass pkv02zb6l -dname 'CN=tomcat'
-
-2) Переместить ключ в C:\keystore
-
-
-
+--Это уже можно не делать--
 Изменить место хранения ключа в server.xml с ${user.home}/.keystore на C:\keystore
