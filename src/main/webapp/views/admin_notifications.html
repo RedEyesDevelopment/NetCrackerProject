@@ -15,6 +15,13 @@
     
     <!-- My styles !-->
     <link href="../res/css/mystyles.css" rel="stylesheet">
+
+    <!-- Angular libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-route.min.js"></script>
+    <script src="https://code.angularjs.org/1.6.4/angular-animate.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-resource.js" type="text/javascript"></script>
+
 </head>
     
 <body>
@@ -43,25 +50,14 @@
         <div class="col-sm-10">
             <div class="table-responsive">
                 <table class="table table-striped">
-                    <tr>
-                        <td>&nbsp;</td>
-                        
-                    </tr>
-                    <tr>
-                        <td>&nbsp;</td>
-                        
-                    </tr>
-                    <tr>
-                        <td>&nbsp;</td>
-                        
-                    </tr>
-                    <tr>
-                        <td>&nbsp;</td>
-                        
-                    </tr>
-                    <tr>
-                        <td>&nbsp;</td>
-                        
+                    <tr ng-repeat = "notification in list">
+                        <td>{{author}}</td>
+                        <td>{{notificationType}}</td>
+                        <td>{{message}}</td>
+                        <td>{{sendDate}}</td>
+                        <td>{{executedBy}}</td>
+                        <td>{{executedDate}}</td>
+                        <td>{{order}}</td>
                     </tr>
                 </table>
             </div>
