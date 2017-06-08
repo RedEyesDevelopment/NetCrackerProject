@@ -1,10 +1,35 @@
- <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<script src=".../res/js/authform.js"></script>
+<div ng-app="ui.bootstrap.demo">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a role="button" id="loginLink">Log in</a></li>
+                    <li><a role="button" id="loginLink" ng-click="$ctrl.open('sm')">Log in</a></li>
                     <li><a role="button" id="signupLink">Sign up</a></li>
                 </ul>
             </div>
         </div>
     </nav>
+    <div ng-controller="ModalDemoCtrl as $ctrl" class="modal-demo">
+        <script type="text/ng-template" id="myModalContent.html">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">I'm a modal!</h3>
+                <button class="btn btn-warning" type="button" ng-click="$ctrl.cancel()">Cancel</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                HELLO MOTHERFUCKA
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </script>
+        <script type="text/ng-template" id="stackedModal.html">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title-{{name}}">The {{name}} modal!</h3>
+            </div>
+            <div class="modal-body" id="modal-body-{{name}}">
+                Having multiple modals open at once is probably bad UX but it's technically possible.
+            </div>
+        </script>
+    </div>
+</div>
