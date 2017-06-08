@@ -23,11 +23,16 @@ public class IUDAnswer {
         ANSWERS.put("orderCanceled", "The order has been canceled.");
         ANSWERS.put("duplicateEmail", "This email is already exist!");
         ANSWERS.put("statWrong", "Unable to create statistics!");
+        ANSWERS.put("failedEmailSent", "Your message haven't been sent!");
     }
 
     private Integer objectId;
     private boolean successful;
     private String message;
+
+    public IUDAnswer(boolean successful) {
+        this.successful = successful;
+    }
 
     public IUDAnswer(Integer objectId, boolean successful) {
         this.objectId = objectId;

@@ -11,6 +11,7 @@ import projectpackage.dto.OrderDTO;
 import projectpackage.dto.SearchAvailabilityParamsDTO;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Order;
+import projectpackage.service.authservice.UserService;
 import projectpackage.service.orderservice.OrderService;
 import projectpackage.service.roomservice.RoomTypeService;
 
@@ -40,6 +41,9 @@ public class OrderController {
 
     @Autowired
     RoomTypeService roomTypeService;
+
+    @Autowired
+    UserService userService;
 
     //Get Order List
     @ResponseStatus(HttpStatus.OK)
@@ -155,6 +159,17 @@ public class OrderController {
         IUDAnswer answer = new IUDAnswer(false, "orderCanceled");
 
         return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+    }
+
+    @RequestMapping(value = "/byUser",method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<List<Order>> getAllOrdersByUser(HttpServletRequest request) {
+        //User user = (User) request.getSession().getAttribute("USER");
+        User user = userService.getSingleUserById(901);
+        List<Order> orders = orderService.getOrdersByClient(user);
+        System.out.println(orders + "********************************************************************************");
+        if (null == orders) return new ResponseEntity<List<Order>>((List<Order>) null,HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<List<Order>>(orders, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/searchavailability", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})

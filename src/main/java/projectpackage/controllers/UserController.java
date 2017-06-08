@@ -6,8 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import projectpackage.model.auth.User;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.dto.MailDTO;
+import projectpackage.model.auth.User;
 import projectpackage.service.authservice.UserService;
 
 import javax.cache.annotation.CacheRemoveAll;
@@ -75,15 +76,24 @@ public class UserController {
         return responseEntity;
     }
 
+    @RequestMapping(value = "/sendMessage", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<IUDAnswer> sendMessage(@RequestBody MailDTO mailDTO, HttpServletRequest request) {
+        System.out.println(mailDTO);
+        IUDAnswer iudAnswer = new IUDAnswer(true);
+        return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+    }
+
     //Update user method
     @CacheRemoveAll(cacheName = "userList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateUser(@PathVariable("id") Integer id, @RequestBody User changedUser){
         System.out.println("*******************************************************");
+        System.out.println(id);
         if (!id.equals(changedUser.getObjectId())){
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, "wrongId"), HttpStatus.NOT_ACCEPTABLE);
         }
         IUDAnswer result = userService.updateUser(id, changedUser);
+        System.out.println(result);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.ACCEPTED;
