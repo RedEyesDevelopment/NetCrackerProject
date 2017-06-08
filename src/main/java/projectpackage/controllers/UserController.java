@@ -45,12 +45,12 @@ public class UserController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Resource<User>> getUser(@PathVariable("id") Integer id, HttpServletRequest request){
         User thisUser = (User) request.getSession().getAttribute("USER");
-        User user = userService.getSingleUserById(id);
-        Resource<User> resource = new Resource<>(user);
+//        User user = userService.getSingleUserById(id);
+        Resource<User> resource = new Resource<>(thisUser);
         HttpStatus status;
-        if (null != user){
-            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(UserController.class).deleteUser(user.getObjectId())).withRel("delete"));
-            resource.add(linkTo(methodOn(UserController.class).updateUser(user.getObjectId(), user)).withRel("update"));
+        if (null != thisUser){
+            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(UserController.class).deleteUser(thisUser.getObjectId())).withRel("delete"));
+            resource.add(linkTo(methodOn(UserController.class).updateUser(thisUser.getObjectId(), thisUser)).withRel("update"));
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;

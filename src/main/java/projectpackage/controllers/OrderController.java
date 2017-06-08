@@ -171,8 +171,6 @@ public class OrderController {
 
     @RequestMapping(value = "/searchavailability", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<List<OrderDTO>> searchAvailabilityForOrderCreation(@RequestBody SearchAvailabilityParamsDTO searchDto, HttpServletRequest request) throws ParseException {
-        System.out.println(searchDto);
-
         List<OrderDTO> data = null;
 
         SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");

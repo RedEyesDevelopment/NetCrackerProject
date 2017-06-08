@@ -46,7 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 //        http.requiresChannel().antMatchers("/auth/login").requiresSecure();
 //        http.requiresChannel().antMatchers("/auth/logout").requiresSecure();
-        http.requiresChannel().antMatchers("/auth/giveSessionData").requiresSecure();
+//        http.requiresChannel().antMatchers("/auth/giveSessionData").requiresSecure();
     }
 
     @Autowired
