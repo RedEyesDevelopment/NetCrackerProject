@@ -24,8 +24,8 @@
   <!-- Security listener. Documentation at /docs/config/listeners.html
   <Listener className="org.apache.catalina.security.SecurityListener" />
   -->
-  <!--APR library loader. Documentation at /docs/apr.html -->
-  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+  <!--APR library loader. Documentation at /docs/apr.html 
+  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />-->
   <!-- Prevent memory leaks due to use of particular java/javax APIs-->
   <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
   <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
@@ -89,16 +89,24 @@
 	<Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
 	       maxThreads="150" scheme="https" secure="true"
 	       clientAuth="false" sslProtocol="TLS"
-	       keystoreFile="config/keystore"
-	       keystorePass="changeit"/>-->
-		   
+	       keystoreFile="C:\keystore\.keystore"
+	       keystorePass="pkv02zb6l07vkw29z8gjp9jr"/>
+		   -->
 	
-    <!---->
+	
+	
     <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
                maxThreads="200" SSLEnabled="true" scheme="https" secure="true"
-           keystoreFile="c:/keystore/.keystore" keystorePass="pkv02zb6l07vkw29z8gjp9jr"
+           keystoreFile="c:\keystore\keystore.jks" keystorePass="pkv02zb6l"
            clientAuth="false" sslProtocol="TLS" >
     </Connector>
+	
+	<!--
+	<SSLHostConfig>
+            <Certificate certificateKeystoreFile="conf/localhost-rsa.jks"
+                         type="RSA" />
+        </SSLHostConfig>-->
+	
     
     <!-- Define a SSL/TLS HTTP/1.1 Connector on port 8443 with HTTP/2
          This connector uses the APR/native implementation which always uses
