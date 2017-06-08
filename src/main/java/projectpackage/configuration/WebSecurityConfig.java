@@ -44,8 +44,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //.antMatchers("/users/**").hasAnyAuthority("CLIENT", "ADMIN");
                 .antMatchers("/users/**").permitAll();
 
-        http.requiresChannel().antMatchers("/auth/login").requiresSecure();
-        http.requiresChannel().antMatchers("/auth/logout").requiresSecure();
+//        http.requiresChannel().antMatchers("/auth/login").requiresSecure();
+//        http.requiresChannel().antMatchers("/auth/logout").requiresSecure();
         http.requiresChannel().antMatchers("/auth/giveSessionData").requiresSecure();
     }
 
