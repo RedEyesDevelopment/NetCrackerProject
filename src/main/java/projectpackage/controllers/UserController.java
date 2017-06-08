@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import projectpackage.model.auth.User;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.model.auth.User;
 import projectpackage.service.authservice.UserService;
 
 import javax.cache.annotation.CacheRemoveAll;
@@ -62,7 +62,7 @@ public class UserController {
     //Create user, fetch into database
     @CacheRemoveAll(cacheName = "userList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> createUser(@RequestBody User newUser){
+    public ResponseEntity<IUDAnswer> createUser(@RequestBody User newUser) {
         IUDAnswer result = userService.insertUser(newUser);
         HttpStatus status;
         if (result.isSuccessful()) {
@@ -70,13 +70,6 @@ public class UserController {
         } else status = HttpStatus.BAD_REQUEST;
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
-    }
-
-    @RequestMapping(value = "/sendMessage", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> sendMessage(@RequestBody MailDTO mailDTO, HttpServletRequest request) {
-        System.out.println(mailDTO);
-        IUDAnswer iudAnswer = new IUDAnswer(true);
-        return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
     }
 
     //Update user method

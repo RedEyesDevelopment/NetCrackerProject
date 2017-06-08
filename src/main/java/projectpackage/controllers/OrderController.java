@@ -50,8 +50,6 @@ public class OrderController {
     @CacheResult(cacheName = "orderList")
     @GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public List<Resource<Order>> getOrderList(HttpServletRequest request){
-        System.out.println("orders SESSION="+request.getSession().toString()+" FROM DATE "+request.getSession().getCreationTime());
-
         List<Order> orders = orderService.getAllOrders();
         List<Resource<Order>> resources = new ArrayList<>();
         for (Order order:orders){
@@ -63,24 +61,19 @@ public class OrderController {
     }
 
     //Get single Order by id
-    @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Resource<Order>> getOrder(@PathVariable("id") Integer id, HttpServletRequest request){
         User thisUser = (User) request.getSession().getAttribute("USER");
         Order order = orderService.getSingleOrderById(id);
-        System.out.println("order/id SESSION="+request.getSession().toString()+" FROM DATE "+request.getSession().getCreationTime());
-
-        System.out.println("USERFROMSESSION="+thisUser);
-        System.out.println("ORDER FROM DB="+order);
         Resource<Order> resource = new Resource<>(order);
-        HttpStatus status = HttpStatus.ACCEPTED;
-//        if (null!= order){
-//            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(OrderController.class).deleteOrder(order.getObjectId())).withRel("delete"));
-//            resource.add(linkTo(methodOn(OrderController.class).updateOrder(order.getObjectId(), order)).withRel("update"));
-//            status = HttpStatus.ACCEPTED;
-//        } else {
-//            status = HttpStatus.BAD_REQUEST;
-//        }
+        HttpStatus status = null;
+        if (null!= order){
+            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(OrderController.class).deleteOrder(order.getObjectId())).withRel("delete"));
+            resource.add(linkTo(methodOn(OrderController.class).updateOrder(order.getObjectId(), order)).withRel("update"));
+            status = HttpStatus.OK;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+        }
         ResponseEntity<Resource<Order>> response = new ResponseEntity<Resource<Order>>(resource, status);
         return response;
     }
@@ -92,7 +85,7 @@ public class OrderController {
         IUDAnswer result = orderService.insertOrder(newOrder);
         HttpStatus status;
         if (result.isSuccessful()) {
-            status = HttpStatus.CREATED;
+            status = HttpStatus.OK;
         } else status = HttpStatus.BAD_REQUEST;
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
@@ -108,7 +101,7 @@ public class OrderController {
         IUDAnswer result = orderService.updateOrder(id, changedOrder);
         HttpStatus status;
         if (result.isSuccessful()) {
-            status = HttpStatus.ACCEPTED;
+            status = HttpStatus.OK;
         } else status = HttpStatus.BAD_REQUEST;
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
@@ -121,7 +114,7 @@ public class OrderController {
         IUDAnswer result = orderService.deleteOrder(id);
         HttpStatus status;
         if (result.isSuccessful()) {
-            status = HttpStatus.ACCEPTED;
+            status = HttpStatus.OK;
         } else status = HttpStatus.NOT_FOUND;
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
@@ -162,17 +155,15 @@ public class OrderController {
     public ResponseEntity<IUDAnswer> cancelOrder(HttpServletRequest request) {
         User thisUser = (User) request.getSession().getAttribute("USER");
         request.getSession().removeAttribute("NEWORDER");
-        IUDAnswer answer = new IUDAnswer(false, "orderCanceled");
+        IUDAnswer answer = new IUDAnswer(true, "orderCanceled");
 
-        return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/byUser",method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<List<Order>> getAllOrdersByUser(HttpServletRequest request) {
-        //User user = (User) request.getSession().getAttribute("USER");
-        User user = userService.getSingleUserById(901);
+        User user = (User) request.getSession().getAttribute("USER");
         List<Order> orders = orderService.getOrdersByClient(user);
-        System.out.println(orders + "********************************************************************************");
         if (null == orders) return new ResponseEntity<List<Order>>((List<Order>) null,HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<List<Order>>(orders, HttpStatus.OK);
@@ -180,9 +171,7 @@ public class OrderController {
 
     @RequestMapping(value = "/searchavailability", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<List<OrderDTO>> searchAvailabilityForOrderCreation(@RequestBody SearchAvailabilityParamsDTO searchDto, HttpServletRequest request) throws ParseException {
-        System.out.println("**************************************************");
         System.out.println(searchDto);
-
 
         List<OrderDTO> data = null;
 
