@@ -1,5 +1,6 @@
 Статья:
 www.baeldung.com/spring-channel-security-https
+https://www.digitalocean.com/community/tutorials/java-keytool-essentials-working-with-java-keystores
 
 
 1) Выполнить:
@@ -10,3 +11,7 @@ www.baeldung.com/spring-channel-security-https
 
 
 Изменить место хранения ключа в server.xml с ${user.home}/.keystore на C:\keystore
+
+-genkeypair -alias tomcat -keyalg RSA -keystore keystore.jks -storepass pkv02zb6l -keypass pkv02zb6l
+
+-certreq -alias tomcat -file tomcat.csr -keystore keystore.jks
