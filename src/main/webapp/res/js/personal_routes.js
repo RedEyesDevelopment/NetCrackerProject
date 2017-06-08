@@ -64,9 +64,11 @@ app.controller('userSettingsController', ['$scope', '$http', '$location' , 'shar
     var user;
 
     $http({
-        url: 'http://localhost:8080/users/901',
+        url: 'http://localhost:8080/users/myself',
         method: 'GET',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        headers: {
+            'Content-Type': 'application/json'
+        },
 
     }).then(function (data) {
         $scope.yourData = data;

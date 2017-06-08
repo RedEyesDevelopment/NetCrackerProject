@@ -46,6 +46,11 @@ app.controller('search-available', ['$scope', '$http', '$location' , 'sharedData
 
     $scope.submit = function (eve) {
 
+        console.log($scope.book.from.getTime());
+        console.log($scope.book.till.getTime());
+        console.log(parseInt($scope.book.adults));
+        console.log(parseInt($scope.book.type));
+
         $http({
             url: 'http://localhost:8080/orders/searchavailability',
             method: 'POST',

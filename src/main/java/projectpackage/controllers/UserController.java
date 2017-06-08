@@ -100,4 +100,14 @@ public class UserController {
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
     }
+
+    //returned user-client from session
+    @RequestMapping(value = "/myself")
+    public ResponseEntity<Resource<User>> getUser(HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("USER");
+
+        Resource<User> resource = new Resource<User>(user);
+
+        return new ResponseEntity<Resource<User>>(resource, HttpStatus.OK);
+    }
 }
