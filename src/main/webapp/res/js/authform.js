@@ -1,3 +1,4 @@
+alert('authform загружен');
 angular.module('ui.bootstrap.demo', ['ngAnimate', 'ngSanitize', 'ui.bootstrap']);
 angular.module('ui.bootstrap.demo').controller('ModalDemoCtrl', function ($uibModal, $log, $document) {
   var $ctrl = this;
