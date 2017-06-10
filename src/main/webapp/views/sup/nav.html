@@ -10,18 +10,31 @@
     </nav>
 
     <div class="modal fade" id="myModal" role="dialog">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-sm">
 
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Modal Header</h4>
+                    <h4 class="modal-title">Login</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Some text in the modal.</p>
+                    <form id="authorizeform" action="action_page.php" method="post">
+                        <table>
+                            <tr>
+                                <td><label for="loginform">Login:</label></td><td><input type="text" id="loginform" name="login" title ="Login" placeholder="Enter login"></td>
+                            </tr>
+                            <br>
+                            <tr>
+                                <td><label for="passform">Password:</label></td><td><input type="password" id="passform" name="password" title="Password" placeholder="Enter password"></td>
+                            </tr>
+                            <tr><td colspan="2"></td></tr>
+                            <table>
+
+                    </form>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Login</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
