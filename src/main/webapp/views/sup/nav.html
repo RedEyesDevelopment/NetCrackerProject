@@ -2,42 +2,89 @@
         <div class="container">
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a role="button" id="loginLink" data-toggle="modal" data-target="#myModal">Log in</a></li>
-                    <li><a role="button" id="signupLink">Sign up</a></li>
+                    <li><a role="button" id="loginLink" data-toggle="modal" data-target="#loginModal">Log in</a></li>
+                    <li><a role="button" id="signupLink" data-toggle="modal" data-target="#creationModal">Sign up</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal fade" id="loginModal" role="dialog">
         <div class="modal-dialog modal-sm">
-
             <!-- Modal content-->
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header popupheader">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Login</h4>
                 </div>
                 <div class="modal-body">
-                    <form id="authorizeform" action="action_page.php" method="post">
+                    <form id="authorizeform" method="post">
                         <table>
                             <tr>
                                 <td><label for="loginform">Login:</label></td><td><input type="text" id="loginform" name="login" title ="Login" placeholder="Enter login"></td>
                             </tr>
-                            <br>
                             <tr>
                                 <td><label for="passform">Password:</label></td><td><input type="password" id="passform" name="password" title="Password" placeholder="Enter password"></td>
                             </tr>
                             <tr><td colspan="2"></td></tr>
-                            <table>
+                            </table>
 
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Login</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Register</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="creationModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header popupheader">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Register</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="usercreationForm" method="post">
+                        <table>
+                            <tr>
+                                <td><label for="logincform">Login:</label></td><td><input type="text" id="logincform" name="login" title ="Login" placeholder="Enter login"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="passcform">Password:</label></td><td><input type="password" id="passcform" name="password" title ="Password" placeholder="Enter password"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="nameform">Name:</label></td><td><input type="text" id="nameform" name="name" title ="Username" placeholder="Enter your name"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="surnameform">Surname:</label></td><td><input type="text" id="surnameform" name="surname" title ="Surname" placeholder="Enter your surname"></td>
+                            </tr>
+                            <tr>
+                                <td><label for="infoform">Info:</label></td><td><input type="text" id="infoform" name="info" title="Info" placeholder="Enter additional info"></td>
+                            </tr>
+                            <tr id="phones">
+                                <td><label for="infoform">Telephones:</label></td><td><button id="pcb" type="button" class="btn btn-primary" onclick="createTelephone()">Add telephone</button></td>
+                            </tr>
+                            <!--<tr id="phone">-->
+                                <!--<td><label for="infoform">Phone:</label></td><td><input type="text" id="teleform" name="telephone" title="Telephone" placeholder="Insert yor phone"></td><td><button type="button" class="close" onclick="deletePhone()">&times;</button></td>-->
+                            <!--</tr>-->
+                            <tr><td colspan="2"></td></tr>
+                        </table>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Register</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
 
         </div>
     </div>
+
+<script>
+var phcb = document.getElementBytId('pcb')
+phcb.onclick = function(){createTelephone()};
+</script>
