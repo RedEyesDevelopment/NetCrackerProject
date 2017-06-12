@@ -21,10 +21,10 @@
                     <form id="authorizeform" method="post">
                         <table>
                             <tr>
-                                <td><label for="loginform">Login:</label></td><td><input type="text" id="loginform" name="login" title ="Login" placeholder="Enter login"></td>
+                                <td><label for="loginform">Login:</label></td><td><input type="text" id="loginform" name="login" title ="Login" placeholder="Enter login" ng-required="true"></td>
                             </tr>
                             <tr>
-                                <td><label for="passform">Password:</label></td><td><input type="password" id="passform" name="password" title="Password" placeholder="Enter password"></td>
+                                <td><label for="passform">Password:</label></td><td><input type="password" id="passform" name="password" title="Password" placeholder="Enter password" ng-required="true"></td>
                             </tr>
                             <tr><td colspan="2"></td></tr>
                             </table>
@@ -32,7 +32,7 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-dismiss="modal">Register</button>
+                    <button type="button" class="btn btn-success" ng-disabled='available.$invalid'>Register</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -51,32 +51,32 @@
                     <form id="usercreationForm" method="post">
                         <table>
                             <tr>
-                                <td><label for="logincform">Login:</label></td><td><input type="text" id="logincform" name="login" title ="Login" placeholder="Enter login"></td>
+                                <td><label for="logincform">Login:</label></td><td><input type="text" id="logincform" name="login" title ="Login" placeholder="Enter login" ng-required="true"></td>
                             </tr>
                             <tr>
-                                <td><label for="passcform">Password:</label></td><td><input type="password" id="passcform" name="password" title ="Password" placeholder="Enter password"></td>
+                                <td><label for="passcform">Password:</label></td><td><input type="password" id="passcform" name="password" title ="Password" placeholder="Enter password" ng-required="true"></td>
                             </tr>
                             <tr>
-                                <td><label for="passcrform">Password:</label></td><td><input type="password" id="passcrform" name="passwordr" title ="Passwordr" placeholder="Enter password confirmation"></td>
+                                <td><label for="passcrform">Password:</label></td><td><input type="password" id="passcrform" name="passwordr" title ="Passwordr" placeholder="Enter password confirmation" ng-required="true"></td>
                             </tr>
                             <tr>
-                                <td><label for="nameform">Name:</label></td><td><input type="text" id="nameform" name="name" title ="Username" placeholder="Enter your name"></td>
+                                <td><label for="nameform">Name:</label></td><td><input type="text" id="nameform" name="name" title ="Username" placeholder="Enter your name" ng-required="true"></td>
                             </tr>
                             <tr>
-                                <td><label for="surnameform">Surname:</label></td><td><input type="text" id="surnameform" name="surname" title ="Surname" placeholder="Enter your surname"></td>
+                                <td><label for="surnameform">Surname:</label></td><td><input type="text" id="surnameform" name="surname" title ="Surname" placeholder="Enter your surname" ng-required="true"></td>
                             </tr>
                             <tr>
-                                <td><label for="infoform">Info:</label></td><td><input type="text" id="infoform" name="info" title="Info" placeholder="Enter additional info"></td>
+                                <td><label for="infoform">Info:</label></td><td><input type="text" id="infoform" name="info" title="Info" placeholder="Enter additional info" ng-required="true"></td>
                             </tr>
                             <tr>
-                                <td><label for="infoform">Phone:</label></td><td><input type="text" id="teleform" name="telephone" title="Telephone" placeholder="Insert yor phone"></td><td><button type="button" class="close" onclick="deletePhone()">&times;</button></td>
+                                <td><label for="telform">Phone:</label></td><td><input type="text" id="teleform" name="telephone" title="Telephone" placeholder="Insert yor phone" ng-required="true"></td><td><input type="text" id="telform" name="telephone" title="Telephone" placeholder="Enter your telephone" ng-required="true"></td>
                             </tr>
                             <tr><td colspan="2"></td></tr>
                         </table>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-dismiss="modal">Register</button>
+                    <button type="button" class="btn btn-success" ng-disabled='available.$invalid'>Register</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
