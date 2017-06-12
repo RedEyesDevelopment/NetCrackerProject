@@ -22,7 +22,6 @@ app.factory('sharedData' , function() {
 
 });
 
-
 app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
     $locationProvider.hashPrefix('');
 

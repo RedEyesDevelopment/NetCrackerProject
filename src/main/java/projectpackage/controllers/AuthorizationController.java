@@ -28,6 +28,7 @@ public class AuthorizationController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Boolean> doLogin(@RequestBody AuthForm form, HttpServletRequest request){
+        System.out.println("AUTHORIZED!");
         boolean result = (boolean) securityService.autologin(form.getLogin(), form.getPassword());
         if (!result){
             return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);

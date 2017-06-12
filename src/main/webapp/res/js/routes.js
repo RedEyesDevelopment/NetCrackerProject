@@ -30,19 +30,64 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
         });
 }]);
 
+// app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
+//     $locationProvider.hashPrefix('');
+//
+//     $routeProvider
+//         .when('/user', {
+//             templateUrl: './personal_settings.html',
+//             controller: 'authorizationController'
+//         });
+// }]);
+app.controller('login', ['$scope', '$http', '$location' , 'sharedData', '$document', function ($scope, $http, $location, sharedData, $document) {
 
-app.controller('search-available', ['$scope', '$http', '$location' , 'sharedData' , function ($scope, $http, $location, sharedData) {
+    $scope.login = function (eve) {
 
-    $http({
-        url: 'http://localhost:8080/orders',
-        method: 'GET',
+        console.log("Why you dont display?");
+        //console.log($document.getElementById("loginform").innerHTML);
+        //console.log($document.getElementById("passform").innerHTML);
+        console.log($scope.userLogin);
+        console.log($scope.userPassword);
 
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        $http({
+            url: 'http://localhost:8080/auth/login',
+            method: 'POST',
+            data: {
+                "login": $scope.userLogin,
+                "password": $scope.userPassword
+            },
+            //headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            headers: {'Content-Type': 'application/json'}
+        }).then(function (data) {
 
-    }).then(function (data) {
-        console.log(data);
-    });
+            if (data.data == true) {
+                console.log(data.data);
+            }
+            //$scope.wasUpdatedUser = false;
 
+            console.log(data.data);
+
+            $http({
+                url: 'http://localhost:8080/orders',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(function(data) {
+                console.log(data);
+            }, function(response) {
+                console.log(response);
+            });
+        }, function (response) {
+            console.log(response);
+            console.log("I_AM_TEAPOT!");
+        });
+
+
+    }
+}]);
+
+app.controller('search-available', ['$scope', '$http', '$location' , 'sharedData', '$document', function ($scope, $http, $location, sharedData, $document) {
 
     $scope.submit = function (eve) {
 
@@ -60,29 +105,16 @@ app.controller('search-available', ['$scope', '$http', '$location' , 'sharedData
                 livingPersons: parseInt($scope.book.adults),
                 categoryId: parseInt($scope.book.type)
             },
-
-
             headers: {
                 'Content-Type': 'application/json'
             }
-
-
         }).then(function(data) {
-
             sharedData.setData(data);
-
-
             $location.path('/rooms');
-
-
         }, function(response) {
             console.log(response);
         });
-
-
     }
-
-
 
 }]);
 
@@ -98,3 +130,4 @@ app.controller('roomTypeController', ['$scope', '$http', 'sharedData' , function
     }
 
 }]);
+
