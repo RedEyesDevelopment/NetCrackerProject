@@ -5,9 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projectpackage.dto.LinksDTO;
 import projectpackage.model.auth.User;
 import projectpackage.dto.AuthForm;
 import projectpackage.service.authservice.UserService;
+import projectpackage.service.linksservice.LinksService;
 import projectpackage.service.securityservice.SecurityService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +27,9 @@ public class AuthorizationController {
     @Autowired
     UserService userService;
 
-    @ResponseStatus(HttpStatus.OK)
+    @Autowired
+    LinksService linksService;
+
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Boolean> doLogin(@RequestBody AuthForm form, HttpServletRequest request){
         System.out.println("AUTHORIZED!");
@@ -40,10 +44,22 @@ public class AuthorizationController {
         }
     }
 
-    @RequestMapping(value = "/giveSessionData", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public User getSessionData(HttpServletRequest request){
-        User user = (User) request.getSession().getAttribute("USER");
-        return user;
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/isauthorized", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public String isAuthorized(HttpServletRequest request){
+        User thisUser = (User) request.getSession().getAttribute("USER");
+        String role;
+        if (null==thisUser){
+            role = "NA";
+        } else {
+            role = thisUser.getRole().getRoleName();
+        }
+        return role;
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/links", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public LinksDTO getLinks(HttpServletRequest request){
+        return linksService.getLinks();
+    }
 }
