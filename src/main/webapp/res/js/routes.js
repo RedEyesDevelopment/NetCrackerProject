@@ -123,6 +123,7 @@ app.controller('roomTypeController', ['$scope', '$http', 'sharedData' , function
     var book = sharedData.getData();
 
     $scope.list = book.data;
+    $scope.auth = window.auth;
     window.scrollTo(0,1000);
 
     $scope.bookApartment = function (id) {
