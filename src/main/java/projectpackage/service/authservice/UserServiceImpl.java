@@ -4,10 +4,13 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.User;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.repository.authdao.PhoneDAO;
 import projectpackage.repository.authdao.UserDAO;
 import projectpackage.repository.support.daoexceptions.*;
+import projectpackage.service.phoneregex.PhoneRegexService;
 
 import java.util.List;
 
@@ -19,6 +22,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserDAO userDAO;
+
+    @Autowired
+    PhoneDAO phoneDAO;
+
+    @Autowired
+    PhoneRegexService phoneRegexService;
 
     @Override
     public List<User> getAllUsers() {
@@ -49,9 +58,20 @@ public class UserServiceImpl implements UserService {
             LOGGER.info("Get from DB userId = " + userId);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);
-            new IUDAnswer(userId,false, "transactionInterrupt");
+            return new IUDAnswer(userId,false, "transactionInterrupt");
         } catch (DuplicateEmailException e) {
             return new IUDAnswer(false, "duplicateEmail");
+        }
+        for (Phone phone : user.getPhones()) {
+            boolean isValid = phoneRegexService.match(phone.getPhoneNumber());
+            if (!isValid) return new IUDAnswer(false, "wrongPhoneNumber");
+            phone.setUserId(userId);
+            try {
+                phone.setObjectId(phoneDAO.insertPhone(phone));
+            } catch (TransactionException e) {
+                LOGGER.warn("Catched transactionException!!!", e);
+                return new IUDAnswer( false, "transactionInterrupt");
+            }
         }
         return new IUDAnswer(userId,true);
     }

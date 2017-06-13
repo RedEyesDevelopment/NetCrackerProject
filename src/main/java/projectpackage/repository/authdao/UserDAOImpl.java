@@ -82,7 +82,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         MapSqlParameterSource in = new MapSqlParameterSource();
         in.addValue("in_email", email);
         try {
-            call.executeFunction(Object.class, in);
+            call.execute(Object.class, in);
         } catch (UncategorizedSQLException e) {
             if (e.getSQLException().getErrorCode() == 20002) {
                 throw new DuplicateEmailException(email);

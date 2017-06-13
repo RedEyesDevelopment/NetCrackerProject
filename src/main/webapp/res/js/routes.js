@@ -131,3 +131,61 @@ app.controller('roomTypeController', ['$scope', '$http', 'sharedData' , function
 
 }]);
 
+app.controller('registration', ['$scope', '$http', '$location' , 'sharedData', function ($scope, $http, $location, sharedData) {
+
+    $scope.registration = function (eve) {
+
+        console.log("Why you dont display?");
+        // console.log(document.getElementById("logincform").innerHTML);
+        //console.log($document.getElementById("passform").innerHTML);
+
+        console.log($scope.userEmail);
+        console.log($scope.userPassword);
+        console.log($scope.userPasswordRepeat);
+        console.log($scope.userName);
+        console.log($scope.userSurname);
+        console.log($scope.userInfo);
+        console.log($scope.userPhone);
+
+        if ($scope.userPasswordRepeat === $scope.userPassword) {
+            $http({
+                url: 'http://localhost:8080/users/registration',
+                method: 'POST',
+                data: {
+                    "objectId": 0,
+                    "email": $scope.userEmail,
+                    "password": $scope.userPassword,
+                    "firstName": $scope.userName,
+                    "lastName": $scope.userSurname,
+                    "additionalInfo": $scope.userInfo,
+                    "enabled": true,
+                    "role": {
+                        "objectId": 0,
+                        "roleName": ""
+                    },
+                    "phones": [
+                        {
+                            "objectId": 0,
+                            "userId": 0,
+                            "phoneNumber": $scope.userPhone
+                        }
+                    ]
+                },
+                //headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                headers: {'Content-Type': 'application/json'}
+            }).then(function (data) {
+                console.log(data);
+                alert("Registration done!");
+            }, function (response) {
+                console.log(response);
+                console.log("I_AM_TEAPOT!");
+                alert("You fuckin idiot, your phone consist letters!");
+            });
+        } else {
+            alert("Passwords not the same!");
+        }
+
+
+    }
+}]);
+

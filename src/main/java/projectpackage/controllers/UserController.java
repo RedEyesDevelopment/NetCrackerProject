@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.service.authservice.UserService;
 
@@ -63,6 +64,23 @@ public class UserController {
     @CacheRemoveAll(cacheName = "userList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> createUser(@RequestBody User newUser) {
+        IUDAnswer result = userService.insertUser(newUser);
+        HttpStatus status;
+        if (result.isSuccessful()) {
+            status = HttpStatus.OK;
+        } else status = HttpStatus.BAD_REQUEST;
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
+        return responseEntity;
+    }
+
+    @RequestMapping(value = "/registration", method = RequestMethod.POST, produces = {MediaType
+            .APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<IUDAnswer> registrationUser(@RequestBody User newUser) {
+        Role role = new Role();
+        role.setObjectId(3);
+        role.setRoleName("CLIENT");
+        newUser.setRole(role);
+        newUser.setEnabled(Boolean.TRUE);
         IUDAnswer result = userService.insertUser(newUser);
         HttpStatus status;
         if (result.isSuccessful()) {
