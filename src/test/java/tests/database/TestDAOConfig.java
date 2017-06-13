@@ -52,6 +52,8 @@ import projectpackage.service.notificationservice.NotificationServiceImpl;
 import projectpackage.service.notificationservice.NotificationTypeService;
 import projectpackage.service.notificationservice.NotificationTypeServiceImpl;
 import projectpackage.service.orderservice.*;
+import projectpackage.service.phoneregex.PhoneRegexService;
+import projectpackage.service.phoneregex.PhoneRegexServiceImpl;
 import projectpackage.service.rateservice.PriceService;
 import projectpackage.service.rateservice.PriceServiceImpl;
 import projectpackage.service.rateservice.RateService;
@@ -62,8 +64,6 @@ import projectpackage.service.roomservice.RoomTypeService;
 import projectpackage.service.roomservice.RoomTypeServiceImpl;
 import projectpackage.service.securityservice.SecurityService;
 import projectpackage.service.securityservice.SecurityServiceImpl;
-import projectpackage.service.phoneregex.PhoneRegexService;
-import projectpackage.service.phoneregex.PhoneRegexServiceImpl;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -409,7 +409,6 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
 
     @Bean
     SecurityService securityService() {return new SecurityServiceImpl(); }
-
 
     @Bean
     InMemoryNotifService inMemoryNotifService(){
