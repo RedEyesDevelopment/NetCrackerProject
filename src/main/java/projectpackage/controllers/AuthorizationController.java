@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projectpackage.dto.AuthFlagDTO;
 import projectpackage.dto.LinksDTO;
 import projectpackage.model.auth.User;
 import projectpackage.dto.AuthForm;
@@ -46,20 +47,20 @@ public class AuthorizationController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/isauthorized", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public String isAuthorized(HttpServletRequest request){
+    public AuthFlagDTO isAuthorized(HttpServletRequest request){
         User thisUser = (User) request.getSession().getAttribute("USER");
-        String role;
+        AuthFlagDTO result;
         if (null==thisUser){
-            role = "NA";
+            result = new AuthFlagDTO("NA");
         } else {
-            role = thisUser.getRole().getRoleName();
+            result = new AuthFlagDTO(thisUser.getRole().getRoleName());
         }
-        return role;
+        return result;
     }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/links", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public LinksDTO getLinks(HttpServletRequest request){
+    public LinksDTO getLinks(){
         return linksService.getLinks();
     }
 }

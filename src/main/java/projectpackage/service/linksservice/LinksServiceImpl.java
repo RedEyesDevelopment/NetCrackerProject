@@ -1,11 +1,10 @@
 package projectpackage.service.linksservice;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import projectpackage.dto.LinksDTO;
 
-/**
- * Created by Lenovo on 13.06.2017.
- */
+@Service
 public class LinksServiceImpl implements LinksService {
 
     @Value("${server.http}")
