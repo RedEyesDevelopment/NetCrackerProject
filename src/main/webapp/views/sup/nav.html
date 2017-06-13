@@ -6,6 +6,9 @@
                     <li><a role="button" id="signupLink" data-toggle="modal" data-target="#creationModal">Sign up</a></li>
                 </ul>
             </div>
+            <div id="loggeduser">
+                TROLOLOLOLOooooo
+            </div>
         </div>
     </nav>
 
@@ -18,7 +21,7 @@
                     <h4 class="modal-title">Login</h4>
                 </div>
                 <div class="modal-body"  ng-controller="login">
-                    <form id="authorizeform" method="POST" >
+                    <form id="authorizeform" method="POST" name='dataavailable' novalidate ng-submit='validateauthform($event)'>
                         <table>
                             <tr>
                                 <td><label for="loginform">Email:</label></td><td><input type="text" id="loginform" name="login" title ="Login" placeholder="Enter login" ng-model="userLogin"></td>
@@ -29,9 +32,9 @@
                             <tr><td colspan="2"></td></tr>
                             </table>
                             <br/>
-
+                            <div id="autherror"><p>Email or password is incorrect</p><br/></div>
                     <button type="submit" class="btn btn-success" ng-click='login()'>Login</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" id="loginformclose" class="btn btn-danger" data-dismiss="modal">Close</button>
                     </form>
                 </div>
             </div>
