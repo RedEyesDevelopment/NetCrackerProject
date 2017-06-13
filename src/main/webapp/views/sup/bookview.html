@@ -84,7 +84,7 @@
         
     <div class="container">
         <div class="row row-content" ng-controller='search-available'>
-            <p id="worngauth">You can book room only if you are authorized client. Authorize if you already have a profile on our site, or register a new user.</p>
+            <p id="worngauth" ng-show="window.auth!=CLIENT">You can book room only if you are authorized client. Authorize if you already have a profile on our site, or register a new user.</p>
             <div class="col-sm-push-1 col-sm-pull-1 col-sm-10">
                 <h2 style="text-align: center; margin: 25px 0px">BOOK NOW</h2>
                 <div>
@@ -136,7 +136,7 @@
                             </p>
                         </div>
                         <div class="col-xs-12 form-group text-center">
-                            <button type="submit" class="btn" ng-disabled='available.$invalid'>SEARCH AVAILABILITY</button>
+                            <button type="submit" class="btn" ng-show="window.auth==CLIENT" ng-disabled='available.$invalid'>SEARCH AVAILABILITY</button>
                         </div>
                     </form>
                 </div>
