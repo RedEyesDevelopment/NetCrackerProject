@@ -30,6 +30,16 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
         });
 }]);
 
+app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
+    $locationProvider.hashPrefix('');
+
+    $routeProvider
+        .when('/order', {
+            templateUrl: './order.html',
+            controller: 'roomTypeController'
+        });
+}]);
+
 // app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
 //     $locationProvider.hashPrefix('');
 //
@@ -109,6 +119,7 @@ app.controller('search-available', ['$scope', '$http', '$location' , 'sharedData
                 'Content-Type': 'application/json'
             }
         }).then(function(data) {
+            console.log(data);
             sharedData.setData(data);
             $location.path('/rooms');
         }, function(response) {
@@ -118,7 +129,7 @@ app.controller('search-available', ['$scope', '$http', '$location' , 'sharedData
 
 }]);
 
-app.controller('roomTypeController', ['$scope', '$http', 'sharedData' , function ($scope, $http, sharedData) {
+app.controller('roomTypeController', ['$scope', '$http', 'sharedData', '$location' , function ($scope, $http, sharedData, $location) {
 
     var book = sharedData.getData();
 
@@ -126,7 +137,20 @@ app.controller('roomTypeController', ['$scope', '$http', 'sharedData' , function
     window.scrollTo(0,1000);
 
     $scope.bookApartment = function (id) {
-        console.log(id);
+        console.log("THIS IS IDDDDDDDDDDDDDDDDDDDDDDDD: " + id);
+        $http({
+            url: 'http://localhost:8080/orders/book/' + id,
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function(data) {
+            sharedData.setData(data);
+            $location.path('/order');
+            console.log(data);
+        }, function(response) {
+            console.log(response);
+        });
     }
 
 }]);
