@@ -5,3 +5,9 @@
           background-image: linear-gradient(to bottom,#3c3c3c 0,#222 100%);
           background-repeat: repeat-x;
     }
+
+#autherror {
+    display: none;}
+
+.showLoginErrorLabel{
+    display: block;}

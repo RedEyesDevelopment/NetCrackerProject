@@ -253,7 +253,7 @@ app.controller('sendMessageController', ['$scope', '$http', 'sharedData', '$docu
         console.log("I am here!");
 
         $http({
-            url: 'http://localhost:8080/users/sendMessage',
+            url: 'http://localhost:8080/clients/sendMessage',
             method: 'POST',
             data: {
                 "themeMessage": $scope.themeMessage,

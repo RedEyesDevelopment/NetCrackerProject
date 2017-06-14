@@ -72,7 +72,10 @@ app.controller('login', ['$scope', '$http', '$location' , 'sharedData', '$docume
 
             if (data.data == true) {
                 console.log(data.data);
-            }
+                eventFire(document.getElementById('loginformclose'), 'click');
+            } else {
+            var loginerrorlabel = document.getElementById('autherror');
+            loginerrorlabel.className="showLoginErrorLabel"}
             //$scope.wasUpdatedUser = false;
 
             console.log(data.data);
@@ -134,6 +137,7 @@ app.controller('roomTypeController', ['$scope', '$http', 'sharedData', '$locatio
     var book = sharedData.getData();
 
     $scope.list = book.data;
+    $scope.auth = window.auth;
     window.scrollTo(0,1000);
 
     $scope.bookApartment = function (id) {
@@ -212,4 +216,14 @@ app.controller('registration', ['$scope', '$http', '$location' , 'sharedData', f
 
     }
 }]);
+
+function eventFire(el, etype){
+  if (el.fireEvent) {
+    el.fireEvent('on' + etype);
+  } else {
+    var evObj = document.createEvent('Events');
+    evObj.initEvent(etype, true, false);
+    el.dispatchEvent(evObj);
+  }
+}
 
