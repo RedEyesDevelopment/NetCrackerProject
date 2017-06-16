@@ -144,6 +144,7 @@ public class OrderController {
         Category category = categoryService.getSingleCategoryById(dto.getCategoryId());
         BookedOrderDTO responseDto = new BookedOrderDTO(dto);
         responseDto.setCategoryName(category.getCategoryTitle());
+        responseDto.setClient(new StringBuilder(thisUser.getFirstName()).append(thisUser.getLastName()).toString());
         return new ResponseEntity<BookedOrderDTO>(responseDto, HttpStatus.ACCEPTED);
     }
 

@@ -17,6 +17,7 @@ public class BookedOrderDTO {
     private String departure;
     private int livingPersons;
     private String categoryName;
+    private String client;
 
     public BookedOrderDTO(OrderDTO order) {
         this.roomTypeName = order.getRoomTypeName();
