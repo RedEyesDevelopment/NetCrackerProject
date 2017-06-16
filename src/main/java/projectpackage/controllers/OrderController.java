@@ -6,12 +6,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projectpackage.dto.BookedOrderDTO;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.dto.OrderDTO;
 import projectpackage.dto.SearchAvailabilityParamsDTO;
 import projectpackage.model.auth.User;
+import projectpackage.model.orders.Category;
 import projectpackage.model.orders.Order;
 import projectpackage.service.authservice.UserService;
+import projectpackage.service.orderservice.CategoryService;
 import projectpackage.service.orderservice.OrderService;
 import projectpackage.service.roomservice.RoomTypeService;
 
@@ -41,6 +44,9 @@ public class OrderController {
 
     @Autowired
     RoomTypeService roomTypeService;
+
+    @Autowired
+    CategoryService categoryService;
 
     @Autowired
     UserService userService;
@@ -121,7 +127,7 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/book/{id}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<Order> createOrderByRoomType(@PathVariable("id") Integer id, HttpServletRequest request) {
+    public @ResponseBody ResponseEntity<BookedOrderDTO> createOrderByRoomType(@PathVariable("id") Integer id, HttpServletRequest request) {
         User thisUser = (User) request.getSession().getAttribute("USER");
         List<OrderDTO> dtoData = (List<OrderDTO>) request.getSession().getAttribute("ORDERDATA");
         OrderDTO dto=null;
@@ -131,11 +137,14 @@ public class OrderController {
                 break;
             }
         }
-//        dto = dtoData.stream().filter(order -> id.equals(order.getRoomTypeId())).findAny();
         Order order = orderService.createOrderTemplate(thisUser,dto);
         request.getSession().removeAttribute("ORDERDATA");
         request.getSession().setAttribute("NEWORDER", order);
-        return new ResponseEntity<Order>(order, HttpStatus.ACCEPTED);
+
+        Category category = categoryService.getSingleCategoryById(dto.getCategoryId());
+        BookedOrderDTO responseDto = new BookedOrderDTO(dto);
+        responseDto.setCategoryName(category.getCategoryTitle());
+        return new ResponseEntity<BookedOrderDTO>(responseDto, HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(value = "/accept", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
