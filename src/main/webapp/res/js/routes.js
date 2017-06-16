@@ -36,7 +36,7 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
     $routeProvider
         .when('/order', {
             templateUrl: './order.html',
-            controller: 'roomTypeController'
+            controller: 'finishOrder'
         });
 }]);
 
@@ -156,6 +156,30 @@ app.controller('roomTypeController', ['$scope', '$http', 'sharedData', '$locatio
             console.log(response);
         });
     }
+
+}]);
+
+app.controller('finishOrder', ['$scope', '$http', 'sharedData', '$location' , function ($scope, $http, sharedData, $location) {
+
+    $scope.finishOrder = sharedData.getData().data;
+    $scope.auth = window.auth;
+
+    // $scope.bookApartment = function (id) {
+    //     console.log("THIS IS IDDDDDDDDDDDDDDDDDDDDDDDD: " + id);
+    //     $http({
+    //         url: 'http://localhost:8080/orders/book/' + id,
+    //         method: 'GET',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         }
+    //     }).then(function(data) {
+    //         sharedData.setData(data);
+    //         $location.path('/order');
+    //         console.log(data);
+    //     }, function(response) {
+    //         console.log(response);
+    //     });
+    // }
 
 }]);
 
