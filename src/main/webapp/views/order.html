@@ -1,31 +1,34 @@
 <div>
-	
 <p>
 	Booked orders
 	<p>
-		Ordered for: {{ finishOrder.livingFinishDate }}
+		Roomtype: {{ finishOrder.roomTypeName }}
 	</p>
 	<p>
-		{{ finishOrder.livingStartDate }}
+		{{ finishOrder.roomTypeDescription }}
 	</p>
 	<p>
-		{{ finishOrder.livingFinishDate }}
+		Ordered for: {{ finishOrder.client }}
 	</p>
 	<p>
-		{{ finishOrder.livingStartDate }}
+		Room ordered for {{ finishOrder.livingPersons }} people.
 	</p>
 	<p>
-		{{ finishOrder.livingFinishDate }}
+		From {{ finishOrder.arrival }} to {{ finishOrder.departure }}
 	</p>
 	<p>
-		{{ finishOrder.livingStartDate }}
+		Category: {{ finishOrder.categoryName }}
 	</p>
 	<p>
-		{{ finishOrder.livingFinishDate }}
+		Categody cost: {{ finishOrder.categoryCost }}
 	</p>
 	<p>
-		{{ finishOrder.livingStartDate }}
+		Living cost: {{ finishOrder.livingCost }}
+	</p>
+	<p>
+		Sum: {{ finishOrder.categoryCost + finishOrder.livingCost }}
 	</p>
 </p>
-
+	<button type="submit" id="acceptButton" class="btn btn-success">Accept</button>
+	<button type="submit" id="declineButton" class="btn btn-danger">Decline</button>
 </div>
