@@ -185,7 +185,7 @@ app.controller('finishOrder', ['$scope', '$http', 'sharedData', '$location' , fu
 
 app.controller('registration', ['$scope', '$http', '$location' , 'sharedData', function ($scope, $http, $location, sharedData) {
 
-    $scope.registration = function (eve) {
+    $scope.submit = function (eve) {
 
         console.log("Why you dont display?");
         // console.log(document.getElementById("logincform").innerHTML);
@@ -231,9 +231,14 @@ app.controller('registration', ['$scope', '$http', '$location' , 'sharedData', f
             }, function (response) {
                 console.log(response);
                 console.log("I_AM_TEAPOT!");
-                alert("You fuckin idiot, your phone consist letters!");
+                alert(response.data.message);
             });
         } else {
+            errorMessage = $('.errorMessage').text();
+            $('.errorMessage').text(errorMessage + 'Passwords not the same!\n');
+            $('.password').css({
+                'color' : 'red'
+            });
             alert("Passwords not the same!");
         }
 

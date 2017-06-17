@@ -18,74 +18,75 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private static final Logger LOGGER = Logger.getLogger(UserServiceImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(UserServiceImpl.class);
 
-    @Autowired
-    UserDAO userDAO;
+	@Autowired
+	UserDAO userDAO;
 
-    @Autowired
-    PhoneDAO phoneDAO;
+	@Autowired
+	PhoneDAO phoneDAO;
 
-    @Autowired
-    PhoneRegexService phoneRegexService;
+	@Autowired
+	PhoneRegexService phoneRegexService;
 
-    @Override
-    public List<User> getAllUsers() {
-        List<User> users = userDAO.getAllUsers();
-        if (users == null) LOGGER.info("Returned NULL!!!");
-        return users;
-    }
+	@Override
+	public List<User> getAllUsers() {
+		List<User> users = userDAO.getAllUsers();
+		if (users == null) LOGGER.info("Returned NULL!!!");
+		return users;
+	}
 
-    @Override
-    public User getSingleUserById(int id) {
-        User user = userDAO.getUser(id);
-        if (user == null) LOGGER.info("Returned NULL!!!");
-        return user;
-    }
+	@Override
+	public User getSingleUserById(int id) {
+		User user = userDAO.getUser(id);
+		if (user == null) LOGGER.info("Returned NULL!!!");
+		return user;
+	}
 
-    @Override
-    public IUDAnswer deleteUser(int id) {
-        User user = userDAO.getUser(id);
-        user.setEnabled(false);
-        return updateUser(id, user);
-    }
+	@Override
+	public IUDAnswer deleteUser(int id) {
+		User user = userDAO.getUser(id);
+		user.setEnabled(false);
+		return updateUser(id, user);
+	}
 
-    @Override
-    public IUDAnswer insertUser(User user) {
-        Integer userId = null;
-        try {
-            userId = userDAO.insertUser(user);
-            LOGGER.info("Get from DB userId = " + userId);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(userId,false, "transactionInterrupt");
-        } catch (DuplicateEmailException e) {
-            return new IUDAnswer(false, "duplicateEmail");
-        }
-        for (Phone phone : user.getPhones()) {
-            boolean isValid = phoneRegexService.match(phone.getPhoneNumber());
-            if (!isValid) return new IUDAnswer(false, "wrongPhoneNumber");
-            phone.setUserId(userId);
-            try {
-                phone.setObjectId(phoneDAO.insertPhone(phone));
-            } catch (TransactionException e) {
-                LOGGER.warn("Catched transactionException!!!", e);
-                return new IUDAnswer( false, "transactionInterrupt");
-            }
-        }
-        return new IUDAnswer(userId,true);
-    }
+	@Override
+	public IUDAnswer insertUser(User user) {
 
-    @Override
-    public IUDAnswer updateUser(int id, User newUser) {
-        try {
-            newUser.setObjectId(id);
-            User oldUser = userDAO.getUser(id);
-            userDAO.updateUser(newUser, oldUser);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, "transactionInterrupt");
-        }
-        return new IUDAnswer(id,true);
-    }
+		Phone phone = user.getPhones().iterator().next();
+		boolean isValid = phoneRegexService.match(phone.getPhoneNumber());
+		if (!isValid) return new IUDAnswer(false, "wrongPhoneNumber");
+
+		Integer userId = null;
+		try {
+			userId = userDAO.insertUser(user);
+			LOGGER.info("Get from DB userId = " + userId);
+		} catch (TransactionException e) {
+			LOGGER.warn("Catched transactionException!!!", e);
+			return new IUDAnswer(userId, false, "transactionInterrupt");
+		} catch (DuplicateEmailException e) {
+			return new IUDAnswer(false, "duplicateEmail");
+		}
+		phone.setUserId(userId);
+		try {
+			phone.setObjectId(phoneDAO.insertPhone(phone));
+		} catch (TransactionException e) {
+			LOGGER.warn("Catched transactionException!!!", e);
+			return new IUDAnswer(false, "transactionInterrupt");
+		}
+		return new IUDAnswer(userId, true);
+	}
+
+	@Override
+	public IUDAnswer updateUser(int id, User newUser) {
+		try {
+			newUser.setObjectId(id);
+			User oldUser = userDAO.getUser(id);
+			userDAO.updateUser(newUser, oldUser);
+		} catch (TransactionException e) {
+			LOGGER.warn("Catched transactionException!!!", e);
+			return new IUDAnswer(id, false, "transactionInterrupt");
+		}
+		return new IUDAnswer(id, true);
+	}
 }

@@ -7,7 +7,28 @@
     }
 
 #autherror {
-    display: none;}
+    display: none;
+}
+
+.windowRegistration {
+	height: 350px;
+}
 
 .showLoginErrorLabel{
-    display: block;}
+    display: block;
+}
+
+#authorizeform p input {
+	float: right;
+}
+
+
+#registrationForm p input {
+	float: right;
+}
+
+.formFooter {
+	text-align: center;
+}
+
+

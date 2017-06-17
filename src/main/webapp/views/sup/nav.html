@@ -20,21 +20,23 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Login</h4>
                 </div>
-                <div class="modal-body"  ng-controller="login">
+                <div class="modal-body" ng-controller="login">
                     <form id="authorizeform" method="POST" name='dataavailable' novalidate ng-submit='validateauthform($event)'>
-                        <table>
-                            <tr>
-                                <td><label for="loginform">Email:</label></td><td><input type="text" id="loginform" name="login" title ="Login" placeholder="Enter login" ng-model="userLogin"></td>
-                            </tr>
-                            <tr>
-                                <td><label for="passform">Password:</label></td><td><input type="password" id="passform" name="password" title="Password" placeholder="Enter password" ng-model="userPassword"></td>
-                            </tr>
-                            <tr><td colspan="2"></td></tr>
-                            </table>
-                            <br/>
-                            <div id="autherror"><p>Email or password is incorrect</p><br/></div>
-                    <button type="submit" class="btn btn-success" ng-click='login()'>Login</button>
-                    <button type="button" id="loginformclose" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <p>  
+                            <label for="loginform">Email:</label>
+                            <input type="text" id="loginform" name="login" title ="Login" placeholder="Enter login" ng-model="userLogin">
+                        </p>
+                        <p>
+                            <label for="passform">Password:</label>
+                            <input type="password" id="passform" name="password" title="Password" placeholder="Enter password" ng-model="userPassword">
+                        </p>
+                        <div id="autherror">
+                            <p>Email or password is incorrect</p>
+                        </div>
+                        <div class="formFooter">
+                            <button type="submit" class="btn btn-success" ng-click='login()'>Login</button>
+                            <button type="button" id="loginformclose" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -44,17 +46,62 @@
     <div class="modal fade" id="creationModal" role="dialog" ng-controller="registration">
         <div class="modal-dialog modal-sm">
             <!-- Modal content-->
-            <div class="modal-content">
+            <div class="modal-content windowRegistration">
                 <div class="modal-header popupheader">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Register</h4>
                 </div>
-                <div class="modal-body" >
-                    <form id="usercreationForm" method="post">
-                        <table>
+                <form id="usercreationForm" method="post" ng-submit='submit($event)'>
+                    <div class="modal-body" id="registrationForm">
+                        <p>
+                            <label for="logincform">Email:</label>
+                            <input type="email" id="logincform" name="email" title ="Login"
+                                       placeholder="Enter email" ng-model="userEmail">
+                        </p>
+                        <p>
+                            <label for="passcform" class="password">Password:</label>
+                            <input type="password" id="passcform" name="password" title ="Password"
+                                       placeholder="Enter password" ng-model="userPassword">
+                        </p>
+                        <p>
+                            <label for="passcrform" class="password">Repeat:</label>
+                            <input type="password" id="passcrform" name="password" title ="Password"
+                                       placeholder="Password confirmation" ng-model="userPasswordRepeat">
+                        </p>
+                        <p>
+                            <label for="nameform">Name:</label>
+                            <input type="text" id="nameform" name="name" title ="Username"
+                                       placeholder="Enter your name" ng-model="userName">
+                        </p>
+                        <p>
+                            <label for="surnameform">Surname:</label>
+                            <input type="text" id="surnameform" name="surname" title ="Surname"
+                                       placeholder="Enter your surname" ng-model="userSurname">
+                        </p>
+                        <p>
+                            <label for="teleform">Phone:</label>
+                            <input type="text" id="teleform" name="telephone" title="Telephone"
+                                       placeholder="Insert yor phone" ng-model="userPhone">
+                        </p>
+                    </div>
+                    <div class="errorMessage"></div>
+                    <div class="modal-footer, formFooter">
+                        <button type="submit" class="btn btn-success">Register</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+
+
+<!-- 
+                            <table id="registrationForm">
                             <tr>
                                 <td><label for="logincform">Email:</label></td>
-                                <td><input type="text" id="logincform" name="login" title ="Login"
+                                <td><input type="email" id="logincform" name="email" title ="Login"
                                            placeholder="Enter email" ng-model="userEmail"></td>
                             </tr>
                             <tr>
@@ -78,24 +125,9 @@
                                            placeholder="Enter your surname" ng-model="userSurname"></td>
                             </tr>
                             <tr>
-                                <td><label for="infoform">Info:</label></td>
-                                <td><input type="text" id="infoform" name="info" title="Info"
-                                           placeholder="Enter additional info" ng-model="userInfo"></td>
-                            </tr>
-                            <tr>
                                 <td><label for="teleform">Phone:</label></td>
                                 <td><input type="text" id="teleform" name="telephone" title="Telephone"
                                            placeholder="Insert yor phone" ng-model="userPhone"></td>
                             </tr>
                             <tr><td colspan="2"></td></tr>
-                        </table>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" ng-click="registration()">Register</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-
-        </div>
-    </div>
+                        </table> -->
