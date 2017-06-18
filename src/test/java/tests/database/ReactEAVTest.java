@@ -18,6 +18,7 @@ import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.reacteav.ReactEAVManager;
+import projectpackage.repository.reacteav.conditions.AppendingStringWhereConditionAfterExecution;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
@@ -350,6 +351,21 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         }
         for (Rate room:rooms){
             System.out.println(room);
+        }
+        System.out.println(SEPARATOR);
+
+    }
+
+    @Test
+    public void getUsersWithCondition(){
+        List<User> users = null;
+        try {
+            users = manager.createReactEAV(User.class).addCondition(new AppendingStringWhereConditionAfterExecution("\nAND ROOTABLE.OBJECT_ID=901"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).getEntityCollection();
+        } catch (ResultEntityNullException e) {
+            e.printStackTrace();
+        }
+        for (User user:users){
+            System.out.println(user);
         }
         System.out.println(SEPARATOR);
 

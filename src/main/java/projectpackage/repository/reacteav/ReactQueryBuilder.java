@@ -173,7 +173,12 @@ public class ReactQueryBuilder {
 
         //Добавляем кляузу WHERE OBJECTS.OBJECT_ID=...
         if (isSearchById) queryAppender.appendWhereConditionWithRootTableObjectIdSearching();
-        if (null!=executor) executor.setBuilder(queryBuilder);
+        if (null!=executor) {
+            if (executor.isThisExecutorContainsConditionForCurrentNode(currentNode)){
+                executor.setBuilder(queryBuilder);
+                executor.executeForTask(currentNode);
+            }
+        }
 
         //Сортируем по колонке
         if (null != orderingParameter) {

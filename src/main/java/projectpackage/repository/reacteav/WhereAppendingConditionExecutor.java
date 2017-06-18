@@ -27,15 +27,24 @@ public class WhereAppendingConditionExecutor implements ConditionExecutor {
         this.builder = builder;
     }
 
+    public boolean isThisExecutorContainsConditionForCurrentNode(ReacTask task){
+        for (ReactConditionData data: tasks){
+            if (data.getTargetTask().equals(task)) return true;
+        }
+        return false;
+    }
+
     @Override
     public void executeAll(ConditionExecutionMoment moment) {
-        if (moment.equals(MOMENT)) {
-            for (ReactConditionData task : tasks) {
-                if (moment.equals(task.getMoment())) {
-                    ReactConditionWhereAppending condition = (ReactConditionWhereAppending) task.getCondition();
-                    condition.setStringBuilder(builder);
-                    condition.execute();
-                }
+    }
+
+    public void executeForTask(ReacTask task){
+        for (ReactConditionData data: tasks){
+            if (data.getTargetTask().equals(task)) {
+                ReactConditionWhereAppending condition = (ReactConditionWhereAppending) data.getCondition();
+                condition.setStringBuilder(builder);
+                condition.execute();
+                builder = null;
             }
         }
     }
