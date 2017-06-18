@@ -2,7 +2,7 @@ package projectpackage.model.maintenances;
 
 import lombok.Data;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
-import projectpackage.repository.reacteav.annotations.ReactField;
+import projectpackage.repository.reacteav.annotations.ReactAttrField;
 import projectpackage.repository.reacteav.annotations.ReactReference;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
@@ -16,13 +16,13 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 @ReactReference(referenceName = "MaintenanceToComplimentary", outerEntityClass = Complimentary.class,
         outerFieldName = "maintenance", outerFieldKey = "objectId", innerFieldKey = "objectId")
 public class Maintenance implements ReactEntityWithId, Cloneable{
-    @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
+    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = "%OBJECT_ID")
     private int objectId;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Maintenance_title")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = "Maintenance_title")
     private String maintenanceTitle;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Maintenance_type")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = "Maintenance_type")
     private String maintenanceType;
-    @ReactField(valueObjectClass = Long.class, databaseAttrtypeCodeValue = "Maintenance_price")
+    @ReactAttrField(valueObjectClass = Long.class, databaseAttrtypeIdValue = "Maintenance_price")
     private Long maintenancePrice;
 
     @Override

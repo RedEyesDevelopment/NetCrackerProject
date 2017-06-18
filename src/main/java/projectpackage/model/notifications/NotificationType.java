@@ -3,7 +3,7 @@ package projectpackage.model.notifications;
 import lombok.Data;
 import projectpackage.model.auth.Role;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
-import projectpackage.repository.reacteav.annotations.ReactField;
+import projectpackage.repository.reacteav.annotations.ReactAttrField;
 import projectpackage.repository.reacteav.annotations.ReactReference;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
@@ -11,9 +11,9 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 @ReactEntity(entityTypeName = "Notification_type")
 @ReactReference(referenceName = "NotificationTypeToNotification", outerEntityClass = Notification.class, outerFieldName = "notificationType", outerFieldKey = "objectId", innerFieldKey = "objectId")
 public class NotificationType implements ReactEntityWithId, Cloneable {
-    @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
+    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = "%OBJECT_ID")
     private int objectId;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Notif_type_title")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = "Notif_type_title")
     private String notificationTypeTitle;
 
     private Role orientedRole;

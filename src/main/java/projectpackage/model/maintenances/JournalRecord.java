@@ -4,7 +4,7 @@ import lombok.Data;
 import projectpackage.model.orders.Order;
 import projectpackage.repository.reacteav.annotations.ReactChild;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
-import projectpackage.repository.reacteav.annotations.ReactField;
+import projectpackage.repository.reacteav.annotations.ReactAttrField;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 import java.util.Date;
@@ -16,15 +16,15 @@ import java.util.Date;
 @ReactEntity(entityTypeName = "JournalRecord")
 @ReactChild(outerEntityClass = Order.class, outerFieldName = "journalRecords", outerFieldKey = "objectId", innerFieldKey = "orderId")
 public class JournalRecord implements ReactEntityWithId, Cloneable {
-    @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
+    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = "%OBJECT_ID")
     private int objectId;
-    @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%PARENT_ID")
+    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = "%PARENT_ID")
     private int orderId;
-    @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "Count")
+    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = "Count")
     private Integer count;
-    @ReactField(valueObjectClass = Long.class, databaseAttrtypeCodeValue = "Cost")
+    @ReactAttrField(valueObjectClass = Long.class, databaseAttrtypeIdValue = "Cost")
     private Long cost;
-    @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Used_date")
+    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = "Used_date")
     private Date usedDate;
 
     private Maintenance maintenance;

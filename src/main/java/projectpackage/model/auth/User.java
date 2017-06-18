@@ -5,7 +5,7 @@ import projectpackage.model.notifications.Notification;
 import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
-import projectpackage.repository.reacteav.annotations.ReactField;
+import projectpackage.repository.reacteav.annotations.ReactAttrField;
 import projectpackage.repository.reacteav.annotations.ReactReference;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
@@ -22,19 +22,19 @@ import java.util.Set;
         outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "44")
 public class User implements ReactEntityWithId, Cloneable {
 
-    @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
+    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = "%OBJECT_ID")
     private int objectId;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Email")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = "Email")
     private String email;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Password")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = "Password")
     private String password;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "First_name")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = "First_name")
     private String firstName;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Last_name")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = "Last_name")
     private String lastName;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Additional_info")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = "Additional_info")
     private String additionalInfo;
-    @ReactField(valueObjectClass = Boolean.class, databaseAttrtypeCodeValue = "Enabled")
+    @ReactAttrField(valueObjectClass = Boolean.class, databaseAttrtypeIdValue = "Enabled")
     private Boolean enabled;
 
     private Role role;

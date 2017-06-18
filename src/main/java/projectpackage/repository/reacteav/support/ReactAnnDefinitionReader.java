@@ -19,7 +19,7 @@ public class ReactAnnDefinitionReader {
     private static final Class REFERENCEANNOTATION = ReactReference.class;
     private static final Class REFERENCEBUCKETANNOTATION = References.class;
     private static final Class CHILDANNOTATION = ReactChild.class;
-    private static final Class FIELDANNOTATION = ReactField.class;
+    private static final Class FIELDANNOTATION = ReactAttrField.class;
 
     public ReactAnnDefinitionReader(String packageName) {
         this.packageName = packageName;
@@ -70,10 +70,10 @@ public class ReactAnnDefinitionReader {
                 if (field.isAnnotationPresent(FIELDANNOTATION)) {
                     Annotation[] annotations = field.getAnnotations();
                     for (Annotation annotation : annotations) {
-                        ReactField reactField = (ReactField) annotation;
+                        ReactAttrField reactAttrField = (ReactAttrField) annotation;
                         String fieldName = field.getName();
-                        String fieldDatabaseName = reactField.databaseAttrtypeCodeValue();
-                        Class objectType = reactField.valueObjectClass();
+                        String fieldDatabaseName = reactAttrField.databaseAttrtypeIdValue();
+                        Class objectType = reactAttrField.valueObjectClass();
                         EntityVariablesData data = new EntityVariablesData(objectType, fieldDatabaseName);
                         thisClassData.put(fieldName, data);
                     }

@@ -7,8 +7,8 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ReactField {
+public @interface ReactAttrField {
 //    String classFieldName();
     Class valueObjectClass();
-    String databaseAttrtypeCodeValue();
+    int databaseAttrtypeIdValue();
 }
