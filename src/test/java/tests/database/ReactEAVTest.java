@@ -18,8 +18,8 @@ import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.reacteav.ReactEAVManager;
-import projectpackage.repository.reacteav.conditions.AppendStringWhereCondition;
-import projectpackage.repository.reacteav.conditions.AppendVariableWhereCondition;
+import projectpackage.repository.reacteav.conditions.StringWhereCondition;
+import projectpackage.repository.reacteav.conditions.VariableWhereCondition;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
@@ -361,7 +361,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     public void getUsersWithCondition(){
         List<User> users = null;
         try {
-            users = manager.createReactEAV(User.class).addCondition(new AppendStringWhereCondition("ROOTABLE.OBJECT_ID=901"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).getEntityCollection();
+            users = manager.createReactEAV(User.class).addCondition(new StringWhereCondition("ROOTABLE.OBJECT_ID=901"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).getEntityCollection();
         } catch (ResultEntityNullException e) {
             e.printStackTrace();
         }
@@ -376,7 +376,22 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     public void getUsersWithVariablesCondition(){
         List<User> users = null;
         try {
-            users = manager.createReactEAV(User.class).addCondition(new AppendVariableWhereCondition("email", "stephenking@mail.ru"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).getEntityCollection();
+            users = manager.createReactEAV(User.class).addCondition(new VariableWhereCondition("email", "stephenking@mail.ru"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).getEntityCollection();
+        } catch (ResultEntityNullException e) {
+            e.printStackTrace();
+        }
+        for (User user:users){
+            System.out.println(user);
+        }
+        System.out.println(SEPARATOR);
+
+    }
+
+    @Test
+    public void getUsersWithReferenceCondition(){
+        List<User> users = null;
+        try {
+            users = manager.createReactEAV(User.class).addCondition(new StringWhereCondition("R_REFOB1.REFERENCE=3"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).fetchRootReference(Role.class, "RoleToUser").addCondition(new VariableWhereCondition("roleName", "CLIENT"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).closeAllFetches().getEntityCollection();
         } catch (ResultEntityNullException e) {
             e.printStackTrace();
         }

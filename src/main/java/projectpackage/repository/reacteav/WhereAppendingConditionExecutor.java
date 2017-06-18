@@ -36,7 +36,7 @@ public class WhereAppendingConditionExecutor implements ConditionExecutor {
 
     public boolean isThisExecutorContainsVariableConditionForCurrentNode(ReacTask task){
         for (ReactConditionData data: tasks){
-            if (data.getCondition().getClass().equals(AppendVariableWhereCondition.class)){
+            if (data.getCondition().getClass().equals(VariableWhereCondition.class)){
                 if (data.getTargetTask().equals(task)) {
                     return true;
                 }
@@ -47,11 +47,11 @@ public class WhereAppendingConditionExecutor implements ConditionExecutor {
 
     public void checkAndInsertVariableToConditionIfEquals(String variableName, String columnName, ReacTask task){
         for (ReactConditionData data: tasks){
-            if (data.getCondition().getClass().equals(AppendVariableWhereCondition.class)){
+            if (data.getCondition().getClass().equals(VariableWhereCondition.class)){
                 if (data.getTargetTask().equals(task)) {
-                    AppendVariableWhereCondition appendVariableWhereCondition = (AppendVariableWhereCondition) data.getCondition();
-                    if (appendVariableWhereCondition.columnNameCheck(variableName)){
-                        appendVariableWhereCondition.setDatabaseQueryColumnName(columnName);
+                    VariableWhereCondition variableWhereCondition = (VariableWhereCondition) data.getCondition();
+                    if (variableWhereCondition.columnNameCheck(variableName)){
+                        variableWhereCondition.setDatabaseQueryColumnName(columnName);
                     }
                 }
             }

@@ -5,11 +5,11 @@ import projectpackage.repository.reacteav.WhereAppendingConditionExecutor;
 /**
  * Created by Lenovo on 18.06.2017.
  */
-public class AppendStringWhereCondition implements ReactConditionWhereAppending {
+public class StringWhereCondition implements ReactConditionWhereAppending {
     private StringBuilder builder;
     private String whereClause;
 
-    public AppendStringWhereCondition(String whereClause) {
+    public StringWhereCondition(String whereClause) {
         this.whereClause = whereClause;
     }
 
