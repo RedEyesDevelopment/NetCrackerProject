@@ -19,8 +19,13 @@ public class ReactQueryBuilder {
     }
 
     String getQueryForEntity(LinkedHashMap<String, EntityVariablesData> currentNodeVariables, ReacTask currentNode, boolean isSearchById, String orderingParameter, boolean ascend, WhereAppendingConditionExecutor executor) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
-        //Вставляем экзекутор, если он есть
+        //Вставляем экзекутор, если он есть и проверяем на наличие variable-where-условий
         if (null!=executor) this.executor = executor;
+        boolean thisNodeNeedsCustomWhereCondition = false;
+        if (null!=executor){
+            thisNodeNeedsCustomWhereCondition = executor.isThisExecutorContainsVariableConditionForCurrentNode(currentNode);
+        }
+
         //Создаём стрингбилдер и ReactQueryAppender, нацеленный на стрингбилдер.
         StringBuilder queryBuilder = new StringBuilder();
         ReactQueryAppender queryAppender = new ReactQueryAppender(queryBuilder, config);
@@ -52,14 +57,22 @@ public class ReactQueryBuilder {
             if (null!=databaseNativeCodeValue) {
                     //Этот объект прямо из таблицы объектов, поэтому очищаем мапу от него.
                     queryAppender.appendSelectColumnWithNaming(config.getRootTableName(), databaseNativeCodeValue.substring(1), objectParameterKey);
-                    attributesNameMap.put(objectParameterKey, config.getRootTableName() + "." + databaseNativeCodeValue.substring(1));
+                    String toMapAColumn = config.getRootTableName() + "." + databaseNativeCodeValue.substring(1);
+                    attributesNameMap.put(objectParameterKey, toMapAColumn);
                     currentNodeVariablesMapIterator.remove();
+                if (thisNodeNeedsCustomWhereCondition){
+                    executor.checkAndInsertVariableToConditionIfEquals(objectParameterKey, toMapAColumn, currentNode);
+                }
             } else {
                 // Мы заранее не знаем где находятся данные - в VALUE или DATE_VALUE, поэтому выбираем и то и то.
                 String nextAttributeName = attributesTablesNameGenerator.getNextTableName();
-                attributesNameMap.put(objectParameterKey, nextAttributeName + ".VALUE");
+                String toMapAColumn = nextAttributeName + ".VALUE";
+                attributesNameMap.put(objectParameterKey, toMapAColumn);
                 queryAppender.appendSelectColumnWithValueAndNaming(nextAttributeName, objectParameterKey);
                 queryAppender.appendSelectColumnWithDataValueAndNaming(nextAttributeName, objectParameterKey);
+                if (thisNodeNeedsCustomWhereCondition){
+                    executor.checkAndInsertVariableToConditionIfEquals(objectParameterKey, toMapAColumn, currentNode);
+                }
             }
         }
 
@@ -118,6 +131,9 @@ public class ReactQueryBuilder {
             Map.Entry<String, EntityVariablesData> objectPropertiesMapIteratorEntry = (Map.Entry) currentNodeVariablesMapIterator.next();
             String databaseColumnValue = objectPropertiesMapIteratorEntry.getValue().getDatabaseNativeCodeValue();
             Integer databaseAttrIdValue = objectPropertiesMapIteratorEntry.getValue().getDatabaseAttrtypeIdValue();
+
+            //Подготавливаемся к аппенду специальных WHERE-полей из VariableCondition
+
 
             //WHERE ATTRTYPE.CODE=Код из таблицы кодов полйе объекта
             if (null!=databaseColumnValue){
