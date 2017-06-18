@@ -5,7 +5,7 @@ import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
 /**
  * Created by Gvozd on 08.05.2017.
  */
-public class ReactQueryBuilder {
+public class ReactQueryAppender {
     private StringBuilder queryBuilder;
     private ReactConstantConfiguration config;
     private boolean firstWordInSelectQueryFlag = true;
@@ -13,7 +13,7 @@ public class ReactQueryBuilder {
     private boolean firstWordInWhereQueryFlag = true;
     private boolean queryHasBeenFinished = false;
 
-    public ReactQueryBuilder(StringBuilder queryBuilder, ReactConstantConfiguration config) {
+    public ReactQueryAppender(StringBuilder queryBuilder, ReactConstantConfiguration config) {
         this.queryBuilder = queryBuilder;
         this.config = config;
     }
@@ -116,6 +116,14 @@ public class ReactQueryBuilder {
         if (queryHasBeenFinished) return false;
         if (!firstWordInWhereQueryFlag) appendAnd();
         queryBuilder.append(firstTable + "." + config.getAid() + "=" + secondTable + "." + config.getAid());
+        firstWordInWhereQueryFlag = false;
+        return true;
+    }
+
+    public boolean appendWhereConditionWithTablesAttrEqualsToValue(String tableName, int value) {
+        if (queryHasBeenFinished) return false;
+        if (!firstWordInWhereQueryFlag) appendAnd();
+        queryBuilder.append(tableName + "." + config.getAid() + "=" + value);
         firstWordInWhereQueryFlag = false;
         return true;
     }
