@@ -355,7 +355,7 @@ public class ReactEAV {
         while (currentNodeVariablesMapIterator.hasNext()) {
             Map.Entry<String, EntityVariablesData> objectPropertiesMapIteratorEntry = (Map.Entry) currentNodeVariablesMapIterator.next();
             String objectParameterKey = objectPropertiesMapIteratorEntry.getKey();
-            String databaseColumnValue = objectPropertiesMapIteratorEntry.getValue().getDatabaseAttrtypeCodeValue();
+            String databaseColumnValue = objectPropertiesMapIteratorEntry.getValue().getDatabaseNativeCodeValue();
 
             if (databaseColumnValue.startsWith("%")) {
                 //Этот объект прямо из таблицы объектов, поэтому очищаем мапу от него.
@@ -423,7 +423,7 @@ public class ReactEAV {
             builder.appendWhereConditionWithTwoTablesEqualsByAT_ID(config.getAttributesPermanentTableName() + i, config.getAttrTypesPermanentTableName() + i);
 
             Map.Entry<String, EntityVariablesData> objectPropertiesMapIteratorEntry = (Map.Entry) currentNodeVariablesMapIterator.next();
-            String databaseColumnValue = objectPropertiesMapIteratorEntry.getValue().getDatabaseAttrtypeCodeValue();
+            String databaseColumnValue = objectPropertiesMapIteratorEntry.getValue().getDatabaseNativeCodeValue();
             //WHERE ATTRTYPE.CODE=Код из таблицы кодов полйе объекта
             if (databaseColumnValue.startsWith("%")) {
                 builder.appendWhereConditionWithTableCodeEqualsToValue(config.getAttrTypesPermanentTableName() + i, databaseColumnValue.substring(1));

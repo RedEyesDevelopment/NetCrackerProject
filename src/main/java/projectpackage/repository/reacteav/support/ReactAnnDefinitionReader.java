@@ -19,7 +19,8 @@ public class ReactAnnDefinitionReader {
     private static final Class REFERENCEANNOTATION = ReactReference.class;
     private static final Class REFERENCEBUCKETANNOTATION = References.class;
     private static final Class CHILDANNOTATION = ReactChild.class;
-    private static final Class FIELDANNOTATION = ReactAttrField.class;
+    private static final Class ATTRFIELDANNOTATION = ReactAttrField.class;
+    private static final Class NATIVEFIELDANNOTATION = ReactNativeField.class;
 
     public ReactAnnDefinitionReader(String packageName) {
         this.packageName = packageName;
@@ -67,14 +68,25 @@ public class ReactAnnDefinitionReader {
         for (Class clazz : classList) {
             LinkedHashMap<String, EntityVariablesData> thisClassData = new LinkedHashMap<>();
             for (Field field : clazz.getDeclaredFields()) {
-                if (field.isAnnotationPresent(FIELDANNOTATION)) {
+                if (field.isAnnotationPresent(ATTRFIELDANNOTATION)) {
                     Annotation[] annotations = field.getAnnotations();
                     for (Annotation annotation : annotations) {
                         ReactAttrField reactAttrField = (ReactAttrField) annotation;
                         String fieldName = field.getName();
-                        String fieldDatabaseName = reactAttrField.databaseAttrtypeIdValue();
+                        int fieldDatabaseName = reactAttrField.databaseAttrtypeIdValue();
                         Class objectType = reactAttrField.valueObjectClass();
-                        EntityVariablesData data = new EntityVariablesData(objectType, fieldDatabaseName);
+                        EntityVariablesData data = new EntityVariablesData(objectType, null, fieldDatabaseName);
+                        thisClassData.put(fieldName, data);
+                    }
+                }
+                if (field.isAnnotationPresent(NATIVEFIELDANNOTATION)) {
+                    Annotation[] annotations = field.getAnnotations();
+                    for (Annotation annotation : annotations) {
+                        ReactNativeField reactAttrField = (ReactNativeField) annotation;
+                        String fieldName = field.getName();
+                        String fieldDatabaseName = reactAttrField.databaseObjectCodeValue();
+                        Class objectType = reactAttrField.valueObjectClass();
+                        EntityVariablesData data = new EntityVariablesData(objectType, fieldDatabaseName, null);
                         thisClassData.put(fieldName, data);
                     }
                 }

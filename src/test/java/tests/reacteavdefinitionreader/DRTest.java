@@ -32,7 +32,7 @@ public class DRTest {
             for (Map.Entry<String, EntityVariablesData> entry1:entry.getValue().entrySet()){
                 System.out.println("    STRING KEY="+entry1.getKey());
                 System.out.println("        PARAMETER CLASS="+entry1.getValue().getParameterClass());
-                System.out.println("        DATABASE ATTRTYPE CODE VALUE="+entry1.getValue().getDatabaseAttrtypeCodeValue());
+                System.out.println("        DATABASE ATTRTYPE CODE VALUE="+entry1.getValue().getDatabaseNativeCodeValue());
             }
             System.out.println();
         }
