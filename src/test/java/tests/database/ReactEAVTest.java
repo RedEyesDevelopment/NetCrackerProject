@@ -18,10 +18,10 @@ import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.reacteav.ReactEAVManager;
-import projectpackage.repository.reacteav.conditions.StringWhereCondition;
-import projectpackage.repository.reacteav.conditions.VariableWhereCondition;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
+import projectpackage.repository.reacteav.conditions.StringWhereCondition;
+import projectpackage.repository.reacteav.conditions.VariableWhereCondition;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.ParentsService;
 

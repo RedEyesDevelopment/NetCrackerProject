@@ -9,7 +9,7 @@ import projectpackage.repository.support.rowmappers.ParentIdRowMapper;
 public class ParentServiceImpl implements ParentsService{
     private static final String QUERY = "SELECT OB.PARENT_ID \"PARENT\" FROM OBJECTS OB WHERE OB.OBJECT_ID=";
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     public Integer getParentId(Integer targetId) {
