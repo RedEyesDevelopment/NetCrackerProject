@@ -199,6 +199,16 @@ app.controller('registration', ['$scope', '$http', '$location' , 'sharedData', f
         console.log($scope.userInfo);
         console.log($scope.userPhone);
 
+
+        $('.windowRegistration').height(390);
+        $('.errorMessage').hide();
+        $('.passwordLabel').css({
+            'color' : 'black'
+        });
+        $('.emailLabel').css({
+            'color' : 'black'
+        });
+
         if ($scope.userPasswordRepeat === $scope.userPassword) {
             $http({
                 url: 'http://localhost:8080/users/registration',
@@ -231,15 +241,18 @@ app.controller('registration', ['$scope', '$http', '$location' , 'sharedData', f
             }, function (response) {
                 console.log(response);
                 console.log("I_AM_TEAPOT!");
-                alert(response.data.message);
+                $('.emailLabel').css({
+                    'color' : 'red'
+                });
+                $('.windowRegistration').height(420);
+                $('.errorMessage').text(response.data.message).show(300);
             });
         } else {
-            errorMessage = $('.errorMessage').text();
-            $('.errorMessage').text(errorMessage + 'Passwords not the same!\n');
-            $('.password').css({
+            $('.passwordLabel').css({
                 'color' : 'red'
             });
-            alert("Passwords not the same!");
+            $('.errorMessage').text('Passwords not the same!').show(300);
+            $('.windowRegistration').height(420);
         }
 
 

@@ -11,11 +11,7 @@
 }
 
 .windowRegistration {
-	height: 350px;
-}
-
-.showLoginErrorLabel{
-    display: block;
+	height: 390px;
 }
 
 #authorizeform p input {
@@ -27,8 +23,19 @@
 	float: right;
 }
 
+.phoneExample {
+	text-align: center;
+	color: gray;
+}
+
 .formFooter {
 	text-align: center;
 }
 
+.errorMessage {
+	display: none;
+	text-align: center;
+	color: red;
+	margin-bottom: 10px;
+}
 

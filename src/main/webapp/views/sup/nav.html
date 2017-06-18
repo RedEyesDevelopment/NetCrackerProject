@@ -1,13 +1,11 @@
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             <div id="navbar" class="navbar-collapse collapse">
+                <div class="toMain"><a href="http://localhost:8080/views/index.html"><i class="fa fa-home" aria-hidden="true"></i> Hotel</a></div>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a role="button" id="loginLink" data-toggle="modal" data-target="#loginModal">Log in</a></li>
                     <li><a role="button" id="signupLink" data-toggle="modal" data-target="#creationModal">Sign up</a></li>
                 </ul>
-            </div>
-            <div id="loggeduser">
-                TROLOLOLOLOooooo
             </div>
         </div>
     </nav>
@@ -54,34 +52,40 @@
                 <form id="usercreationForm" method="post" ng-submit='submit($event)'>
                     <div class="modal-body" id="registrationForm">
                         <p>
-                            <label for="logincform">Email:</label>
-                            <input type="email" id="logincform" name="email" title ="Login"
-                                       placeholder="Enter email" ng-model="userEmail">
+                            <label for="logincform" class="emailLabel">Email:</label>
+                            <input type="text" id="logincform" name="email" title ="email"
+                                    required placeholder="Enter email" ng-model="userEmail"
+                                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$">
                         </p>
                         <p>
-                            <label for="passcform" class="password">Password:</label>
+                            <label for="passcform" class="passwordLabel">Password:</label>
                             <input type="password" id="passcform" name="password" title ="Password"
-                                       placeholder="Enter password" ng-model="userPassword">
+                                    required placeholder="Enter password" ng-model="userPassword"
+                                    pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$">
                         </p>
                         <p>
-                            <label for="passcrform" class="password">Repeat:</label>
+                            <label for="passcrform" class="passwordLabel">Repeat:</label>
                             <input type="password" id="passcrform" name="password" title ="Password"
-                                       placeholder="Password confirmation" ng-model="userPasswordRepeat">
+                                    required placeholder="Password confirmation" ng-model="userPasswordRepeat">
                         </p>
                         <p>
                             <label for="nameform">Name:</label>
                             <input type="text" id="nameform" name="name" title ="Username"
-                                       placeholder="Enter your name" ng-model="userName">
+                                    required placeholder="Enter your name" ng-model="userName">
                         </p>
                         <p>
                             <label for="surnameform">Surname:</label>
                             <input type="text" id="surnameform" name="surname" title ="Surname"
-                                       placeholder="Enter your surname" ng-model="userSurname">
+                                    required placeholder="Enter your surname" ng-model="userSurname">
                         </p>
                         <p>
                             <label for="teleform">Phone:</label>
-                            <input type="text" id="teleform" name="telephone" title="Telephone"
-                                       placeholder="Insert yor phone" ng-model="userPhone">
+                            <input type="text" id="teleform" name="telephone" title="phone"
+                                    required placeholder="Enter your phone" ng-model="userPhone"
+                                    pattern="\+\d{1,2}\(\d{3}\)\d{2}-\d{2}-\d{3}|\+\d{12}|\d{7}|[0]\d{9}">
+                        </p>
+                        <p class="phoneExample">
+                            e.g. +123456789012 or&nbsp;0501234567 or&nbsp;1234567 or&nbsp;+1(000)12-34-567
                         </p>
                     </div>
                     <div class="errorMessage"></div>
