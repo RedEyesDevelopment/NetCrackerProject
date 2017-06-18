@@ -205,21 +205,23 @@ public class ReactQueryBuilder {
     }
 
     void appendChildWhereClause(StringBuilder temporary, List<Integer> parentIds){
-        System.out.println("***********************************************");
-        System.out.println("APPENDING to stringBuilder parentIds: "+parentIds);
         if (null!=parentIds && !parentIds.isEmpty()){
-            temporary.append("\nAND (");
-            boolean firstAppend = true;
-            for (Integer parentId:parentIds){
-                if (firstAppend) {
-                    temporary.append("PARENT_ID=");
-                } else {
-                    temporary.append(" OR PARENT_ID=");
+            if (parentIds.size()!=1){
+                temporary.append("\nAND (");
+                boolean firstAppend = true;
+                for (Integer parentId:parentIds){
+                    if (firstAppend) {
+                        temporary.append("ROOTABLE.PARENT_ID=");
+                    } else {
+                        temporary.append(" OR ROOTABLE.PARENT_ID=");
+                    }
+                    temporary.append(parentId);
+                    firstAppend = false;
                 }
-                temporary.append(parentId);
-                firstAppend = false;
+                temporary.append(")");
+            } else {
+                temporary.append("\nAND ROOTABLE.PARENT_ID="+parentIds.get(0));
             }
-            temporary.append(")");
         }
     }
 }

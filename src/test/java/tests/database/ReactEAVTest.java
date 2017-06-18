@@ -23,6 +23,7 @@ import projectpackage.repository.reacteav.conditions.VariableWhereCondition;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+import projectpackage.repository.support.ParentsService;
 
 import java.util.List;
 
@@ -35,6 +36,9 @@ public class ReactEAVTest extends AbstractDatabaseTest {
 
     @Autowired
     ReactEAVManager manager;
+
+    @Autowired
+    ParentsService parentsService;
 
     //Получить список юзеров
     @Test
@@ -400,5 +404,12 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         }
         System.out.println(SEPARATOR);
 
+    }
+
+    @Test
+    public void getParentId(){
+        Integer parentId = parentsService.getParentId(1101);
+        System.out.println("PARENTID="+parentId);
+        System.out.println(SEPARATOR);
     }
 }

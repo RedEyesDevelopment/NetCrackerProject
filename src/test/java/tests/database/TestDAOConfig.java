@@ -41,6 +41,8 @@ import projectpackage.repository.roomsdao.RoomTypeDAO;
 import projectpackage.repository.roomsdao.RoomTypeDAOImpl;
 import projectpackage.repository.securitydao.AuthCredentialsDAO;
 import projectpackage.repository.securitydao.AuthCredentialsDAOImpl;
+import projectpackage.repository.support.ParentServiceImpl;
+import projectpackage.repository.support.ParentsService;
 import projectpackage.service.adminservice.InMemoryNotifService;
 import projectpackage.service.authservice.*;
 import projectpackage.service.blockservice.BlockService;
@@ -408,6 +410,11 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
 
     @Bean
     SecurityService securityService() {return new SecurityServiceImpl(); }
+
+    @Bean
+    ParentsService parentsService(){
+        return new ParentServiceImpl();
+    }
 
     @Bean
     InMemoryNotifService inMemoryNotifService(){
