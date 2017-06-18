@@ -412,4 +412,17 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         System.out.println("PARENTID="+parentId);
         System.out.println(SEPARATOR);
     }
+
+    @Test
+    public void getUserForPhone(){
+        Integer parentId = parentsService.getParentId(1101);
+        User user = null;
+        try {
+            user = (User) manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches().getSingleEntityWithId(parentId);
+        } catch (ResultEntityNullException e) {
+            e.printStackTrace();
+        }
+        System.out.println(user);
+        System.out.println(SEPARATOR);
+    }
 }
