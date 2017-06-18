@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * Created by Lenovo on 20.05.2017.
  */
-public class PriceEqualsToRoomCondition implements ReactCondition {
+public class PriceEqualsToRoomCondition implements ReactConditionAfterExecution {
     private List<Object> objects;
 
     @Override

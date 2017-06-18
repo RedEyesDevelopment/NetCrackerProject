@@ -7,12 +7,12 @@ import projectpackage.repository.reacteav.ReacTask;
  */
 public class ReactConditionData {
     private ReactCondition condition;
-    private ReacTask startingTask;
+    private ReacTask targetTask;
     private ConditionExecutionMoment moment;
 
-    public ReactConditionData(ReactCondition condition, ReacTask startingTask, ConditionExecutionMoment moment) {
+    public ReactConditionData(ReactCondition condition, ReacTask targetTask, ConditionExecutionMoment moment) {
         this.condition = condition;
-        this.startingTask = startingTask;
+        this.targetTask = targetTask;
         this.moment = moment;
     }
 
@@ -20,8 +20,8 @@ public class ReactConditionData {
         return condition;
     }
 
-    public ReacTask getStartingTask() {
-        return startingTask;
+    public ReacTask getTargetTask() {
+        return targetTask;
     }
 
     public ConditionExecutionMoment getMoment() {

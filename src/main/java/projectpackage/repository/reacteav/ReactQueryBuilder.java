@@ -12,12 +12,15 @@ import java.util.*;
 
 public class ReactQueryBuilder {
     ReactConstantConfiguration config;
+    WhereAppendingConditionExecutor executor;
 
     public ReactQueryBuilder(ReactConstantConfiguration config) {
         this.config = config;
     }
 
-    String getQueryForEntity(LinkedHashMap<String, EntityVariablesData> currentNodeVariables, ReacTask currentNode, boolean isSearchById, String orderingParameter, boolean ascend) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    String getQueryForEntity(LinkedHashMap<String, EntityVariablesData> currentNodeVariables, ReacTask currentNode, boolean isSearchById, String orderingParameter, boolean ascend, WhereAppendingConditionExecutor executor) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
+        //Вставляем экзекутор, если он есть
+        if (null!=executor) this.executor = executor;
         //Создаём стрингбилдер и ReactQueryAppender, нацеленный на стрингбилдер.
         StringBuilder queryBuilder = new StringBuilder();
         ReactQueryAppender queryAppender = new ReactQueryAppender(queryBuilder, config);
@@ -170,6 +173,7 @@ public class ReactQueryBuilder {
 
         //Добавляем кляузу WHERE OBJECTS.OBJECT_ID=...
         if (isSearchById) queryAppender.appendWhereConditionWithRootTableObjectIdSearching();
+        if (null!=executor) executor.setBuilder(queryBuilder);
 
         //Сортируем по колонке
         if (null != orderingParameter) {

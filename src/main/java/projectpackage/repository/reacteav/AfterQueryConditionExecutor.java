@@ -1,9 +1,6 @@
 package projectpackage.repository.reacteav;
 
-import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
-import projectpackage.repository.reacteav.conditions.ConditionExecutor;
-import projectpackage.repository.reacteav.conditions.ReactCondition;
-import projectpackage.repository.reacteav.conditions.ReactConditionData;
+import projectpackage.repository.reacteav.conditions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +27,8 @@ public class AfterQueryConditionExecutor implements ConditionExecutor {
             if (moment.equals(MOMENT)){
                 for (ReactConditionData task:tasks){
                     if (moment.equals(task.getMoment())){
-                        ReactCondition condition = task.getCondition();
-                        condition.loadDataToParse(task.getStartingTask().getResultList());
+                        ReactConditionAfterExecution condition = (ReactConditionAfterExecution) task.getCondition();
+                        condition.loadDataToParse(task.getTargetTask().getResultList());
                         condition.execute();
                     }
                 }

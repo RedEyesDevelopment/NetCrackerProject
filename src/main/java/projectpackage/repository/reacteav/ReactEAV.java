@@ -45,7 +45,7 @@ public class ReactEAV {
         this.builder = builder;
         this.rootNode = new ReacTask(null, this, entityClass, true, null, null, false, null);
         this.rootNode.setObjectClass(entityClass);
-        this.executors =new HashSet<>();
+        this.executors = new HashSet<>();
     }
 
     ReactConnectionsDataBucket getDataBucket() {
@@ -60,8 +60,8 @@ public class ReactEAV {
 
     public ReacTask fetchRootReference(Class innerEntityClass, String referenceName) {
         boolean innerHasIt = false;
-        for (EntityReferenceRelationshipsData data:dataBucket.getEntityReferenceRelationsMap().get(innerEntityClass).values()){
-            if (data.getOuterClass().equals(rootNode.getObjectClass())){
+        for (EntityReferenceRelationshipsData data : dataBucket.getEntityReferenceRelationsMap().get(innerEntityClass).values()) {
+            if (data.getOuterClass().equals(rootNode.getObjectClass())) {
                 innerHasIt = true;
             }
         }
@@ -73,9 +73,9 @@ public class ReactEAV {
         return newReacTask;
     }
 
-    private void checkInnerRelations(Class clazz, Set<Class> set){
-        boolean rootHasIt=false;
-        for (Class currentClass: set){
+    private void checkInnerRelations(Class clazz, Set<Class> set) {
+        boolean rootHasIt = false;
+        for (Class currentClass : set) {
             if (currentClass.equals(clazz)) rootHasIt = true;
         }
         if (!rootHasIt) {
@@ -91,7 +91,7 @@ public class ReactEAV {
         return childNode;
     }
 
-    void generateCondition(ReactConditionData data){
+    void generateCondition(ReactConditionData data) {
         addConditionExecutor(data);
     }
 
@@ -101,26 +101,26 @@ public class ReactEAV {
         return this;
     }
 
-    private void addConditionExecutor(ReactConditionData data){
+    private void addConditionExecutor(ReactConditionData data) {
         Class<ConditionExecutor> executorClass = data.getCondition().getNeededConditionExecutor();
         boolean executorAlreadyExists = false;
-        for (ConditionExecutor existingExecutor:executors){
-            if (existingExecutor.getClass().equals(executorClass)){
+        for (ConditionExecutor existingExecutor : executors) {
+            if (existingExecutor.getClass().equals(executorClass)) {
                 existingExecutor.addReactConditionData(data);
                 executorAlreadyExists = true;
             }
         }
-            if (!executorAlreadyExists){
-                    try {
-                        ConditionExecutor executor = (ConditionExecutor) executorClass.newInstance();
-                        executor.addReactConditionData(data);
-                        executors.add(executor);
-                    } catch (InstantiationException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                }
+        if (!executorAlreadyExists) {
+            try {
+                ConditionExecutor executor = (ConditionExecutor) executorClass.newInstance();
+                executor.addReactConditionData(data);
+                executors.add(executor);
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
             }
+        }
     }
 
     public Object getSingleEntityWithId(int targetId) throws ResultEntityNullException {
@@ -135,7 +135,7 @@ public class ReactEAV {
         } catch (NullPointerException e) {
             throw new ResultEntityNullException();
         }
-            conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
+        conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
         return result;
     }
 
@@ -170,8 +170,8 @@ public class ReactEAV {
     }
 
     private void conditionExecution(ConditionExecutionMoment moment) {
-        if (!executors.isEmpty()){
-            for (ConditionExecutor executor:executors){
+        if (!executors.isEmpty()) {
+            for (ConditionExecutor executor : executors) {
                 executor.executeAll(moment);
             }
         }
@@ -262,7 +262,7 @@ public class ReactEAV {
         int per = 0;
         for (ReacTask task : currentTask.getInnerObjects()) {
             for (Map.Entry<String, EntityReferenceRelationshipsData> outerData : task.getCurrentEntityReferenceRelations().entrySet()) {
-       if (outerData.getValue().getOuterClass().equals(currentTask.getObjectClass()) && null != task.getReferenceId() && task.getReferenceId().equals(outerData.getKey())) {
+                if (outerData.getValue().getOuterClass().equals(currentTask.getObjectClass()) && null != task.getReferenceId() && task.getReferenceId().equals(outerData.getKey())) {
                     EntityReferenceTaskData newReferenceTask = new EntityReferenceTaskData(currentTask.getObjectClass(), task.getObjectClass(), task.getThisClassObjectTypeName(), outerData.getValue().getOuterFieldName(), outerData.getValue().getInnerIdKey(), outerData.getValue().getOuterIdKey(), outerData.getValue().getReferenceAttrId());
                     currentTask.addCurrentEntityReferenceTasks(per++, newReferenceTask);
                 }
@@ -328,6 +328,12 @@ public class ReactEAV {
 
     //Метод создания ссылки в билдере
     String getQueryForEntity(LinkedHashMap<String, EntityVariablesData> currentNodeVariables, ReacTask currentNode, boolean isSearchById, String orderingParameter, boolean ascend) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
-    return builder.getQueryForEntity(currentNodeVariables, currentNode, isSearchById, orderingParameter, ascend);
+        WhereAppendingConditionExecutor afterWhereExecutor = null;
+        for (ConditionExecutor executor: executors){
+            if (executor.getExecutorClass().equals(WhereAppendingConditionExecutor.class)){
+                afterWhereExecutor = (WhereAppendingConditionExecutor) executor;
+            }
+        }
+        return builder.getQueryForEntity(currentNodeVariables, currentNode, isSearchById, orderingParameter, ascend, afterWhereExecutor);
     }
 }
