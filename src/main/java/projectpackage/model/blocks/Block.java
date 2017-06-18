@@ -4,6 +4,7 @@ import lombok.Data;
 import projectpackage.model.rooms.Room;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
 import projectpackage.repository.reacteav.annotations.ReactAttrField;
+import projectpackage.repository.reacteav.annotations.ReactNativeField;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 import java.util.Date;
@@ -11,13 +12,13 @@ import java.util.Date;
 @Data
 @ReactEntity(entityTypeName = "Block")
 public class Block implements ReactEntityWithId, Cloneable {
-    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = "%OBJECT_ID")
+    @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
-    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = "Block_start_date")
+    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = 35)
     private Date blockStartDate;
-    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = "Block_finish_date")
+    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = 36)
     private Date blockFinishDate;
-    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = "Reason")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 37)
     private String reason;
 
     private Room room;

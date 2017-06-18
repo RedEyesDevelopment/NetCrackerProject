@@ -5,6 +5,7 @@ import projectpackage.model.auth.User;
 import projectpackage.model.orders.Order;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
 import projectpackage.repository.reacteav.annotations.ReactAttrField;
+import projectpackage.repository.reacteav.annotations.ReactNativeField;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 import java.util.Date;
@@ -12,13 +13,13 @@ import java.util.Date;
 @Data
 @ReactEntity(entityTypeName = "Notification")
 public class Notification implements ReactEntityWithId, Cloneable {
-    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = "%OBJECT_ID")
+    @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
-    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = "Message")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 22)
     private String message;
-    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = "Send_date")
+    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = 23)
     private Date sendDate;
-    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = "Executed_date")
+    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = 25)
     private Date executedDate;
 
     private User author;

@@ -4,7 +4,7 @@ import lombok.Data;
 import projectpackage.model.orders.Category;
 import projectpackage.repository.reacteav.annotations.ReactChild;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
-import projectpackage.repository.reacteav.annotations.ReactAttrField;
+import projectpackage.repository.reacteav.annotations.ReactNativeField;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 /**
@@ -14,9 +14,9 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 @ReactEntity(entityTypeName = "Complimentary")
 @ReactChild(outerEntityClass = Category.class, outerFieldName = "complimentaries", outerFieldKey = "objectId", innerFieldKey = "categoryId")
 public class Complimentary implements ReactEntityWithId, Cloneable {
-    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = "%OBJECT_ID")
+    @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
-    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = "%PARENT_ID")
+    @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%PARENT_ID")
     private int categoryId;
 
     private Maintenance maintenance;

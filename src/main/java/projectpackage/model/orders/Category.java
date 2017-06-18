@@ -4,6 +4,7 @@ import lombok.Data;
 import projectpackage.model.maintenances.Complimentary;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
 import projectpackage.repository.reacteav.annotations.ReactAttrField;
+import projectpackage.repository.reacteav.annotations.ReactNativeField;
 import projectpackage.repository.reacteav.annotations.ReactReference;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
@@ -17,12 +18,12 @@ import java.util.Set;
 @ReactReference(referenceName = "OrderToCategory", outerEntityClass = Order.class, outerFieldName = "category",
         outerFieldKey = "objectId", innerFieldKey = "objectId")
 public class Category implements ReactEntityWithId, Cloneable {
-    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = "%OBJECT_ID")
+    @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
 
-    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = "Category_title")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 45)
     private String categoryTitle;
-    @ReactAttrField(valueObjectClass = Long.class, databaseAttrtypeIdValue = "Category_price")
+    @ReactAttrField(valueObjectClass = Long.class, databaseAttrtypeIdValue = 46)
     private Long categoryPrice;
 
     private Set<Complimentary> complimentaries;

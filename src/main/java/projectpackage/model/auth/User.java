@@ -6,6 +6,7 @@ import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
 import projectpackage.repository.reacteav.annotations.ReactAttrField;
+import projectpackage.repository.reacteav.annotations.ReactNativeField;
 import projectpackage.repository.reacteav.annotations.ReactReference;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
@@ -22,19 +23,19 @@ import java.util.Set;
         outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "44")
 public class User implements ReactEntityWithId, Cloneable {
 
-    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = "%OBJECT_ID")
+    @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
-    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = "Email")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 15)
     private String email;
-    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = "Password")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 16)
     private String password;
-    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = "First_name")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 17)
     private String firstName;
-    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = "Last_name")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 18)
     private String lastName;
-    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = "Additional_info")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 19)
     private String additionalInfo;
-    @ReactAttrField(valueObjectClass = Boolean.class, databaseAttrtypeIdValue = "Enabled")
+    @ReactAttrField(valueObjectClass = Boolean.class, databaseAttrtypeIdValue = 3)
     private Boolean enabled;
 
     private Role role;

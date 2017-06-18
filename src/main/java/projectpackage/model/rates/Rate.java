@@ -5,6 +5,7 @@ import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.reacteav.annotations.ReactChild;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
 import projectpackage.repository.reacteav.annotations.ReactAttrField;
+import projectpackage.repository.reacteav.annotations.ReactNativeField;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 import java.util.Date;
@@ -14,13 +15,13 @@ import java.util.Set;
 @ReactEntity(entityTypeName = "Rate")
 @ReactChild(outerEntityClass = RoomType.class, outerFieldName = "rates", outerFieldKey = "objectId", innerFieldKey = "roomTypeId")
 public class Rate implements ReactEntityWithId, Cloneable{
-    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = "%OBJECT_ID")
+    @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
-    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = "Rate_from_date")
+    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = 30)
     private Date rateFromDate;
-    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = "Rate_to_date")
+    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = 31)
     private Date rateToDate;
-    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = "%PARENT_ID")
+    @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%PARENT_ID")
     private Integer roomTypeId;
 
     private Set<Price> prices;

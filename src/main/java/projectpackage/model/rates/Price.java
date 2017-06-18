@@ -4,19 +4,20 @@ import lombok.Data;
 import projectpackage.repository.reacteav.annotations.ReactChild;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
 import projectpackage.repository.reacteav.annotations.ReactAttrField;
+import projectpackage.repository.reacteav.annotations.ReactNativeField;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 @Data
 @ReactEntity(entityTypeName = "Price")
 @ReactChild(outerEntityClass = Rate.class, outerFieldName = "prices", outerFieldKey = "objectId", innerFieldKey = "rateId")
 public class Price implements ReactEntityWithId, Cloneable {
-    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = "%OBJECT_ID")
+    @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
-    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = "Number_of_people")
+    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = 32)
     private Integer numberOfPeople;
-    @ReactAttrField(valueObjectClass = Long.class, databaseAttrtypeIdValue = "Rate")
+    @ReactAttrField(valueObjectClass = Long.class, databaseAttrtypeIdValue = 33)
     private Long rate;
-    @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = "%PARENT_ID")
+    @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%PARENT_ID")
     private int rateId;
 
     @Override
