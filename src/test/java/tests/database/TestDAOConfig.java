@@ -42,7 +42,6 @@ import projectpackage.repository.roomsdao.RoomTypeDAOImpl;
 import projectpackage.repository.securitydao.AuthCredentialsDAO;
 import projectpackage.repository.securitydao.AuthCredentialsDAOImpl;
 import projectpackage.service.adminservice.InMemoryNotifService;
-import projectpackage.service.adminservice.InMemoryNotifServiceImpl;
 import projectpackage.service.authservice.*;
 import projectpackage.service.blockservice.BlockService;
 import projectpackage.service.blockservice.BlockServiceImpl;
@@ -412,6 +411,6 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
 
     @Bean
     InMemoryNotifService inMemoryNotifService(){
-        return new InMemoryNotifServiceImpl();
+        return null;
     }
 }

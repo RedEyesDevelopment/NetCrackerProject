@@ -18,7 +18,7 @@ public class ReactQueryBuilder {
         this.config = config;
     }
 
-    String getQueryForEntity(LinkedHashMap<String, EntityVariablesData> currentNodeVariables, ReacTask currentNode, boolean isSearchById, String orderingParameter, boolean ascend, WhereAppendingConditionExecutor executor) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    StringBuilder getQueryForEntity(LinkedHashMap<String, EntityVariablesData> currentNodeVariables, ReacTask currentNode, boolean isSearchById, String orderingParameter, boolean ascend, WhereAppendingConditionExecutor executor) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
         //Вставляем экзекутор, если он есть и проверяем на наличие variable-where-условий
         if (null!=executor) this.executor = executor;
         boolean thisNodeNeedsCustomWhereCondition = false;
@@ -201,6 +201,25 @@ public class ReactQueryBuilder {
             queryAppender.appendOrderBy(attributesNameMap.get(orderingParameter), ascend);
         } else queryAppender.closeQueryBuilder();
 
-        return queryBuilder.toString();
+        return queryBuilder;
+    }
+
+    void appendChildWhereClause(StringBuilder temporary, List<Integer> parentIds){
+        System.out.println("***********************************************");
+        System.out.println("APPENDING to stringBuilder parentIds: "+parentIds);
+        if (null!=parentIds && !parentIds.isEmpty()){
+            temporary.append("\nAND (");
+            boolean firstAppend = true;
+            for (Integer parentId:parentIds){
+                if (firstAppend) {
+                    temporary.append("PARENT_ID=");
+                } else {
+                    temporary.append(" OR PARENT_ID=");
+                }
+                temporary.append(parentId);
+                firstAppend = false;
+            }
+            temporary.append(")");
+        }
     }
 }

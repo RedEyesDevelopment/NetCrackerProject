@@ -29,6 +29,8 @@ public class ReacTask {
     private String referenceId;
     private List<ReacTask> innerObjects;
     private Object entity = null;
+    private List<Integer> idsListForChildFetchesOfInnerEntities;
+    private List<Integer> parentalIdsForChildFetch;
     private LinkedHashMap<String, EntityVariablesData> currentEntityParameters;
     private HashMap<Class, EntityOuterRelationshipsData> currentEntityOuterLinks;
     private HashMap<String, EntityReferenceRelationshipsData> currentEntityReferenceRelations;
@@ -48,6 +50,7 @@ public class ReacTask {
         if (null != referenceId) this.referenceId = referenceId;
         this.referenceIdRelations = new HashMap<>();
         this.currentEntityReferenceTasks = new HashMap<>();
+        this.idsListForChildFetchesOfInnerEntities =new ArrayList<>(50);
 
         //Кастуем класс
         try {
@@ -73,6 +76,31 @@ public class ReacTask {
     void addCurrentEntityReferenceTasks(int thisId, EntityReferenceTaskData currentEntityReferenceRelation) {
         if (null != currentEntityReferenceRelation) {
             this.currentEntityReferenceTasks.put(thisId, currentEntityReferenceRelation);
+        }
+    }
+
+    public List<Integer> getParentalIdsForChildFetch() {
+        return parentalIdsForChildFetch;
+    }
+
+    public void manageParentList() {
+        this.parentalIdsForChildFetch = null;
+        if (null!=parentTask) {
+            for (Class clazz:currentEntityOuterLinks.keySet()){
+                if (clazz.equals(parentTask.getObjectClass())){
+                    this.parentalIdsForChildFetch = parentTask.getIdsListForChildFetchesOfInnerEntities();
+                }
+            }
+        }
+    }
+
+    public List<Integer> getIdsListForChildFetchesOfInnerEntities() {
+        return idsListForChildFetchesOfInnerEntities;
+    }
+
+    public void addIdForChildFetches(Integer newObjectId) {
+        if (null!= newObjectId) {
+            this.idsListForChildFetchesOfInnerEntities.add(newObjectId);
         }
     }
 

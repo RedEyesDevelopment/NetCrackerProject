@@ -141,17 +141,17 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     }
 
     //Получить одного юзера с вставленным телефоном и ролью
-//    @Test
-//    public void queryTestOfSingeUserFetchPhonesFetchRoles(){
-//        User user = null;
-//        try {
-//            user = (User) manager.createReactEAV(User.class).fetchInnerEntityCollection(Phone.class).closeFetch().fetchInnerEntityCollection(Role.class).closeFetch().getSingleEntityWithId(901);
-//        } catch (ResultEntityNullException e) {
-//        }
-//        assertNotNull(user);
-//        System.out.println(user.toString());
-//        System.out.println(SEPARATOR);
-//    }
+    @Test
+    public void queryTestOfSingeUserFetchPhonesFetchRoles(){
+        User user = null;
+        try {
+            user = (User) manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches().fetchRootReference(Role.class, "RoleToUser").closeAllFetches().getSingleEntityWithId(901);
+        } catch (ResultEntityNullException e) {
+        }
+        assertNotNull(user);
+        System.out.println(user.toString());
+        System.out.println(SEPARATOR);
+    }
 //
 //    //Получить список юзеров со вставленными телефонами
 //    @Test

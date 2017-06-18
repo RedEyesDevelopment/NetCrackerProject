@@ -12,6 +12,7 @@ import projectpackage.repository.reacteav.conditions.ReactCondition;
 import projectpackage.repository.reacteav.conditions.ReactConditionData;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.reacteav.exceptions.WrongFetchException;
+import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 import projectpackage.repository.reacteav.querying.ReactQueryTaskHolder;
 import projectpackage.repository.reacteav.relationsdata.EntityReferenceRelationshipsData;
 import projectpackage.repository.reacteav.relationsdata.EntityReferenceTaskData;
@@ -194,7 +195,7 @@ public class ReactEAV {
     }
 
     private ReactQueryTaskHolder prepareReacTask(ReacTask currentNode) {
-        String query = null;
+        StringBuilder query = null;
         Map<String, Object> sqlParameterSource = new HashMap<>();
         if (currentNode.isForSingleObject()) {
             try {
@@ -271,11 +272,15 @@ public class ReactEAV {
     }
 
     private List launchProcess() {
+        Iterator<ReactQueryTaskHolder> holderIterator = reactQueryTaskHolders.listIterator();
         for (ReactQueryTaskHolder holder : reactQueryTaskHolders) {
+            System.out.println("***********************************************************************");
+            System.out.println("QUERYING "+holder.getNode().getObjectClass());
+            holder.getNode().manageParentList();
             if (holder.getNode().isForSingleObject()) {
                 Object result = null;
                 try {
-                    result = namedParameterJdbcTemplate.queryForObject(holder.getQuery(), holder.getSource(), new ReactEntityRowMapper(holder.getNode(), config.getDateAppender()));
+                    result = namedParameterJdbcTemplate.queryForObject(holder.getQuery().toString(), holder.getSource(), new ReactEntityRowMapper(holder.getNode(), config.getDateAppender()));
                     holder.getNode().getResultList().add(result);
                 } catch (EmptyResultDataAccessException empty) {
                     StringBuilder sb = new StringBuilder();
@@ -292,17 +297,24 @@ public class ReactEAV {
                 }
             } else {
                 List result;
-                boolean cloned = false;
-                for (ReactQueryTaskHolder currentHolder : reactQueryTaskHolders) {
-                    if (!currentHolder.getNode().getResultList().isEmpty() && holder.getNode().getObjectClass().equals(currentHolder.getNode().getObjectClass())) {
-                        result = new ArrayList(currentHolder.getNode().getResultList());
-                        holder.getNode().setResultList(result);
-                    }
-                }
-                if (!cloned) {
+//                boolean cloned = false;
+//                for (ReactQueryTaskHolder currentHolder : reactQueryTaskHolders) {
+//                    if (!currentHolder.getNode().getResultList().isEmpty() && holder.getNode().getObjectClass().equals(currentHolder.getNode().getObjectClass())) {
+//                        result = new ArrayList(currentHolder.getNode().getResultList());
+//                        holder.getNode().setResultList(result);
+//                    }
+//                }
+//                if (!cloned) {
                     try {
-                        result = (List) namedParameterJdbcTemplate.query(holder.getQuery(), holder.getSource(), new RowMapperResultSetExtractor(new ReactEntityRowMapper(holder.getNode(), config.getDateAppender())));
+                        if (null!=holder.getNode().getParentalIdsForChildFetch()){
+                            builder.appendChildWhereClause(holder.getQuery(), holder.getNode().getParentalIdsForChildFetch());
+                        }
+                        result = (List) namedParameterJdbcTemplate.query(holder.getQuery().toString(), holder.getSource(), new RowMapperResultSetExtractor(new ReactEntityRowMapper(holder.getNode(), config.getDateAppender())));
                         holder.getNode().setResultList(result);
+                        for (Object resultEntity: result){
+                            ReactEntityWithId entity = (ReactEntityWithId) resultEntity;
+                            holder.getNode().addIdForChildFetches(entity.getObjectId());
+                        }
                     } catch (EmptyResultDataAccessException empty) {
                         StringBuilder sb = new StringBuilder();
                         sb.append("ReactEAV failed to get object collection from database, DB returned null. This may be because there is no entity objects in database.");
@@ -317,7 +329,7 @@ public class ReactEAV {
                     }
                 }
             }
-        }
+//        }
 
         if (reactQueryTaskHolders.size() == 1) {
             return reactQueryTaskHolders.get(0).getNode().getResultList();
@@ -327,7 +339,7 @@ public class ReactEAV {
     }
 
     //Метод создания ссылки в билдере
-    String getQueryForEntity(LinkedHashMap<String, EntityVariablesData> currentNodeVariables, ReacTask currentNode, boolean isSearchById, String orderingParameter, boolean ascend) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
+    private StringBuilder getQueryForEntity(LinkedHashMap<String, EntityVariablesData> currentNodeVariables, ReacTask currentNode, boolean isSearchById, String orderingParameter, boolean ascend) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
         WhereAppendingConditionExecutor afterWhereExecutor = null;
         for (ConditionExecutor executor: executors){
             if (executor.getExecutorClass().equals(WhereAppendingConditionExecutor.class)){
