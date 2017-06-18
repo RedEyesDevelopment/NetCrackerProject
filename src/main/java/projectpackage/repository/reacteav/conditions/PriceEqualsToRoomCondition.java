@@ -4,7 +4,7 @@ import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
-import projectpackage.repository.reacteav.TaskToTaskConditionExecutor;
+import projectpackage.repository.reacteav.AfterQueryConditionExecutor;
 
 import java.util.*;
 
@@ -16,7 +16,7 @@ public class PriceEqualsToRoomCondition implements ReactCondition {
 
     @Override
     public Class getNeededConditionExecutor() {
-        return TaskToTaskConditionExecutor.class;
+        return AfterQueryConditionExecutor.class;
     }
 
     @Override
