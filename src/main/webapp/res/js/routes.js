@@ -100,7 +100,8 @@ app.controller('login', ['$scope', '$http', '$location' , 'sharedData', '$docume
     }
 }]);
 
-app.controller('search-available', ['$scope', '$http', '$location' , 'sharedData', '$document', function ($scope, $http, $location, sharedData, $document) {
+app.controller('search-available', ['$scope', '$rootScope', '$http', '$location' , 'sharedData', '$document', function
+        ($scope, $rootScope, $http, $location, sharedData, $document) {
 
     $scope.submit = function (eve) {
 
@@ -130,11 +131,19 @@ app.controller('search-available', ['$scope', '$http', '$location' , 'sharedData
         });
     }
 
+    $scope.bookViewChange = function() {
+        $rootScope.doesNeedToShowRoomType = false;
+        $location.path('/');
+    }
+
 }]);
 
-app.controller('roomTypeController', ['$scope', '$http', 'sharedData', '$location' , function ($scope, $http, sharedData, $location) {
+app.controller('roomTypeController', ['$scope', '$rootScope', '$http', 'sharedData', '$location' , function
+    ($scope, $rootScope, $http, sharedData, $location) {
 
     var book = sharedData.getData();
+
+    $rootScope.doesNeedToShowRoomType = true;
 
     $scope.list = book.data;
     $scope.auth = window.auth;
@@ -164,28 +173,32 @@ app.controller('finishOrder', ['$scope', '$http', 'sharedData', '$location' , fu
     $scope.finishOrder = sharedData.getData().data;
     $scope.auth = window.auth;
 
-    // $scope.bookApartment = function (id) {
-    //     console.log("THIS IS IDDDDDDDDDDDDDDDDDDDDDDDD: " + id);
-    //     $http({
-    //         url: 'http://localhost:8080/orders/book/' + id,
-    //         method: 'GET',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         }
-    //     }).then(function(data) {
-    //         sharedData.setData(data);
-    //         $location.path('/order');
-    //         console.log(data);
-    //     }, function(response) {
-    //         console.log(response);
-    //     });
-    // }
+    $scope.book = function() {
+        // $http({
+        //     url: 'http://localhost:8080/orders/book/' + id,
+        //     method: 'GET',
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     }
+        // }).then(function(data) {
+        //     sharedData.setData(data);
+        //     $location.path('/order');
+        //     console.log(data);
+        // }, function(response) {
+        //     console.log(response);
+        // });
+    }
+
+    $scope.cancel = function() {
+        $scope.finishOrder = false;
+        $location.path('/');
+    }
 
 }]);
 
 app.controller('registration', ['$scope', '$http', '$location' , 'sharedData', function ($scope, $http, $location, sharedData) {
 
-    $scope.submit = function (eve) {
+    $scope.submit = function(eve) {
 
         console.log("Why you dont display?");
         // console.log(document.getElementById("logincform").innerHTML);
@@ -254,8 +267,6 @@ app.controller('registration', ['$scope', '$http', '$location' , 'sharedData', f
             $('.errorMessage').text('Passwords not the same!').show(300);
             $('.windowRegistration').height(420);
         }
-
-
     }
 }]);
 

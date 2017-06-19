@@ -93,19 +93,19 @@
                             <div class="row">
                                 <div class="form-group col-sm-6">
                                     <label for="arrivalDate">Arrival</label>
-                                    <input type="date" class="form-control"   ng-model='book.from' ng-required="true">
+                                    <input type="date" class="form-control"   ng-model='book.from' ng-change="bookViewChange()" ng-required="true">
                                     
                                 </div>
                                 <div class="form-group col-sm-6">
                                     <label for="departureDate">Departure</label>
-                                    <input type="date" class="form-control"  ng-model='book.till' ng-required="true">
+                                    <input type="date" class="form-control"  ng-model='book.till' ng-change="bookViewChange()" ng-required="true">
                                     
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="form-group col-sm-6">
                                     <label for="adultsNumber">Adults</label>
-                                    <select class="form-control" ng-model='book.adults' ng-required="true" value='1'>
+                                    <select class="form-control" ng-model='book.adults' ng-change="bookViewChange()" ng-required="true" value='1'>
                                         <option>1</option>
                                         <option>2</option>
                                         <option>3</option>
@@ -114,7 +114,7 @@
 
                                 <div class="form-group col-sm-6">
                                     <label for="adultsNumber">Type of meals</label>
-                                    <select class="form-control" ng-model='book.type' ng-required="true" value='Room Only'>
+                                    <select class="form-control" ng-model='book.type' ng-required="true" ng-change="bookViewChange()" value='Room Only'>
                                         <option value='0' >Room Only</option>
                                         <option value='450'>Bed and Breakfast</option>
                                         <option value='451'> Half-board</option>
