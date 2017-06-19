@@ -1,34 +1,38 @@
-<div>
-<p>
-	Booked orders
-	<p>
-		Roomtype: {{ finishOrder.roomTypeName }}
+<div class="finishOrder" ng-if="finishOrder">
+    <div class="my-border col-sm-offset-3 col-sm-6">
+    <h2 class="text-center">Booked orders</h2>
+	<p class="order-confirm">
+		<b>Roomtype:</b> {{ finishOrder.roomTypeName }}
 	</p>
-	<p>
+	<p class="order-confirm">
 		{{ finishOrder.roomTypeDescription }}
 	</p>
-	<p>
-		Ordered for: {{ finishOrder.client }}
+	<p class="order-confirm">
+		<b>Ordered for:</b> {{ finishOrder.client }}
 	</p>
-	<p>
+	<p class="order-confirm">
 		Room ordered for {{ finishOrder.livingPersons }} people.
 	</p>
-	<p>
-		From {{ finishOrder.arrival }} to {{ finishOrder.departure }}
+	<p class="order-confirm">
+        <b>Date:</b> From {{ finishOrder.arrival | date:'dd-MMMM-yyyy' }} to {{ finishOrder.departure | date:'dd-MMMM-yyyy' }}
 	</p>
-	<p>
-		Category: {{ finishOrder.categoryName }}
+	<p class="order-confirm">
+		<b>Category:</b> {{ finishOrder.categoryName }}
 	</p>
-	<p>
-		Categody cost: {{ finishOrder.categoryCost }}
+	<p class="order-confirm">
+		<b>Categody cost:</b> {{ finishOrder.categoryCost }}
 	</p>
-	<p>
-		Living cost: {{ finishOrder.livingCost }}
+	<p class="order-confirm">
+		<b>Living cost:</b> {{ finishOrder.livingCost }}
 	</p>
-	<p>
-		Sum: {{ finishOrder.categoryCost + finishOrder.livingCost }}
+	<p class="order-confirm">
+		<b>Total cost:</b> {{ finishOrder.categoryCost + finishOrder.livingCost }}
 	</p>
-</p>
-	<button type="submit" id="acceptButton" class="btn btn-success">Accept</button>
-	<button type="submit" id="declineButton" class="btn btn-danger">Decline</button>
+    <div class="text-center">
+        <div class="btn-group">
+            <button type="submit" id="acceptButton" class="btn btn-success" ng-click="book()">Accept</button>
+            <button type="submit" id="declineButton" class="btn btn-danger" ng-click="cancel()">Decline</button>
+        </div>
+    </div>
+    </div>
 </div>
