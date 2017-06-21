@@ -21,22 +21,43 @@
     </div>
 
     <div class="edit" ng-if="editing">
-        <p class="back" ng-click="back()"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back to rooms</p>
-        <form name="formEditRoom" ng-submit="editRoom($event)">
-            <input type="number" ng-required="true" ng-model="roomNumber">
-            <select ng-required="true" ng-model="numberOfResidents">
-				<option value="1">1 person</option>
-				<option value="2">2 persons</option>
-				<option value="3">3 persons</option>
-            </select>
-            <select ng-required="true">
-				<option value="111">RoomType111</option>
-				<option value="222">RoomType222</option>
-				<option value="333">RoomType333</option>
-				<option value="444">RoomType444</option>
-            </select>
-            <button type="submit" ng-disabled="formEditRoom.$invalid">Edit</button>
-        </form>
+        <div ng-click="back()"><button type="button" class="btn btn-info btn-sm back"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back to rooms</button></div>
+        <div class="col-sm-offset-3 col-sm-5 edit-border">
+            <form class="form-horizontal" name="formEditRoom" ng-submit="editRoom($event)">
+                <div class="form-group">
+                    <label for="roomNmbr" class="col-sm-6 control-label">Room number</label>
+                    <div class="col-sm-6">
+                        <input type="number" max="9999" id="roomNmbr" ng-required="true" ng-model="roomNumber">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="numberOfRsdnts" class="col-sm-6 control-label">Number of residents</label>
+                    <div class="col-sm-3">
+                        <select id="numberOfRsdnts" class="form-control" ng-required="true" ng-model="numberOfResidents">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="roomTp" class="col-sm-6 control-label">Room type</label>
+                    <div class="col-sm-6">
+                        <select id="roomTp" class="form-control" ng-required="true">
+                            <option value="111">RoomType111</option>
+                            <option value="222">RoomType222</option>
+                            <option value="333">RoomType333</option>
+                            <option value="444">RoomType444</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary" ng-disabled="formEditRoom.$invalid" id="editConfirmLink" data-toggle="modal" data-target="#editConfirmModal">Edit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
         <div class="answer" ng-if="updated">
             Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
         </div>
@@ -57,6 +78,27 @@
                     <div class="text-right">
                         <button type="submit" class="btn btn-danger">Yes</button>
                         <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editConfirmModal" role="dialog">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog modal-sm vertical-align-center">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header popupheader">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Save changes</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="admin-notes">Would you like to save changes?</p>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-success">Yes</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
                     </div>
                 </div>
             </div>

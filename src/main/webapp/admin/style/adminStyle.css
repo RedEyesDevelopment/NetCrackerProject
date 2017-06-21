@@ -67,3 +67,18 @@ aside {
     left: 48%;
     top: 90%;
 }
+
+input[type=number]#roomNmbr {
+    width: 70px;
+}
+
+.back {
+    margin: 75px 0px 15px 0px;
+    border-radius: 15px;
+}
+
+.edit-border {
+    border: 1px solid #dfdfdf;
+    padding: 15px;
+    border-radius: 10px;
+}
