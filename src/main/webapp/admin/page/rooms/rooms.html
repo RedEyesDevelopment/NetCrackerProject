@@ -1,22 +1,48 @@
 <div class="workspace col-sm-10">
-	<h2>Rooms</h2>
-	<button> New room </button>
-	<ul class="pager">
-		<li><a ng-click="previousRooms()"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li>
-		<li><input type="number" min="1" max="999" ng-model="objectsOnPage"></li>
-		<li><a ng-click="nextRooms()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
-	</ul>
-	<div ng-repeat="room in listOfRooms | orderBy : 'roomNumber' | limitTo : objectsOnPage : start">
-		<p> Room number: {{ room.roomNumber }} </p>
-		<p> Room type: {{ room.roomType.roomTypeTitle }} </p>
-		<p> Number of residents: {{ room.numberOfResidents }} </p>
-		<button>Edit</button>
-		<button>Delete</button>
-		<p> ---------------------------- </p>
-	</div>
-	<ul class="pager">
-		<li><a ng-click="previousRooms()"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li>
-		<li><input type="number" min="1" max="999" ng-model="objectsOnPage"></li>
-		<li><a ng-click="nextRooms()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
-	</ul>
+    <div class="col-sm-12">
+        <span class="h2">Rooms<span>
+        <button type="button" class="btn btn-primary btn-md" style="margin-left: 25px;">New room</button>
+    </div>
+    <div class="listOfObjects">
+        <ul class="pager">
+            <li><a ng-click="previousRooms()"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li>
+            <li><input type="number" min="1" max="999" ng-model="objectsOnPage"></li>
+            <li><a ng-click="nextRooms()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
+        </ul>
+        <div ng-repeat="room in listOfRooms | orderBy : 'roomNumber' | limitTo : objectsOnPage : start" class="admin-grid my-border">
+            <p class="admin-notes"> Room number: {{ room.roomNumber }} </p>
+            <p class="top-bottom-border admin-notes"> Room type: {{ room.roomType.roomTypeTitle }} </p>
+            <p class="admin-notes"> Number of residents: {{ room.numberOfResidents }} </p>
+            <div class="text-right">
+                <button type="button" class="btn btn-primary btn-md">Edit</button>
+                <button type="button" class="btn btn-warning btn-md" id="confirmLink" data-toggle="modal" data-target="#confirmModal">Delete</button>
+            </div>
+        </div>
+        <ul class="pager bottom-pager">
+            <li><a ng-click="previousRooms()"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li>
+            <li><input type="number" min="1" max="999" ng-model="objectsOnPage"></li>
+            <li><a ng-click="nextRooms()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmModal" role="dialog">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog modal-sm vertical-align-center">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header popupheader">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Warning</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="admin-notes">You would like to delete a room. Are you sure?</p>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-danger">Yes</button>
+                        <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

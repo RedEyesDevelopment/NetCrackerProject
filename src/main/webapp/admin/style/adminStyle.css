@@ -19,5 +19,47 @@ aside {
 	width: 43px;
 }
 
+.admin-grid {
+    display: inline-block;
+    margin: 20px 30px;
+}
 
+.my-border {
+    border: 1px solid #dfdfdf;
+    padding: 30px;
+    border-radius: 10px;
+}
 
+.top-bottom-border {
+    border-top: 1px solid #dfdfdf;
+    border-bottom: 1px solid #dfdfdf;
+    padding: 10px 0px;
+}
+
+.admin-notes {
+    font-size: 18px;
+}
+
+.vertical-alignment-helper {
+    display: table;
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+}
+.vertical-align-center {
+    display: table-cell;
+    vertical-align: middle;
+    pointer-events: none;
+}
+.modal-content {
+    width: inherit;
+    height: inherit;
+    margin: 0 auto;
+    pointer-events: all;
+}
+
+.bottom-pager {
+    position: fixed;
+    left: 48%;
+    top: 90%;
+}

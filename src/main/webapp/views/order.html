@@ -14,19 +14,19 @@
 		Room ordered for {{ finishOrder.livingPersons }} people.
 	</p>
 	<p class="order-confirm">
-        <b>Date:</b> From {{ finishOrder.arrival | date:'dd-MMMM-yyyy' }} to {{ finishOrder.departure | date:'dd-MMMM-yyyy' }}
+        <b>Date:</b> From {{ finishOrder.arrival | date:'dd MMMM yyyy' }} to {{ finishOrder.departure | date:'dd MMMM yyyy' }}
 	</p>
 	<p class="order-confirm">
 		<b>Category:</b> {{ finishOrder.categoryName }}
 	</p>
 	<p class="order-confirm">
-		<b>Categody cost:</b> {{ finishOrder.categoryCost }}
+		<b>Categody cost:</b> ${{ finishOrder.categoryCost}}
 	</p>
 	<p class="order-confirm">
-		<b>Living cost:</b> {{ finishOrder.livingCost }}
+		<b>Living cost:</b> ${{ finishOrder.livingCost}}
 	</p>
 	<p class="order-confirm">
-		<b>Total cost:</b> {{ finishOrder.categoryCost + finishOrder.livingCost }}
+		<b>Total cost:</b> ${{ finishOrder.categoryCost + finishOrder.livingCost}}
 	</p>
     <div class="text-center">
             <button type="submit" id="acceptButton" class="btn btn-success" ng-click="book()">Accept</button>
