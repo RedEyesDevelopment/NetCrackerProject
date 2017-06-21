@@ -8,8 +8,8 @@ import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.reacteav.ReactEAVManager;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 
 import java.sql.Types;
 import java.util.Map;
@@ -27,18 +27,20 @@ public abstract class AbstractDAO {
     @Autowired
     protected ReactEAVManager manager;
 
-    protected final String insertObject = "INSERT INTO OBJECTS (OBJECT_ID, PARENT_ID, OBJECT_TYPE_ID, NAME, DESCRIPTION) VALUES (?, ?, ?, ?, ?)";
-    protected final String insertAttribute = "INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (?, ?, ?, ?)";
-    protected final String insertObjReference = "INSERT INTO OBJREFERENCE (ATTR_ID, OBJECT_ID, REFERENCE) VALUES (?, ?, ?)";
+    public static final String INSERT_OBJECT = "INSERT INTO OBJECTS (OBJECT_ID, PARENT_ID, " +
+            "OBJECT_TYPE_ID, NAME, DESCRIPTION) VALUES (?, ?, ?, ?, ?)";
 
-    protected final String updateAttribute = "UPDATE ATTRIBUTES SET VALUE = ?, DATE_VALUE = ? WHERE OBJECT_ID = ? AND ATTR_ID = ?";
-    protected final String updateReference = "UPDATE OBJREFERENCE SET REFERENCE = ? WHERE OBJECT_ID = ? AND ATTR_ID = ?";
+    public static final String INSERT_ATTRIBUTE = "INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (?, ?, ?, ?)";
+    public static final String INSERT_OBJ_REFERENCE = "INSERT INTO OBJREFERENCE (ATTR_ID, OBJECT_ID, REFERENCE) VALUES (?, ?, ?)";
 
-    public Integer nextObjectId() {
+    public static final String UPDATE_ATTRIBUTE = "UPDATE ATTRIBUTES SET VALUE = ?, DATE_VALUE = ? WHERE OBJECT_ID = ? AND ATTR_ID = ?";
+    public static final String UPDATE_REFERENCE = "UPDATE OBJREFERENCE SET REFERENCE = ? WHERE OBJECT_ID = ? AND ATTR_ID = ?";
+
+    protected Integer nextObjectId() {
         return jdbcTemplate.queryForObject("SELECT seq_obj_id.nextval FROM DUAL", Integer.class);
     }
 
-    public void deleteSingleEntityById(int id) throws ReferenceBreakException {
+    protected void deleteSingleEntityById(int id) throws ReferenceBreakException {
         SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate)
                 .withFunctionName("DELETE_OBJECT_BY_ID")
                 .declareParameters(

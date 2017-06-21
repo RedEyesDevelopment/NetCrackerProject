@@ -106,28 +106,28 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     public int insertOrder(Order order) throws TransactionException {
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObject, objectId, null, 2, null, null);                      //2 = Order
+            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 2, null, null);                      //2 = Order
 
-            jdbcTemplate.update(insertAttribute, 5, objectId, objectId, null);
-            jdbcTemplate.update(insertAttribute, 8, objectId, null, order.getRegistrationDate());     //Registration_date
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 5, objectId, objectId, null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 8, objectId, null, order.getRegistrationDate());     //Registration_date
             if (order.getIsPaidFor()) {
-                jdbcTemplate.update(insertAttribute, 9, objectId, "true", null);      //Is_paid_for
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 9, objectId, "true", null);      //Is_paid_for
             } else {
-                jdbcTemplate.update(insertAttribute, 9, objectId, "false", null);      //Is_paid_for
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 9, objectId, "false", null);      //Is_paid_for
             }
             if (order.getIsConfirmed()) {
-                jdbcTemplate.update(insertAttribute, 10, objectId, "true", null);
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 10, objectId, "true", null);
             } else {
-                jdbcTemplate.update(insertAttribute, 10, objectId, "false", null);
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 10, objectId, "false", null);
             }
-            jdbcTemplate.update(insertAttribute, 11, objectId, null, order.getLivingStartDate());     //Living_start_date
-            jdbcTemplate.update(insertAttribute, 12, objectId, null, order.getLivingFinishDate());    //Living_finish_date
-            jdbcTemplate.update(insertAttribute, 13, objectId, order.getSum(), null);               //Sum
-            jdbcTemplate.update(insertAttribute, 14, objectId, order.getComment(), null);           //Comment
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 11, objectId, null, order.getLivingStartDate());     //Living_start_date
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 12, objectId, null, order.getLivingFinishDate());    //Living_finish_date
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 13, objectId, order.getSum(), null);               //Sum
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 14, objectId, order.getComment(), null);           //Comment
 
-            jdbcTemplate.update(insertObjReference, 44, objectId, order.getLastModificator().getObjectId());
-            jdbcTemplate.update(insertObjReference, 6, objectId, order.getRoom().getObjectId());     //Booked
-            jdbcTemplate.update(insertObjReference, 7, objectId, order.getClient().getObjectId());     //Belong
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 44, objectId, order.getLastModificator().getObjectId());
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 6, objectId, order.getRoom().getObjectId());     //Booked
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 7, objectId, order.getClient().getObjectId());     //Belong
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -138,42 +138,42 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     public void updateOrder(Order newOrder, Order oldOrder) throws TransactionException {
         try {
             if (oldOrder.getRegistrationDate().getTime() != newOrder.getRegistrationDate().getTime()) {
-                jdbcTemplate.update(updateAttribute, null,  newOrder.getRegistrationDate(), newOrder.getObjectId(), 8);
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, null,  newOrder.getRegistrationDate(), newOrder.getObjectId(), 8);
             }
             if (!oldOrder.getIsPaidFor().equals(newOrder.getIsPaidFor())) {
                 if (newOrder.getIsPaidFor()) {
-                    jdbcTemplate.update(updateAttribute, "true", null, newOrder.getObjectId(), 9);
+                    jdbcTemplate.update(UPDATE_ATTRIBUTE, "true", null, newOrder.getObjectId(), 9);
                 } else {
-                    jdbcTemplate.update(updateAttribute, "false", null, newOrder.getObjectId(), 9);
+                    jdbcTemplate.update(UPDATE_ATTRIBUTE, "false", null, newOrder.getObjectId(), 9);
                 }
             }
             if (!oldOrder.getIsConfirmed().equals(newOrder.getIsConfirmed())) {
                 if (newOrder.getIsConfirmed()) {
-                    jdbcTemplate.update(updateAttribute, "true", null, newOrder.getObjectId(), 10);
+                    jdbcTemplate.update(UPDATE_ATTRIBUTE, "true", null, newOrder.getObjectId(), 10);
                 } else {
-                    jdbcTemplate.update(updateAttribute, "false", null, newOrder.getObjectId(), 10);
+                    jdbcTemplate.update(UPDATE_ATTRIBUTE, "false", null, newOrder.getObjectId(), 10);
                 }
             }
             if (oldOrder.getLivingStartDate().getTime() != newOrder.getLivingStartDate().getTime()) {
-                jdbcTemplate.update(updateAttribute, null, newOrder.getLivingStartDate(), newOrder.getObjectId(), 11);
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newOrder.getLivingStartDate(), newOrder.getObjectId(), 11);
             }
             if (oldOrder.getLivingFinishDate().getTime() != newOrder.getLivingFinishDate().getTime()) {
-                jdbcTemplate.update(updateAttribute, null,  newOrder.getLivingFinishDate(), newOrder.getObjectId(), 12);
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, null,  newOrder.getLivingFinishDate(), newOrder.getObjectId(), 12);
             }
             if (!oldOrder.getSum().equals(newOrder.getSum())) {
-                jdbcTemplate.update(updateAttribute, newOrder.getSum(), null, newOrder.getObjectId(), 13);
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newOrder.getSum(), null, newOrder.getObjectId(), 13);
             }
             if (!oldOrder.getComment().equals(newOrder.getComment())) {
-                jdbcTemplate.update(updateAttribute, newOrder.getComment(), null, newOrder.getObjectId(), 14);
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newOrder.getComment(), null, newOrder.getObjectId(), 14);
             }
             if (oldOrder.getLastModificator().getObjectId() != newOrder.getLastModificator().getObjectId()) {
-                jdbcTemplate.update(updateReference, newOrder.getLastModificator().getObjectId(), newOrder.getObjectId(), 44);
+                jdbcTemplate.update(UPDATE_REFERENCE, newOrder.getLastModificator().getObjectId(), newOrder.getObjectId(), 44);
             }
             if (oldOrder.getRoom().getObjectId() != newOrder.getRoom().getObjectId()) {
-                jdbcTemplate.update(updateReference, newOrder.getRoom().getObjectId(), newOrder.getObjectId(), 6);
+                jdbcTemplate.update(UPDATE_REFERENCE, newOrder.getRoom().getObjectId(), newOrder.getObjectId(), 6);
             }
             if (oldOrder.getClient().getObjectId() != newOrder.getClient().getObjectId()) {
-                jdbcTemplate.update(updateReference, newOrder.getClient().getObjectId(), newOrder.getObjectId(), 7);
+                jdbcTemplate.update(UPDATE_REFERENCE, newOrder.getClient().getObjectId(), newOrder.getObjectId(), 7);
             }
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());

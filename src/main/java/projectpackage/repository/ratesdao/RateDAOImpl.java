@@ -78,11 +78,11 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
 //    public void updateRate(Rate newRate, Rate oldRate) throws TransactionException {
 //        try {
 //            if (oldRate.getRateFromDate().getTime() != newRate.getRateFromDate().getTime()) {
-//                jdbcTemplate.update(updateAttribute, null, newRate.getRateFromDate(),
+//                jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newRate.getRateFromDate(),
 //                        newRate.getObjectId(), 30);
 //            }
 //            if (oldRate.getRateToDate().getTime() != newRate.getRateToDate().getTime()) {
-//                jdbcTemplate.update(updateAttribute, null, newRate.getRateToDate(),
+//                jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newRate.getRateToDate(),
 //                        newRate.getObjectId(), 31);
 //            }
 //        } catch (DataIntegrityViolationException e) {

@@ -71,7 +71,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         Integer objectId = nextObjectId();
         checkEmailForDuplicate(user.getEmail());
         try {
-            jdbcTemplate.update(insertObject, objectId, null, 3, null, null);
+            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 3, null, null);
             insertEmail(objectId, user);
             insertPassword(objectId, user);
             insertFirstName(objectId, user);
@@ -120,68 +120,67 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
 
     private void insertEmail(Integer objectId, User user) {
         if (user.getEmail() != null && !user.getEmail().isEmpty()) {
-            jdbcTemplate.update(insertAttribute, 15, objectId, user.getEmail(), null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 15, objectId, user.getEmail(), null);
         } else {
-            jdbcTemplate.update(insertAttribute, 15, objectId, null, null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 15, objectId, null, null);
         }
     }
 
     private void insertPassword(Integer objectId, User user) {
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-            jdbcTemplate.update(insertAttribute, 16, objectId, user.getPassword(), null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 16, objectId, user.getPassword(), null);
         } else {
-            jdbcTemplate.update(insertAttribute, 16, objectId, null, null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 16, objectId, null, null);
         }
     }
 
     private void insertFirstName(Integer objectId, User user) {
         if (user.getFirstName() != null && !user.getFirstName().isEmpty()) {
-            jdbcTemplate.update(insertAttribute, 17, objectId, user.getFirstName(), null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 17, objectId, user.getFirstName(), null);
         } else {
-            jdbcTemplate.update(insertAttribute, 17, objectId, null, null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 17, objectId, null, null);
         }
     }
 
     private void insertLastName(Integer objectId, User user) {
         if (user.getLastName() != null && !user.getLastName().isEmpty()) {
-            jdbcTemplate.update(insertAttribute, 18, objectId, user.getLastName(), null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 18, objectId, user.getLastName(), null);
         } else {
-            jdbcTemplate.update(insertAttribute, 18, objectId, null, null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 18, objectId, null, null);
         }
     }
 
     private void insertAdditionalInfo(Integer objectId, User user) {
         if (user.getAdditionalInfo() != null && !user.getAdditionalInfo().isEmpty()) {
-            jdbcTemplate.update(insertAttribute, 19, objectId, user.getAdditionalInfo(), null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 19, objectId, user.getAdditionalInfo(), null);
         } else {
-            jdbcTemplate.update(insertAttribute, 19, objectId, null, null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 19, objectId, null, null);
         }
     }
 
     private void insertEnabled(Integer objectId, User user) {
         if (user.getEnabled() != null && user.getEnabled()) {
-            jdbcTemplate.update(insertAttribute, 3, objectId, "true", null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 3, objectId, "true", null);
         } else {
-            jdbcTemplate.update(insertAttribute, 3, objectId, "false", null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 3, objectId, "false", null);
         }
     }
 
     private void insertRole(Integer objectId, User user) {
         if (user.getRole() != null) {
-            jdbcTemplate.update(insertObjReference, 20, objectId, user.getRole().getObjectId());
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 20, objectId, user.getRole().getObjectId());
         } else {
-            jdbcTemplate.update(insertObjReference, 20, objectId, 3);
+            throw new NullReferenceObjectException();
         }
     }
 
     private void updateEmail(User newUser, User oldUser) {
-        if (oldUser.getEmail() != null && newUser.getEmail() != null
-                && !oldUser.getEmail().isEmpty() && !newUser.getEmail().isEmpty()) {
+        if (oldUser.getEmail() != null && newUser.getEmail() != null && !newUser.getEmail().isEmpty()) {
             if (!oldUser.getEmail().equals(newUser.getEmail())) {
-                jdbcTemplate.update(updateAttribute, newUser.getEmail(), null, newUser.getObjectId(), 15);
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newUser.getEmail(), null, newUser.getObjectId(), 15);
             }
-        } else {
-            jdbcTemplate.update(updateAttribute, null, null, newUser.getObjectId(), 15);
+        } else if (oldUser.getEmail() != null || newUser.getEmail() != null) {
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newUser.getObjectId(), 15);
         }
     }
 
@@ -189,10 +188,10 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         if (oldUser.getPassword() != null && newUser.getPassword() != null && !oldUser.getPassword().isEmpty()
                 && !newUser.getPassword().isEmpty()) {
             if (!oldUser.getPassword().equals(newUser.getPassword())) {
-                jdbcTemplate.update(updateAttribute, newUser.getPassword(), null, newUser.getObjectId(), 16);
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newUser.getPassword(), null, newUser.getObjectId(), 16);
             }
-        } else {
-            jdbcTemplate.update(updateAttribute, null, null, newUser.getObjectId(), 16);
+        } else if (oldUser.getEmail() != null || newUser.getEmail() != null) {
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newUser.getObjectId(), 16);
         }
     }
 
@@ -200,10 +199,10 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         if (oldUser.getFirstName() != null && newUser.getLastName() != null && !oldUser.getFirstName().isEmpty()
                 && !newUser.getFirstName().isEmpty()) {
             if (!oldUser.getFirstName().equals(newUser.getFirstName())) {
-                jdbcTemplate.update(updateAttribute, newUser.getFirstName(), null, newUser.getObjectId(), 17);
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newUser.getFirstName(), null, newUser.getObjectId(), 17);
             }
-        } else {
-            jdbcTemplate.update(updateAttribute, null, null, newUser.getObjectId(), 17);
+        } else if (oldUser.getEmail() != null || newUser.getEmail() != null) {
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newUser.getObjectId(), 17);
         }
     }
 
@@ -211,10 +210,10 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         if (oldUser.getLastName() != null && newUser.getLastName() != null && !oldUser.getLastName().isEmpty()
                 && !newUser.getLastName().isEmpty()) {
             if (!oldUser.getLastName().equals(newUser.getLastName())) {
-                jdbcTemplate.update(updateAttribute, newUser.getLastName(), null, newUser.getObjectId(), 18);
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newUser.getLastName(), null, newUser.getObjectId(), 18);
             }
-        } else {
-            jdbcTemplate.update(updateAttribute, null, null, newUser.getObjectId(), 18);
+        } else if (oldUser.getEmail() != null || newUser.getEmail() != null) {
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newUser.getObjectId(), 18);
         }
     }
 
@@ -222,10 +221,10 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         if (oldUser.getAdditionalInfo() != null && newUser.getAdditionalInfo() != null && !oldUser.getAdditionalInfo().isEmpty()
                 && !newUser.getAdditionalInfo().isEmpty()) {
             if (!oldUser.getAdditionalInfo().equals(newUser.getAdditionalInfo())) {
-                jdbcTemplate.update(updateAttribute, newUser.getAdditionalInfo(), null, newUser.getObjectId(), 19);
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newUser.getAdditionalInfo(), null, newUser.getObjectId(), 19);
             }
-        } else {
-            jdbcTemplate.update(updateAttribute, null, null, newUser.getObjectId(), 19);
+        } else if (oldUser.getEmail() != null || newUser.getEmail() != null) {
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newUser.getObjectId(), 19);
         }
     }
 
@@ -233,23 +232,23 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         if (oldUser.getEnabled() != null && newUser.getEnabled() != null) {
             if (!oldUser.getEnabled().equals(newUser.getEnabled())) {
                 if (newUser.getEnabled()) {
-                    jdbcTemplate.update(updateAttribute, "true", null, newUser.getObjectId(), 3);
+                    jdbcTemplate.update(UPDATE_ATTRIBUTE, "true", null, newUser.getObjectId(), 3);
                 } else {
-                    jdbcTemplate.update(updateAttribute, "false", null, newUser.getObjectId(), 3);
+                    jdbcTemplate.update(UPDATE_ATTRIBUTE, "false", null, newUser.getObjectId(), 3);
                 }
             }
         } else {
-            jdbcTemplate.update(updateAttribute, "false", null, newUser.getObjectId(), 3);
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, "false", null, newUser.getObjectId(), 3);
         }
     }
 
     private void updateRole(User newUser, User oldUser) {
         if (oldUser.getRole() != null && newUser.getRole() != null) {
             if (oldUser.getRole().getObjectId() != newUser.getRole().getObjectId()) {
-                jdbcTemplate.update(updateReference, newUser.getRole().getObjectId(), newUser.getObjectId(), 20);
+                jdbcTemplate.update(UPDATE_REFERENCE, newUser.getRole().getObjectId(), newUser.getObjectId(), 20);
             }
         } else {
-            jdbcTemplate.update(updateReference, 3, newUser.getObjectId(), 20);
+            throw new NullReferenceObjectException();
         }
     }
 }

@@ -7,10 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.rates.Price;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -50,9 +47,9 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
 //    public int insertPrice(Price price) throws TransactionException {
 //        Integer objectId = nextObjectId();
 //        try {
-//            jdbcTemplate.update(insertObject, objectId, price.getRateId(), 7, null, null);
-//            jdbcTemplate.update(insertAttribute, 32, objectId, price.getNumberOfPeople(), null);
-//            jdbcTemplate.update(insertAttribute, 33, objectId, price.getRate(), null);
+//            jdbcTemplate.update(INSERT_OBJECT, objectId, price.getRateId(), 7, null, null);
+//            jdbcTemplate.update(INSERT_ATTRIBUTE, 32, objectId, price.getNumberOfPeople(), null);
+//            jdbcTemplate.update(INSERT_ATTRIBUTE, 33, objectId, price.getRate(), null);
 //        } catch (DataIntegrityViolationException e) {
 //            throw new TransactionException(this, e.getMessage());
 //        }
@@ -63,11 +60,11 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
     public void updatePrice(Price newPrice, Price oldPrice) throws TransactionException {
         try {
             if (!oldPrice.getNumberOfPeople().equals(newPrice.getNumberOfPeople())) {
-                jdbcTemplate.update(updateAttribute, newPrice.getNumberOfPeople(), null,
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newPrice.getNumberOfPeople(), null,
                         newPrice.getObjectId(), 32);
             }
             if (!oldPrice.getRate().equals(newPrice.getRate())) {
-                jdbcTemplate.update(updateAttribute, newPrice.getRate(), null,
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newPrice.getRate(), null,
                         newPrice.getObjectId(), 33);
             }
         } catch (DataIntegrityViolationException e) {
