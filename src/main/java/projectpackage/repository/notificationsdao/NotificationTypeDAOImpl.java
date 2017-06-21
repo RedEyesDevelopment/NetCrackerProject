@@ -55,11 +55,11 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     public int insertNotificationType(NotificationType notificationType) throws TransactionException {
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObject, objectId, null, 11, null, null);
+            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 11, null, null);
 
-            jdbcTemplate.update(insertAttribute, 40, objectId, notificationType.getNotificationTypeTitle(), null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 40, objectId, notificationType.getNotificationTypeTitle(), null);
 
-            jdbcTemplate.update(insertObjReference, 41, objectId, notificationType.getOrientedRole().getObjectId());
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 41, objectId, notificationType.getOrientedRole().getObjectId());
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -70,11 +70,11 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     public void updateNotificationType(NotificationType newNotificationType, NotificationType oldNotificationType) throws TransactionException {
         try {
             if (!oldNotificationType.getNotificationTypeTitle().equals(newNotificationType.getNotificationTypeTitle())) {
-                jdbcTemplate.update(updateAttribute, newNotificationType.getNotificationTypeTitle(), null,
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newNotificationType.getNotificationTypeTitle(), null,
                         newNotificationType.getObjectId(), 40);
             }
             if (oldNotificationType.getOrientedRole().getObjectId() != newNotificationType.getOrientedRole().getObjectId()) {
-                jdbcTemplate.update(updateReference, newNotificationType.getOrientedRole().getObjectId(),
+                jdbcTemplate.update(UPDATE_REFERENCE, newNotificationType.getOrientedRole().getObjectId(),
                         newNotificationType.getObjectId(), 41);
             }
         } catch (DataIntegrityViolationException e) {

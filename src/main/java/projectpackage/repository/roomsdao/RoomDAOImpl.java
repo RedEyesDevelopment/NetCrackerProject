@@ -118,12 +118,12 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     public int insertRoom(Room room) throws TransactionException {
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObject, objectId, null, 1, null, null);
+            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 1, null, null);
 
-            jdbcTemplate.update(insertAttribute, 1, objectId, room.getRoomNumber(), null);
-            jdbcTemplate.update(insertAttribute, 2, objectId, room.getNumberOfResidents(), null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 1, objectId, room.getRoomNumber(), null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 2, objectId, room.getNumberOfResidents(), null);
 
-            jdbcTemplate.update(insertObjReference, 4, objectId, room.getRoomType().getObjectId());
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 4, objectId, room.getRoomType().getObjectId());
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -134,13 +134,13 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     public void updateRoom(Room newRoom, Room oldRoom) throws TransactionException {
         try {
             if (!oldRoom.getRoomNumber().equals(newRoom.getRoomNumber())) {
-                jdbcTemplate.update(updateAttribute, newRoom.getRoomNumber(), null, newRoom.getObjectId(), 1);
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newRoom.getRoomNumber(), null, newRoom.getObjectId(), 1);
             }
             if (!oldRoom.getNumberOfResidents().equals(newRoom.getNumberOfResidents())) {
-                jdbcTemplate.update(updateAttribute, newRoom.getNumberOfResidents(), null, newRoom.getObjectId(), 2);
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newRoom.getNumberOfResidents(), null, newRoom.getObjectId(), 2);
             }
             if (oldRoom.getRoomType().getObjectId() != newRoom.getRoomType().getObjectId()) {
-                jdbcTemplate.update(updateReference, newRoom.getRoomType().getObjectId(), newRoom.getObjectId(), 4);
+                jdbcTemplate.update(UPDATE_REFERENCE, newRoom.getRoomType().getObjectId(), newRoom.getObjectId(), 4);
             }
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());

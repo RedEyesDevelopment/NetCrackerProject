@@ -48,7 +48,7 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
         if (phone == null) return null;
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObject, objectId, phone.getUserId(), 9, null, null);
+            jdbcTemplate.update(INSERT_OBJECT, objectId, phone.getUserId(), 9, null, null);
             insertPhoneNumber(objectId, phone);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
@@ -82,20 +82,19 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
 
     private void insertPhoneNumber(Integer objectId, Phone phone) {
         if (phone.getPhoneNumber() == null || phone.getPhoneNumber().isEmpty()) {
-            jdbcTemplate.update(insertAttribute, 38, objectId, null, null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 38, objectId, null, null);
         } else {
-            jdbcTemplate.update(insertAttribute, 38, objectId, phone.getPhoneNumber(), null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 38, objectId, phone.getPhoneNumber(), null);
         }
     }
 
     private void updatePhoneNumber(Phone newPhone, Phone oldPhone) {
-        if (oldPhone != null && newPhone != null && !oldPhone.getPhoneNumber().isEmpty()
-                && !newPhone.getPhoneNumber().isEmpty()) {
+        if (oldPhone != null && newPhone != null && !newPhone.getPhoneNumber().isEmpty()) {
             if (!oldPhone.getPhoneNumber().equals(newPhone.getPhoneNumber())) {
-                jdbcTemplate.update(updateAttribute, newPhone.getPhoneNumber(), null, newPhone.getObjectId(), 38);
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newPhone.getPhoneNumber(), null, newPhone.getObjectId(), 38);
             }
-        } else {
-            jdbcTemplate.update(updateAttribute, null, null, newPhone.getObjectId(), 38);
+        } else if (oldPhone.getPhoneNumber() != null || newPhone.getPhoneNumber() != null) {
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newPhone.getObjectId(), 38);
         }
     }
 }

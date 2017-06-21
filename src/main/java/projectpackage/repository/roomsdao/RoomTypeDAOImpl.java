@@ -94,10 +94,10 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
     public int insertRoomType(RoomType roomType) throws TransactionException {
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObject, objectId, null, 5, null, null);
+            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 5, null, null);
 
-            jdbcTemplate.update(insertAttribute, 28, objectId, roomType.getRoomTypeTitle(), null);
-            jdbcTemplate.update(insertAttribute, 29, objectId, roomType.getContent(), null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 28, objectId, roomType.getRoomTypeTitle(), null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 29, objectId, roomType.getContent(), null);
 
             createRateForNewRoomType(objectId);
         } catch (DataIntegrityViolationException e) {
@@ -140,10 +140,10 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
     public void updateRoomType(RoomType newRoomType, RoomType oldRoomType) throws TransactionException {
         try {
             if (!oldRoomType.getRoomTypeTitle().equals(newRoomType.getRoomTypeTitle())) {
-                jdbcTemplate.update(updateAttribute, newRoomType.getRoomTypeTitle(), null, newRoomType.getObjectId(), 28);
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newRoomType.getRoomTypeTitle(), null, newRoomType.getObjectId(), 28);
             }
             if (!oldRoomType.getContent().equals(newRoomType.getContent())) {
-                jdbcTemplate.update(updateAttribute, newRoomType.getContent(), null, newRoomType.getObjectId(), 29);
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newRoomType.getContent(), null, newRoomType.getObjectId(), 29);
             }
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());

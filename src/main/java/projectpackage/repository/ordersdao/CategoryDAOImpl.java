@@ -61,10 +61,10 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
     public int insertCategory(Category category) throws TransactionException {
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObject, objectId, null, 13, null, null);
+            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 13, null, null);
 
-            jdbcTemplate.update(insertAttribute, 45, objectId, category.getCategoryTitle(), null);
-            jdbcTemplate.update(insertAttribute, 46, objectId, category.getCategoryPrice(), null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 45, objectId, category.getCategoryTitle(), null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 46, objectId, category.getCategoryPrice(), null);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -75,10 +75,10 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
     public void updateCategory(Category newCategory, Category oldCategory) throws TransactionException {
         try {
             if (!oldCategory.getCategoryTitle().equals(newCategory.getCategoryTitle())) {
-                jdbcTemplate.update(updateAttribute, newCategory.getCategoryTitle(), null, newCategory.getObjectId(), 45);
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newCategory.getCategoryTitle(), null, newCategory.getObjectId(), 45);
             }
             if (!oldCategory.getCategoryPrice().equals(newCategory.getCategoryPrice())) {
-                jdbcTemplate.update(updateAttribute, newCategory.getCategoryPrice(), null, newCategory.getObjectId(), 46);
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newCategory.getCategoryPrice(), null, newCategory.getObjectId(), 46);
             }
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());

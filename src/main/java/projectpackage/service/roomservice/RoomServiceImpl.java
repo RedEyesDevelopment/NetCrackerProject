@@ -139,6 +139,10 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public IUDAnswer insertRoom(Room room) {
+        if (room == null) return new IUDAnswer(false, "transactionInterrupt");
+        if (room.getNumberOfResidents() > 3 || room.getNumberOfResidents() < 1) {
+            return new IUDAnswer(false, "transactionInterrupt");
+        }
         Integer roomId = null;
         try {
             roomId = roomDAO.insertRoom(room);
@@ -152,6 +156,10 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public IUDAnswer updateRoom(int id, Room newRoom) {
+        if (newRoom == null) return new IUDAnswer(false, "transactionInterrupt");
+        if (newRoom.getNumberOfResidents() > 3 || newRoom.getNumberOfResidents() < 1) {
+            return new IUDAnswer(false, "transactionInterrupt");
+        }
         try {
             newRoom.setObjectId(id);
             Room oldRoom = roomDAO.getRoom(id);
