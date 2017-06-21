@@ -36,7 +36,17 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
     $routeProvider
         .when('/order', {
             templateUrl: './order.html',
-            controller: 'finishOrder'
+            controller: 'finishOrderController'
+        });
+}]);
+
+app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
+    $locationProvider.hashPrefix('');
+
+    $routeProvider
+        .when('/fineBooked', {
+            templateUrl: './fineBooked.html',
+            controller: 'fineBookedController'
         });
 }]);
 
@@ -168,29 +178,53 @@ app.controller('roomTypeController', ['$scope', '$rootScope', '$http', 'sharedDa
 
 }]);
 
-app.controller('finishOrder', ['$scope', '$http', 'sharedData', '$location' , function ($scope, $http, sharedData, $location) {
+app.controller('finishOrderController', ['$scope', '$rootScope', '$http', 'sharedData', '$location' , function ($scope, $rootScope, $http, sharedData, $location) {
 
     $scope.finishOrder = sharedData.getData().data;
     $scope.auth = window.auth;
+    $rootScope.doesNeedToShowFinishOrder = true;
 
     $scope.book = function() {
-        // $http({
-        //     url: 'http://localhost:8080/orders/book/' + id,
-        //     method: 'GET',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     }
-        // }).then(function(data) {
-        //     sharedData.setData(data);
-        //     $location.path('/order');
-        //     console.log(data);
-        // }, function(response) {
-        //     console.log(response);
-        // });
+        $http({
+            url: 'http://localhost:8080/orders/accept',
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function(data) {
+            sharedData.setData(data);
+            $location.path('/fineBooked');
+            console.log(data);
+        }, function(response) {
+            console.log("We are in response");
+        });
     }
 
     $scope.cancel = function() {
-        $scope.finishOrder = false;
+        $http({
+            url: 'http://localhost:8080/orders/cancel',
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function(data) {
+            $rootScope.doesNeedToShowFinishOrder = false;
+            $location.path('/rooms');
+            console.log(data);
+        }, function(response) {
+            console.log("We are in response");
+        });
+    }
+
+}]);
+
+app.controller('fineBookedController', ['$scope', '$rootScope', '$http', 'sharedData', '$location' , function ($scope, $rootScope, $http, sharedData, $location) {
+
+    $scope.finishOrderController = sharedData.getData().data;
+    $scope.auth = window.auth;
+
+    $scope.thanks = function() {
+        $rootScope.doesNeedToShowFinishOrder = false;
         $location.path('/');
     }
 

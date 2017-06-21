@@ -1,5 +1,6 @@
 .bg-image {
   background: url('/res/background.jpg') no-repeat center center;
+  background-size: cover;
   width: 100%;
   top: 0;
   left: 0;
@@ -80,4 +81,13 @@ ul.notifications li {
   margin: 0px auto;
   padding: 20px 0px;
   background-color: #AfAfAf;
+}
+
+.fineBooked {
+  text-align: center;
+  padding: 15px;
+}
+
+.fineBooked p {
+  margin-bottom: 10px;
 }

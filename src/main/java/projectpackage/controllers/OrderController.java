@@ -150,11 +150,10 @@ public class OrderController {
 
     @RequestMapping(value = "/accept", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> acceptOrder(HttpServletRequest request) {
-        User thisUser = (User) request.getSession().getAttribute("USER");
         Order order = (Order) request.getSession().getAttribute("NEWORDER");
         request.getSession().removeAttribute("NEWORDER");
         IUDAnswer answer = orderService.insertOrder(order);
-        HttpStatus status = HttpStatus.CREATED;
+        HttpStatus status = HttpStatus.OK;
         if (!answer.isSuccessful()){
             status = HttpStatus.BAD_REQUEST;
         }

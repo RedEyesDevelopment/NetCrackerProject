@@ -70,7 +70,7 @@
         <div class="container">
             <div class="row row-header">
                 <div class="col-xs-12 col-sm-8">
-                    <h1>NYC Hotel</h1>
+                    <h1>NC Hotel</h1>
                     <p style="padding:40px;"></p>
                     <p>The cultural landmarks of New York City — and the iconic beauty of Central Park — just steps away. It’s all the vibrancy of Manhattan with the quiet comforts of a stately, tree-lined neighborhood. NYC Hotel is accessible to Manhattan’s downtown destinations and uptown landmarks. Feel like staying in? Rooms are available — some with balconies overlooking the NYC skyline and the Hudson River, and all with modern comforts. Plus, we have two acclaimed restaurants and a bar right in the hotel. Options abound.</p>
                 </div>
@@ -114,12 +114,10 @@
 
                                 <div class="form-group col-sm-6">
                                     <label for="adultsNumber">Type of meals</label>
-                                    <select class="form-control" ng-model='book.type' ng-required="true" ng-change="bookViewChange()" value='Room Only'>
-                                        <option value='0' >Room Only</option>
-                                        <option value='450'>Bed and Breakfast</option>
-                                        <option value='451'> Half-board</option>
-                                        <option value='452'>Full-board</option>
-                                        <option value='453'>All-inclusive</option>
+                                    <select class="form-control" ng-model='book.type' ng-required="true" ng-change="bookViewChange()">
+                                        <option value='450'>All-inclusive</option>
+                                        <option value='451'>Bed and Breakfast</option>
+                                        <option value='452'>Half-board</option>
                                     </select>
                                 </div>
                             </div>
