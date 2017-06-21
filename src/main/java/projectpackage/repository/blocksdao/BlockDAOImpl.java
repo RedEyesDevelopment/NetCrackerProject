@@ -51,7 +51,9 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     }
 
     @Override
-    public int insertBlock(Block block) throws TransactionException {
+    public Integer insertBlock(Block block) throws TransactionException {
+        if (block == null) return null;
+
         Integer objectId = nextObjectId();
         try {
             jdbcTemplate.update(insertObject, objectId, null, 8, null, null);
@@ -68,7 +70,7 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     }
 
     @Override
-    public void updateBlock(Block newBlock, Block oldBlock) throws TransactionException {
+    public Integer updateBlock(Block newBlock, Block oldBlock) throws TransactionException {
         try {
             if (oldBlock.getBlockStartDate().getTime() != newBlock.getBlockStartDate().getTime()) {
                 jdbcTemplate.update(updateAttribute, null, newBlock.getBlockStartDate(), newBlock.getObjectId(), 35);
@@ -85,6 +87,7 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
+        return newBlock.getObjectId();
     }
 
     @Override

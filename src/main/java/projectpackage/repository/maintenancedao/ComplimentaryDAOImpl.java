@@ -66,7 +66,8 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     public void updateComplimentary(Complimentary newComplimentary, Complimentary oldComplimentary) throws TransactionException {
         try {
             if (oldComplimentary.getMaintenance().getObjectId() != newComplimentary.getMaintenance().getObjectId()) {
-                jdbcTemplate.update(updateReference, newComplimentary.getMaintenance().getObjectId(), newComplimentary.getObjectId(), 51);
+                jdbcTemplate.update(updateReference, newComplimentary.getMaintenance().getObjectId(),
+                        newComplimentary.getObjectId(), 51);
             }
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());

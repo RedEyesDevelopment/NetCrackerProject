@@ -72,13 +72,13 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         checkEmailForDuplicate(user.getEmail());
         try {
             jdbcTemplate.update(insertObject, objectId, null, 3, null, null);
-            insertEmail(user, objectId);
-            insertPassword(user, objectId);
-            insertFirstName(user, objectId);
-            insertLastName(user, objectId);
-            insertAdditionalInfo(user, objectId);
-            insertEnabled(user, objectId);
-            insertRole(user, objectId);
+            insertEmail(objectId, user);
+            insertPassword(objectId, user);
+            insertFirstName(objectId, user);
+            insertLastName(objectId, user);
+            insertAdditionalInfo(objectId, user);
+            insertEnabled(objectId, user);
+            insertRole(objectId, user);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -92,13 +92,13 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     public Integer updateUser(User newUser, User oldUser) throws TransactionException {
         if (newUser == null || oldUser == null) return null;
         try {
-            updateEmail(oldUser, newUser);
-            updatePassword(oldUser, newUser);
-            updateFirstName(oldUser, newUser);
-            updateLastName(oldUser, newUser);
-            updateAdditionalInfo(oldUser, newUser);
-            updateEnabled(oldUser, newUser);
-            updateRole(oldUser, newUser);
+            updateEmail(newUser, oldUser);
+            updatePassword(newUser, oldUser);
+            updateFirstName(newUser, oldUser);
+            updateLastName(newUser, oldUser);
+            updateAdditionalInfo(newUser, oldUser);
+            updateEnabled(newUser, oldUser);
+            updateRole(newUser, oldUser);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -118,47 +118,47 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         deleteSingleEntityById(id);
     }
 
-    private void insertEmail(User user, Integer objectId) {
-        if (user.getEmail() != null) {
+    private void insertEmail(Integer objectId, User user) {
+        if (user.getEmail() != null && !user.getEmail().isEmpty()) {
             jdbcTemplate.update(insertAttribute, 15, objectId, user.getEmail(), null);
         } else {
             jdbcTemplate.update(insertAttribute, 15, objectId, null, null);
         }
     }
 
-    private void insertPassword(User user, Integer objectId) {
-        if (user.getPassword() != null) {
+    private void insertPassword(Integer objectId, User user) {
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             jdbcTemplate.update(insertAttribute, 16, objectId, user.getPassword(), null);
         } else {
             jdbcTemplate.update(insertAttribute, 16, objectId, null, null);
         }
     }
 
-    private void insertFirstName(User user, Integer objectId) {
-        if (user.getFirstName() != null) {
+    private void insertFirstName(Integer objectId, User user) {
+        if (user.getFirstName() != null && !user.getFirstName().isEmpty()) {
             jdbcTemplate.update(insertAttribute, 17, objectId, user.getFirstName(), null);
         } else {
             jdbcTemplate.update(insertAttribute, 17, objectId, null, null);
         }
     }
 
-    private void insertLastName(User user, Integer objectId) {
-        if (user.getLastName() != null) {
+    private void insertLastName(Integer objectId, User user) {
+        if (user.getLastName() != null && !user.getLastName().isEmpty()) {
             jdbcTemplate.update(insertAttribute, 18, objectId, user.getLastName(), null);
         } else {
             jdbcTemplate.update(insertAttribute, 18, objectId, null, null);
         }
     }
 
-    private void insertAdditionalInfo(User user, Integer objectId) {
-        if (user.getAdditionalInfo() != null) {
+    private void insertAdditionalInfo(Integer objectId, User user) {
+        if (user.getAdditionalInfo() != null && !user.getAdditionalInfo().isEmpty()) {
             jdbcTemplate.update(insertAttribute, 19, objectId, user.getAdditionalInfo(), null);
         } else {
             jdbcTemplate.update(insertAttribute, 19, objectId, null, null);
         }
     }
 
-    private void insertEnabled(User user, Integer objectId) {
+    private void insertEnabled(Integer objectId, User user) {
         if (user.getEnabled() != null && user.getEnabled()) {
             jdbcTemplate.update(insertAttribute, 3, objectId, "true", null);
         } else {
@@ -166,7 +166,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         }
     }
 
-    private void insertRole(User user, Integer objectId) {
+    private void insertRole(Integer objectId, User user) {
         if (user.getRole() != null) {
             jdbcTemplate.update(insertObjReference, 20, objectId, user.getRole().getObjectId());
         } else {
@@ -174,8 +174,9 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         }
     }
 
-    private void updateEmail(User oldUser, User newUser) {
-        if (oldUser.getEmail() != null && newUser.getEmail() != null) {
+    private void updateEmail(User newUser, User oldUser) {
+        if (oldUser.getEmail() != null && newUser.getEmail() != null
+                && !oldUser.getEmail().isEmpty() && !newUser.getEmail().isEmpty()) {
             if (!oldUser.getEmail().equals(newUser.getEmail())) {
                 jdbcTemplate.update(updateAttribute, newUser.getEmail(), null, newUser.getObjectId(), 15);
             }
@@ -184,8 +185,9 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         }
     }
 
-    private void updatePassword(User oldUser, User newUser) {
-        if (oldUser.getPassword() != null && newUser.getPassword() != null) {
+    private void updatePassword(User newUser, User oldUser) {
+        if (oldUser.getPassword() != null && newUser.getPassword() != null && !oldUser.getPassword().isEmpty()
+                && !newUser.getPassword().isEmpty()) {
             if (!oldUser.getPassword().equals(newUser.getPassword())) {
                 jdbcTemplate.update(updateAttribute, newUser.getPassword(), null, newUser.getObjectId(), 16);
             }
@@ -195,7 +197,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     }
 
     private void updateFirstName(User oldUser, User newUser) {
-        if (oldUser.getFirstName() != null && newUser.getLastName() != null) {
+        if (oldUser.getFirstName() != null && newUser.getLastName() != null && !oldUser.getFirstName().isEmpty()
+                && !newUser.getFirstName().isEmpty()) {
             if (!oldUser.getFirstName().equals(newUser.getFirstName())) {
                 jdbcTemplate.update(updateAttribute, newUser.getFirstName(), null, newUser.getObjectId(), 17);
             }
@@ -204,8 +207,9 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         }
     }
 
-    private void updateLastName(User oldUser, User newUser) {
-        if (oldUser.getLastName() != null && newUser.getLastName() != null) {
+    private void updateLastName(User newUser, User oldUser) {
+        if (oldUser.getLastName() != null && newUser.getLastName() != null && !oldUser.getLastName().isEmpty()
+                && !newUser.getLastName().isEmpty()) {
             if (!oldUser.getLastName().equals(newUser.getLastName())) {
                 jdbcTemplate.update(updateAttribute, newUser.getLastName(), null, newUser.getObjectId(), 18);
             }
@@ -214,8 +218,9 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         }
     }
 
-    private void updateAdditionalInfo(User oldUser, User newUser) {
-        if (oldUser.getAdditionalInfo() != null && newUser.getAdditionalInfo() != null) {
+    private void updateAdditionalInfo(User newUser, User oldUser) {
+        if (oldUser.getAdditionalInfo() != null && newUser.getAdditionalInfo() != null && !oldUser.getAdditionalInfo().isEmpty()
+                && !newUser.getAdditionalInfo().isEmpty()) {
             if (!oldUser.getAdditionalInfo().equals(newUser.getAdditionalInfo())) {
                 jdbcTemplate.update(updateAttribute, newUser.getAdditionalInfo(), null, newUser.getObjectId(), 19);
             }
@@ -224,7 +229,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         }
     }
 
-    private void updateEnabled(User oldUser, User newUser) {
+    private void updateEnabled(User newUser, User oldUser) {
         if (oldUser.getEnabled() != null && newUser.getEnabled() != null) {
             if (!oldUser.getEnabled().equals(newUser.getEnabled())) {
                 if (newUser.getEnabled()) {
@@ -238,7 +243,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         }
     }
 
-    private void updateRole(User oldUser, User newUser) {
+    private void updateRole(User newUser, User oldUser) {
         if (oldUser.getRole() != null && newUser.getRole() != null) {
             if (oldUser.getRole().getObjectId() != newUser.getRole().getObjectId()) {
                 jdbcTemplate.update(updateReference, newUser.getRole().getObjectId(), newUser.getObjectId(), 20);
