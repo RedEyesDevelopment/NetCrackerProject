@@ -1,0 +1,23 @@
+.container {
+	
+}
+
+aside {
+	
+}
+
+.workspace {
+	
+}
+
+.workspace ul.pager li a {
+	width: 100px;
+	cursor: pointer;
+}
+
+.workspace ul.pager li input {
+	width: 43px;
+}
+
+
+

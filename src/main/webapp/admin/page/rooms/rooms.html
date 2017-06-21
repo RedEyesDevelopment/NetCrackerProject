@@ -1,0 +1,22 @@
+<div class="workspace col-sm-10">
+	<h2>Rooms</h2>
+	<button> New room </button>
+	<ul class="pager">
+		<li><a ng-click="previousRooms()"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li>
+		<li><input type="number" min="1" max="999" ng-model="objectsOnPage"></li>
+		<li><a ng-click="nextRooms()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
+	</ul>
+	<div ng-repeat="room in listOfRooms | orderBy : 'roomNumber' | limitTo : objectsOnPage : start">
+		<p> Room number: {{ room.roomNumber }} </p>
+		<p> Room type: {{ room.roomType.roomTypeTitle }} </p>
+		<p> Number of residents: {{ room.numberOfResidents }} </p>
+		<button>Edit</button>
+		<button>Delete</button>
+		<p> ---------------------------- </p>
+	</div>
+	<ul class="pager">
+		<li><a ng-click="previousRooms()"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li>
+		<li><input type="number" min="1" max="999" ng-model="objectsOnPage"></li>
+		<li><a ng-click="nextRooms()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
+	</ul>
+</div>
