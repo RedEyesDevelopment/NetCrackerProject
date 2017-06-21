@@ -1,9 +1,9 @@
 <div class="workspace col-sm-10">
     <div class="col-sm-12">
-        <span class="h2">Rooms<span>
-        <button type="button" class="btn btn-primary btn-md" style="margin-left: 25px;">New room</button>
+        <span class="h2">Rooms</span>
+        <button type="button" class="btn btn-primary btn-md newEntity">New room</button>
     </div>
-    <div class="listOfObjects">
+    <div class="listOfObjects" ng-if="!editing">
         <ul class="pager">
             <li><a ng-click="previousRooms()"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li>
             <li><input type="number" min="1" max="999" ng-model="objectsOnPage"></li>
@@ -14,15 +14,32 @@
             <p class="top-bottom-border admin-notes"> Room type: {{ room.roomType.roomTypeTitle }} </p>
             <p class="admin-notes"> Number of residents: {{ room.numberOfResidents }} </p>
             <div class="text-right">
-                <button type="button" class="btn btn-primary btn-md">Edit</button>
+                <button type="button" class="btn btn-primary btn-md" ng-click="attemptToEditRoom(room.objectId)">Edit</button>
                 <button type="button" class="btn btn-warning btn-md" id="confirmLink" data-toggle="modal" data-target="#confirmModal">Delete</button>
             </div>
         </div>
-        <ul class="pager bottom-pager">
-            <li><a ng-click="previousRooms()"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li>
-            <li><input type="number" min="1" max="999" ng-model="objectsOnPage"></li>
-            <li><a ng-click="nextRooms()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
-        </ul>
+    </div>
+
+    <div class="edit" ng-if="editing">
+        <p class="back" ng-click="back()"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back to rooms</p>
+        <form name="formEditRoom" ng-submit="editRoom($event)">
+            <input type="number" ng-required="true" ng-model="roomNumber">
+            <select ng-required="true" ng-model="numberOfResidents">
+				<option value="1">1 person</option>
+				<option value="2">2 persons</option>
+				<option value="3">3 persons</option>
+            </select>
+            <select ng-required="true">
+				<option value="111">RoomType111</option>
+				<option value="222">RoomType222</option>
+				<option value="333">RoomType333</option>
+				<option value="444">RoomType444</option>
+            </select>
+            <button type="submit" ng-disabled="formEditRoom.$invalid">Edit</button>
+        </form>
+        <div class="answer" ng-if="updated">
+            Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
+        </div>
     </div>
 </div>
 

@@ -10,6 +10,10 @@ aside {
 	
 }
 
+.workspace button.newEntity {
+	margin-left: 25px;
+}
+
 .workspace ul.pager li a {
 	width: 100px;
 	cursor: pointer;

@@ -60,9 +60,9 @@ adminDesktop.config(['$routeProvider', '$locationProvider', function ($routeProv
 adminDesktop.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
 	$locationProvider.hashPrefix('');
     $routeProvider
-        .when('/categoryies', {
-            templateUrl: 'page/categoryies/categoryies.html',
-            controller: 'categoryiesCtrl'
+        .when('/categories', {
+            templateUrl: 'page/categories/categories.html',
+            controller: 'categoriesCtrl'
         });
 }]);
 
