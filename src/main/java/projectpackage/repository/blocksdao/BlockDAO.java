@@ -14,7 +14,7 @@ import java.util.List;
 public interface BlockDAO {
     public Block getBlock(Integer id);
     public List<Block> getAllBlocks();
-    public int insertBlock(Block block) throws TransactionException;
-    public void updateBlock(Block newBlock, Block oldBlock) throws TransactionException;
+    public Integer insertBlock(Block block) throws TransactionException;
+    public Integer updateBlock(Block newBlock, Block oldBlock) throws TransactionException;
     public void deleteBlock(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

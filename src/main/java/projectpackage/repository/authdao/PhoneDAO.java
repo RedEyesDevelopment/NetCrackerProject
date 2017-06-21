@@ -14,7 +14,7 @@ import java.util.List;
 public interface PhoneDAO {
     public Phone getPhone(Integer id);
     public List<Phone> getAllPhones();
-    public int insertPhone(Phone phone) throws TransactionException;
-    public void updatePhone(Phone newPhone, Phone oldPhone) throws TransactionException;
+    public Integer insertPhone(Phone phone) throws TransactionException;
+    public Integer updatePhone(Phone newPhone, Phone oldPhone) throws TransactionException;
     public void deletePhone(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

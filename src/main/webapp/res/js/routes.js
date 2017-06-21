@@ -11,15 +11,14 @@ app.factory('sharedData' , function() {
 
         setData: function(data) {
             sharedData = data;
-
         }
 
     }
 
 
 });
-
-
+//
+//
 app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
     $locationProvider.hashPrefix('');
 
@@ -113,6 +112,7 @@ app.controller('login', ['$scope', '$http', '$location' , 'sharedData', '$docume
 app.controller('search-available', ['$scope', '$rootScope', '$http', '$location' , 'sharedData', '$document', function
         ($scope, $rootScope, $http, $location, sharedData, $document) {
 
+
     $scope.submit = function (eve) {
 
         console.log($scope.book.from.getTime());
@@ -150,6 +150,17 @@ app.controller('search-available', ['$scope', '$rootScope', '$http', '$location'
 
 app.controller('roomTypeController', ['$scope', '$rootScope', '$http', 'sharedData', '$location' , function
     ($scope, $rootScope, $http, sharedData, $location) {
+
+    $scope.$watchCollection(
+        function () {
+            return MapService.sharedData;
+        }, function (newVal, oldVal, scope) {
+            // the `scope` parameter refers to the current scope
+            scope.sharedData = MapService.sharedData
+        }
+    )
+
+    console.log("in room type controller");
 
     var book = sharedData.getData();
 
