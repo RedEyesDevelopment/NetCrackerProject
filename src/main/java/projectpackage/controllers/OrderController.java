@@ -189,7 +189,7 @@ public class OrderController {
         long validStartDate = searchDto.getArrival().getTime() - today.getTime();
         long validFinishDate = searchDto.getDeparture().getTime() - today.getTime();
 
-        ResponseEntity<List<OrderDTO>> answer = new ResponseEntity<List<OrderDTO>>(data, HttpStatus.NOT_FOUND);
+        ResponseEntity<List<OrderDTO>> answer = new ResponseEntity<List<OrderDTO>>(data, HttpStatus.BAD_REQUEST);
 
         if (validStartDate > maxValidTime) return answer;
         if (validFinishDate > maxValidTime) return answer;

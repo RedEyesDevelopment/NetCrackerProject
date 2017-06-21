@@ -7,11 +7,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Phone;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 
@@ -44,11 +44,16 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
     }
 
     @Override
-    public int insertPhone(Phone phone) throws TransactionException {
+    public Integer insertPhone(Phone phone) throws TransactionException {
         Integer objectId = nextObjectId();
+        if (phone == null) return null;
         try {
             jdbcTemplate.update(insertObject, objectId, phone.getUserId(), 9, null, null);
-            jdbcTemplate.update(insertAttribute, 38, objectId, phone.getPhoneNumber(), null);
+            if (phone.getPhoneNumber() == null || phone.getPhoneNumber().isEmpty()) {
+                jdbcTemplate.update(insertAttribute, 38, objectId, null, null);
+            } else {
+                jdbcTemplate.update(insertAttribute, 38, objectId, phone.getPhoneNumber(), null);
+            }
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -56,14 +61,21 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
     }
 
     @Override
-    public void updatePhone(Phone newPhone, Phone oldPhone) throws TransactionException {
+    public Integer updatePhone(Phone newPhone, Phone oldPhone) throws TransactionException {
+        if (oldPhone == null || newPhone == null) return null;
         try {
-            if (!oldPhone.getPhoneNumber().equals(newPhone.getPhoneNumber())) {
+            if (oldPhone == null || newPhone == null || oldPhone.getPhoneNumber().isEmpty()
+                    || newPhone.getPhoneNumber().isEmpty()) {
+                jdbcTemplate.update(updateAttribute, null, null, newPhone.getObjectId(), 38);
+            } else {
+                if (!oldPhone.getPhoneNumber().equals(newPhone.getPhoneNumber())) {
                 jdbcTemplate.update(updateAttribute, newPhone.getPhoneNumber(), null, newPhone.getObjectId(), 38);
+                }
             }
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
+        return newPhone.getObjectId();
     }
 
     @Override
