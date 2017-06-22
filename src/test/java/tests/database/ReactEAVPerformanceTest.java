@@ -11,10 +11,10 @@ import java.util.HashSet;
 
 @Log4j
 public class ReactEAVPerformanceTest extends AbstractDatabaseTest {
-    private final String SEPARATOR = "**********************************************************";
+    private static final int QUERYQUANTITY = 100;
 
     @Autowired
-    ReactEAVManager manager;
+    ReactEAVManager reactEAVManager;
 
     @Autowired
     ParentsDAO parentsDAO;
@@ -23,14 +23,14 @@ public class ReactEAVPerformanceTest extends AbstractDatabaseTest {
     public void queryTestOfUsersOrderBy(){
         long diy;
         HashSet<PerformanceJob> jobs = new HashSet();
-        PerformanceJob job1 = new GetUsersJob(manager);
-        PerformanceJob job2 = new GetSingleUserJob(manager);
-        PerformanceJob job3 = new GetSingleUserWithInnerJob(manager);
-        PerformanceJob job4 = new GetUsersWithInnerJob(manager);
-        PerformanceJob job5 = new GetUsersWithMultipleConditionsJob(manager);
-        PerformanceJob job6 = new GetUsersWithParentConditionJob(manager, parentsDAO);
-        PerformanceJob job7 = new GetUsersWithStringConditionJob(manager);
-        PerformanceJob job8 = new GetUsersWithVariableConditionJob(manager);
+        PerformanceJob job1 = new GetUsersJob(reactEAVManager);
+        PerformanceJob job2 = new GetSingleUserJob(reactEAVManager);
+        PerformanceJob job3 = new GetSingleUserWithInnerJob(reactEAVManager);
+        PerformanceJob job4 = new GetUsersWithInnerJob(reactEAVManager);
+        PerformanceJob job5 = new GetUsersWithMultipleConditionsJob(reactEAVManager);
+        PerformanceJob job6 = new GetUsersWithParentConditionJob(reactEAVManager, parentsDAO);
+        PerformanceJob job7 = new GetUsersWithStringConditionJob(reactEAVManager);
+        PerformanceJob job8 = new GetUsersWithVariableConditionJob(reactEAVManager);
         jobs.add(job1);
         jobs.add(job2);
         jobs.add(job3);
@@ -42,13 +42,14 @@ public class ReactEAVPerformanceTest extends AbstractDatabaseTest {
 
         diy = System.currentTimeMillis();
 
-        for (int i=0; i<10; i++){
+        for (int i=0; i<=QUERYQUANTITY; i++){
             for (PerformanceJob job:jobs){
                 job.doaJob();
             }
         }
         diy = System.currentTimeMillis()-diy;
 
+        System.out.println(SEPARATOR);
         System.out.println("RESULTING TIME="+diy);
 
         for (PerformanceJob job:jobs){

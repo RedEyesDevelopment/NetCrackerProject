@@ -31,7 +31,7 @@ public class GetUsersWithMultipleConditionsJob extends PerformanceJob {
         } catch (ResultEntityNullException e) {
             e.printStackTrace();
         }
-        assertEquals(1 ,users.size());
+        assertEquals(3 ,users.size());
         insertResult(System.currentTimeMillis()-diy);
     }
 
