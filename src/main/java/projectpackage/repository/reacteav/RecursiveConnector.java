@@ -1,8 +1,5 @@
 package projectpackage.repository.reacteav;
 
-/**
- * Created by Lenovo on 14.05.2017.
- */
 public class RecursiveConnector {
     ReacTask outer;
     ReacTask inner;

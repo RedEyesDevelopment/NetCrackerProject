@@ -5,9 +5,6 @@ import projectpackage.repository.reacteav.conditions.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Lenovo on 24.05.2017.
- */
 public class AfterQueryConditionExecutor implements ConditionExecutor {
     private static final ConditionExecutionMoment MOMENT= ConditionExecutionMoment.AFTER_QUERY;
     private List<ReactConditionData> tasks = new ArrayList<>();

@@ -1,8 +1,5 @@
 package projectpackage.repository.reacteav.support;
 
-/**
- * Created by Gvozd on 06.05.2017.
- */
 public class ObjectTableNameGenerator {
     private String tableName;
     private int counter;

@@ -1,8 +1,5 @@
 package projectpackage.repository.reacteav.relationsdata;
 
-/**
- * Created by Lenovo on 08.05.2017.
- */
 public class EntityOuterRelationshipsData {
     private String outerFieldName;
     private String innerFieldKey;

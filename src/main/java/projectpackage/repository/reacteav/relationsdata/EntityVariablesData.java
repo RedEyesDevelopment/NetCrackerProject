@@ -1,8 +1,5 @@
 package projectpackage.repository.reacteav.relationsdata;
 
-/**
- * Created by Lenovo on 07.05.2017.
- */
 public class EntityVariablesData {
     private Class parameterClass;
     private String databaseNativeCodeValue;

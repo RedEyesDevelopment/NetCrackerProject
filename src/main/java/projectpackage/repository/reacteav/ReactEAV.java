@@ -274,7 +274,6 @@ public class ReactEAV {
         ListIterator<ReactQueryTaskHolder> holderIterator = reactQueryTaskHolders.listIterator(reactQueryTaskHolders.size());
         while(holderIterator.hasPrevious()) {
             ReactQueryTaskHolder holder = holderIterator.previous();
-            System.out.println("QUERY: "+holder.getQuery());
             holder.getNode().manageParentAndReferenceLists();
             if (holder.getNode().isForSingleObject()) {
                 Object result = null;

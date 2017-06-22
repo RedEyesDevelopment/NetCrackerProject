@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-/**
- * Created by Lenovo on 08.05.2017.
- */
 public class ReacResultDataConnector {
     private ReacTask rootTask;
 

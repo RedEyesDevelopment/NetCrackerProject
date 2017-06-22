@@ -5,9 +5,6 @@ import projectpackage.repository.reacteav.conditions.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Lenovo on 18.06.2017.
- */
 public class WhereAppendingConditionExecutor implements ConditionExecutor {
     private static final ConditionExecutionMoment MOMENT = ConditionExecutionMoment.AFTER_APPENDING_WHERE;
     private List<ReactConditionData> tasks = new ArrayList<>();

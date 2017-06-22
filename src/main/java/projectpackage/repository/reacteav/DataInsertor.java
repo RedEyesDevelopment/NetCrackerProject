@@ -9,9 +9,6 @@ import projectpackage.repository.reacteav.relationsdata.EntityReferenceTaskData;
 import java.lang.reflect.Field;
 import java.util.*;
 
-/**
- * Created by Lenovo on 08.05.2017.
- */
 public class DataInsertor {
     private ReacTask outerEntity;
     private ReacTask innerEntity;

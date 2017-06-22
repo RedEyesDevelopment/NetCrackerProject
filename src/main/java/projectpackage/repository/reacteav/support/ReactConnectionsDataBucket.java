@@ -9,9 +9,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Created by Lenovo on 16.05.2017.
- */
 public class ReactConnectionsDataBucket {
     Map<Class, Integer> classesMap;
     Map<Class, LinkedHashMap<String, EntityVariablesData>> entityVariablesMap;

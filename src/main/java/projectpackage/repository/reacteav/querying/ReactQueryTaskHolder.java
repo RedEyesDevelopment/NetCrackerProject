@@ -4,9 +4,6 @@ import projectpackage.repository.reacteav.ReacTask;
 
 import java.util.Map;
 
-/**
- * Created by Lenovo on 08.05.2017.
- */
 public class ReactQueryTaskHolder {
     private ReacTask node;
     private StringBuilder query;

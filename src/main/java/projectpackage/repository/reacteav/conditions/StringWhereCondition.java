@@ -2,9 +2,6 @@ package projectpackage.repository.reacteav.conditions;
 
 import projectpackage.repository.reacteav.WhereAppendingConditionExecutor;
 
-/**
- * Created by Lenovo on 18.06.2017.
- */
 public class StringWhereCondition implements ReactConditionWhereAppending {
     private StringBuilder builder;
     private String whereClause;

@@ -1,8 +1,5 @@
 package projectpackage.repository.reacteav.relationsdata;
 
-/**
- * Created by Lenovo on 14.05.2017.
- */
 public class EntityReferenceTaskData {
     private Class thisClass;
     private Class innerClass;

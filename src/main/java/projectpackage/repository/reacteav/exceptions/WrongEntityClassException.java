@@ -1,8 +1,5 @@
 package projectpackage.repository.reacteav.exceptions;
 
-/**
- * Created by Lenovo on 06.05.2017.
- */
 public class WrongEntityClassException extends RuntimeException {
     private static final String DEFAULTMESSAGE = "Entity class is not an accessor of a ReacEntity abstract class";
 

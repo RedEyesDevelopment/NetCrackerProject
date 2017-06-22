@@ -2,9 +2,6 @@ package projectpackage.repository.reacteav.querying;
 
 import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
 
-/**
- * Created by Gvozd on 08.05.2017.
- */
 public class ReactQueryAppender {
     private StringBuilder queryBuilder;
     private ReactConstantConfiguration config;

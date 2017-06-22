@@ -10,9 +10,6 @@ import projectpackage.repository.reacteav.support.ReactEntityValidator;
 
 import java.util.*;
 
-/**
- * Created by Gvozd on 06.05.2017.
- */
 public class ReacTask {
 
     @Autowired
@@ -100,11 +97,8 @@ public class ReacTask {
             }
             this.objectIdsForReferenceFetch = null;
             if (!parentTask.getReferenceIdRelations().isEmpty()){
-                System.out.println("***********************************************************************");
                 for (EntityReferenceIdRelation parentRelation : parentTask.getReferenceIdRelations().values()) {
-                    System.out.println("thisClass: " + this.getObjectClass() + " and parent ERIR class: " + parentRelation.getInnerClass());
                     if (parentRelation.getInnerClass().equals(this.getObjectClass())) {
-                        System.out.println("this will do");
                         if (null == objectIdsForReferenceFetch) {
                             objectIdsForReferenceFetch = new HashSet<>();
                         }
