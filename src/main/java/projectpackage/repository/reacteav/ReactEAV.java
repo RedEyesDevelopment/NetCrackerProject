@@ -2,7 +2,6 @@ package projectpackage.repository.reacteav;
 
 import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Level;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -14,14 +13,14 @@ import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.reacteav.exceptions.WrongFetchException;
 import projectpackage.repository.reacteav.querying.ReactQueryTaskHolder;
 import projectpackage.repository.reacteav.relationsdata.EntityReferenceRelationshipsData;
-import projectpackage.repository.reacteav.relationsdata.EntityReferenceTaskData;
-import projectpackage.repository.reacteav.relationsdata.EntityVariablesData;
 import projectpackage.repository.reacteav.support.ReactConnectionsDataBucket;
 import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
 import projectpackage.repository.reacteav.support.ReactEntityValidator;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
 
 @Log4j
 public class ReactEAV {
@@ -32,18 +31,17 @@ public class ReactEAV {
     private List<ReactQueryTaskHolder> reactQueryTaskHolders;
     private ReactQueryBuilder builder;
     private ReacQueryTasksPreparator preparator;
-
-    @Autowired
-    private ReactEntityValidator validator = new ReactEntityValidator();
-
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private ReactEntityValidator validator;
 
-    ReactEAV(Class entityClass, NamedParameterJdbcTemplate namedParameterJdbcTemplate, ReactConstantConfiguration config, ReactConnectionsDataBucket dataBucket, ReactQueryBuilder builder) {
+    ReactEAV(Class entityClass, NamedParameterJdbcTemplate namedParameterJdbcTemplate, ReactConstantConfiguration config, ReactConnectionsDataBucket dataBucket, ReactQueryBuilder builder, ReacQueryTasksPreparator preparator, ReactEntityValidator validator) {
         validator.isTargetClassAReactEntity(entityClass);
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.config = config;
         this.dataBucket = dataBucket;
         this.builder = builder;
+        this.preparator = preparator;
+        this.validator = validator;
         this.rootNode = new ReacTask(null, this, entityClass, true, null, null, false, null);
         this.rootNode.setObjectClass(entityClass);
         this.executors = new HashSet<>();
@@ -123,7 +121,7 @@ public class ReactEAV {
         rootNode.setTargetId(targetId);
         rootNode.setAscend(false);
         rootNode.setOrderingParameter(null);
-        reactQueryTaskHolders = reacTaskPreparator();
+        reactQueryTaskHolders = preparator.prepareTasks(rootNode,executors,builder);
         Object result;
         try {
             result = launchProcess().get(0);
@@ -139,7 +137,7 @@ public class ReactEAV {
         rootNode.setTargetId(null);
         rootNode.setAscend(false);
         rootNode.setOrderingParameter(null);
-        reactQueryTaskHolders = reacTaskPreparator();
+        reactQueryTaskHolders = preparator.prepareTasks(rootNode,executors,builder);
         List result;
         result = launchProcess();
         if (null == result) {
@@ -154,7 +152,7 @@ public class ReactEAV {
         rootNode.setTargetId(null);
         rootNode.setAscend(ascend);
         rootNode.setOrderingParameter(orderingParameter);
-        reactQueryTaskHolders = reacTaskPreparator();
+        reactQueryTaskHolders = preparator.prepareTasks(rootNode,executors,builder);
         List result;
         result = launchProcess();
         if (null == result) {
@@ -168,81 +166,6 @@ public class ReactEAV {
         if (!executors.isEmpty()) {
             for (ConditionExecutor executor : executors) {
                 executor.executeAll(moment);
-            }
-        }
-    }
-
-    private List<ReactQueryTaskHolder> reacTaskPreparator() {
-        List<ReactQueryTaskHolder> taskList = new ArrayList<>();
-        creatingReacTaskTree(taskList, rootNode);
-        return taskList;
-    }
-
-    private void creatingReacTaskTree(List<ReactQueryTaskHolder> taskList, ReacTask task) {
-        addReferenceLinks(task);
-        if (!task.getInnerObjects().isEmpty()) {
-            for (ReacTask reacTask : task.getInnerObjects()) {
-                creatingReacTaskTree(taskList, reacTask);
-            }
-        }
-        taskList.add(prepareReacTask(task));
-    }
-
-    private ReactQueryTaskHolder prepareReacTask(ReacTask currentNode) {
-        StringBuilder query = null;
-        Map<String, Object> sqlParameterSource = new HashMap<>();
-        if (currentNode.isForSingleObject()) {
-            try {
-                query = getQueryForEntity(currentNode.getCurrentEntityParameters(), currentNode, true, null, false);
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                log.error(e);
-            }
-            sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getThisClassObjectTypeName());
-            sqlParameterSource.put(config.getEntityIdConstant(), currentNode.getTargetId());
-            if (currentNode.hasReferencedObjects()) {
-                for (EntityReferenceTaskData data : currentNode.getCurrentEntityReferenceTasks().values()) {
-                    sqlParameterSource.put(data.getInnerClassObjectTypeName(), dataBucket.getClassesMap().get(data.getInnerClass()));
-                }
-            }
-        } else {
-            if (null != currentNode.getOrderingParameter()) {
-                try {
-                    query = getQueryForEntity(currentNode.getCurrentEntityParameters(), currentNode, false, currentNode.getOrderingParameter(), currentNode.isAscend());
-                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                    log.error(e);
-                }
-                sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getThisClassObjectTypeName());
-                if (currentNode.hasReferencedObjects()) {
-                    for (EntityReferenceTaskData data : currentNode.getCurrentEntityReferenceTasks().values()) {
-                        sqlParameterSource.put(data.getInnerClassObjectTypeName(), dataBucket.getClassesMap().get(data.getInnerClass()));
-                    }
-                }
-            } else {
-                try {
-                    query = getQueryForEntity(currentNode.getCurrentEntityParameters(), currentNode, false, null, false);
-                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                    log.error(e);
-                }
-                sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getThisClassObjectTypeName());
-                if (currentNode.hasReferencedObjects()) {
-                    for (EntityReferenceTaskData data : currentNode.getCurrentEntityReferenceTasks().values()) {
-                        sqlParameterSource.put(data.getInnerClassObjectTypeName(), dataBucket.getClassesMap().get(data.getInnerClass()));
-                    }
-                }
-            }
-        }
-        return new ReactQueryTaskHolder(currentNode, query, sqlParameterSource);
-    }
-
-    //Добавляем в задание ссылки и маркера на reference-объекты
-    private void addReferenceLinks(ReacTask currentTask) {
-        int per = 0;
-        for (ReacTask task : currentTask.getInnerObjects()) {
-            for (Map.Entry<String, EntityReferenceRelationshipsData> outerData : task.getCurrentEntityReferenceRelations().entrySet()) {
-                if (outerData.getValue().getOuterClass().equals(currentTask.getObjectClass()) && null != task.getReferenceId() && task.getReferenceId().equals(outerData.getKey())) {
-                    EntityReferenceTaskData newReferenceTask = new EntityReferenceTaskData(task.getObjectClass(), task.getObjectClass().getSimpleName(), outerData.getValue().getOuterFieldName(), outerData.getValue().getReferenceAttrId());
-                    currentTask.addCurrentEntityReferenceTasks(per++, newReferenceTask);
-                }
             }
         }
     }
@@ -303,14 +226,5 @@ public class ReactEAV {
         return dataConnector.connectEntitiesAndReturn();
     }
 
-    //Метод создания ссылки в билдере
-    private StringBuilder getQueryForEntity(LinkedHashMap<String, EntityVariablesData> currentNodeVariables, ReacTask currentNode, boolean isSearchById, String orderingParameter, boolean ascend) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
-        WhereAppendingConditionExecutor afterWhereExecutor = null;
-        for (ConditionExecutor executor: executors){
-            if (executor.getExecutorClass().equals(WhereAppendingConditionExecutor.class)){
-                afterWhereExecutor = (WhereAppendingConditionExecutor) executor;
-            }
-        }
-        return builder.getQueryForEntity(currentNodeVariables, currentNode, isSearchById, orderingParameter, ascend, afterWhereExecutor);
-    }
+
 }

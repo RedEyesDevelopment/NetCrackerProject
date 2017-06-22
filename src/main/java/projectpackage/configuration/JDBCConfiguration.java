@@ -11,7 +11,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 import projectpackage.repository.reacteav.ReactEAVManager;
-import projectpackage.repository.reacteav.support.ReactAnnDefinitionReader;
 import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
 import projectpackage.repository.reacteav.support.ReactEntityValidator;
 
@@ -105,13 +104,8 @@ public class JDBCConfiguration implements TransactionManagementConfigurer {
     ReactConstantConfiguration reactConstantConfiguration() { return new ReactConstantConfiguration(); }
 
     @Bean
-    ReactAnnDefinitionReader reactAnnDefinitionReader(){
-        return new ReactAnnDefinitionReader(modelPackage);
-    }
-
-    @Bean
     ReactEAVManager reactEAVManager(){
-        return new ReactEAVManager(reactConstantConfiguration(),reactAnnDefinitionReader());
+        return new ReactEAVManager(reactConstantConfiguration(),modelPackage);
     }
 
     @Bean

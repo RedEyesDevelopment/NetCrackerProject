@@ -2,7 +2,6 @@ package projectpackage.repository.reacteav.support;
 
 import lombok.extern.log4j.Log4j;
 import org.reflections.Reflections;
-import org.springframework.stereotype.Component;
 import projectpackage.repository.reacteav.annotations.*;
 import projectpackage.repository.reacteav.relationsdata.EntityOuterRelationshipsData;
 import projectpackage.repository.reacteav.relationsdata.EntityReferenceRelationshipsData;
@@ -13,7 +12,6 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 @Log4j
-@Component
 public class ReactAnnDefinitionReader {
     private String packageName;
     private Set<Class> classList;
@@ -27,7 +25,6 @@ public class ReactAnnDefinitionReader {
     public ReactAnnDefinitionReader(String packageName) {
         this.packageName = packageName;
         this.classList = new HashSet<>();
-
         Reflections reflections = new Reflections(packageName);
         classList = (Set<Class>) reflections.getTypesAnnotatedWith(ENTITYANNOTATION);
     }
