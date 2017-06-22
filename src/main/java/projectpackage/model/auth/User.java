@@ -13,14 +13,12 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 import java.util.Set;
 
 @Data
-@ReactEntity(entityTypeName = "User")
-@ReactReference(referenceName = "UserToNotificationAsAuthor", outerEntityClass = Notification.class, outerFieldName = "author", outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "21")
-@ReactReference(referenceName = "UserToNotificationAsExecutor", outerEntityClass = Notification.class, outerFieldName = "executedBy", outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "24")
-@ReactReference(referenceName = "UserToModificationHistory", outerEntityClass = ModificationHistory.class, outerFieldName = "modifAuthor", outerFieldKey = "objectId", innerFieldKey = "objectId")
-@ReactReference(referenceName = "UserToOrderAsClient", outerEntityClass = Order.class, outerFieldName = "client",
-        outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "7")
-@ReactReference(referenceName = "UserToOrderAsLastModificator", outerEntityClass = Order.class, outerFieldName = "lastModificator",
-        outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "44")
+@ReactEntity(entityTypeId = 3)
+@ReactReference(referenceName = "UserToNotificationAsAuthor", outerEntityClass = Notification.class, outerFieldName = "author", attrIdField = "21")
+@ReactReference(referenceName = "UserToNotificationAsExecutor", outerEntityClass = Notification.class, outerFieldName = "executedBy", attrIdField = "24")
+@ReactReference(referenceName = "UserToModificationHistory", outerEntityClass = ModificationHistory.class, outerFieldName = "modifAuthor")
+@ReactReference(referenceName = "UserToOrderAsClient", outerEntityClass = Order.class, outerFieldName = "client", attrIdField = "7")
+@ReactReference(referenceName = "UserToOrderAsLastModificator", outerEntityClass = Order.class, outerFieldName = "lastModificator", attrIdField = "44")
 public class User implements ReactEntityWithId, Cloneable {
 
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")

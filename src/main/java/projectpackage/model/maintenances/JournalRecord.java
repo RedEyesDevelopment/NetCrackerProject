@@ -14,8 +14,8 @@ import java.util.Date;
  * Created by Arizel on 19.05.2017.
  */
 @Data
-@ReactEntity(entityTypeName = "JournalRecord")
-@ReactChild(outerEntityClass = Order.class, outerFieldName = "journalRecords", outerFieldKey = "objectId", innerFieldKey = "orderId")
+@ReactEntity(entityTypeId = 16)
+@ReactChild(outerEntityClass = Order.class, outerFieldName = "journalRecords", innerFieldKey = "orderId")
 public class JournalRecord implements ReactEntityWithId, Cloneable {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;

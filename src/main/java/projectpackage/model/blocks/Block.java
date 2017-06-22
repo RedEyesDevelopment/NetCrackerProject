@@ -10,7 +10,7 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 import java.util.Date;
 
 @Data
-@ReactEntity(entityTypeName = "Block")
+@ReactEntity(entityTypeId = 8)
 public class Block implements ReactEntityWithId, Cloneable {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;

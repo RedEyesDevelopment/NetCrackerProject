@@ -171,18 +171,18 @@ public class ReactQueryBuilder {
             Iterator iterator = objReferenceConnections.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<String, EntityAttrIdType> tgtReference = (Map.Entry<String, EntityAttrIdType>) iterator.next();
-                String referenceInnerClassObjectTypeName = tgtReference.getValue().getInnerClassObjectTypeName();
-                String taskDataInnerClassName = taskData.getInnerClass().getName();
+//                String referenceInnerClassObjectTypeName = tgtReference.getValue().getInnerClassObjectTypeName();
+//                String taskDataInnerClassName = taskData.getInnerClass().getName();
                 Integer referenceAttrId = tgtReference.getValue().getAttrId();
                 Integer taskDataAttrId = taskData.getReferenceAttrId();
-                if (referenceInnerClassObjectTypeName.equals(taskDataInnerClassName)) {
+//                if (referenceInnerClassObjectTypeName.equals(taskDataInnerClassName)) {
                     if (null != referenceAttrId && null != taskDataAttrId) {
-                        if (referenceAttrId.equals(taskDataAttrId)) {
-                            taskData.setInnerIdParameterNameForQueryParametersMap(tgtReference.getKey());
-                        }
-                    } else {
+//                        if (referenceAttrId.equals(taskDataAttrId)) {
+//                            taskData.setInnerIdParameterNameForQueryParametersMap(tgtReference.getKey());
+//                        }
+//                    } else {
                         taskData.setInnerIdParameterNameForQueryParametersMap(tgtReference.getKey());
-                    }
+//                    }
                 }
             }
         }

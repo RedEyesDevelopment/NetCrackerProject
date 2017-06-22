@@ -14,9 +14,8 @@ import java.util.Set;
  * Created by Arizel on 19.05.2017.
  */
 @Data
-@ReactEntity(entityTypeName = "Category")
-@ReactReference(referenceName = "OrderToCategory", outerEntityClass = Order.class, outerFieldName = "category",
-        outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactEntity(entityTypeId = 13)
+@ReactReference(referenceName = "OrderToCategory", outerEntityClass = Order.class, outerFieldName = "category")
 public class Category implements ReactEntityWithId, Cloneable {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;

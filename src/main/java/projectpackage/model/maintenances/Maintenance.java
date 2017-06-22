@@ -11,11 +11,11 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
  * Created by Arizel on 19.05.2017.
  */
 @Data
-@ReactEntity(entityTypeName = "Maintenance")
+@ReactEntity(entityTypeId = 14)
 @ReactReference(referenceName = "MaintenanceToJournalRecord", outerEntityClass = JournalRecord.class,
-        outerFieldName = "maintenance", outerFieldKey = "objectId", innerFieldKey = "objectId")
+        outerFieldName = "maintenance")
 @ReactReference(referenceName = "MaintenanceToComplimentary", outerEntityClass = Complimentary.class,
-        outerFieldName = "maintenance", outerFieldKey = "objectId", innerFieldKey = "objectId")
+        outerFieldName = "maintenance")
 public class Maintenance implements ReactEntityWithId, Cloneable{
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;

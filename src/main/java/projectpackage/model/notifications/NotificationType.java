@@ -9,8 +9,8 @@ import projectpackage.repository.reacteav.annotations.ReactReference;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 @Data
-@ReactEntity(entityTypeName = "Notification_type")
-@ReactReference(referenceName = "NotificationTypeToNotification", outerEntityClass = Notification.class, outerFieldName = "notificationType", outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactEntity(entityTypeId = 11)
+@ReactReference(referenceName = "NotificationTypeToNotification", outerEntityClass = Notification.class, outerFieldName = "notificationType")
 public class NotificationType implements ReactEntityWithId, Cloneable {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;

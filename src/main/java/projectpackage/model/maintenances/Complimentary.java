@@ -11,8 +11,8 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
  * Created by Arizel on 19.05.2017.
  */
 @Data
-@ReactEntity(entityTypeName = "Complimentary")
-@ReactChild(outerEntityClass = Category.class, outerFieldName = "complimentaries", outerFieldKey = "objectId", innerFieldKey = "categoryId")
+@ReactEntity(entityTypeId = 15)
+@ReactChild(outerEntityClass = Category.class, outerFieldName = "complimentaries", innerFieldKey = "categoryId")
 public class Complimentary implements ReactEntityWithId, Cloneable {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;

@@ -10,9 +10,9 @@ import projectpackage.repository.reacteav.annotations.ReactReference;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 @Data
-@ReactEntity(entityTypeName = "Room")
-@ReactReference(referenceName = "RoomToBlock", outerEntityClass = Block.class, outerFieldName = "room", outerFieldKey = "objectId", innerFieldKey = "objectId")
-@ReactReference(referenceName = "RoomToOrder", outerEntityClass = Order.class, outerFieldName = "room", outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactEntity(entityTypeId = 1)
+@ReactReference(referenceName = "RoomToBlock", outerEntityClass = Block.class, outerFieldName = "room")
+@ReactReference(referenceName = "RoomToOrder", outerEntityClass = Order.class, outerFieldName = "room")
 public class Room implements ReactEntityWithId, Cloneable {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;

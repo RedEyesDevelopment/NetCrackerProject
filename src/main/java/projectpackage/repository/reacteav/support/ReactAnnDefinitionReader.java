@@ -36,7 +36,7 @@ public class ReactAnnDefinitionReader {
         for (Class clazz : classList) {
             if (clazz.isAnnotationPresent(ENTITYANNOTATION)) {
                 ReactEntity annotation = (ReactEntity) clazz.getAnnotation(ENTITYANNOTATION);
-                String entityTypeName = annotation.entityTypeName();
+                String entityTypeName = annotation.entityTypeId();
                 makeClassesMap.put(clazz, entityTypeName);
             }
         }

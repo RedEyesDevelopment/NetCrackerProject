@@ -8,8 +8,8 @@ import projectpackage.repository.reacteav.annotations.ReactNativeField;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 @Data
-@ReactEntity(entityTypeName = "Phone")
-@ReactChild(outerEntityClass = User.class, outerFieldName = "phones", outerFieldKey = "objectId", innerFieldKey = "userId")
+@ReactEntity(entityTypeId = 9)
+@ReactChild(outerEntityClass = User.class, outerFieldName = "phones", innerFieldKey = "userId")
 public class Phone implements ReactEntityWithId, Cloneable {
 
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")

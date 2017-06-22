@@ -15,9 +15,9 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@ReactEntity(entityTypeName = "Order")
+@ReactEntity(entityTypeId = 2)
 @ReactReference(referenceName = "OrderToNotification", outerEntityClass = Notification.class, outerFieldName =
-        "order", outerFieldKey = "objectId", innerFieldKey = "objectId")
+        "order")
 public class Order implements ReactEntityWithId, Cloneable {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;

@@ -9,9 +9,9 @@ import projectpackage.repository.reacteav.annotations.ReactReference;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 @Data
-@ReactEntity(entityTypeName = "Role")
-@ReactReference(referenceName = "RoleToUser", outerEntityClass = User.class, outerFieldName = "role", outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "20")
-@ReactReference(referenceName = "RoleToNotificationType", outerEntityClass = NotificationType.class, outerFieldName = "orientedRole", outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactEntity(entityTypeId = 10)
+@ReactReference(referenceName = "RoleToUser", outerEntityClass = User.class, outerFieldName = "role", attrIdField = "20")
+@ReactReference(referenceName = "RoleToNotificationType", outerEntityClass = NotificationType.class, outerFieldName = "orientedRole")
 public class Role implements ReactEntityWithId, Cloneable {
 
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")

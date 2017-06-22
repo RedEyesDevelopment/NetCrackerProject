@@ -11,8 +11,8 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 import java.util.Set;
 
 @Data
-@ReactEntity(entityTypeName = "Room_type")
-@ReactReference(referenceName = "RoomTypeToRoom", outerEntityClass = Room.class, outerFieldName = "roomType", outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactEntity(entityTypeId = 5)
+@ReactReference(referenceName = "RoomTypeToRoom", outerEntityClass = Room.class, outerFieldName = "roomType")
 public class RoomType implements ReactEntityWithId, Cloneable {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;

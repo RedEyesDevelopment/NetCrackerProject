@@ -12,8 +12,8 @@ import java.util.Date;
 import java.util.Set;
 
 @Data
-@ReactEntity(entityTypeName = "Rate")
-@ReactChild(outerEntityClass = RoomType.class, outerFieldName = "rates", outerFieldKey = "objectId", innerFieldKey = "roomTypeId")
+@ReactEntity(entityTypeId = 6)
+@ReactChild(outerEntityClass = RoomType.class, outerFieldName = "rates", innerFieldKey = "roomTypeId")
 public class Rate implements ReactEntityWithId, Cloneable{
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;

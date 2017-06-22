@@ -11,8 +11,8 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 import java.util.Date;
 
 @Data
-@ReactEntity(entityTypeName = "Modification_history")
-@ReactChild(outerEntityClass = Order.class, outerFieldName = "historys", outerFieldKey = "objectId", innerFieldKey = "savedOrder")
+@ReactEntity(entityTypeId = 12)
+@ReactChild(outerEntityClass = Order.class, outerFieldName = "historys", innerFieldKey = "savedOrder")
 public class ModificationHistory implements ReactEntityWithId, Cloneable {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
