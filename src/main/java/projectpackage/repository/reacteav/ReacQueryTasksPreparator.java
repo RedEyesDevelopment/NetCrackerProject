@@ -11,37 +11,64 @@ import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.concurrent.Callable;
+import java.util.concurrent.*;
 
 @Log4j
 class ReacQueryTasksPreparator {
+    private static final int THREADSCOUNT = Runtime.getRuntime().availableProcessors()-1;
     private ReactConstantConfiguration config;
     private ReactConnectionsDataBucket dataBucket;
     private Set<ConditionExecutor> executors;
     private ReactQueryBuilder builder;
 
-    public ReacQueryTasksPreparator(ReactConstantConfiguration config, ReactConnectionsDataBucket dataBucket) {
+
+    ReacQueryTasksPreparator(ReactConstantConfiguration config, ReactConnectionsDataBucket dataBucket) {
         this.config = config;
         this.dataBucket = dataBucket;
     }
 
-    List<ReactQueryTaskHolder> prepareTasks(ReacTask rootNode, Set<ConditionExecutor> executors,ReactQueryBuilder builder) {
+    List<ReactQueryTaskHolder> prepareTasks(ReacTask rootNode, Set<ConditionExecutor> executors, ReactQueryBuilder builder) {
         this.executors = executors;
         this.builder = builder;
-        List<ReactQueryTaskHolder> taskList = new ArrayList<>();
-        creatingReacTaskTree(taskList, rootNode);
-        return taskList;
+        int endedFutures = 0;
+        ExecutorService threadPool = Executors.newFixedThreadPool(THREADSCOUNT);
+        List<FutureTask<ReactQueryTaskHolder>> futureTasks = new ArrayList<>(6);
+        recursiveTaskCreation(rootNode, futureTasks);
+        List<ReactQueryTaskHolder> results = new ArrayList<>(futureTasks.size());
+
+        for (FutureTask futureTask : futureTasks) {
+            threadPool.execute(futureTask);
+        }
+
+        while (true) {
+            if (endedFutures >= futureTasks.size()) {
+                break;
+            }
+            for (FutureTask<ReactQueryTaskHolder> currentTask : futureTasks) {
+                if (currentTask.isDone()) {
+                    endedFutures++;
+                }
+            }
+        }
+
+        for (FutureTask<ReactQueryTaskHolder> futureTask : futureTasks) {
+            try {
+                results.add(futureTask.get());
+            } catch (InterruptedException | ExecutionException e) {
+                log.error(e);
+            }
+        }
+        return results;
     }
 
-    private void creatingReacTaskTree(List<ReactQueryTaskHolder> taskList, ReacTask task) {
+    private void recursiveTaskCreation(ReacTask task, List<FutureTask<ReactQueryTaskHolder>> futures) {
         addReferenceLinks(task);
         if (!task.getInnerObjects().isEmpty()) {
             for (ReacTask reacTask : task.getInnerObjects()) {
-                creatingReacTaskTree(taskList, reacTask);
+                recursiveTaskCreation(reacTask, futures);
             }
         }
-        Exe
-        taskList.add(prepareReacTask(task));
+        futures.add(new FutureTask<>(new TaskPreparator(task)));
     }
 
     //   /Добавляем в задание ссылки и маркера на reference-объекты
@@ -57,10 +84,11 @@ class ReacQueryTasksPreparator {
         }
     }
 
-    private class TaskPreparator implements Callable<ReactQueryTaskHolder>{
+    //ВНУТРЕННИЙ КЛАСС ПО СОЗДАНИЮ REACT QUERY TASK HOLDER
+    private class TaskPreparator implements Callable<ReactQueryTaskHolder> {
         private ReacTask currentNode;
 
-        public TaskPreparator(ReacTask currentNode) {
+        TaskPreparator(ReacTask currentNode) {
             this.currentNode = currentNode;
         }
 
@@ -118,8 +146,8 @@ class ReacQueryTasksPreparator {
         //Метод создания ссылки в билдере
         private StringBuilder getQueryForEntity(LinkedHashMap<String, EntityVariablesData> currentNodeVariables, ReacTask currentNode, boolean isSearchById, String orderingParameter, boolean ascend) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
             WhereAppendingConditionExecutor afterWhereExecutor = null;
-            for (ConditionExecutor executor: executors){
-                if (executor.getExecutorClass().equals(WhereAppendingConditionExecutor.class)){
+            for (ConditionExecutor executor : executors) {
+                if (executor.getExecutorClass().equals(WhereAppendingConditionExecutor.class)) {
                     afterWhereExecutor = (WhereAppendingConditionExecutor) executor;
                 }
             }
