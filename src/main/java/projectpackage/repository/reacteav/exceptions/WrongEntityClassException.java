@@ -12,6 +12,6 @@ public class WrongEntityClassException extends RuntimeException {
     }
 
     public WrongEntityClassException(String message, Class targetClass) {
-        super(DEFAULTMESSAGE + (null != message ? ". " + message + "." : (".")) + " Throwed object is " + targetClass.getName().toString());
+        super(DEFAULTMESSAGE + (null != message ? ". " + message + "." : (".")) + " Throwed object is " + targetClass.getName());
     }
 }

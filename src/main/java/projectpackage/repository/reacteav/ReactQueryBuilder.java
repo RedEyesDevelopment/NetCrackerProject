@@ -199,7 +199,7 @@ public class ReactQueryBuilder {
         //Сортируем по колонке
         if (null != orderingParameter) {
             queryAppender.appendOrderBy(attributesNameMap.get(orderingParameter), ascend);
-        } else queryAppender.closeQueryBuilder();
+        }
 
         return queryBuilder;
     }

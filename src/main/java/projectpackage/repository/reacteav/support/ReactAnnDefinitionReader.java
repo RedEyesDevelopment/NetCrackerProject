@@ -27,8 +27,7 @@ public class ReactAnnDefinitionReader {
         this.classList = new HashSet<>();
 
         Reflections reflections = new Reflections(packageName);
-        Set<Class> allClasses = reflections.getTypesAnnotatedWith(ENTITYANNOTATION);
-        classList = allClasses;
+        classList = (Set<Class>) reflections.getTypesAnnotatedWith(ENTITYANNOTATION);
     }
 
     public Map<Class, Integer> makeClassesMap() {
@@ -144,10 +143,6 @@ public class ReactAnnDefinitionReader {
             }
         }
         return objectReferenceRelations;
-    }
-
-    public void printPackageName() {
-        System.out.println(packageName);
     }
 
     public void printClassesList() {

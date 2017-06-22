@@ -49,7 +49,7 @@ public class PriceEqualsToRoomCondition implements ReactConditionAfterExecution 
         setRates(newRates);
     }
 
-    public void setRates(Map<Integer, Set<Rate>> newRates){
+    private void setRates(Map<Integer, Set<Rate>> newRates){
         for (Object obj : objects) {
             Room room = (Room) obj;
             for (Map.Entry<Integer, Set<Rate>> entry:newRates.entrySet()){

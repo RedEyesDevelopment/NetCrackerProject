@@ -22,6 +22,6 @@ public class StringWhereCondition implements ReactConditionWhereAppending {
 
     @Override
     public void execute() {
-        builder.append("\nAND "+whereClause);
+        builder.append("\nAND ").append(whereClause);
     }
 }

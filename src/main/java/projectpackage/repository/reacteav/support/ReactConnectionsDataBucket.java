@@ -10,10 +10,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ReactConnectionsDataBucket {
-    Map<Class, Integer> classesMap;
-    Map<Class, LinkedHashMap<String, EntityVariablesData>> entityVariablesMap;
-    Map<Class, HashMap<Class, EntityOuterRelationshipsData>> outerRelationsMap;
-    Map<Class, HashMap<String, EntityReferenceRelationshipsData>> entityReferenceRelationsMap;
+    private Map<Class, Integer> classesMap;
+    private Map<Class, LinkedHashMap<String, EntityVariablesData>> entityVariablesMap;
+    private Map<Class, HashMap<Class, EntityOuterRelationshipsData>> outerRelationsMap;
+    private Map<Class, HashMap<String, EntityReferenceRelationshipsData>> entityReferenceRelationsMap;
 
     public ReactConnectionsDataBucket(Map<Class, Integer> classesMap, Map<Class, LinkedHashMap<String, EntityVariablesData>> entityVariablesMap, Map<Class, HashMap<Class, EntityOuterRelationshipsData>> outerRelationsMap, Map<Class, HashMap<String, EntityReferenceRelationshipsData>> entityReferenceRelationsMap) {
         this.classesMap = classesMap;

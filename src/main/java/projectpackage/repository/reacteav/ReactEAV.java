@@ -263,7 +263,7 @@ public class ReactEAV {
         for (ReacTask task : currentTask.getInnerObjects()) {
             for (Map.Entry<String, EntityReferenceRelationshipsData> outerData : task.getCurrentEntityReferenceRelations().entrySet()) {
                 if (outerData.getValue().getOuterClass().equals(currentTask.getObjectClass()) && null != task.getReferenceId() && task.getReferenceId().equals(outerData.getKey())) {
-                    EntityReferenceTaskData newReferenceTask = new EntityReferenceTaskData(currentTask.getObjectClass(), task.getObjectClass(), task.getObjectClass().getSimpleName(), outerData.getValue().getOuterFieldName(), outerData.getValue().getInnerIdKey(), outerData.getValue().getOuterIdKey(), outerData.getValue().getReferenceAttrId());
+                    EntityReferenceTaskData newReferenceTask = new EntityReferenceTaskData(task.getObjectClass(), task.getObjectClass().getSimpleName(), outerData.getValue().getOuterFieldName(), outerData.getValue().getReferenceAttrId());
                     currentTask.addCurrentEntityReferenceTasks(per++, newReferenceTask);
                 }
             }

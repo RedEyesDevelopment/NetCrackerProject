@@ -13,7 +13,7 @@ import java.util.*;
 public class ReacTask {
 
     @Autowired
-    ReactEntityValidator validator = new ReactEntityValidator();
+    private ReactEntityValidator validator = new ReactEntityValidator();
     private ReactEAV reactEAV;
     private ReacTask parentTask;
     private Class objectClass;
@@ -25,10 +25,10 @@ public class ReacTask {
     private boolean ascend;
     private String referenceId;
     private List<ReacTask> innerObjects;
-    private Object entity = null;
+//    private Object entity = null;
     private List<Integer> idsListForChildFetchesOfInnerEntities;
     private List<Integer> parentalIdsForChildFetch;
-    private List<Integer> idsListForReferenceFetchesOfInnerEntities;
+//    private List<Integer> idsListForReferenceFetchesOfInnerEntities;
     private Set<Integer> objectIdsForReferenceFetch;
     private LinkedHashMap<String, EntityVariablesData> currentEntityParameters;
     private HashMap<Class, EntityOuterRelationshipsData> currentEntityOuterLinks;
@@ -49,17 +49,17 @@ public class ReacTask {
         if (null != referenceId) this.referenceId = referenceId;
         this.referenceIdRelations = new HashMap<>();
         this.currentEntityReferenceTasks = new HashMap<>();
-        this.idsListForChildFetchesOfInnerEntities =new ArrayList<>(50);
-        this.idsListForReferenceFetchesOfInnerEntities =new ArrayList<>(50);
+        this.idsListForChildFetchesOfInnerEntities =new ArrayList<>(6);
+//        this.idsListForReferenceFetchesOfInnerEntities =new ArrayList<>(6);
 
         //Кастуем класс
-        try {
-            entity = objectClass.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            entity = objectClass.newInstance();
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
 
         this.currentEntityParameters = reactEAV.getDataBucket().getEntityVariablesMap().get(objectClass);
         if (null == currentEntityParameters) currentEntityParameters = new LinkedHashMap<>();
@@ -79,15 +79,15 @@ public class ReacTask {
         }
     }
 
-    public List<Integer> getParentalIdsForChildFetch() {
+    List<Integer> getParentalIdsForChildFetch() {
         return parentalIdsForChildFetch;
     }
 
-    public Set<Integer> getObjectIdsForReferenceFetch() {
+    Set<Integer> getObjectIdsForReferenceFetch() {
         return objectIdsForReferenceFetch;
     }
 
-    public void manageParentAndReferenceLists() {
+    void manageParentAndReferenceLists() {
         this.parentalIdsForChildFetch = null;
         if (null!=parentTask) {
             for (Class clazz:currentEntityOuterLinks.keySet()){
@@ -109,11 +109,11 @@ public class ReacTask {
         }
     }
 
-    public List<Integer> getIdsListForChildFetchesOfInnerEntities() {
+    private List<Integer> getIdsListForChildFetchesOfInnerEntities() {
         return idsListForChildFetchesOfInnerEntities;
     }
 
-    public void addIdForChildFetches(Integer newObjectId) {
+    void addIdForChildFetches(Integer newObjectId) {
         if (null!= newObjectId) {
             this.idsListForChildFetchesOfInnerEntities.add(newObjectId);
         }
@@ -218,13 +218,13 @@ public class ReacTask {
     }
 
     public ReacTask fetchInnerChild(Class innerEntityClass) {
-        ReacTask newTask = fetchingOrderCreation(innerEntityClass, false, null, null, false, null);
+        ReacTask newTask = fetchingOrderCreation(innerEntityClass, null);
         checkInnerRelations(this.objectClass, newTask.getCurrentEntityOuterLinks().keySet());
         return newTask;
     }
 
     public ReacTask fetchInnerReference(Class innerEntityClass, String referenceId) {
-        ReacTask newTask =fetchingOrderCreation(innerEntityClass, false, null, null, false, referenceId);
+        ReacTask newTask =fetchingOrderCreation(innerEntityClass, referenceId);
         boolean innerHasIt = false;
         for (EntityReferenceRelationshipsData data : newTask.getCurrentEntityReferenceRelations().values()) {
             if (data.getOuterClass().equals(this.objectClass)) {
@@ -232,15 +232,14 @@ public class ReacTask {
             }
         }
         if (!innerHasIt) {
-            WrongFetchException exception = new WrongFetchException(this.objectClass, innerEntityClass, this.toString());
-            throw exception;
+            throw new WrongFetchException(this.objectClass, innerEntityClass, this.toString());
         }
         return newTask;
     }
 
-    private ReacTask fetchingOrderCreation(Class innerEntityClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend, String referenceId) {
+    private ReacTask fetchingOrderCreation(Class innerEntityClass, String referenceId) {
         validator.isTargetClassAReactEntity(innerEntityClass);
-        ReacTask childNode = new ReacTask(this, reactEAV, innerEntityClass, forSingleObject, targetId, orderingParameter, ascend, referenceId);
+        ReacTask childNode = new ReacTask(this, reactEAV, innerEntityClass, false, null, null, false, referenceId);
         this.addInnerObject(childNode);
         return childNode;
     }
@@ -251,8 +250,7 @@ public class ReacTask {
             if (currentClass.equals(clazz)) rootHasIt = true;
         }
         if (!rootHasIt) {
-            WrongFetchException exception = new WrongFetchException(this.objectClass, clazz, this.toString());
-            throw exception;
+            throw new WrongFetchException(this.objectClass, clazz, this.toString());
         }
     }
 

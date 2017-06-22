@@ -14,8 +14,8 @@ public class ObjectTableNameGenerator {
         return getCurrentTableName();
     }
 
-    public String getCurrentTableName() {
-        return new StringBuilder(tableName).append(counter).toString();
+    private String getCurrentTableName() {
+        return tableName + counter;
     }
 
     public int getTablesCounter() {

@@ -9,7 +9,7 @@ import projectpackage.repository.reacteav.relationsdata.EntityReferenceTaskData;
 import java.lang.reflect.Field;
 import java.util.*;
 
-public class DataInsertor {
+class DataInsertor {
     private ReacTask outerEntity;
     private ReacTask innerEntity;
 
