@@ -224,4 +224,25 @@ public class ReactQueryBuilder {
             }
         }
     }
+
+    void appendReferenceWhereClause(StringBuilder temporary, List<Integer> objectIds){
+        if (null!=objectIds && !objectIds.isEmpty()){
+            if (objectIds.size()!=1){
+                temporary.append("\nAND (");
+                boolean firstAppend = true;
+                for (Integer parentId:objectIds){
+                    if (firstAppend) {
+                        temporary.append("ROOTABLE.OBJECT_ID=");
+                    } else {
+                        temporary.append(" OR ROOTABLE.OBJECT_ID=");
+                    }
+                    temporary.append(parentId);
+                    firstAppend = false;
+                }
+                temporary.append(")");
+            } else {
+                temporary.append("\nAND ROOTABLE.PARENT_ID="+objectIds.get(0));
+            }
+        }
+    }
 }

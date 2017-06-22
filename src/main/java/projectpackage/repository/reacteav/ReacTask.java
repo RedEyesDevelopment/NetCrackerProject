@@ -31,6 +31,8 @@ public class ReacTask {
     private Object entity = null;
     private List<Integer> idsListForChildFetchesOfInnerEntities;
     private List<Integer> parentalIdsForChildFetch;
+    private List<Integer> idsListForReferenceFetchesOfInnerEntities;
+    private List<Integer> parentalIdsForReferenceFetch;
     private LinkedHashMap<String, EntityVariablesData> currentEntityParameters;
     private HashMap<Class, EntityOuterRelationshipsData> currentEntityOuterLinks;
     private HashMap<String, EntityReferenceRelationshipsData> currentEntityReferenceRelations;
@@ -51,6 +53,7 @@ public class ReacTask {
         this.referenceIdRelations = new HashMap<>();
         this.currentEntityReferenceTasks = new HashMap<>();
         this.idsListForChildFetchesOfInnerEntities =new ArrayList<>(50);
+        this.idsListForReferenceFetchesOfInnerEntities =new ArrayList<>(50);
 
         //Кастуем класс
         try {
@@ -83,12 +86,26 @@ public class ReacTask {
         return parentalIdsForChildFetch;
     }
 
-    public void manageParentList() {
+    public void manageParentAndReferenceLists() {
         this.parentalIdsForChildFetch = null;
         if (null!=parentTask) {
             for (Class clazz:currentEntityOuterLinks.keySet()){
                 if (clazz.equals(parentTask.getObjectClass())){
                     this.parentalIdsForChildFetch = parentTask.getIdsListForChildFetchesOfInnerEntities();
+                }
+            }
+            this.parentalIdsForReferenceFetch = null;
+            if (!parentTask.getReferenceIdRelations().isEmpty()){
+                System.out.println("***********************************************************************");
+                for (EntityReferenceIdRelation parentRelation : parentTask.getReferenceIdRelations().values()) {
+                    System.out.println("thisClass: " + this.getObjectClass() + " and parent ERIR class: " + parentRelation.getInnerClass());
+                    if (parentRelation.getInnerClass().equals(this.getObjectClass())) {
+                        System.out.println("this will do");
+                        if (null == parentalIdsForChildFetch) {
+                            parentalIdsForChildFetch = new ArrayList<>();
+                        }
+                        this.parentalIdsForChildFetch.add(parentRelation.getOuterId());
+                    }
                 }
             }
         }
