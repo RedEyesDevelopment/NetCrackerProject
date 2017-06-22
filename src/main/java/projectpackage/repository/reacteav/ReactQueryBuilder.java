@@ -10,17 +10,17 @@ import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-public class ReactQueryBuilder {
-    ReactConstantConfiguration config;
-    WhereAppendingConditionExecutor executor;
+class ReactQueryBuilder {
+    private ReactConstantConfiguration config;
 
-    public ReactQueryBuilder(ReactConstantConfiguration config) {
+    ReactQueryBuilder(ReactConstantConfiguration config) {
         this.config = config;
     }
 
     StringBuilder getQueryForEntity(LinkedHashMap<String, EntityVariablesData> currentNodeVariables, ReacTask currentNode, boolean isSearchById, String orderingParameter, boolean ascend, WhereAppendingConditionExecutor executor) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
         //Вставляем экзекутор, если он есть и проверяем на наличие variable-where-условий
-        if (null!=executor) this.executor = executor;
+        WhereAppendingConditionExecutor conditionExecutor;
+        if (null!=executor) conditionExecutor = executor;
         boolean thisNodeNeedsCustomWhereCondition = false;
         if (null!=executor){
             thisNodeNeedsCustomWhereCondition = executor.isThisExecutorContainsVariableConditionForCurrentNode(currentNode);
@@ -79,14 +79,12 @@ public class ReactQueryBuilder {
         //добавляем в selec-кляузу OBJREFERENCE.REFERENCE(т.е. айди объекта который вставляется в референс)
 
         if (currentNode.hasReferencedObjects()) {
-            int i = 1;
             for (EntityReferenceTaskData reference : currentNode.getCurrentEntityReferenceTasks().values()) {
                 String nextReferenceName = referenceNameGenerator.getNextTableName();
                 String targetName = "R_" + nextReferenceName;
                 queryAppender.appendSelectColumnWithNaming(targetName, config.getOref(), targetName);
                 EntityAttrIdType type = new EntityAttrIdType(reference.getInnerClass().getName(), reference.getReferenceAttrId());
                 objReferenceConnections.put(targetName, type);
-                i++;
             }
         }
 

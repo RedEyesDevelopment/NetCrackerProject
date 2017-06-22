@@ -21,12 +21,11 @@ class DataInsertor {
     void connectBy() {
         if (outerEntity.hasReferencedObjects()) {
             for (Map.Entry<Integer, EntityReferenceIdRelation> entry : outerEntity.getReferenceIdRelations().entrySet()) {
-                Class targetClass = entry.getValue().getInnerClass();
                 Field parentToInputField = null;
                 String fieldName = null;
 
                 for (Map.Entry<Integer, EntityReferenceTaskData> taskdata : outerEntity.getCurrentEntityReferenceTasks().entrySet()) {
-                    if (taskdata.getKey().equals(entry.getValue().getReferenceTaskId())){
+                    if (taskdata.getKey().equals(entry.getValue().getReferenceTaskId())) {
                         fieldName = taskdata.getValue().getThisFieldName();
                     }
                 }
@@ -41,9 +40,6 @@ class DataInsertor {
                 for (Object outerObject : outerEntity.getResultList()) {
                     boolean doNotModifyTheField = false;
                     for (Object innerObject : innerEntity.getResultList()) {
-
-                        ReactEntityWithId outer = (ReactEntityWithId) outerObject;
-                        ReactEntityWithId inner = (ReactEntityWithId) innerObject;
 
                         if (entry.getValue().getOuterId() == getEntityId(innerObject) && entry.getValue().getInnerId() == getEntityId(outerObject)) {
                             insertInnerEntity(outerObject, innerObject, parentToInputField, doNotModifyTheField);
@@ -87,13 +83,10 @@ class DataInsertor {
                     }
                 }
             }
-
         }
-
-//        outerEntity.getInnerObjects().remove(innerEntity);
     }
 
-    void insertInnerEntity(Object outer, Object inner, Field outerField, boolean doNotModifyTheField) {
+    private void insertInnerEntity(Object outer, Object inner, Field outerField, boolean doNotModifyTheField) {
         try {
             outerField.setAccessible(true);
             if (outerField.getType().equals(Set.class)) {

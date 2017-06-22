@@ -15,19 +15,17 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ReactEntityRowMapper implements RowMapper {
-    Class clazz;
-    ReacTask task;
-    LinkedHashMap<String, EntityVariablesData> parameters;
-    HashMap<Integer, EntityReferenceTaskData> referenceData;
-    HashMap<Integer, EntityReferenceIdRelation> objectReferenceTable;
-    String dataStringPrefix;
+    private Class clazz;
+    private ReacTask task;
+    private LinkedHashMap<String, EntityVariablesData> parameters;
+    private HashMap<Integer, EntityReferenceTaskData> referenceData;
+    private String dataStringPrefix;
 
-    public ReactEntityRowMapper(ReacTask task, String dataStringPrefix) {
+    ReactEntityRowMapper(ReacTask task, String dataStringPrefix) {
         this.task = task;
         this.clazz = task.getObjectClass();
         this.parameters = task.getCurrentEntityParameters();
         this.referenceData = task.getCurrentEntityReferenceTasks();
-        this.objectReferenceTable = task.getReferenceIdRelations();
         this.dataStringPrefix = dataStringPrefix;
     }
 
@@ -36,9 +34,7 @@ public class ReactEntityRowMapper implements RowMapper {
         Object targetReacEntityObject = null;
         try {
             targetReacEntityObject = clazz.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
 

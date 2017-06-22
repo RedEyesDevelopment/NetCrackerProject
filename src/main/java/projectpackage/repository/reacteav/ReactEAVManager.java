@@ -33,8 +33,7 @@ public class ReactEAVManager {
         validator.isTargetClassAReactEntity(entityClass);
         if (null != entityClass) {
             ReactQueryBuilder builder = new ReactQueryBuilder(reactConstantConfiguration);
-            ReactEAV reactEAV = new ReactEAV(entityClass, namedParameterJdbcTemplate, reactConstantConfiguration, dataBucket, builder);
-            return reactEAV;
+            return new ReactEAV(entityClass, namedParameterJdbcTemplate, reactConstantConfiguration, dataBucket, builder);
         } else {
             WrongEntityClassException exception;
             if (null == entityClass) {

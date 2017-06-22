@@ -4,26 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-public class ReacResultDataConnector {
+class ReacResultDataConnector {
     private ReacTask rootTask;
 
-    public ReacResultDataConnector(ReacTask rootTask) {
+    ReacResultDataConnector(ReacTask rootTask) {
         this.rootTask = rootTask;
     }
 
-    public List connectEntitiesAndReturn() {
+    List connectEntitiesAndReturn() {
         List<RecursiveConnector> connectors = new ArrayList<>();
         for (ReacTask reacTask : rootTask.getInnerObjects()) {
             RecursiveConnector connector = new RecursiveConnector(rootTask, reacTask);
             connectors.add(connector);
         }
         ListIterator<RecursiveConnector> iterator = connectors.listIterator(connectors.size());
-        while(iterator.hasPrevious()){
+        while (iterator.hasPrevious()) {
             RecursiveConnector connector = iterator.previous();
             connector.doConnect();
         }
-//        for (RecursiveConnector connector : connectors.) connector.doConnect();
-
         return rootTask.getResultList();
     }
 

@@ -25,10 +25,8 @@ public class ReacTask {
     private boolean ascend;
     private String referenceId;
     private List<ReacTask> innerObjects;
-//    private Object entity = null;
     private List<Integer> idsListForChildFetchesOfInnerEntities;
     private List<Integer> parentalIdsForChildFetch;
-//    private List<Integer> idsListForReferenceFetchesOfInnerEntities;
     private Set<Integer> objectIdsForReferenceFetch;
     private LinkedHashMap<String, EntityVariablesData> currentEntityParameters;
     private HashMap<Class, EntityOuterRelationshipsData> currentEntityOuterLinks;
@@ -50,16 +48,6 @@ public class ReacTask {
         this.referenceIdRelations = new HashMap<>();
         this.currentEntityReferenceTasks = new HashMap<>();
         this.idsListForChildFetchesOfInnerEntities =new ArrayList<>(6);
-//        this.idsListForReferenceFetchesOfInnerEntities =new ArrayList<>(6);
-
-        //Кастуем класс
-//        try {
-//            entity = objectClass.newInstance();
-//        } catch (InstantiationException e) {
-//            e.printStackTrace();
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        }
 
         this.currentEntityParameters = reactEAV.getDataBucket().getEntityVariablesMap().get(objectClass);
         if (null == currentEntityParameters) currentEntityParameters = new LinkedHashMap<>();

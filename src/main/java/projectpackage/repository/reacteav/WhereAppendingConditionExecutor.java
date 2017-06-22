@@ -20,18 +20,18 @@ public class WhereAppendingConditionExecutor implements ConditionExecutor {
         return this.getClass();
     }
 
-    public void setBuilder(StringBuilder builder) {
+    void setBuilder(StringBuilder builder) {
         this.builder = builder;
     }
 
-    public boolean isThisExecutorContainsConditionForCurrentNode(ReacTask task){
+    boolean isThisExecutorContainsConditionForCurrentNode(ReacTask task){
         for (ReactConditionData data: tasks){
             if (data.getTargetTask().equals(task)) return true;
         }
         return false;
     }
 
-    public boolean isThisExecutorContainsVariableConditionForCurrentNode(ReacTask task){
+    boolean isThisExecutorContainsVariableConditionForCurrentNode(ReacTask task){
         for (ReactConditionData data: tasks){
             if (data.getCondition().getClass().equals(VariableWhereCondition.class)){
                 if (data.getTargetTask().equals(task)) {
@@ -42,7 +42,7 @@ public class WhereAppendingConditionExecutor implements ConditionExecutor {
         return false;
     }
 
-    public void checkAndInsertVariableToConditionIfEquals(String variableName, String columnName, ReacTask task){
+    void checkAndInsertVariableToConditionIfEquals(String variableName, String columnName, ReacTask task){
         for (ReactConditionData data: tasks){
             if (data.getCondition().getClass().equals(VariableWhereCondition.class)){
                 if (data.getTargetTask().equals(task)) {
@@ -59,7 +59,7 @@ public class WhereAppendingConditionExecutor implements ConditionExecutor {
     public void executeAll(ConditionExecutionMoment moment) {
     }
 
-    public void executeForTask(ReacTask task){
+    void executeForTask(ReacTask task){
         for (ReactConditionData data: tasks){
             if (data.getTargetTask().equals(task)) {
                 ReactConditionWhereAppending condition = (ReactConditionWhereAppending) data.getCondition();

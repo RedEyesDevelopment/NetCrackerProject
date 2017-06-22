@@ -54,8 +54,7 @@ public class ReactEAV {
 
     public ReacTask fetchRootChild(Class innerEntityClass) {
         checkInnerRelations(rootNode.getObjectClass(), dataBucket.getOuterRelationsMap().get(innerEntityClass).keySet());
-        ReacTask newReacTask = fetchingOrderCreation(innerEntityClass, false, null, null, false, null);
-        return newReacTask;
+        return fetchingOrderCreation(innerEntityClass, null);
     }
 
     public ReacTask fetchRootReference(Class innerEntityClass, String referenceName) {
@@ -66,11 +65,9 @@ public class ReactEAV {
             }
         }
         if (!innerHasIt) {
-            WrongFetchException exception = new WrongFetchException(rootNode.getObjectClass(), innerEntityClass, "root");
-            throw exception;
+            throw new WrongFetchException(rootNode.getObjectClass(), innerEntityClass, "root");
         }
-        ReacTask newReacTask = fetchingOrderCreation(innerEntityClass, false, null, null, false, referenceName);
-        return newReacTask;
+        return fetchingOrderCreation(innerEntityClass, referenceName);
     }
 
     private void checkInnerRelations(Class clazz, Set<Class> set) {
@@ -79,14 +76,13 @@ public class ReactEAV {
             if (currentClass.equals(clazz)) rootHasIt = true;
         }
         if (!rootHasIt) {
-            WrongFetchException exception = new WrongFetchException(clazz, rootNode.getObjectClass(), "root");
-            throw exception;
+            throw new WrongFetchException(clazz, rootNode.getObjectClass(), "root");
         }
     }
 
-    private ReacTask fetchingOrderCreation(Class innerEntityClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend, String referenceId) {
+    private ReacTask fetchingOrderCreation(Class innerEntityClass, String referenceId) {
         validator.isTargetClassAReactEntity(innerEntityClass);
-        ReacTask childNode = new ReacTask(rootNode, this, innerEntityClass, forSingleObject, targetId, orderingParameter, ascend, referenceId);
+        ReacTask childNode = new ReacTask(rootNode, this, innerEntityClass, false, null, null, false, referenceId);
         rootNode.addInnerObject(childNode);
         return childNode;
     }
@@ -112,12 +108,10 @@ public class ReactEAV {
         }
         if (!executorAlreadyExists) {
             try {
-                ConditionExecutor executor = (ConditionExecutor) executorClass.newInstance();
+                ConditionExecutor executor = executorClass.newInstance();
                 executor.addReactConditionData(data);
                 executors.add(executor);
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
@@ -199,13 +193,7 @@ public class ReactEAV {
         if (currentNode.isForSingleObject()) {
             try {
                 query = getQueryForEntity(currentNode.getCurrentEntityParameters(), currentNode, true, null, false);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
                 e.printStackTrace();
             }
             sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getThisClassObjectTypeName());
@@ -219,13 +207,7 @@ public class ReactEAV {
             if (null != currentNode.getOrderingParameter()) {
                 try {
                     query = getQueryForEntity(currentNode.getCurrentEntityParameters(), currentNode, false, currentNode.getOrderingParameter(), currentNode.isAscend());
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
                     e.printStackTrace();
                 }
                 sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getThisClassObjectTypeName());
@@ -237,13 +219,7 @@ public class ReactEAV {
             } else {
                 try {
                     query = getQueryForEntity(currentNode.getCurrentEntityParameters(), currentNode, false, null, false);
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
                     e.printStackTrace();
                 }
                 sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getThisClassObjectTypeName());
@@ -281,14 +257,14 @@ public class ReactEAV {
                     result = namedParameterJdbcTemplate.queryForObject(holder.getQuery().toString(), holder.getSource(), new ReactEntityRowMapper(holder.getNode(), config.getDateAppender()));
                     holder.getNode().getResultList().add(result);
                 } catch (EmptyResultDataAccessException empty) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("ReactEAV failed to get single object from database, DB returned null. This may be because there is no entity objects in database.");
-                    sb.append("Root entity class=" + rootNode.getObjectClass());
-                    sb.append("Entity-that-returned-null-class=" + holder.getNode().getObjectClass());
-                    sb.append("Target entity id=" + holder.getNode().getTargetId());
-                    sb.append("Query=" + holder.getQuery());
-                    sb.append("isForSibleObject? :" + holder.getNode().isForSingleObject());
-                    log.log(Level.WARN, sb.toString(), empty);
+                    StringBuilder errorBuilder = new StringBuilder();
+                    errorBuilder.append("ReactEAV failed to get single object from database, DB returned null. This may be because there is no entity objects in database.");
+                    errorBuilder.append("Root entity class=").append(rootNode.getObjectClass());
+                    errorBuilder.append("Entity-that-returned-null-class=").append(holder.getNode().getObjectClass());
+                    errorBuilder.append("Target entity id=").append(holder.getNode().getTargetId());
+                    errorBuilder.append("Query=").append(holder.getQuery());
+                    errorBuilder.append("isForSibleObject? :").append(holder.getNode().isForSingleObject());
+                    log.log(Level.WARN, errorBuilder.toString(), empty);
                     if (holder.getNode().equals(rootNode)) {
                         return null;
                     }
@@ -305,13 +281,13 @@ public class ReactEAV {
                         result = (List) namedParameterJdbcTemplate.query(holder.getQuery().toString(), holder.getSource(), new RowMapperResultSetExtractor(new ReactEntityRowMapper(holder.getNode(), config.getDateAppender())));
                         holder.getNode().setResultList(result);
                     } catch (EmptyResultDataAccessException empty) {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("ReactEAV failed to get object collection from database, DB returned null. This may be because there is no entity objects in database.");
-                        sb.append("Root entity class=" + rootNode.getObjectClass());
-                        sb.append("Entity-that-returned-null-class=" + holder.getNode().getObjectClass());
-                        sb.append("Query=" + holder.getQuery());
-                        sb.append("Sorting parameter=" + holder.getNode().getOrderingParameter());
-                        log.log(Level.WARN, sb.toString(), empty);
+                        StringBuilder errorBuilder = new StringBuilder();
+                        errorBuilder.append("ReactEAV failed to get object collection from database, DB returned null. This may be because there is no entity objects in database.");
+                        errorBuilder.append("Root entity class=").append(rootNode.getObjectClass());
+                        errorBuilder.append("Entity-that-returned-null-class=").append(holder.getNode().getObjectClass());
+                        errorBuilder.append("Query=").append(holder.getQuery());
+                        errorBuilder.append("Sorting parameter=").append(holder.getNode().getOrderingParameter());
+                        log.log(Level.WARN, errorBuilder.toString(), empty);
                         if (holder.getNode().equals(rootNode)) {
                             return null;
                         }
