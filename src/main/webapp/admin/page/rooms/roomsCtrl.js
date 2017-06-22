@@ -1,7 +1,6 @@
 adminDesktop.controller('roomsCtrl', ['$scope', '$http', function($scope, $http){
 
-	/*  */
-	getAllRooms = function(e) {
+	getAllRooms = function() {
 		$http({
 			url: 'http://localhost:8080/rooms',
 			method: 'GET',
@@ -17,33 +16,88 @@ adminDesktop.controller('roomsCtrl', ['$scope', '$http', function($scope, $http)
 		});
 	}();
 
+	getAllRoomTypes = function() {
+		$http({
+			url: 'http://localhost:8080/roomtypes',
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		}).then(function(data) {
+			console.log(data);
+			$scope.listOfRoomTypes = data.data;
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}();
+
 	$scope.start = 0;
 	$scope.objectsOnPage = 3;
+	$scope.stage = "looking";
+	$scope.added = false;
+	$scope.updated = false;
+	$scope.deleted = false;
+	$scope.residents = [1, 2, 3];
 
-	$scope.attemptToEditRoom = function(objectId) {
+	$scope.prepareToAddRoom = function() {
+		$scope.addingOrEditing = true;
+		$scope.stage = "additing";
+	}
+
+	$scope.prepareToEditRoom = function(roomId) {
+		$scope.roomIdForOperation = roomId;
 		$http({
-			url: 'http://localhost:8080/rooms/' + objectId,
+			url: 'http://localhost:8080/rooms/' + roomId,
 			method: 'GET',
 			headers: {'Content-Type': 'application/json'}
 		}).then(function(data) {
 			console.log(data);
-			$scope.editing = true;
 			$scope.roomNumber = data.data.roomNumber;
 			$scope.numberOfResidents = data.data.numberOfResidents;
+			$scope.roomType = data.data.roomType.objectId;
+			$scope.addingOrEditing = true;
+			$scope.stage = "editing";
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
 		});
 	}
 
-	$scope.back = function() {
-		$scope.editing = false;
+	$scope.prepareToDeleteRoom = function(roomId) {
+		$scope.roomIdForOperation = roomId;
+		$scope.stage = "deleting";
 	}
 
-	$scope.editRoom = function(event) {
+	$scope.back = function() {
+		$scope.addingOrEditing = false;
+		$scope.stage = "looking";
+	}
+
+	$scope.query = function() {
+		switch ($scope.stage) {
+			case 'additing': addRoom();
+				break;
+			case 'editing': editRoom();
+				break;
+			case 'deleting': deleteRoom();
+				break;
+		}
+	}
+
+	editRoom = function() {
 		$scope.updated = false;
+		console.log($scope.roomNumber);
+		console.log($scope.numberOfResidents);
+		console.log($scope.roomType);
+		data = {
+				"roomNumber": 		$scope.roomNumber,
+				"numberOfResidents": 	$scope.numberOfResidents,
+				"roomType": 			$scope.roomType
+			}
+		console.log(data);
 		$http({
-			url: 'http://localhost:8080/rooms/' + $scope.roomID,
+			url: 'http://localhost:8080/rooms/' + $scope.roomIdForOperation,
 			method: 'PUT',
 			data: {
 				roomNumber: 		$scope.roomNumber,

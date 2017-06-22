@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projectpackage.dto.UpdateRoomDTO;
 import projectpackage.model.auth.User;
 import projectpackage.model.rooms.Room;
 import projectpackage.dto.IUDAnswer;
@@ -80,16 +81,15 @@ public class RoomController {
     //Update room method
     @CacheRemoveAll(cacheName = "roomList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> updateRoom(@PathVariable("id") Integer id, @RequestBody Room changedRoom){
-        if (!id.equals(changedRoom.getObjectId())){
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, "wrongId"), HttpStatus.NOT_ACCEPTABLE);
-        }
+    public ResponseEntity<IUDAnswer> updateRoom(@PathVariable("id") Integer id, @RequestBody UpdateRoomDTO changedRoom){
         IUDAnswer result = roomService.updateRoom(id, changedRoom);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.ACCEPTED;
         } else status = HttpStatus.BAD_REQUEST;
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
+        System.out.println("result: "+result);
+        System.out.println("changedRoom: "+changedRoom);
         return responseEntity;
     }
 

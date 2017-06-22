@@ -32,7 +32,7 @@ public class RoomTypeController {
     //Get RoomType List
     @ResponseStatus(HttpStatus.OK)
     @CacheResult(cacheName = "roomTypeList")
-    @GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public List<Resource<RoomType>> getRoomTypeList(){
         List<RoomType> roomTypes = roomTypeService.getAllRoomTypes();
         List<Resource<RoomType>> resources = new ArrayList<>();
