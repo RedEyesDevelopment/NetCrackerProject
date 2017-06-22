@@ -31,12 +31,12 @@ public class ReactAnnDefinitionReader {
         classList = allClasses;
     }
 
-    public Map<Class, String> makeClassesMap() {
-        Map<Class, String> makeClassesMap = new HashMap<>();
+    public Map<Class, Integer> makeClassesMap() {
+        Map<Class, Integer> makeClassesMap = new HashMap<>();
         for (Class clazz : classList) {
             if (clazz.isAnnotationPresent(ENTITYANNOTATION)) {
                 ReactEntity annotation = (ReactEntity) clazz.getAnnotation(ENTITYANNOTATION);
-                String entityTypeName = annotation.entityTypeId();
+                int entityTypeName = annotation.entityTypeId();
                 makeClassesMap.put(clazz, entityTypeName);
             }
         }

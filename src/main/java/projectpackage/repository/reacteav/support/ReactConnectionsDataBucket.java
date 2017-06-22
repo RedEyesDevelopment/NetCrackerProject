@@ -13,19 +13,19 @@ import java.util.Map;
  * Created by Lenovo on 16.05.2017.
  */
 public class ReactConnectionsDataBucket {
-    Map<Class, String> classesMap;
+    Map<Class, Integer> classesMap;
     Map<Class, LinkedHashMap<String, EntityVariablesData>> entityVariablesMap;
     Map<Class, HashMap<Class, EntityOuterRelationshipsData>> outerRelationsMap;
     Map<Class, HashMap<String, EntityReferenceRelationshipsData>> entityReferenceRelationsMap;
 
-    public ReactConnectionsDataBucket(Map<Class, String> classesMap, Map<Class, LinkedHashMap<String, EntityVariablesData>> entityVariablesMap, Map<Class, HashMap<Class, EntityOuterRelationshipsData>> outerRelationsMap, Map<Class, HashMap<String, EntityReferenceRelationshipsData>> entityReferenceRelationsMap) {
+    public ReactConnectionsDataBucket(Map<Class, Integer> classesMap, Map<Class, LinkedHashMap<String, EntityVariablesData>> entityVariablesMap, Map<Class, HashMap<Class, EntityOuterRelationshipsData>> outerRelationsMap, Map<Class, HashMap<String, EntityReferenceRelationshipsData>> entityReferenceRelationsMap) {
         this.classesMap = classesMap;
         this.entityVariablesMap = entityVariablesMap;
         this.outerRelationsMap = outerRelationsMap;
         this.entityReferenceRelationsMap = entityReferenceRelationsMap;
     }
 
-    public Map<Class, String> getClassesMap() {
+    public Map<Class, Integer> getClassesMap() {
         return ImmutableMap.copyOf(classesMap);
     }
 

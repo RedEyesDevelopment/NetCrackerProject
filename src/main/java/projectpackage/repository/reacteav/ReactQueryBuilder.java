@@ -114,7 +114,7 @@ public class ReactQueryBuilder {
         //OB_ID = OBJECT_ID
         //AT_ID = ATTR_ID
         queryAppender.appendWhereWord();
-        queryAppender.appendWhereConditionWithTableCodeEqualsToConstant(config.getRootTypesTableName(), config.getEntityTypeIdConstant());
+        queryAppender.appendWhereConditionWithTableIdEqualsToConstantInt(config.getRootTypesTableName(), config.getEntityTypeIdConstant());
         queryAppender.appendWhereConditionWithTwoTablesEqualsByOB_TY_ID(config.getRootTableName(), config.getRootTypesTableName());
 
         //Аппендим аттрибуты
@@ -158,7 +158,7 @@ public class ReactQueryBuilder {
                 queryAppender.appendWhereConditionWithTwoTablesEqualsByOB_TY_ID(config.getRootTableName(), attrTypeName);
                 queryAppender.appendWhereConditionWithAttrTypeRefEqualsOB_TY_ID(attrTypeName, objTypeName);
                 queryAppender.appendWhereConditionWithTwoTablesEqualsByAT_ID(attrTypeName, objReferenceName);
-                queryAppender.appendWhereConditionWithTableCodeEqualsToConstant(objTypeName, objTypelist.get(j).getInnerClassObjectTypeName());
+                queryAppender.appendWhereConditionWithTableIdEqualsToConstantInt(objTypeName, objTypelist.get(j).getInnerClassObjectTypeName());
                 if (null != objTypelist.get(j).getAttrId()) {
                     queryAppender.appendWhereConditionWithObRefAttrIdEqualsInteger(attrTypeName, objTypelist.get(j).getAttrId());
                 }
@@ -171,18 +171,18 @@ public class ReactQueryBuilder {
             Iterator iterator = objReferenceConnections.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<String, EntityAttrIdType> tgtReference = (Map.Entry<String, EntityAttrIdType>) iterator.next();
-//                String referenceInnerClassObjectTypeName = tgtReference.getValue().getInnerClassObjectTypeName();
-//                String taskDataInnerClassName = taskData.getInnerClass().getName();
+                String referenceInnerClassObjectTypeName = tgtReference.getValue().getInnerClassObjectTypeName();
+                String taskDataInnerClassName = taskData.getInnerClass().getName();
                 Integer referenceAttrId = tgtReference.getValue().getAttrId();
                 Integer taskDataAttrId = taskData.getReferenceAttrId();
-//                if (referenceInnerClassObjectTypeName.equals(taskDataInnerClassName)) {
+                if (referenceInnerClassObjectTypeName.equals(taskDataInnerClassName)) {
                     if (null != referenceAttrId && null != taskDataAttrId) {
-//                        if (referenceAttrId.equals(taskDataAttrId)) {
-//                            taskData.setInnerIdParameterNameForQueryParametersMap(tgtReference.getKey());
-//                        }
-//                    } else {
+                        if (referenceAttrId.equals(taskDataAttrId)) {
+                            taskData.setInnerIdParameterNameForQueryParametersMap(tgtReference.getKey());
+                        }
+                    } else {
                         taskData.setInnerIdParameterNameForQueryParametersMap(tgtReference.getKey());
-//                    }
+                    }
                 }
             }
         }
@@ -207,41 +207,57 @@ public class ReactQueryBuilder {
     void appendChildWhereClause(StringBuilder temporary, List<Integer> parentIds){
         if (null!=parentIds && !parentIds.isEmpty()){
             if (parentIds.size()!=1){
-                temporary.append("\nAND (");
+                temporary.append(config.getNewLineAnd());
+                temporary.append(config.getLbracketChar());
                 boolean firstAppend = true;
                 for (Integer parentId:parentIds){
                     if (firstAppend) {
-                        temporary.append("ROOTABLE.PARENT_ID=");
+                        temporary.append(config.getRootTableName());
+                        temporary.append(config.getParamParentId());
                     } else {
-                        temporary.append(" OR ROOTABLE.PARENT_ID=");
+                        temporary.append(config.getSpacedOr());
+                        temporary.append(config.getRootTableName());
+                        temporary.append(config.getParamParentId());
                     }
                     temporary.append(parentId);
                     firstAppend = false;
                 }
-                temporary.append(")");
+                temporary.append(config.getRbracketChar());
             } else {
-                temporary.append("\nAND ROOTABLE.PARENT_ID="+parentIds.get(0));
+                temporary.append(config.getNewLineAnd());
+                temporary.append(config.getRootTableName());
+                temporary.append(config.getParamParentId());
+                temporary.append(parentIds.get(0));
             }
         }
     }
 
-    void appendReferenceWhereClause(StringBuilder temporary, List<Integer> objectIds){
+    void appendReferenceWhereClause(StringBuilder temporary, Set<Integer> objectIds){
         if (null!=objectIds && !objectIds.isEmpty()){
             if (objectIds.size()!=1){
-                temporary.append("\nAND (");
+                temporary.append(config.getNewLineAnd());
+                temporary.append(config.getLbracketChar());
                 boolean firstAppend = true;
                 for (Integer parentId:objectIds){
                     if (firstAppend) {
-                        temporary.append("ROOTABLE.OBJECT_ID=");
+                        temporary.append(config.getRootTableName());
+                        temporary.append(config.getParamObjectId());
                     } else {
-                        temporary.append(" OR ROOTABLE.OBJECT_ID=");
+                        temporary.append(config.getSpacedOr());
+                        temporary.append(config.getRootTableName());
+                        temporary.append(config.getParamObjectId());
                     }
                     temporary.append(parentId);
                     firstAppend = false;
                 }
-                temporary.append(")");
+                temporary.append(config.getRbracketChar());
             } else {
-                temporary.append("\nAND ROOTABLE.PARENT_ID="+objectIds.get(0));
+                temporary.append(config.getNewLineAnd());
+                temporary.append(config.getRootTableName());
+                temporary.append(config.getParamObjectId());
+                for (Integer objId:objectIds){
+                    temporary.append(objId);
+                }
             }
         }
     }

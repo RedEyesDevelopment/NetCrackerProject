@@ -20,7 +20,7 @@ public class ReacTask {
     private ReactEAV reactEAV;
     private ReacTask parentTask;
     private Class objectClass;
-    private String thisClassObjectTypeName;
+    private int thisClassObjectTypeName;
     private List resultList;
     private boolean forSingleObject;
     private Integer targetId;
@@ -32,7 +32,7 @@ public class ReacTask {
     private List<Integer> idsListForChildFetchesOfInnerEntities;
     private List<Integer> parentalIdsForChildFetch;
     private List<Integer> idsListForReferenceFetchesOfInnerEntities;
-    private List<Integer> parentalIdsForReferenceFetch;
+    private Set<Integer> objectIdsForReferenceFetch;
     private LinkedHashMap<String, EntityVariablesData> currentEntityParameters;
     private HashMap<Class, EntityOuterRelationshipsData> currentEntityOuterLinks;
     private HashMap<String, EntityReferenceRelationshipsData> currentEntityReferenceRelations;
@@ -86,6 +86,10 @@ public class ReacTask {
         return parentalIdsForChildFetch;
     }
 
+    public Set<Integer> getObjectIdsForReferenceFetch() {
+        return objectIdsForReferenceFetch;
+    }
+
     public void manageParentAndReferenceLists() {
         this.parentalIdsForChildFetch = null;
         if (null!=parentTask) {
@@ -94,17 +98,17 @@ public class ReacTask {
                     this.parentalIdsForChildFetch = parentTask.getIdsListForChildFetchesOfInnerEntities();
                 }
             }
-            this.parentalIdsForReferenceFetch = null;
+            this.objectIdsForReferenceFetch = null;
             if (!parentTask.getReferenceIdRelations().isEmpty()){
                 System.out.println("***********************************************************************");
                 for (EntityReferenceIdRelation parentRelation : parentTask.getReferenceIdRelations().values()) {
                     System.out.println("thisClass: " + this.getObjectClass() + " and parent ERIR class: " + parentRelation.getInnerClass());
                     if (parentRelation.getInnerClass().equals(this.getObjectClass())) {
                         System.out.println("this will do");
-                        if (null == parentalIdsForChildFetch) {
-                            parentalIdsForChildFetch = new ArrayList<>();
+                        if (null == objectIdsForReferenceFetch) {
+                            objectIdsForReferenceFetch = new HashSet<>();
                         }
-                        this.parentalIdsForChildFetch.add(parentRelation.getOuterId());
+                        this.objectIdsForReferenceFetch.add(parentRelation.getOuterId());
                     }
                 }
             }
@@ -145,7 +149,7 @@ public class ReacTask {
         this.objectClass = objectClass;
     }
 
-    String getThisClassObjectTypeName() {
+    int getThisClassObjectTypeName() {
         return thisClassObjectTypeName;
     }
 

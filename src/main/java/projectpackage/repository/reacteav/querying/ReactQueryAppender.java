@@ -77,13 +77,21 @@ public class ReactQueryAppender {
     }
 
     private void appendAnd() {
-        queryBuilder.append("\nAND ");
+        queryBuilder.append(config.getNewLineAnd());
     }
 
     public boolean appendWhereConditionWithTableCodeEqualsToConstant(String tableName, String constant) {
         if (queryHasBeenFinished) return false;
         if (!firstWordInWhereQueryFlag) appendAnd();
         queryBuilder.append(tableName + "." + config.getCd() + "=:" + constant);
+        firstWordInWhereQueryFlag = false;
+        return true;
+    }
+
+    public boolean appendWhereConditionWithTableIdEqualsToConstantInt(String tableName, String constant) {
+        if (queryHasBeenFinished) return false;
+        if (!firstWordInWhereQueryFlag) appendAnd();
+        queryBuilder.append(tableName + "." + config.getOtid() + "=:" + constant);
         firstWordInWhereQueryFlag = false;
         return true;
     }

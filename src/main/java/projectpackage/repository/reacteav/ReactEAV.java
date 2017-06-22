@@ -212,7 +212,7 @@ public class ReactEAV {
             sqlParameterSource.put(config.getEntityIdConstant(), currentNode.getTargetId());
             if (currentNode.hasReferencedObjects()) {
                 for (EntityReferenceTaskData data : currentNode.getCurrentEntityReferenceTasks().values()) {
-                    sqlParameterSource.put(data.getInnerClassObjectTypeName(), data.getInnerClassObjectTypeName());
+                    sqlParameterSource.put(data.getInnerClassObjectTypeName(), dataBucket.getClassesMap().get(data.getInnerClass()));
                 }
             }
         } else {
@@ -231,7 +231,7 @@ public class ReactEAV {
                 sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getThisClassObjectTypeName());
                 if (currentNode.hasReferencedObjects()) {
                     for (EntityReferenceTaskData data : currentNode.getCurrentEntityReferenceTasks().values()) {
-                        sqlParameterSource.put(data.getInnerClassObjectTypeName(), data.getInnerClassObjectTypeName());
+                        sqlParameterSource.put(data.getInnerClassObjectTypeName(), dataBucket.getClassesMap().get(data.getInnerClass()));
                     }
                 }
             } else {
@@ -249,7 +249,7 @@ public class ReactEAV {
                 sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getThisClassObjectTypeName());
                 if (currentNode.hasReferencedObjects()) {
                     for (EntityReferenceTaskData data : currentNode.getCurrentEntityReferenceTasks().values()) {
-                        sqlParameterSource.put(data.getInnerClassObjectTypeName(), data.getInnerClassObjectTypeName());
+                        sqlParameterSource.put(data.getInnerClassObjectTypeName(), dataBucket.getClassesMap().get(data.getInnerClass()));
                     }
                 }
             }
@@ -263,7 +263,7 @@ public class ReactEAV {
         for (ReacTask task : currentTask.getInnerObjects()) {
             for (Map.Entry<String, EntityReferenceRelationshipsData> outerData : task.getCurrentEntityReferenceRelations().entrySet()) {
                 if (outerData.getValue().getOuterClass().equals(currentTask.getObjectClass()) && null != task.getReferenceId() && task.getReferenceId().equals(outerData.getKey())) {
-                    EntityReferenceTaskData newReferenceTask = new EntityReferenceTaskData(currentTask.getObjectClass(), task.getObjectClass(), task.getThisClassObjectTypeName(), outerData.getValue().getOuterFieldName(), outerData.getValue().getInnerIdKey(), outerData.getValue().getOuterIdKey(), outerData.getValue().getReferenceAttrId());
+                    EntityReferenceTaskData newReferenceTask = new EntityReferenceTaskData(currentTask.getObjectClass(), task.getObjectClass(), task.getObjectClass().getSimpleName(), outerData.getValue().getOuterFieldName(), outerData.getValue().getInnerIdKey(), outerData.getValue().getOuterIdKey(), outerData.getValue().getReferenceAttrId());
                     currentTask.addCurrentEntityReferenceTasks(per++, newReferenceTask);
                 }
             }
@@ -274,6 +274,7 @@ public class ReactEAV {
         ListIterator<ReactQueryTaskHolder> holderIterator = reactQueryTaskHolders.listIterator(reactQueryTaskHolders.size());
         while(holderIterator.hasPrevious()) {
             ReactQueryTaskHolder holder = holderIterator.previous();
+            System.out.println("QUERY: "+holder.getQuery());
             holder.getNode().manageParentAndReferenceLists();
             if (holder.getNode().isForSingleObject()) {
                 Object result = null;
@@ -298,6 +299,9 @@ public class ReactEAV {
                     try {
                         if (null!=holder.getNode().getParentalIdsForChildFetch()){
                             builder.appendChildWhereClause(holder.getQuery(), holder.getNode().getParentalIdsForChildFetch());
+                        }
+                        if (null!=holder.getNode().getObjectIdsForReferenceFetch()){
+                            builder.appendReferenceWhereClause(holder.getQuery(), holder.getNode().getObjectIdsForReferenceFetch());
                         }
                         result = (List) namedParameterJdbcTemplate.query(holder.getQuery().toString(), holder.getSource(), new RowMapperResultSetExtractor(new ReactEntityRowMapper(holder.getNode(), config.getDateAppender())));
                         holder.getNode().setResultList(result);

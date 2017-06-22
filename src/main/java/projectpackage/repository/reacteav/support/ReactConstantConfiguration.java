@@ -48,6 +48,23 @@ public class ReactConstantConfiguration {
     private String entityTypeIdConstant;
     //CONSTANT NAME FOR OBJECT_TYPE_ID VALUE
     private String entityIdConstant;
+    //"\nAND"
+    private String newLineAnd;
+    //" OR "
+    private String spacedOr;
+    //".OBJECT_ID="
+    private String paramObjectId;
+    //".PARENT_ID="
+    private String paramParentId;
+    //"("
+    private char lbracketChar;
+    //")"
+    private char rbracketChar;
+    //NEW LINE CHAR;
+    private char newLineChar;
+    //POINT CHAR;
+    private char pointChar;
+
 
     public ReactConstantConfiguration() {
         objectsTableName = "OBJECTS";
@@ -72,6 +89,14 @@ public class ReactConstantConfiguration {
         entityIdConstant = "targetId";
         entityOrderConstant = "enorder";
         rootTypesTableName = "ROOTYPES";
+        newLineAnd = "\nAND ";
+        spacedOr = " OR ";
+        paramObjectId = ".OBJECT_ID=";
+        paramParentId = ".PARENT_ID=";
+        lbracketChar ='(';
+        rbracketChar =')';
+        newLineChar='\n';
+        pointChar='.';
     }
 
     public String getObjectsTableName() {
@@ -248,5 +273,37 @@ public class ReactConstantConfiguration {
 
     public void setOtidref(String otidref) {
         this.otidref = otidref;
+    }
+
+    public String getNewLineAnd() {
+        return newLineAnd;
+    }
+
+    public String getSpacedOr() {
+        return spacedOr;
+    }
+
+    public String getParamObjectId() {
+        return paramObjectId;
+    }
+
+    public String getParamParentId() {
+        return paramParentId;
+    }
+
+    public char getLbracketChar() {
+        return lbracketChar;
+    }
+
+    public char getRbracketChar() {
+        return rbracketChar;
+    }
+
+    public char getNewLineChar() {
+        return newLineChar;
+    }
+
+    public char getPointChar() {
+        return pointChar;
     }
 }
