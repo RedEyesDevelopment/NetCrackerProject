@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import projectpackage.dto.UpdateRoomDTO;
+import projectpackage.dto.RoomDTO;
 import projectpackage.model.auth.User;
 import projectpackage.model.rooms.Room;
 import projectpackage.dto.IUDAnswer;
@@ -56,7 +56,7 @@ public class RoomController {
         HttpStatus status;
         if (null != room){
             if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(RoomController.class).deleteRoom(room.getObjectId())).withRel("delete"));
-            resource.add(linkTo(methodOn(RoomController.class).updateRoom(room.getObjectId(), room)).withRel("update"));
+            //resource.add(linkTo(methodOn(RoomController.class).updateRoom(room.getObjectId(), room)).withRel("update"));
             status = HttpStatus.ACCEPTED;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -68,8 +68,8 @@ public class RoomController {
     //Create room, fetch into database
     @CacheRemoveAll(cacheName = "roomList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> createRoom(@RequestBody Room newRoom){
-        IUDAnswer result = roomService.insertRoom(newRoom);
+    public ResponseEntity<IUDAnswer> createRoom(@RequestBody RoomDTO roomDTO){
+        IUDAnswer result = roomService.insertRoom(roomDTO);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.CREATED;
@@ -81,7 +81,7 @@ public class RoomController {
     //Update room method
     @CacheRemoveAll(cacheName = "roomList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> updateRoom(@PathVariable("id") Integer id, @RequestBody UpdateRoomDTO changedRoom){
+    public ResponseEntity<IUDAnswer> updateRoom(@PathVariable("id") Integer id, @RequestBody RoomDTO changedRoom){
         IUDAnswer result = roomService.updateRoom(id, changedRoom);
         HttpStatus status;
         if (result.isSuccessful()) {
