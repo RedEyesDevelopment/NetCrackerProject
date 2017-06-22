@@ -30,7 +30,7 @@ class ReacQueryTasksPreparator {
     List<ReactQueryTaskHolder> prepareTasks(ReacTask rootNode, Set<ConditionExecutor> executors, ReactQueryBuilder builder) {
         this.executors = executors;
         this.builder = builder;
-        int endedFutures = 0;
+
         ExecutorService threadPool = Executors.newFixedThreadPool(THREADSCOUNT);
         List<FutureTask<ReactQueryTaskHolder>> futureTasks = new ArrayList<>(6);
         recursiveTaskCreation(rootNode, futureTasks);
@@ -39,16 +39,20 @@ class ReacQueryTasksPreparator {
         for (FutureTask futureTask : futureTasks) {
             threadPool.execute(futureTask);
         }
+        int endedFutures;
 
+        //КАК ЭТО, МАТЬ ЕГО, РАБОТАЕТ??????????
         while (true) {
-            if (endedFutures >= futureTasks.size()) {
-                break;
-            }
+            endedFutures=0;
             for (FutureTask<ReactQueryTaskHolder> currentTask : futureTasks) {
                 if (currentTask.isDone()) {
                     endedFutures++;
                 }
             }
+            if (endedFutures >= futureTasks.size()) {
+                break;
+            }
+            //ВОТ ТУТ ИМЕННО - ПРИ СЛЕДУЮЩЕМ ПРОХОДЕ, ДАЖЕ ЕСЛИ КАРРЕНТТАСК
         }
 
         for (FutureTask<ReactQueryTaskHolder> futureTask : futureTasks) {

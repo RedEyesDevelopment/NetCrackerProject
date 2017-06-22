@@ -89,6 +89,7 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getAllOrders() {
+        System.out.println("IN TESTS:"+Thread.currentThread());
         List<Order> orders = orderService.getAllOrders();
         for (Order order : orders) {
             LOGGER.info(order);

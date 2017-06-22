@@ -182,13 +182,13 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
         //сколько пулов разрешено взять поверх максимального числа
         comboPooledDataSource.setAcquireIncrement(10);
         //максимальное время получения содеинения под запрос
-        comboPooledDataSource.setMaxIdleTime(300);
+        comboPooledDataSource.setMaxIdleTime(50);
         //максимальное время жизни запроса
-        comboPooledDataSource.setMaxConnectionAge(1200);
+        comboPooledDataSource.setMaxConnectionAge(500);
         //время простоя соединения, после которого оно уничтожается, пул сжимается до минимума
-        comboPooledDataSource.setMaxIdleTimeExcessConnections(120);
+        comboPooledDataSource.setMaxIdleTimeExcessConnections(240);
         //время между повторами запроса на соединение
-        comboPooledDataSource.setAcquireRetryDelay(1500);
+        comboPooledDataSource.setAcquireRetryDelay(30);
         //размер кэша под preparestatements
         comboPooledDataSource.setMaxStatements(500);
         //размер кэша для одного соединения под preparestatements
@@ -197,6 +197,8 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
         comboPooledDataSource.setIdleConnectionTestPeriod(300);
         //имя специальной таблицы для тестирования соединения с БД
         comboPooledDataSource.setAutomaticTestTable("c3p0DatabaseTestTable");
+        //c3p0 helper threads - специальные треды что чистят пулы и смотрят за ними
+        comboPooledDataSource.setNumHelperThreads(10);
 
         return comboPooledDataSource;
     }
@@ -414,4 +416,7 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
     InMemoryNotifService inMemoryNotifService(){
         return null;
     }
+
+    @Bean
+    ParentsDAO parentsDAO(){ return new ParentDAOImpl();}
 }

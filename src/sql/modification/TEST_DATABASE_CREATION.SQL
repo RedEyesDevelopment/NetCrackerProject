@@ -91,6 +91,15 @@ COMMENT ON COLUMN OBJREFERENCE.OBJECT_ID IS 'ссылка на экземпля�
 COMMENT ON COLUMN OBJREFERENCE.REFERENCE IS 'ссылка на экземпляр 2-го объекта ассоциативной связи с кратностью "один"';
 
 
+CREATE INDEX obj_ot_ind ON OBJECTS (OBJECT_TYPE_ID);
+CREATE INDEX obj_par_ind ON OBJECTS (PARENT_ID);
+CREATE INDEX objt_ot_ind ON OBJTYPE (OBJECT_TYPE_ID);
+CREATE INDEX attrt_ot_ind ON ATTRTYPE (OBJECT_TYPE_ID);
+CREATE INDEX attrt_at_ind ON ATTRTYPE (ATTR_ID);
+CREATE INDEX attr_at_ind ON ATTRIBUTES (ATTR_ID);
+
+
+
 INSERT INTO OBJTYPE (OBJECT_TYPE_ID, PARENT_ID, CODE, NAME, DESCRIPTION) VALUES (1,NULL,'Room','Комната',NULL);
 INSERT INTO OBJTYPE (OBJECT_TYPE_ID, PARENT_ID, CODE, NAME, DESCRIPTION) VALUES (2,NULL,'Order','Заказ',NULL);
 INSERT INTO OBJTYPE (OBJECT_TYPE_ID, PARENT_ID, CODE, NAME, DESCRIPTION) VALUES (3,NULL,'User','Пользователь',NULL);
