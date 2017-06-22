@@ -25,7 +25,7 @@ public class ReactQueryAppender {
     public boolean appendSelectColumnWithNaming(String tableName, String column, String nameOfColumn) {
         if (queryHasBeenFinished) return false;
         if (!firstWordInSelectQueryFlag) appendKoma();
-        queryBuilder.append(tableName + "." + column + " \"" + nameOfColumn + "\"");
+        queryBuilder.append(tableName + config.getPointChar() + column + config.getSpaceChar() + config.getDoubleBracket() + nameOfColumn + config.getDoubleBracket());
         firstWordInSelectQueryFlag = false;
         return true;
     }
@@ -33,7 +33,7 @@ public class ReactQueryAppender {
     public boolean appendSelectColumnWithValueAndNaming(String tableName, String nameOfColumn) {
         if (queryHasBeenFinished) return false;
         if (!firstWordInSelectQueryFlag) appendKoma();
-        queryBuilder.append(tableName + "." + config.getV() + " \"" + nameOfColumn + "\"");
+        queryBuilder.append(tableName + config.getPointChar() + config.getV() + config.getSpaceChar() + config.getDoubleBracket() + nameOfColumn + config.getDoubleBracket());
         firstWordInSelectQueryFlag = false;
         return true;
     }
@@ -41,33 +41,34 @@ public class ReactQueryAppender {
     public boolean appendSelectColumnWithDataValueAndNaming(String tableName, String nameOfColumn) {
         if (queryHasBeenFinished) return false;
         if (!firstWordInSelectQueryFlag) appendKoma();
-        queryBuilder.append(tableName + "." + config.getDv() + " \"" + nameOfColumn + config.getDateAppender() + "\"");
+        queryBuilder.append(tableName + config.getPointChar() + config.getDv() + config.getSpaceChar() + config.getDoubleBracket() + nameOfColumn + config.getDateAppender() + config.getDoubleBracket());
         firstWordInSelectQueryFlag = false;
         return true;
     }
 
     public boolean appendSelectWord() {
         if (queryHasBeenFinished) return false;
-        queryBuilder.append("SELECT ");
+        queryBuilder.append(config.getSelectWord() + config.getSpaceChar());
         return true;
     }
 
     public boolean appendFromWord() {
         if (queryHasBeenFinished) return false;
-        queryBuilder.append("\nFROM ");
+        queryBuilder.append(config.getNewLineChar() + config.getFromWord() + config.getSpaceChar());
         return true;
     }
 
     public boolean appendWhereWord() {
         if (queryHasBeenFinished) return false;
-        queryBuilder.append("\nWHERE ");
+        queryBuilder.append(config.getNewLineChar() + config.getWhereWord() + config.getSpaceChar());
+
         return true;
     }
 
     public boolean appendFromTableWithNaming(String tableName, String tableAlias) {
         if (queryHasBeenFinished) return false;
         if (!firstWordInFromQueryFlag) appendKoma();
-        queryBuilder.append(tableName + " " + tableAlias);
+        queryBuilder.append(tableName + config.getSpaceChar() + tableAlias);
         firstWordInFromQueryFlag = false;
         return true;
     }
@@ -83,7 +84,7 @@ public class ReactQueryAppender {
     public boolean appendWhereConditionWithTableCodeEqualsToConstant(String tableName, String constant) {
         if (queryHasBeenFinished) return false;
         if (!firstWordInWhereQueryFlag) appendAnd();
-        queryBuilder.append(tableName + "." + config.getCd() + "=:" + constant);
+        queryBuilder.append(tableName + config.getPointChar() + config.getCd() + config.getMapEqualitySign() + constant);
         firstWordInWhereQueryFlag = false;
         return true;
     }
@@ -91,7 +92,7 @@ public class ReactQueryAppender {
     public boolean appendWhereConditionWithTableIdEqualsToConstantInt(String tableName, String constant) {
         if (queryHasBeenFinished) return false;
         if (!firstWordInWhereQueryFlag) appendAnd();
-        queryBuilder.append(tableName + "." + config.getOtid() + "=:" + constant);
+        queryBuilder.append(tableName + config.getPointChar() + config.getOtid() + config.getMapEqualitySign() + constant);
         firstWordInWhereQueryFlag = false;
         return true;
     }
@@ -99,7 +100,7 @@ public class ReactQueryAppender {
     public boolean appendWhereConditionWithTwoTablesEqualsByOB_TY_ID(String firstTable, String secondTable) {
         if (queryHasBeenFinished) return false;
         if (!firstWordInWhereQueryFlag) appendAnd();
-        queryBuilder.append(firstTable + "." + config.getOtid() + "=" + secondTable + "." + config.getOtid());
+        queryBuilder.append(firstTable + config.getPointChar() + config.getOtid() + config.getEqualitySign() + secondTable + config.getPointChar() + config.getOtid());
         firstWordInWhereQueryFlag = false;
         return true;
     }
@@ -107,7 +108,7 @@ public class ReactQueryAppender {
     public boolean appendWhereConditionWithAttrTypeRefEqualsOB_TY_ID(String attrTypeTable, String ObjectTypeTable) {
         if (queryHasBeenFinished) return false;
         if (!firstWordInWhereQueryFlag) appendAnd();
-        queryBuilder.append(attrTypeTable + "." + config.getOtidref() + "=" + ObjectTypeTable + "." + config.getOtid());
+        queryBuilder.append(attrTypeTable + config.getPointChar() + config.getOtidref() + config.getEqualitySign() + ObjectTypeTable + config.getPointChar() + config.getOtid());
         firstWordInWhereQueryFlag = false;
         return true;
     }
@@ -115,7 +116,7 @@ public class ReactQueryAppender {
     public boolean appendWhereConditionWithTwoTablesEqualsByOB_ID(String firstTable, String secondTable) {
         if (queryHasBeenFinished) return false;
         if (!firstWordInWhereQueryFlag) appendAnd();
-        queryBuilder.append(firstTable + "." + config.getOid() + "=" + secondTable + "." + config.getOid());
+        queryBuilder.append(firstTable + config.getPointChar() + config.getOid() + config.getEqualitySign() + secondTable + config.getPointChar() + config.getOid());
         firstWordInWhereQueryFlag = false;
         return true;
     }
@@ -123,7 +124,7 @@ public class ReactQueryAppender {
     public boolean appendWhereConditionWithTwoTablesEqualsByAT_ID(String firstTable, String secondTable) {
         if (queryHasBeenFinished) return false;
         if (!firstWordInWhereQueryFlag) appendAnd();
-        queryBuilder.append(firstTable + "." + config.getAid() + "=" + secondTable + "." + config.getAid());
+        queryBuilder.append(firstTable + config.getPointChar() + config.getAid() + config.getEqualitySign() + secondTable + config.getPointChar() + config.getAid());
         firstWordInWhereQueryFlag = false;
         return true;
     }
@@ -131,7 +132,7 @@ public class ReactQueryAppender {
     public boolean appendWhereConditionWithTablesAttrEqualsToValue(String tableName, int value) {
         if (queryHasBeenFinished) return false;
         if (!firstWordInWhereQueryFlag) appendAnd();
-        queryBuilder.append(tableName + "." + config.getAid() + "=" + value);
+        queryBuilder.append(tableName + config.getPointChar() + config.getAid() + config.getEqualitySign() + value);
         firstWordInWhereQueryFlag = false;
         return true;
     }
@@ -139,7 +140,7 @@ public class ReactQueryAppender {
     public boolean appendWhereConditionWithTableCodeEqualsToValue(String tableName, String value) {
         if (queryHasBeenFinished) return false;
         if (!firstWordInWhereQueryFlag) appendAnd();
-        queryBuilder.append(tableName + "." + config.getCd() + "='" + value + "'");
+        queryBuilder.append(tableName + config.getPointChar() + config.getCd() + config.getEqualitySign() + config.getSingleBracket() + value + config.getSingleBracket());
         firstWordInWhereQueryFlag = false;
         return true;
     }
@@ -147,7 +148,7 @@ public class ReactQueryAppender {
     public boolean appendWhereConditionWithObjectIdEqualsSearchingString(String tableName, String searcheable) {
         if (queryHasBeenFinished) return false;
         if (!firstWordInWhereQueryFlag) appendAnd();
-        queryBuilder.append(tableName + "." + config.getOid() + "=" + searcheable);
+        queryBuilder.append(tableName + config.getPointChar() + config.getOid() + config.getEqualitySign() + searcheable);
         firstWordInWhereQueryFlag = false;
         return true;
     }
@@ -155,7 +156,7 @@ public class ReactQueryAppender {
     public boolean appendWhereConditionWithObRefAttrIdEqualsInteger(String tableName, Integer integer) {
         if (queryHasBeenFinished) return false;
         if (!firstWordInWhereQueryFlag) appendAnd();
-        queryBuilder.append(tableName + "." + config.getAid() + "=" + integer);
+        queryBuilder.append(tableName + config.getPointChar() + config.getAid() + config.getEqualitySign() + integer);
         firstWordInWhereQueryFlag = false;
         return true;
     }
@@ -163,7 +164,7 @@ public class ReactQueryAppender {
     public boolean appendWhereConditionWithRootTableObjectIdSearching() {
         if (queryHasBeenFinished) return false;
         if (!firstWordInWhereQueryFlag) appendAnd();
-        queryBuilder.append(config.getRootTableName() + "." + config.getOid() + "= :" + config.getEntityIdConstant());
+        queryBuilder.append(config.getRootTableName() + config.getPointChar() + config.getOid() + config.getMapEqualitySign() + config.getEntityIdConstant());
         firstWordInWhereQueryFlag = false;
         return true;
     }

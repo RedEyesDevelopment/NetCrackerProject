@@ -64,6 +64,19 @@ public class ReactConstantConfiguration {
     private char newLineChar;
     //POINT CHAR;
     private char pointChar;
+    //" " "
+    private char doubleBracket;
+    //" ' "
+    private char singleBracket;
+    //space
+    private char spaceChar;
+    //SELECT FROM WHERE
+    private String selectWord;
+    private String fromWord;
+    private String whereWord;
+    //mapParameterEqualitySign;
+    private String mapEqualitySign;
+    private char equalitySign;
 
 
     public ReactConstantConfiguration() {
@@ -97,6 +110,14 @@ public class ReactConstantConfiguration {
         rbracketChar =')';
         newLineChar='\n';
         pointChar='.';
+        doubleBracket='"';
+        singleBracket='\'';
+        spaceChar=' ';
+        selectWord="SELECT";
+        fromWord="FROM";
+        whereWord="WHERE";
+        mapEqualitySign = "=:";
+        equalitySign = '=';
     }
 
     public String getObjectsTableName() {
@@ -305,5 +326,37 @@ public class ReactConstantConfiguration {
 
     public char getPointChar() {
         return pointChar;
+    }
+
+    public char getDoubleBracket() {
+        return doubleBracket;
+    }
+
+    public char getSpaceChar() {
+        return spaceChar;
+    }
+
+    public String getSelectWord() {
+        return selectWord;
+    }
+
+    public String getFromWord() {
+        return fromWord;
+    }
+
+    public String getWhereWord() {
+        return whereWord;
+    }
+
+    public String getMapEqualitySign() {
+        return mapEqualitySign;
+    }
+
+    public char getEqualitySign() {
+        return equalitySign;
+    }
+
+    public char getSingleBracket() {
+        return singleBracket;
     }
 }
