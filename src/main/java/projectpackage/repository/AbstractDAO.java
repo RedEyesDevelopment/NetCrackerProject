@@ -36,6 +36,8 @@ public abstract class AbstractDAO {
     public static final String UPDATE_ATTRIBUTE = "UPDATE ATTRIBUTES SET VALUE = ?, DATE_VALUE = ? WHERE OBJECT_ID = ? AND ATTR_ID = ?";
     public static final String UPDATE_REFERENCE = "UPDATE OBJREFERENCE SET REFERENCE = ? WHERE OBJECT_ID = ? AND ATTR_ID = ?";
 
+    public static final String DELETE_REFERENCE = "DELETE FROM OBJREFERENCE WHERE Object_id = ? AND Attr_id = ? AND Reference = ? ";
+
     protected Integer nextObjectId() {
         return jdbcTemplate.queryForObject("SELECT seq_obj_id.nextval FROM DUAL", Integer.class);
     }

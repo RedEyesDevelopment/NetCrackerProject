@@ -8,10 +8,7 @@ import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Role;
 import projectpackage.model.notifications.NotificationType;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.*;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -52,14 +49,13 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     }
 
     @Override
-    public int insertNotificationType(NotificationType notificationType) throws TransactionException {
+    public Integer insertNotificationType(NotificationType notificationType) throws TransactionException {
+        if (notificationType == null) return null;
         Integer objectId = nextObjectId();
         try {
             jdbcTemplate.update(INSERT_OBJECT, objectId, null, 11, null, null);
-
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 40, objectId, notificationType.getNotificationTypeTitle(), null);
-
-            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 41, objectId, notificationType.getOrientedRole().getObjectId());
+            insertNotificationTypeTitle(objectId, notificationType);
+            insertOrientedRole(objectId, notificationType);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -67,7 +63,9 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     }
 
     @Override
-    public void updateNotificationType(NotificationType newNotificationType, NotificationType oldNotificationType) throws TransactionException {
+    public Integer updateNotificationType(NotificationType newNotificationType, NotificationType oldNotificationType)
+            throws TransactionException {
+        if (oldNotificationType == null || newNotificationType == null) return null;
         try {
             if (!oldNotificationType.getNotificationTypeTitle().equals(newNotificationType.getNotificationTypeTitle())) {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newNotificationType.getNotificationTypeTitle(), null,
@@ -80,6 +78,7 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
+        return newNotificationType.getObjectId();
     }
 
     @Override
@@ -93,5 +92,21 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
         if (null == notificationType) throw new DeletedObjectNotExistsException(this);
 
         deleteSingleEntityById(id);
+    }
+
+    private void insertNotificationTypeTitle(Integer objectId, NotificationType notificationType) {
+        if (notificationType.getNotificationTypeTitle() != null && !notificationType.getNotificationTypeTitle().isEmpty()) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 40, objectId, notificationType.getNotificationTypeTitle(), null);
+        } else {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 40, objectId, null, null);
+        }
+    }
+
+    private void insertOrientedRole(Integer objectId, NotificationType notificationType) {
+        if (notificationType.getOrientedRole() != null) {
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 41, objectId, notificationType.getOrientedRole().getObjectId());
+        } else {
+            throw new NullReferenceObjectException();
+        }
     }
 }
