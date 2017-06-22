@@ -1,5 +1,6 @@
 package projectpackage.repository.reacteav.support;
 
+import lombok.extern.log4j.Log4j;
 import org.reflections.Reflections;
 import org.springframework.stereotype.Component;
 import projectpackage.repository.reacteav.annotations.*;
@@ -11,6 +12,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
 
+@Log4j
 @Component
 public class ReactAnnDefinitionReader {
     private String packageName;
@@ -112,7 +114,7 @@ public class ReactAnnDefinitionReader {
                         try {
                             referenceAttrId = Integer.parseInt(reactReference.attrIdField());
                         } catch (Throwable e) {
-                            e.printStackTrace();
+                            log.error(e);
                         }
                     }
                     EntityReferenceRelationshipsData data = new EntityReferenceRelationshipsData(outerClass, outerFieldName, innerFieldKey, outerFieldKey, referenceAttrId);
@@ -133,7 +135,7 @@ public class ReactAnnDefinitionReader {
                         try {
                             referenceAttrId = Integer.parseInt(reactReference.attrIdField());
                         } catch (Throwable e) {
-                            e.printStackTrace();
+                            log.error(e);
                         }
                     }
                     EntityReferenceRelationshipsData data = new EntityReferenceRelationshipsData(outerClass, outerFieldName, innerFieldKey, outerFieldKey, referenceAttrId);

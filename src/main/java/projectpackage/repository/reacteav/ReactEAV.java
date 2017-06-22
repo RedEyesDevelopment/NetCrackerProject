@@ -31,6 +31,7 @@ public class ReactEAV {
     private Set<ConditionExecutor> executors;
     private List<ReactQueryTaskHolder> reactQueryTaskHolders;
     private ReactQueryBuilder builder;
+    private ReacQueryTasksPreparator preparator;
 
     @Autowired
     private ReactEntityValidator validator = new ReactEntityValidator();
@@ -112,7 +113,7 @@ public class ReactEAV {
                 executor.addReactConditionData(data);
                 executors.add(executor);
             } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
+                log.error(e);
             }
         }
     }
@@ -194,7 +195,7 @@ public class ReactEAV {
             try {
                 query = getQueryForEntity(currentNode.getCurrentEntityParameters(), currentNode, true, null, false);
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                e.printStackTrace();
+                log.error(e);
             }
             sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getThisClassObjectTypeName());
             sqlParameterSource.put(config.getEntityIdConstant(), currentNode.getTargetId());
@@ -208,7 +209,7 @@ public class ReactEAV {
                 try {
                     query = getQueryForEntity(currentNode.getCurrentEntityParameters(), currentNode, false, currentNode.getOrderingParameter(), currentNode.isAscend());
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                    e.printStackTrace();
+                    log.error(e);
                 }
                 sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getThisClassObjectTypeName());
                 if (currentNode.hasReferencedObjects()) {
@@ -220,7 +221,7 @@ public class ReactEAV {
                 try {
                     query = getQueryForEntity(currentNode.getCurrentEntityParameters(), currentNode, false, null, false);
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                    e.printStackTrace();
+                    log.error(e);
                 }
                 sqlParameterSource.put(config.getEntityTypeIdConstant(), currentNode.getThisClassObjectTypeName());
                 if (currentNode.hasReferencedObjects()) {

@@ -2,11 +2,11 @@ package projectpackage.repository.support;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import projectpackage.repository.support.rowmappers.ParentIdRowMapper;
 
-@Service
-public class ParentServiceImpl implements ParentsService{
+@Repository
+public class ParentDAOImpl implements ParentsDAO {
     private static final String QUERY = "SELECT OB.PARENT_ID \"PARENT\" FROM OBJECTS OB WHERE OB.OBJECT_ID=";
     @Autowired
     private JdbcTemplate jdbcTemplate;

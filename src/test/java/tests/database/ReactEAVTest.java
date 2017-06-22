@@ -23,7 +23,7 @@ import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
 import projectpackage.repository.reacteav.conditions.StringWhereCondition;
 import projectpackage.repository.reacteav.conditions.VariableWhereCondition;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
-import projectpackage.repository.support.ParentsService;
+import projectpackage.repository.support.ParentsDAO;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     ReactEAVManager manager;
 
     @Autowired
-    ParentsService parentsService;
+    ParentsDAO parentsDAO;
 
     //Получить список юзеров
     @Test
@@ -408,14 +408,14 @@ public class ReactEAVTest extends AbstractDatabaseTest {
 
     @Test
     public void getParentId(){
-        Integer parentId = parentsService.getParentId(1101);
+        Integer parentId = parentsDAO.getParentId(1101);
         System.out.println("PARENTID="+parentId);
         System.out.println(SEPARATOR);
     }
 
     @Test
     public void getUserForPhone(){
-        Integer parentId = parentsService.getParentId(1101);
+        Integer parentId = parentsDAO.getParentId(1101);
         User user = null;
         try {
             user = (User) manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches().getSingleEntityWithId(parentId);

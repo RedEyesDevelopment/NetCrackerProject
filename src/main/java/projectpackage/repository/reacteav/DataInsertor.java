@@ -1,5 +1,6 @@
 package projectpackage.repository.reacteav;
 
+import lombok.extern.log4j.Log4j;
 import projectpackage.repository.reacteav.exceptions.WrongFieldNameException;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 import projectpackage.repository.reacteav.relationsdata.EntityOuterRelationshipsData;
@@ -9,6 +10,7 @@ import projectpackage.repository.reacteav.relationsdata.EntityReferenceTaskData;
 import java.lang.reflect.Field;
 import java.util.*;
 
+@Log4j
 class DataInsertor {
     private ReacTask outerEntity;
     private ReacTask innerEntity;
@@ -32,7 +34,7 @@ class DataInsertor {
                 try {
                     parentToInputField = outerEntity.getObjectClass().getDeclaredField(fieldName);
                 } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
+                    log.error(e);
                 }
                 parentToInputField.setAccessible(true);
 
@@ -78,7 +80,7 @@ class DataInsertor {
                                 doNotModifyTheField = true;
                             }
                         } catch (IllegalAccessException e) {
-                            e.printStackTrace();
+                            log.error(e);
                         }
                     }
                 }
@@ -111,7 +113,7 @@ class DataInsertor {
                 outerField.set(outer, inner);
             }
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 

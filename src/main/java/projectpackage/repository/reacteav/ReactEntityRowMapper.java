@@ -1,5 +1,6 @@
 package projectpackage.repository.reacteav;
 
+import lombok.extern.log4j.Log4j;
 import org.springframework.jdbc.core.RowMapper;
 import projectpackage.repository.reacteav.exceptions.WrongTypeClassException;
 import projectpackage.repository.reacteav.relationsdata.EntityReferenceIdRelation;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@Log4j
 public class ReactEntityRowMapper implements RowMapper {
     private Class clazz;
     private ReacTask task;
@@ -35,7 +37,7 @@ public class ReactEntityRowMapper implements RowMapper {
         try {
             targetReacEntityObject = clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
+            log.error(e);
         }
 
         for (Map.Entry<String, EntityVariablesData> entry : parameters.entrySet()) {
@@ -45,7 +47,7 @@ public class ReactEntityRowMapper implements RowMapper {
             try {
                 field = targetReacEntityObject.getClass().getDeclaredField(objectParameterKey);
             } catch (NoSuchFieldException e) {
-                e.printStackTrace();
+                log.error(e);
             }
             boolean fieldWasPrivate = false;
             if (!field.isAccessible()) {
