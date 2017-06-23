@@ -17,47 +17,8 @@ app.factory('sharedData' , function() {
 
 
 });
-//
-//
-app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
-    $locationProvider.hashPrefix('');
 
-    $routeProvider
-        .when('/rooms', {
-            templateUrl: './room_type.html',
-            controller: 'roomTypeController'
-        });
-}]);
 
-app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
-    $locationProvider.hashPrefix('');
-
-    $routeProvider
-        .when('/order', {
-            templateUrl: './order.html',
-            controller: 'finishOrderController'
-        });
-}]);
-
-app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
-    $locationProvider.hashPrefix('');
-
-    $routeProvider
-        .when('/fineBooked', {
-            templateUrl: './fineBooked.html',
-            controller: 'fineBookedController'
-        });
-}]);
-
-// app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
-//     $locationProvider.hashPrefix('');
-//
-//     $routeProvider
-//         .when('/user', {
-//             templateUrl: './personal_settings.html',
-//             controller: 'authorizationController'
-//         });
-// }]);
 app.controller('login', ['$scope', '$http', '$location' , 'sharedData', '$document', function ($scope, $http, $location, sharedData, $document) {
 
     $scope.login = function (eve) {

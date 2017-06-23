@@ -22,40 +22,6 @@ app.factory('sharedData' , function() {
 
 });
 
-app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
-    $locationProvider.hashPrefix('');
-
-    $routeProvider
-        .when('/settings', {
-            templateUrl: 'user_settings.html',
-            controller: 'userSettingsController'
-        })
-        .otherwise({
-            templateUrl: 'user_settings.html',
-            controller: 'userSettingsController'
-        })
-}]);
-
-app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
-    $locationProvider.hashPrefix('');
-
-    $routeProvider
-        .when('/sendmessage', {
-            templateUrl: 'send_message.html',
-            controller: 'sendMessageController'
-        })
-}]);
-
-app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
-    $locationProvider.hashPrefix('');
-
-    $routeProvider
-        .when('/orderlist', {
-            templateUrl: 'checklist.html',
-            controller: 'orderListController'
-        })
-}]);
-
 
 app.controller('userSettingsController', ['$scope', '$http', '$location' , 'sharedData', '$timeout', function ($scope, $http, $location, sharedData, $timeout) {
     //$scope.userFlag = true;
