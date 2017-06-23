@@ -7,11 +7,14 @@ import projectpackage.repository.reacteav.ReactEAVManager;
 import projectpackage.repository.support.ParentsDAO;
 import tests.database.reacteavperformance.*;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashSet;
 
 @Log4j
 public class ReactEAVPerformanceTest extends AbstractDatabaseTest {
-    private static final int QUERYQUANTITY = 100;
+    private static final int QUERYQUANTITY = 1000;
 
     @Autowired
     ReactEAVManager reactEAVManager;
@@ -49,11 +52,26 @@ public class ReactEAVPerformanceTest extends AbstractDatabaseTest {
         }
         diy = System.currentTimeMillis()-diy;
 
-        System.out.println(SEPARATOR);
-        System.out.println("RESULTING TIME="+diy);
 
-        for (PerformanceJob job:jobs){
-            System.out.println(job.getResult());
+        File file = new File("results.txt");
+        FileWriter writer = null;
+        try {
+             writer = new FileWriter(file);
+            writer.write(SEPARATOR+"\n");
+            writer.write("RESULTING TIME="+diy+"\n");
+            for (PerformanceJob job:jobs){
+                writer.write(job.getResult());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                writer.flush();
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
     }
 }

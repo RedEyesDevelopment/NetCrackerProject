@@ -25,7 +25,9 @@ public abstract class PerformanceJob {
 
     public String getResult(){
         OptionalDouble average = timings.stream().mapToLong((p) -> p).average();
-        return new StringBuilder(SEPARATOR).append("\n").append(getJobName()).append(" ENDED:\n").append("Smallest time: ").append(smallestOne).append("\n").append("Biggest time: ").append(biggestOne).append("\n").append("Average: ").append(average).append("\n").toString();
+         StringBuilder builder = new StringBuilder(SEPARATOR).append("\n").append(getJobName()).append(" ENDED:\n").append("Smallest time: ").append(smallestOne).append("\n").append("Biggest time: ").append(biggestOne).append("\n").append("Average: ").append(average).append("\n").append("Data: ").append("\n");
+         for (Long data:timings) builder.append(data).append("\n");
+        return builder.toString();
     }
 
     void insertResult(Long result){
