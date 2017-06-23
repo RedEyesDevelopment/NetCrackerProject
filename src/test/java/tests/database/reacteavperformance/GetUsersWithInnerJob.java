@@ -41,6 +41,6 @@ public class GetUsersWithInnerJob extends PerformanceJob {
 
     @Override
     public String getJobName() {
-        return "Simple Get All Users";
+        return "Get All Users With Inners";
     }
 }
