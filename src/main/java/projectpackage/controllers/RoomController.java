@@ -82,6 +82,9 @@ public class RoomController {
     @CacheRemoveAll(cacheName = "roomList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateRoom(@PathVariable("id") Integer id, @RequestBody RoomDTO changedRoom){
+        System.out.println("******************* IN CONTROLLER *********************");
+        System.out.println(changedRoom);
+        System.out.println(id);
         IUDAnswer result = roomService.updateRoom(id, changedRoom);
         HttpStatus status;
         if (result.isSuccessful()) {

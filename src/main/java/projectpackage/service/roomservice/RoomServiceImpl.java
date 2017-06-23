@@ -162,6 +162,9 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public IUDAnswer updateRoom(Integer id, RoomDTO roomDTO) {
+        System.out.println("****************** IN SERVICE ******************");
+        System.out.println(roomDTO);
+        System.out.println(id);
         if (id == null) return new IUDAnswer(false, "transactionInterrupt");
         if (roomDTO == null) return new IUDAnswer(false, "transactionInterrupt");
         if (roomDTO.getNumberOfResidents() > 3 || roomDTO.getNumberOfResidents() < 1) {
@@ -174,6 +177,8 @@ public class RoomServiceImpl implements RoomService {
         newRoom.setRoomNumber(roomDTO.getRoomNumber());
         newRoom.setRoomType(roomType);
         Room oldRoom = roomDAO.getRoom(id);
+        System.out.println(oldRoom);
+        System.out.println(newRoom);
         try {
             roomDAO.updateRoom(newRoom, oldRoom);
         } catch (TransactionException e) {

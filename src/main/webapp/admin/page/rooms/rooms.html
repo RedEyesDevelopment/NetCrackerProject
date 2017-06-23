@@ -1,9 +1,14 @@
 <div class="workspace col-sm-10">
-    <div class="col-sm-12">
-        <span class="h2">Rooms</span>
-        <button type="button" class="btn btn-primary btn-md newEntity">New room</button>
+
+	<!-- Top of workspace -->
+    <div class="top col-sm-12">
+        <h2>Rooms</h2>
+        <button class="btn btn-primary btn-md newEntity" ng-click="prepareToAddRoom()">New room</button>
     </div>
-    <div class="listOfObjects" ng-if="!editing">
+
+
+    <!-- List of objects in workspace -->
+    <div class="listOfObjects" ng-if="!modificationMode">
         <ul class="pager">
             <li><a ng-click="previousRooms()"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li>
             <li><input type="number" min="1" max="999" ng-model="objectsOnPage"></li>
@@ -14,77 +19,76 @@
             <p class="top-bottom-border admin-notes"> Room type: {{ room.roomType.roomTypeTitle }} </p>
             <p class="admin-notes"> Number of residents: {{ room.numberOfResidents }} </p>
             <div class="text-right">
-                <button type="button" class="btn btn-primary btn-md" ng-click="attemptToEditRoom(room.objectId)">Edit</button>
-                <button type="button" class="btn btn-warning btn-md" id="confirmLink" data-toggle="modal" data-target="#confirmModal">Delete</button>
+                <button type="button" class="btn btn-primary btn-md"
+                        ng-click="prepareToEditRoom(room.objectId, listOfRooms.indexOf(room))">
+                    Edit
+                </button>
+                <button type="button" class="btn btn-warning btn-md"
+                        ng-click="prepareToDeleteRoom(room.objectId, listOfRooms.indexOf(room))"
+                		data-toggle="modal" data-target="#deleteConfirmModal">
+                    Delete
+                </button>
             </div>
         </div>
     </div>
 
-    <div class="edit" ng-if="editing">
-        <div ng-click="back()"><button type="button" class="btn btn-info btn-sm back"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back to rooms</button></div>
-        <div class="col-sm-offset-3 col-sm-5 edit-border">
-            <form class="form-horizontal" name="formEditRoom" ng-submit="editRoom($event)">
+	
+	<!-- Form for add or edit -->
+    <div class="editWindow" ng-if="modificationMode">
+        <div>
+        	<button ng-click="back()" class="btn btn-info btn-sm back">
+        		<i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back to rooms
+        	</button>
+
+            <div class="answer">
+                <!-- Successfully added -->
+                <div ng-if="added">
+                    Successfully added! <i class="fa fa-check" aria-hidden="true"></i>              
+                </div>
+
+                <!-- Successfully updated -->
+                <div ng-if="updated">
+                    Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-sm-offset-3 col-sm-5 createUpdateForm">
+            <form class="form-horizontal" name="createUpdateForm">
                 <div class="form-group">
                     <label for="roomNmbr" class="col-sm-6 control-label">Room number</label>
                     <div class="col-sm-6">
-                        <input type="number" max="9999" id="roomNmbr" ng-required="true" ng-model="roomNumber">
+                        <input type="number" max="9999" id="roomNmbr" ng-required="true" ng-model="room.number">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="numberOfRsdnts" class="col-sm-6 control-label">Number of residents</label>
                     <div class="col-sm-3">
-                        <select id="numberOfRsdnts" class="form-control" ng-required="true" ng-model="numberOfResidents">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
+                        <select id="numberOfRsdnts" class="form-control" ng-required="true" ng-model="room.numberOfResidents"
+                        		ng-options="res for res in residents">
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="roomTp" class="col-sm-6 control-label">Room type</label>
                     <div class="col-sm-6">
-                        <select id="roomTp" class="form-control" ng-required="true">
-                            <option value="111">RoomType111</option>
-                            <option value="222">RoomType222</option>
-                            <option value="333">RoomType333</option>
-                            <option value="444">RoomType444</option>
+                        <select id="roomTp" class="form-control" ng-required="true" ng-model="room.type"
+                        		ng-options="type.objectId as type.roomTypeTitle for type in listOfRoomTypes">
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary" ng-disabled="formEditRoom.$invalid" id="editConfirmLink" data-toggle="modal" data-target="#editConfirmModal">Edit</button>
+                        <button class="btn btn-primary" ng-disabled="createUpdateForm.$invalid" data-toggle="modal" data-target="#editConfirmModal">OK</button>
                     </div>
                 </div>
             </form>
         </div>
-        <div class="answer" ng-if="updated">
-            Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
-        </div>
     </div>
 </div>
 
-<div class="modal fade" id="confirmModal" role="dialog">
-    <div class="vertical-alignment-helper">
-        <div class="modal-dialog modal-sm vertical-align-center">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header popupheader">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Warning</h4>
-                </div>
-                <div class="modal-body">
-                    <p class="admin-notes">You would like to delete a room. Are you sure?</p>
-                    <div class="text-right">
-                        <button type="submit" class="btn btn-danger">Yes</button>
-                        <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
+<!-- Add or Edit confirmation -->
 <div class="modal fade" id="editConfirmModal" role="dialog">
     <div class="vertical-alignment-helper">
         <div class="modal-dialog modal-sm vertical-align-center">
@@ -97,11 +101,35 @@
                 <div class="modal-body">
                     <p class="admin-notes">Would you like to save changes?</p>
                     <div class="text-right">
-                        <button type="submit" class="btn btn-success">Yes</button>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+                        <button class="btn btn-success" data-dismiss="modal" ng-click="query()">Yes</button>
+                        <button class="btn btn-primary" data-dismiss="modal">No</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+<!-- Delete confirmation -->
+<div class="modal fade" id="deleteConfirmModal" role="dialog">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog modal-sm vertical-align-center">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header popupheader">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Warning</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="admin-notes">You would like to delete a room. <br> Are you sure?</p>
+                    <div class="text-right">
+                        <button class="btn btn-danger" data-dismiss="modal" ng-click="query()">Yes</button>
+                        <button class="btn btn-success" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
