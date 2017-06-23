@@ -8,10 +8,7 @@ import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.support.daoexceptions.*;
 
 import java.util.List;
 
@@ -52,17 +49,9 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
         Integer objectId = nextObjectId();
         try {
             jdbcTemplate.update(INSERT_OBJECT, objectId, null, 14, null, null);
-            if (maintenance.getMaintenanceTitle() != null && !maintenance.getMaintenanceTitle().isEmpty()) {
-                jdbcTemplate.update(INSERT_ATTRIBUTE, 47, objectId, maintenance.getMaintenanceTitle(), null);
-            } else {
-                jdbcTemplate.update(INSERT_ATTRIBUTE, 47, objectId, null, null);
-            }
-            if (maintenance.getMaintenanceType() != null && !maintenance.getMaintenanceType().isEmpty()) {
-                jdbcTemplate.update(INSERT_ATTRIBUTE, 48, objectId, maintenance.getMaintenanceType(), null);
-            } else {
-                jdbcTemplate.update(INSERT_ATTRIBUTE, 48, objectId, null, null);
-            }
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 49, objectId, maintenance.getMaintenancePrice(), null);
+            insertTitle(maintenance, objectId);
+            insertType(maintenance, objectId);
+            insertPrice(maintenance, objectId);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -96,6 +85,30 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
         deleteSingleEntityById(id);
     }
 
+    private void insertPrice(Maintenance maintenance, Integer objectId) {
+        if (maintenance.getMaintenancePrice() != null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 49, objectId, maintenance.getMaintenancePrice(), null);
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertType(Maintenance maintenance, Integer objectId) {
+        if (maintenance.getMaintenanceType() != null && !maintenance.getMaintenanceType().isEmpty()) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 48, objectId, maintenance.getMaintenanceType(), null);
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertTitle(Maintenance maintenance, Integer objectId) {
+        if (maintenance.getMaintenanceTitle() != null && !maintenance.getMaintenanceTitle().isEmpty()) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 47, objectId, maintenance.getMaintenanceTitle(), null);
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
     private void updateTitle(Maintenance newMaintenance, Maintenance oldMaintenance) {
         if (oldMaintenance.getMaintenanceTitle() != null && newMaintenance.getMaintenanceTitle() != null
                 && !newMaintenance.getMaintenanceTitle().isEmpty()) {
@@ -103,8 +116,8 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newMaintenance.getMaintenanceTitle(),
                         null, newMaintenance.getObjectId(), 47);
             }
-        } else if (oldMaintenance.getMaintenanceTitle() != null || newMaintenance.getMaintenanceTitle() != null) {
-            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newMaintenance.getObjectId(), 47);
+        } else {
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -115,8 +128,8 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newMaintenance.getMaintenanceType(),
                         null, newMaintenance.getObjectId(), 48);
             }
-        } else if (oldMaintenance.getMaintenanceType() != null || newMaintenance.getMaintenanceType() != null) {
-            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newMaintenance.getObjectId(), 48);
+        } else {
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -126,9 +139,8 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newMaintenance.getMaintenancePrice(),
                         null, newMaintenance.getObjectId(), 49);
             }
-        } else if (oldMaintenance.getMaintenancePrice() != null || newMaintenance.getMaintenancePrice() != null) {
-            jdbcTemplate.update(UPDATE_ATTRIBUTE, newMaintenance.getMaintenancePrice(),
-                    null, newMaintenance.getObjectId(), 49);
+        } else {
+            throw new RequiredFieldAbsenceException();
         }
     }
 }

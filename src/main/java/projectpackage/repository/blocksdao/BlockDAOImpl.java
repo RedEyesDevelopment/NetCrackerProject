@@ -54,9 +54,8 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
         Integer objectId = nextObjectId();
         try {
             jdbcTemplate.update(INSERT_OBJECT, objectId, null, 8, null, null);
-
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 35, objectId, null, block.getBlockStartDate());
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 36, objectId, null, block.getBlockFinishDate());
+            insertStartDate(block, objectId);
+            insertFinishDate(block, objectId);
             insertReason(objectId, block);
             insertRoom(objectId, block);
         } catch (DataIntegrityViolationException e) {
@@ -92,6 +91,22 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
         deleteSingleEntityById(id);
     }
 
+    private void insertStartDate(Block block, Integer objectId) {
+        if (block.getBlockStartDate() != null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 35, objectId, null, block.getBlockStartDate());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertFinishDate(Block block, Integer objectId) {
+        if (block.getBlockFinishDate() != null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 36, objectId, null, block.getBlockFinishDate());
+        } else {
+
+        }
+    }
+
     private void insertReason(Integer objectId, Block block) {
         if (block.getReason() != null && !block.getReason().isEmpty()) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 37, objectId, block.getReason(), null);
@@ -104,7 +119,7 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
         if (block.getRoom() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 34, objectId, block.getRoom().getObjectId());
         } else {
-            throw new NullReferenceObjectException();
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -114,7 +129,7 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newBlock.getBlockStartDate(), newBlock.getObjectId(), 35);
             }
         } else {
-            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newBlock.getObjectId(), 35);
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -123,8 +138,8 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
             if (oldBlock.getBlockFinishDate().getTime() != newBlock.getBlockFinishDate().getTime()) {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newBlock.getBlockFinishDate(), newBlock.getObjectId(), 36);
             }
-        } else if (oldBlock.getBlockFinishDate() != null || newBlock.getBlockFinishDate() != null) {
-            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newBlock.getBlockFinishDate(), newBlock.getObjectId(), 36);
+        } else {
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -133,7 +148,9 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
             if (!oldBlock.getReason().equals(newBlock.getReason())) {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newBlock.getReason(), null, newBlock.getObjectId(), 37);
             }
-        } else if (oldBlock.getReason() != null || newBlock.getReason() != null) {
+        } else if (newBlock.getReason() != null && !newBlock.getReason().isEmpty()) {
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, newBlock.getReason(), null, newBlock.getObjectId(), 37);
+        } else if (oldBlock.getReason() != null) {
             jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newBlock.getObjectId(), 37);
         }
     }
@@ -144,7 +161,7 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
                 jdbcTemplate.update(UPDATE_REFERENCE, newBlock.getRoom().getObjectId(), newBlock.getObjectId(), 34);
             }
         } else {
-            throw new NullReferenceObjectException();
+            throw new RequiredFieldAbsenceException();
         }
     }
 }

@@ -18,7 +18,7 @@ public interface RoomTypeDAO {
     public List<RoomType> getAllRoomTypes();
     public Set<Integer> getAvailableRoomTypes(int numberOfPeople, Date startDate, Date finishDate);
     public long getCostForLiving(RoomType roomType, int numberOfResidents, Date start, Date finish);
-    public int insertRoomType(RoomType roomType) throws TransactionException;
-    public void updateRoomType(RoomType newRoomType, RoomType oldRoomType) throws TransactionException;
+    public Integer insertRoomType(RoomType roomType) throws TransactionException;
+    public Integer updateRoomType(RoomType newRoomType, RoomType oldRoomType) throws TransactionException;
     public void deleteRoomType(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

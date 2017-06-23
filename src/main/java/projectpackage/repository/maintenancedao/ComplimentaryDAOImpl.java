@@ -53,11 +53,7 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
         Integer objectId = nextObjectId();
         try {
             jdbcTemplate.update(INSERT_OBJECT, objectId, complimentary.getCategoryId(), 15, null, null);
-            if (complimentary.getMaintenance() != null) {
-                jdbcTemplate.update(INSERT_OBJ_REFERENCE, 51, objectId, complimentary.getMaintenance().getObjectId());
-            } else {
-                throw new NullReferenceObjectException();
-            }
+            insertMaintenance(complimentary, objectId);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -68,14 +64,7 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     public Integer updateComplimentary(Complimentary newComplimentary, Complimentary oldComplimentary) throws TransactionException {
         if (oldComplimentary == null || newComplimentary == null) return null;
         try {
-            if (oldComplimentary.getMaintenance() != null && newComplimentary.getMaintenance() != null) {
-                if (oldComplimentary.getMaintenance().getObjectId() != newComplimentary.getMaintenance().getObjectId()) {
-                    jdbcTemplate.update(UPDATE_REFERENCE, newComplimentary.getMaintenance().getObjectId(),
-                            newComplimentary.getObjectId(), 51);
-                }
-            } else {
-                throw new NullReferenceObjectException();
-            }
+            updateMaintenance(newComplimentary, oldComplimentary);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -93,5 +82,24 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
         if (null == complimentary) throw new DeletedObjectNotExistsException(this);
 
         deleteSingleEntityById(id);
+    }
+
+    private void updateMaintenance(Complimentary newComplimentary, Complimentary oldComplimentary) {
+        if (oldComplimentary.getMaintenance() != null && newComplimentary.getMaintenance() != null) {
+            if (oldComplimentary.getMaintenance().getObjectId() != newComplimentary.getMaintenance().getObjectId()) {
+                jdbcTemplate.update(UPDATE_REFERENCE, newComplimentary.getMaintenance().getObjectId(),
+                        newComplimentary.getObjectId(), 51);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertMaintenance(Complimentary complimentary, Integer objectId) {
+        if (complimentary.getMaintenance() != null) {
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 51, objectId, complimentary.getMaintenance().getObjectId());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
     }
 }

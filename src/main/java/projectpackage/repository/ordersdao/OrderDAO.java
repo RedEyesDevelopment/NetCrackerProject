@@ -14,7 +14,7 @@ import java.util.List;
 public interface OrderDAO {
     public Order getOrder(Integer id);
     public List<Order> getAllOrder();
-    public int insertOrder(Order order) throws TransactionException;
-    public void updateOrder(Order newOrder, Order oldOrder) throws TransactionException;
+    public Integer insertOrder(Order order) throws TransactionException;
+    public Integer updateOrder(Order newOrder, Order oldOrder) throws TransactionException;
     public void deleteOrder(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

@@ -2,7 +2,6 @@ package projectpackage.repository.ratesdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
@@ -10,16 +9,14 @@ import org.springframework.stereotype.Repository;
 import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.math.BigDecimal;
-import java.sql.CallableStatement;
 import java.util.List;
-import java.util.Set;
 
 @Repository
 public class RateDAOImpl extends AbstractDAO implements RateDAO{
@@ -51,7 +48,8 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
     }
 
     @Override
-    public int insertRate(Rate rate) throws TransactionException {
+    public Integer insertRate(Rate rate) throws TransactionException {
+        if (rate == null) return null;
         Long price1 = null;
         Long price2 = null;
         Long price3 = null;
@@ -73,22 +71,6 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
 
         return insertedRateId.intValue();
     }
-
-//    @Override
-//    public void updateRate(Rate newRate, Rate oldRate) throws TransactionException {
-//        try {
-//            if (oldRate.getRateFromDate().getTime() != newRate.getRateFromDate().getTime()) {
-//                jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newRate.getRateFromDate(),
-//                        newRate.getObjectId(), 30);
-//            }
-//            if (oldRate.getRateToDate().getTime() != newRate.getRateToDate().getTime()) {
-//                jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newRate.getRateToDate(),
-//                        newRate.getObjectId(), 31);
-//            }
-//        } catch (DataIntegrityViolationException e) {
-//            throw new TransactionException(this, e.getMessage());
-//        }
-//    }
 
     @Override
     public void deleteRate(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {

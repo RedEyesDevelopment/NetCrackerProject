@@ -57,16 +57,10 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
         Integer objectId = nextObjectId();
         try {
             jdbcTemplate.update(INSERT_OBJECT, objectId, journalRecord.getOrderId(), 16, null, null);
-
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 54, objectId, journalRecord.getCount(), null);
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 55, objectId, journalRecord.getCost(), null);
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 56, objectId, null, journalRecord.getUsedDate());
-
-            if (journalRecord.getMaintenance() != null) {
-                jdbcTemplate.update(INSERT_OBJ_REFERENCE, 53, objectId, journalRecord.getMaintenance().getObjectId());
-            } else {
-                throw new NullReferenceObjectException();
-            }
+            insertCount(journalRecord, objectId);
+            insertCost(journalRecord, objectId);
+            insertUsedDate(journalRecord, objectId);
+            insertMaintenance(journalRecord, objectId);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -98,6 +92,38 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
         if (null == journalRecord) throw new DeletedObjectNotExistsException(this);
 
         deleteSingleEntityById(id);
+    }
+
+    private void insertMaintenance(JournalRecord journalRecord, Integer objectId) {
+        if (journalRecord.getMaintenance() != null) {
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 53, objectId, journalRecord.getMaintenance().getObjectId());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertUsedDate(JournalRecord journalRecord, Integer objectId) {
+        if (journalRecord.getUsedDate() != null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 56, objectId, null, journalRecord.getUsedDate());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertCost(JournalRecord journalRecord, Integer objectId) {
+        if (journalRecord.getCost() != null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 55, objectId, journalRecord.getCost(), null);
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertCount(JournalRecord journalRecord, Integer objectId) {
+        if (journalRecord.getCount() != null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 54, objectId, journalRecord.getCount(), null);
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
     }
 
     private void updateCount(JournalRecord newJournalRecord, JournalRecord oldJournalRecord) {
@@ -137,7 +163,7 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
                         newJournalRecord.getObjectId(), 53);
             }
         } else {
-            throw new NullReferenceObjectException();
+            throw new RequiredFieldAbsenceException();
         }
     }
 }

@@ -21,6 +21,7 @@ import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.support.daoexceptions.*;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -107,15 +108,12 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         Integer objectId = nextObjectId();
         try {
             jdbcTemplate.update(INSERT_OBJECT, objectId, null, 4, null, null);
-            // insert dates without verification
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 23, objectId, null, notification.getSendDate());
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 25, objectId, null, notification.getExecutedDate());
-
+            insertSendDate(notification, objectId);
             insertMessage(objectId, notification);
             insertAuthor(objectId, notification);
             insertNotificationType(objectId, notification);
             insertOrder(objectId, notification);
-            insertExecutedBy(objectId, notification);
+            insertExecutedByAndDate(objectId, notification);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -151,6 +149,14 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         deleteSingleEntityById(id);
     }
 
+    private void insertSendDate(Notification notification, Integer objectId) {
+        if (notification.getSendDate() != null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 23, objectId, null, notification.getSendDate());
+        } else {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 23, objectId, null, new Date());
+        }
+    }
+
     private void insertMessage(Integer objectId, Notification notification) {
         if (notification.getMessage() != null && !notification.getMessage().isEmpty()) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 22, objectId, notification.getMessage(), null);
@@ -163,7 +169,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         if (notification.getAuthor() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 21, objectId, notification.getAuthor().getObjectId());
         } else {
-            throw new NullReferenceObjectException();
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -171,7 +177,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         if (notification.getNotificationType() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 26, objectId, notification.getNotificationType().getObjectId());
         } else {
-            throw new NullReferenceObjectException();
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -179,13 +185,14 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         if (notification.getOrder() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 27, objectId, notification.getOrder().getObjectId());
         } else {
-            throw new NullReferenceObjectException();
+            throw new RequiredFieldAbsenceException();
         }
     }
 
-    private void insertExecutedBy(Integer objectId, Notification notification) {
-        if (notification.getExecutedBy() != null) {
+    private void insertExecutedByAndDate(Integer objectId, Notification notification) {
+        if (notification.getExecutedBy() != null && notification.getExecutedDate() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 24, objectId, notification.getExecutedBy().getObjectId());
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 25, objectId, null, notification.getExecutedDate());
         }
     }
 
@@ -196,9 +203,8 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newNotification.getMessage(), null,
                         newNotification.getObjectId(), 22);
             }
-        } else if (oldNotification.getMessage() != null || newNotification.getMessage() != null) {
-            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null,
-                    newNotification.getObjectId(), 22);
+        } else {
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -208,9 +214,8 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newNotification.getSendDate(),
                         newNotification.getObjectId(), 23);
             }
-        } else if (oldNotification.getSendDate() != null || newNotification.getSendDate() != null) {
-            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newNotification.getSendDate(),
-                    newNotification.getObjectId(), 23);
+        } else {
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -221,7 +226,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                         newNotification.getObjectId(), 21);
             }
         } else {
-            throw new NullReferenceObjectException();
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -232,7 +237,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                         newNotification.getObjectId(), 26);
             }
         } else {
-            throw new NullReferenceObjectException();
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -243,14 +248,14 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                         newNotification.getObjectId(), 27);
             }
         } else {
-            throw new NullReferenceObjectException();
+            throw new RequiredFieldAbsenceException();
         }
     }
 
     private void updateDateAndExecutedBy(Notification newNotification, Notification oldNotification) {
         if ((newNotification.getExecutedBy() == null && newNotification.getExecutedDate() != null)
-                || newNotification.getExecutedBy() != null && newNotification.getExecutedDate() == null) {
-            throw new NullReferenceObjectException();
+                || (newNotification.getExecutedBy() != null && newNotification.getExecutedDate() == null)) {
+            throw new RequiredFieldAbsenceException();
         }
         if (oldNotification.getExecutedBy() == null && newNotification.getExecutedBy() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 24,

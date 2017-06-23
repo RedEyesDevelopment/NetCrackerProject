@@ -8,10 +8,7 @@ import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Phone;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.support.daoexceptions.*;
 
 import java.util.List;
 
@@ -82,19 +79,19 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
 
     private void insertPhoneNumber(Integer objectId, Phone phone) {
         if (phone.getPhoneNumber() == null || phone.getPhoneNumber().isEmpty()) {
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 38, objectId, null, null);
+            throw new RequiredFieldAbsenceException();
         } else {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 38, objectId, phone.getPhoneNumber(), null);
         }
     }
 
     private void updatePhoneNumber(Phone newPhone, Phone oldPhone) {
-        if (oldPhone != null && newPhone != null && !newPhone.getPhoneNumber().isEmpty()) {
+        if (oldPhone.getPhoneNumber() != null && newPhone.getPhoneNumber() != null && !newPhone.getPhoneNumber().isEmpty()) {
             if (!oldPhone.getPhoneNumber().equals(newPhone.getPhoneNumber())) {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newPhone.getPhoneNumber(), null, newPhone.getObjectId(), 38);
             }
-        } else if (oldPhone.getPhoneNumber() != null || newPhone.getPhoneNumber() != null) {
-            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newPhone.getObjectId(), 38);
+        } else {
+            throw new RequiredFieldAbsenceException();
         }
     }
 }

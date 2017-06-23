@@ -18,10 +18,7 @@ import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.*;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
@@ -103,31 +100,23 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     }
 
     @Override
-    public int insertOrder(Order order) throws TransactionException {
+    public Integer insertOrder(Order order) throws TransactionException {
+        if (order == null) return null;
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 2, null, null);                      //2 = Order
-
+            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 2, null, null);
             jdbcTemplate.update(INSERT_ATTRIBUTE, 5, objectId, objectId, null);
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 8, objectId, null, order.getRegistrationDate());     //Registration_date
-            if (order.getIsPaidFor()) {
-                jdbcTemplate.update(INSERT_ATTRIBUTE, 9, objectId, "true", null);      //Is_paid_for
-            } else {
-                jdbcTemplate.update(INSERT_ATTRIBUTE, 9, objectId, "false", null);      //Is_paid_for
-            }
-            if (order.getIsConfirmed()) {
-                jdbcTemplate.update(INSERT_ATTRIBUTE, 10, objectId, "true", null);
-            } else {
-                jdbcTemplate.update(INSERT_ATTRIBUTE, 10, objectId, "false", null);
-            }
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 11, objectId, null, order.getLivingStartDate());     //Living_start_date
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 12, objectId, null, order.getLivingFinishDate());    //Living_finish_date
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 13, objectId, order.getSum(), null);               //Sum
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 14, objectId, order.getComment(), null);           //Comment
 
-            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 44, objectId, order.getLastModificator().getObjectId());
-            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 6, objectId, order.getRoom().getObjectId());     //Booked
-            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 7, objectId, order.getClient().getObjectId());     //Belong
+            insertRegistrationDate(order, objectId);
+            insertIsPaidFor(order, objectId);
+            insertIsConfirmed(order, objectId);
+            insertLivingStartDate(order, objectId);
+            insertLivingFinishDate(order, objectId);
+            insertSum(order, objectId);
+            insertComment(order, objectId);
+            insertLastModificator(order, objectId);
+            insertRoom(order, objectId);
+            insertClient(order, objectId);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -135,49 +124,23 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     }
 
     @Override
-    public void updateOrder(Order newOrder, Order oldOrder) throws TransactionException {
+    public Integer updateOrder(Order newOrder, Order oldOrder) throws TransactionException {
+        if (newOrder == null || oldOrder == null) return null;
         try {
-            if (oldOrder.getRegistrationDate().getTime() != newOrder.getRegistrationDate().getTime()) {
-                jdbcTemplate.update(UPDATE_ATTRIBUTE, null,  newOrder.getRegistrationDate(), newOrder.getObjectId(), 8);
-            }
-            if (!oldOrder.getIsPaidFor().equals(newOrder.getIsPaidFor())) {
-                if (newOrder.getIsPaidFor()) {
-                    jdbcTemplate.update(UPDATE_ATTRIBUTE, "true", null, newOrder.getObjectId(), 9);
-                } else {
-                    jdbcTemplate.update(UPDATE_ATTRIBUTE, "false", null, newOrder.getObjectId(), 9);
-                }
-            }
-            if (!oldOrder.getIsConfirmed().equals(newOrder.getIsConfirmed())) {
-                if (newOrder.getIsConfirmed()) {
-                    jdbcTemplate.update(UPDATE_ATTRIBUTE, "true", null, newOrder.getObjectId(), 10);
-                } else {
-                    jdbcTemplate.update(UPDATE_ATTRIBUTE, "false", null, newOrder.getObjectId(), 10);
-                }
-            }
-            if (oldOrder.getLivingStartDate().getTime() != newOrder.getLivingStartDate().getTime()) {
-                jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newOrder.getLivingStartDate(), newOrder.getObjectId(), 11);
-            }
-            if (oldOrder.getLivingFinishDate().getTime() != newOrder.getLivingFinishDate().getTime()) {
-                jdbcTemplate.update(UPDATE_ATTRIBUTE, null,  newOrder.getLivingFinishDate(), newOrder.getObjectId(), 12);
-            }
-            if (!oldOrder.getSum().equals(newOrder.getSum())) {
-                jdbcTemplate.update(UPDATE_ATTRIBUTE, newOrder.getSum(), null, newOrder.getObjectId(), 13);
-            }
-            if (!oldOrder.getComment().equals(newOrder.getComment())) {
-                jdbcTemplate.update(UPDATE_ATTRIBUTE, newOrder.getComment(), null, newOrder.getObjectId(), 14);
-            }
-            if (oldOrder.getLastModificator().getObjectId() != newOrder.getLastModificator().getObjectId()) {
-                jdbcTemplate.update(UPDATE_REFERENCE, newOrder.getLastModificator().getObjectId(), newOrder.getObjectId(), 44);
-            }
-            if (oldOrder.getRoom().getObjectId() != newOrder.getRoom().getObjectId()) {
-                jdbcTemplate.update(UPDATE_REFERENCE, newOrder.getRoom().getObjectId(), newOrder.getObjectId(), 6);
-            }
-            if (oldOrder.getClient().getObjectId() != newOrder.getClient().getObjectId()) {
-                jdbcTemplate.update(UPDATE_REFERENCE, newOrder.getClient().getObjectId(), newOrder.getObjectId(), 7);
-            }
+            updateRegistrationDate(newOrder, oldOrder);
+            updateIsPaidFor(newOrder, oldOrder);
+            updateIsConfirmed(newOrder, oldOrder);
+            updateLivingStartDate(newOrder, oldOrder);
+            updateLivingFinishDate(newOrder, oldOrder);
+            updateSum(newOrder, oldOrder);
+            updateComment(newOrder, oldOrder);
+            updateLastModificator(newOrder, oldOrder);
+            updateRoom(newOrder, oldOrder);
+            updateClient(newOrder, oldOrder);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
+        return newOrder.getObjectId();
     }
 
     @Override
@@ -192,4 +155,203 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
 
         deleteSingleEntityById(id);
     }
+
+    private void insertClient(Order order, Integer objectId) {
+        if (order.getClient() != null) {
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 7, objectId, order.getClient().getObjectId());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertRoom(Order order, Integer objectId) {
+        if (order.getRoom() != null) {
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 6, objectId, order.getRoom().getObjectId());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertLastModificator(Order order, Integer objectId) {
+        if (order.getLastModificator() != null) {
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 44, objectId, order.getLastModificator().getObjectId());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertComment(Order order, Integer objectId) {
+        if (order.getComment() != null && !order.getComment().isEmpty()) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 14, objectId, order.getComment(), null);
+        } else {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 14, objectId, null, null);
+        }
+    }
+
+    private void insertSum(Order order, Integer objectId) {
+        if (order.getSum() != null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 13, objectId, order.getSum(), null);
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertLivingFinishDate(Order order, Integer objectId) {
+        if (order.getLivingFinishDate() != null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 12, objectId, null, order.getLivingFinishDate());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertLivingStartDate(Order order, Integer objectId) {
+        if (order.getLivingStartDate() != null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 11, objectId, null, order.getLivingStartDate());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertIsConfirmed(Order order, Integer objectId) {
+        if (order.getIsConfirmed() != null) {
+            if (order.getIsConfirmed()) {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 10, objectId, "true", null);
+            } else {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 10, objectId, "false", null);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertIsPaidFor(Order order, Integer objectId) {
+        if (order.getIsPaidFor() != null) {
+            if (order.getIsPaidFor()) {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 9, objectId, "true", null);
+            } else {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 9, objectId, "false", null);      //Is_paid_for
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertRegistrationDate(Order order, Integer objectId) {
+        if (order.getRegistrationDate() != null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 8, objectId, null, order.getRegistrationDate());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateClient(Order newOrder, Order oldOrder) {
+        if (oldOrder.getClient() != null && newOrder.getClient() != null) {
+            if (oldOrder.getClient().getObjectId() != newOrder.getClient().getObjectId()) {
+                jdbcTemplate.update(UPDATE_REFERENCE, newOrder.getClient().getObjectId(), newOrder.getObjectId(), 7);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateRoom(Order newOrder, Order oldOrder) {
+        if (oldOrder.getRoom() != null && newOrder.getRoom() != null) {
+            if (oldOrder.getRoom().getObjectId() != newOrder.getRoom().getObjectId()) {
+                jdbcTemplate.update(UPDATE_REFERENCE, newOrder.getRoom().getObjectId(), newOrder.getObjectId(), 6);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateLastModificator(Order newOrder, Order oldOrder) {
+        if (oldOrder.getLastModificator() != null && newOrder.getLastModificator() != null) {
+            if (oldOrder.getLastModificator().getObjectId() != newOrder.getLastModificator().getObjectId()) {
+                jdbcTemplate.update(UPDATE_REFERENCE, newOrder.getLastModificator().getObjectId(), newOrder.getObjectId(), 44);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateComment(Order newOrder, Order oldOrder) {
+        if (oldOrder.getComment() != null && newOrder.getComment() != null && !newOrder.getComment().isEmpty()) {
+            if (!oldOrder.getComment().equals(newOrder.getComment())) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newOrder.getComment(), null, newOrder.getObjectId(), 14);
+            }
+        } else if (newOrder.getComment() != null && !newOrder.getComment().isEmpty()) {
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, newOrder.getComment(), null, newOrder.getObjectId(), 14);
+        } else if (oldOrder.getComment() != null){
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newOrder.getObjectId(), 14);
+        }
+    }
+
+    private void updateSum(Order newOrder, Order oldOrder) {
+        if (oldOrder.getSum() != null && newOrder.getSum() != null) {
+            if (!oldOrder.getSum().equals(newOrder.getSum())) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newOrder.getSum(), null, newOrder.getObjectId(), 13);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateLivingFinishDate(Order newOrder, Order oldOrder) {
+        if (oldOrder.getLivingFinishDate() != null && newOrder.getLivingFinishDate() != null) {
+            if (oldOrder.getLivingFinishDate().getTime() != newOrder.getLivingFinishDate().getTime()) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newOrder.getLivingFinishDate(), newOrder.getObjectId(), 12);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateLivingStartDate(Order newOrder, Order oldOrder) {
+        if (oldOrder.getLivingStartDate() != null && newOrder.getLivingStartDate() != null) {
+            if (oldOrder.getLivingStartDate().getTime() != newOrder.getLivingStartDate().getTime()) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newOrder.getLivingStartDate(), newOrder.getObjectId(), 11);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateIsConfirmed(Order newOrder, Order oldOrder) {
+        if (oldOrder.getIsConfirmed() != null && newOrder.getIsConfirmed() != null) {
+            if (!oldOrder.getIsConfirmed().equals(newOrder.getIsConfirmed())) {
+                if (newOrder.getIsConfirmed()) {
+                    jdbcTemplate.update(UPDATE_ATTRIBUTE, "true", null, newOrder.getObjectId(), 10);
+                } else {
+                    jdbcTemplate.update(UPDATE_ATTRIBUTE, "false", null, newOrder.getObjectId(), 10);
+                }
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateIsPaidFor(Order newOrder, Order oldOrder) {
+        if (oldOrder.getIsPaidFor() != null && newOrder.getIsPaidFor() != null) {
+            if (!oldOrder.getIsPaidFor().equals(newOrder.getIsPaidFor())) {
+                if (newOrder.getIsPaidFor()) {
+                    jdbcTemplate.update(UPDATE_ATTRIBUTE, "true", null, newOrder.getObjectId(), 9);
+                } else {
+                    jdbcTemplate.update(UPDATE_ATTRIBUTE, "false", null, newOrder.getObjectId(), 9);
+                }
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateRegistrationDate(Order newOrder, Order oldOrder) {
+        if (oldOrder.getRegistrationDate() != null && newOrder.getRegistrationDate() != null) {
+            if (oldOrder.getRegistrationDate().getTime() != newOrder.getRegistrationDate().getTime()) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newOrder.getRegistrationDate(), newOrder.getObjectId(), 8);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
 }

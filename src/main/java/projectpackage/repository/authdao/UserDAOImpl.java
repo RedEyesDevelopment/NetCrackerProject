@@ -122,7 +122,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         if (user.getEmail() != null && !user.getEmail().isEmpty()) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 15, objectId, user.getEmail(), null);
         } else {
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 15, objectId, null, null);
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -130,7 +130,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 16, objectId, user.getPassword(), null);
         } else {
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 16, objectId, null, null);
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -138,7 +138,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         if (user.getFirstName() != null && !user.getFirstName().isEmpty()) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 17, objectId, user.getFirstName(), null);
         } else {
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 17, objectId, null, null);
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -146,7 +146,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         if (user.getLastName() != null && !user.getLastName().isEmpty()) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 18, objectId, user.getLastName(), null);
         } else {
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 18, objectId, null, null);
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -170,7 +170,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         if (user.getRole() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 20, objectId, user.getRole().getObjectId());
         } else {
-            throw new NullReferenceObjectException();
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -179,8 +179,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
             if (!oldUser.getEmail().equals(newUser.getEmail())) {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newUser.getEmail(), null, newUser.getObjectId(), 15);
             }
-        } else if (oldUser.getEmail() != null || newUser.getEmail() != null) {
-            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newUser.getObjectId(), 15);
+        } else {
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -190,40 +190,40 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
             if (!oldUser.getPassword().equals(newUser.getPassword())) {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newUser.getPassword(), null, newUser.getObjectId(), 16);
             }
-        } else if (oldUser.getEmail() != null || newUser.getEmail() != null) {
-            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newUser.getObjectId(), 16);
+        } else {
+            throw new RequiredFieldAbsenceException();
         }
     }
 
     private void updateFirstName(User oldUser, User newUser) {
-        if (oldUser.getFirstName() != null && newUser.getLastName() != null && !oldUser.getFirstName().isEmpty()
-                && !newUser.getFirstName().isEmpty()) {
+        if (oldUser.getFirstName() != null && newUser.getLastName() != null && !newUser.getFirstName().isEmpty()) {
             if (!oldUser.getFirstName().equals(newUser.getFirstName())) {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newUser.getFirstName(), null, newUser.getObjectId(), 17);
             }
-        } else if (oldUser.getEmail() != null || newUser.getEmail() != null) {
-            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newUser.getObjectId(), 17);
+        } else {
+            throw new RequiredFieldAbsenceException();
         }
     }
 
     private void updateLastName(User newUser, User oldUser) {
-        if (oldUser.getLastName() != null && newUser.getLastName() != null && !oldUser.getLastName().isEmpty()
-                && !newUser.getLastName().isEmpty()) {
+        if (oldUser.getLastName() != null && newUser.getLastName() != null && !newUser.getLastName().isEmpty()) {
             if (!oldUser.getLastName().equals(newUser.getLastName())) {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newUser.getLastName(), null, newUser.getObjectId(), 18);
             }
-        } else if (oldUser.getEmail() != null || newUser.getEmail() != null) {
-            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newUser.getObjectId(), 18);
+        } else {
+            throw new RequiredFieldAbsenceException();
         }
     }
 
+    // TODO check
     private void updateAdditionalInfo(User newUser, User oldUser) {
-        if (oldUser.getAdditionalInfo() != null && newUser.getAdditionalInfo() != null && !oldUser.getAdditionalInfo().isEmpty()
-                && !newUser.getAdditionalInfo().isEmpty()) {
+        if (oldUser.getAdditionalInfo() != null && newUser.getAdditionalInfo() != null && !newUser.getAdditionalInfo().isEmpty()) {
             if (!oldUser.getAdditionalInfo().equals(newUser.getAdditionalInfo())) {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newUser.getAdditionalInfo(), null, newUser.getObjectId(), 19);
             }
-        } else if (oldUser.getEmail() != null || newUser.getEmail() != null) {
+        } else if (newUser.getAdditionalInfo() != null && !newUser.getAdditionalInfo().isEmpty()) {
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, newUser.getAdditionalInfo(), null, newUser.getObjectId(), 19);
+        } else if (oldUser.getEmail() != null) {
             jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newUser.getObjectId(), 19);
         }
     }
@@ -248,7 +248,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
                 jdbcTemplate.update(UPDATE_REFERENCE, newUser.getRole().getObjectId(), newUser.getObjectId(), 20);
             }
         } else {
-            throw new NullReferenceObjectException();
+            throw new RequiredFieldAbsenceException();
         }
     }
 }

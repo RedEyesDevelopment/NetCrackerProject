@@ -67,14 +67,8 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
             throws TransactionException {
         if (oldNotificationType == null || newNotificationType == null) return null;
         try {
-            if (!oldNotificationType.getNotificationTypeTitle().equals(newNotificationType.getNotificationTypeTitle())) {
-                jdbcTemplate.update(UPDATE_ATTRIBUTE, newNotificationType.getNotificationTypeTitle(), null,
-                        newNotificationType.getObjectId(), 40);
-            }
-            if (oldNotificationType.getOrientedRole().getObjectId() != newNotificationType.getOrientedRole().getObjectId()) {
-                jdbcTemplate.update(UPDATE_REFERENCE, newNotificationType.getOrientedRole().getObjectId(),
-                        newNotificationType.getObjectId(), 41);
-            }
+            updateTitle(newNotificationType, oldNotificationType);
+            updateRole(newNotificationType, oldNotificationType);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -98,7 +92,7 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
         if (notificationType.getNotificationTypeTitle() != null && !notificationType.getNotificationTypeTitle().isEmpty()) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 40, objectId, notificationType.getNotificationTypeTitle(), null);
         } else {
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 40, objectId, null, null);
+            throw new RequiredFieldAbsenceException();
         }
     }
 
@@ -106,7 +100,30 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
         if (notificationType.getOrientedRole() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 41, objectId, notificationType.getOrientedRole().getObjectId());
         } else {
-            throw new NullReferenceObjectException();
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateRole(NotificationType newNotificationType, NotificationType oldNotificationType) {
+        if (oldNotificationType.getOrientedRole() != null && newNotificationType.getOrientedRole() != null) {
+            if (oldNotificationType.getOrientedRole().getObjectId() != newNotificationType.getOrientedRole().getObjectId()) {
+                jdbcTemplate.update(UPDATE_REFERENCE, newNotificationType.getOrientedRole().getObjectId(),
+                        newNotificationType.getObjectId(), 41);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateTitle(NotificationType newNotificationType, NotificationType oldNotificationType) {
+        if (oldNotificationType.getNotificationTypeTitle() != null && newNotificationType.getNotificationTypeTitle() != null
+                && !newNotificationType.getNotificationTypeTitle().isEmpty()) {
+            if (!oldNotificationType.getNotificationTypeTitle().equals(newNotificationType.getNotificationTypeTitle())) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newNotificationType.getNotificationTypeTitle(), null,
+                        newNotificationType.getObjectId(), 40);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
         }
     }
 }
