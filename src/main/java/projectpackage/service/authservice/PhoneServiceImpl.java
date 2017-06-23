@@ -57,14 +57,14 @@ public class PhoneServiceImpl implements PhoneService{
     }
 
     @Override
-    public Phone getSinglePhoneById(int id) {
+    public Phone getSinglePhoneById(Integer id) {
         Phone phone = phoneDAO.getPhone(id);
         if (phone == null) LOGGER.info("Returned NULL!!!");
         return phone;
     }
 
     @Override
-    public IUDAnswer deletePhone(int id) {
+    public IUDAnswer deletePhone(Integer id) {
         try {
             phoneDAO.deletePhone(id);
         } catch (ReferenceBreakException e) {
@@ -96,7 +96,7 @@ public class PhoneServiceImpl implements PhoneService{
     }
 
     @Override
-    public IUDAnswer updatePhone(int id, Phone newPhone) {
+    public IUDAnswer updatePhone(Integer id, Phone newPhone) {
         boolean isValid = phoneRegexService.match(newPhone.getPhoneNumber());
         if (!isValid) return new IUDAnswer(false, "wrongPhoneNumber");
 

@@ -93,7 +93,7 @@ public class BlockRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getSingleBlockById(){
-        Block block = blockService.getSingleBlockById(2107);
+        Block block = blockService.getSingleBlockById(2381);
         LOGGER.info(block);
         LOGGER.info(SEPARATOR);
     }
@@ -124,6 +124,7 @@ public class BlockRepositoryTests extends AbstractDatabaseTest{
         IUDAnswer iudAnswer = blockService.insertBlock(block);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Insert block result = " + iudAnswer.isSuccessful());
+        LOGGER.info("Insert block result = " + iudAnswer.getObjectId());
         LOGGER.info(SEPARATOR);
     }
 

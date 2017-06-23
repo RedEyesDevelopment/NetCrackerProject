@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * Created by Arizel on 17.05.2017.
  */
-public abstract class AbstractDAO {
+public abstract class AbstractDAO implements Commitable, Rollbackable{
 
     private static final Logger LOGGER = Logger.getLogger(AbstractDAO.class);
 
@@ -63,5 +63,13 @@ public abstract class AbstractDAO {
                 throw e;
             }
         }
+    }
+
+    public void commit() {
+        jdbcTemplate.execute("COMMIT");
+    }
+
+    public void rollback() {
+        jdbcTemplate.execute("ROLLBACK");
     }
 }

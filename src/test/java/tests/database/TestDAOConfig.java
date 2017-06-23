@@ -41,6 +41,7 @@ import projectpackage.repository.roomsdao.RoomTypeDAO;
 import projectpackage.repository.roomsdao.RoomTypeDAOImpl;
 import projectpackage.repository.securitydao.AuthCredentialsDAO;
 import projectpackage.repository.securitydao.AuthCredentialsDAOImpl;
+import projectpackage.repository.support.CustomConnectionCustomizer;
 import projectpackage.service.adminservice.InMemoryNotifService;
 import projectpackage.service.adminservice.InMemoryNotifServiceImpl;
 import projectpackage.service.authservice.*;
@@ -152,6 +153,7 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
 //        config.addDataSourceProperty("cachePrepStmts", "true");
 //        config.addDataSourceProperty("prepStmtCacheSize", "250");
 //        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+//        config.setAutoCommit(false);
 //        return new HikariDataSource(config);
 //    }
 
@@ -197,6 +199,9 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
         comboPooledDataSource.setIdleConnectionTestPeriod(300);
         //имя специальной таблицы для тестирования соединения с БД
         comboPooledDataSource.setAutomaticTestTable("c3p0DatabaseTestTable");
+        comboPooledDataSource.setForceIgnoreUnresolvedTransactions(true);
+        comboPooledDataSource.setAutoCommitOnClose(false);
+        comboPooledDataSource.setConnectionCustomizerClassName(CustomConnectionCustomizer.class.getName());
 
         return comboPooledDataSource;
     }

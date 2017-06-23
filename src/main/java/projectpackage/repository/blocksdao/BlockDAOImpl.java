@@ -5,17 +5,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.blocks.Block;
 import projectpackage.model.rooms.Room;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.*;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+import projectpackage.repository.support.daoexceptions.*;
 
 import java.util.List;
 
 /**
  * Created by Arizel on 16.05.2017.
  */
+@Transactional
 @Repository
 public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     private static final Logger LOGGER = Logger.getLogger(BlockDAOImpl.class);
@@ -47,6 +50,7 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
         }
     }
 
+    @Transactional(propagation= Propagation.REQUIRED, rollbackFor = RequiredFieldAbsenceException.class)
     @Override
     public Integer insertBlock(Block block) throws TransactionException {
         if (block == null) return null;
