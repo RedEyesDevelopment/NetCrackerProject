@@ -1,0 +1,65 @@
+<div class="row row-content choosingRoomType">
+    <p id="notauth" ng-show="auth!=CLIENT">
+        You can book any room only if you authorized as a client. Authorize if you already have a profile or register a new user.
+    </p>
+    <div class="col-xs-12">
+        <ul class="media-list">
+            <li class="media my-border" ng-repeat="roomType in listOfRoomTypes">
+                <div class="col-sm-4">
+                    <div class="media">
+                        <img class="media-object img-thumbnail"
+                             src='res/img/roomTypes/{{roomType.roomTypeId}}/1.png'>
+                    </div>
+                    <div class="media row">
+                        <div class="col-xs-3"> 
+                            <div class="thumbnail">
+                                <img src="res/img/roomTypes/{{roomType.roomTypeId}}/2.png">
+                            </div>
+                        </div>
+                        <div class="col-xs-3"> 
+                            <div class="thumbnail">
+                                <img src="res/img/roomTypes/{{roomType.roomTypeId}}/3.png">
+                            </div>
+                        </div>
+                        <div class="col-xs-3"> 
+                            <div class="thumbnail">
+                                <img src="res/img/roomTypes/{{roomType.roomTypeId}}/4.png">
+                            </div>
+                        </div>
+                        <div class="col-xs-3"> 
+                            <div class="thumbnail">
+                                <img src="res/img/roomTypes/{{roomType.roomTypeId}}/5.png">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="media-body">
+                        <h2 class="media-heading">{{roomType.roomTypeName}}</h2>
+                        <p>{{roomType.roomTypeDescription}}</p>
+                        <h1 class="text-center">
+                                                <span class="label label-success" ng-show="roomType.available">AVAILABLE</span>
+                                                <span class="label label-danger" ng-show="!roomType.available">NOT AVAILABLE</span>
+                        </h1>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="media-body my-border text-center" ng-show="roomType.available">
+                        <h2 class="media-heading">Accomodation price</h2>
+                        <p class="price">${{(roomType.livingCost / 100)}}</p>
+                        <h2 class="media-heading">Service price</h2>
+                        <p class="price">${{(roomType.categoryCost / 100) }}</p>
+                        <h2 class="media-heading">Total</h2>
+                        <p class="price">${{ roomType.livingCost / 100 + roomType.categoryCost / 100 }}</p>
+                        <div class="text-center">
+                            <form name='book'>
+                                
+                                <button type="submit" ng-click='issueOder(roomType.roomTypeId)'  class="btn btn-lg" ng-show="window.auth==CLIENT">BOOK</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </li>
+         </ul>
+    </div>
+</div>

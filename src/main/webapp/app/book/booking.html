@@ -1,0 +1,58 @@
+<div class="row row-content booking">
+    <p id="worngauth" ng-show="window.auth!=CLIENT">You can book room only if you are authorized client. Authorize if you already have a profile on our site, or register a new user.</p>
+    <div class="col-sm-push-1 col-sm-pull-1 col-sm-10">
+        <h2>BOOK NOW</h2>
+        <div>
+            <form class="form" name='available' novalidate>
+                <div class="col-sm-7">
+                    <div class="row">
+                        <div class="form-group col-sm-6">
+                            <label for="arrivalDate">Arrival</label>
+                            <input type="date" id="arrivalDate" class="form-control" ng-model='book.from' ng-change="bookFormChange()" ng-required="true">
+                            
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="departureDate">Departure</label>
+                            <input type="date" id="departureDate" class="form-control" ng-model='book.till' ng-change="bookFormChange()" ng-required="true">
+                            
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-sm-6">
+                            <label for="adultsNumber">Adults</label>
+                            <select class="form-control" ng-model='book.adults' ng-change="bookFormChange()" ng-required="true" value='1'>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-sm-6">
+                            <label for="adultsNumber">Type of meals</label>
+                            <select id="adultsNumber" class="form-control" ng-required="true"
+                                    ng-model="book.category" ng-change="bookFormChange()"
+                                    ng-options="category.objectId as category.categoryTitle for category in listOfCategories">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <p>
+                        <div class='require-fields'>
+                            <div ng-show="!book.from">Arrival data is required</div>
+                            <div ng-show="!book.till">Departure data is required</div>
+                            <div ng-show="!book.adults">Number of adults is required</div>
+                            <div ng-show="!book.category">Type of meals is required</div>
+                            <div ng-hide="true">The Difference in years shouldn't be more than 2 years</div>
+                        </div>
+                    </p>
+                </div>
+                <div class="col-xs-12 form-group text-center">
+                    <button class="btn" ng-click="searchRoomTypes()" ng-disabled='available.$invalid'>
+                        SEARCH AVAILABILITY
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>    
