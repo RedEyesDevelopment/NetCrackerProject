@@ -14,7 +14,7 @@ import java.util.List;
 public interface CategoryDAO {
     public Category getCategory(Integer id);
     public List<Category> getAllCategories();
-    public int insertCategory(Category category) throws TransactionException;
-    public void updateCategory(Category newCategory, Category oldCategory) throws TransactionException;
+    public Integer insertCategory(Category category) throws TransactionException;
+    public Integer updateCategory(Category newCategory, Category oldCategory) throws TransactionException;
     public void deleteCategory(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

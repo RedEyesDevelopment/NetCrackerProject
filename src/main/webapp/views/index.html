@@ -4,7 +4,8 @@
 <head>
 	<meta charset="utf-8">
     
-    <title>404 Hotel</title>
+    <title>NC Hotel</title>
+
 
         <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
@@ -13,40 +14,92 @@
     <!-- Optional theme -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     
+    <!-- Google Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet'  type='text/css'>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/5.1.1/bootstrap-social.css" rel='stylesheet'  type='text/css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.1.1/ekko-lightbox.css" rel='stylesheet'  type='text/css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.1.1/ekko-lightbox.min.css" rel='stylesheet'  type='text/css'>
+    
     <!-- My styles !-->
     <link href="../res/css/mystyles.css" rel="stylesheet">
+    <link href="../res/css/loginform.css" rel="stylesheet">
+
+    <!-- Font-awesome! -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    
 
     <!-- Angular libraries -->
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-route.min.js"></script>
     <script src="https://code.angularjs.org/1.6.4/angular-animate.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-resource.js" type="text/javascript"></script>
-
-</head>
-
-<body>
-   
-
-   <header ng-include="'./views/nav.html'"></header>
-
-    <div ng-include="'./views/bookview.html'"></div>
-    <div id='application' ng-view></div>
-
-
-        
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.1.1/ekko-lightbox.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.1.1/ekko-lightbox.min.js" type="text/javascript"></script>
+    
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+   <header ng-include="'./sup/nav.html'"></header>
+
+    <div ng-include="'./sup/bookview.html'"></div>
+    <div id='application' ng-view></div>
+    
+    <!--<footer class="row-footer">
+        <div class="container">
+            <div class="row">             
+                <div class="col-sm-offset-1 col-sm-5">
+                    <h5>Our Address</h5>
+                    <address>
+		              45 West 81st Street<br>
+		              New York City<br>
+		              NY 10024-6025<br>
+		              <i class="fa fa-phone"></i>: +852 1234 5678<br>
+		              <i class="fa fa-fax"></i>: +852 8765 4321<br>
+		              <i class="fa fa-envelope"></i>:
+                        <a href="mailto:hotel@nyc.com">hotel@nyc.com</a>
+		           </address>
+                </div>
+                <div class="col-sm-offset-2 col-sm-4">
+                    <div class="nav navbar-nav" style="padding: 40px 10px;">
+                        <a class="btn btn-social-icon btn-google-plus" href="http://google.com/+"><i class="fa fa-google-plus"></i></a>
+                        <a class="btn btn-social-icon btn-facebook" href="http://www.facebook.com/profile.php?id="><i class="fa fa-facebook"></i></a>
+                        <a class="btn btn-social-icon btn-linkedin" href="http://www.linkedin.com/in/"><i class="fa fa-linkedin"></i></a>
+                        <a class="btn btn-social-icon btn-twitter" href="http://twitter.com/"><i class="fa fa-twitter"></i></a>
+                        <a class="btn btn-social-icon btn-youtube" href="http://youtube.com/"><i class="fa fa-youtube"></i></a>
+                        <a class="btn btn-social-icon" href="mailto:"><i class="fa fa-envelope-o"></i></a>
+                    </div>
+                </div>
+                <div class="col-xs-12">
+                    <p style="padding:10px;"></p>
+                    <p align=center>© Copyright 2017 NYC Hotel</p>
+                </div>
+            </div>
+        </div>
+    </footer>-->
 
     <!-- AngularJS -->
     <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>-->
     <!-- My scripts -->
-    <script src="js/index.js"></script>
+    <!--<script src="js/index.js"></script>-->
     <!-- <script src="js/controllers/bookingController.js"></script> -->
-
     <!-- Route for the application -->
     <script src="../res/js/routes.js"></script>
-        
+    <!--<script src="../res/js/createtelephone.js"></script>-->
+    <!--<script src="../resisauth.jss.js"></script>-->
+    <script src="../res/js/getsupportdata.js"></script>
+   <!--<script src="../res/frameworks/ui-bootstrap-2.5.0.min.js"></script>-->
+   <!--<script src="../res/js/authform.js"></script>-->
+   <!--<div id="result">RESULT</div>-->
 </body>
 </html>

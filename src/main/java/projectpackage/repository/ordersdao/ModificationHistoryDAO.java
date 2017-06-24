@@ -15,6 +15,6 @@ import java.util.List;
 public interface ModificationHistoryDAO {
     public ModificationHistory getModificationHistory(Integer id);
     public List<ModificationHistory> getAllModificationHistories();
-    public int insertModificationHistory(Order newOrder, Order oldOrder) throws TransactionException;
+    public Integer insertModificationHistory(Order newOrder, Order oldOrder) throws TransactionException;
     public void deleteModificationHistory(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.dto.RoomStatDTO;
+import projectpackage.dto.RoomDTO;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.roomsdao.RoomDAO;
@@ -138,8 +139,17 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public IUDAnswer insertRoom(Room room) {
+    public IUDAnswer insertRoom(RoomDTO roomDTO) {
+        if (roomDTO == null) return new IUDAnswer(false, "transactionInterrupt");
+        if (roomDTO.getNumberOfResidents() > 3 || roomDTO.getNumberOfResidents() < 1) {
+            return new IUDAnswer(false, "transactionInterrupt");
+        }
         Integer roomId = null;
+        RoomType roomType = roomTypeDAO.getRoomType(roomDTO.getRoomType());
+        Room room = new Room();
+        room.setRoomNumber(roomDTO.getRoomNumber());
+        room.setNumberOfResidents(roomDTO.getNumberOfResidents());
+        room.setRoomType(roomType);
         try {
             roomId = roomDAO.insertRoom(room);
             LOGGER.info("Get from DB roomId = " + roomId);
@@ -151,10 +161,25 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public IUDAnswer updateRoom(int id, Room newRoom) {
+    public IUDAnswer updateRoom(Integer id, RoomDTO roomDTO) {
+        System.out.println("****************** IN SERVICE ******************");
+        System.out.println(roomDTO);
+        System.out.println(id);
+        if (id == null) return new IUDAnswer(false, "transactionInterrupt");
+        if (roomDTO == null) return new IUDAnswer(false, "transactionInterrupt");
+        if (roomDTO.getNumberOfResidents() > 3 || roomDTO.getNumberOfResidents() < 1) {
+            return new IUDAnswer(false, "transactionInterrupt");
+        }
+        RoomType roomType = roomTypeDAO.getRoomType(roomDTO.getRoomType());
+        Room newRoom = new Room();
+        newRoom.setObjectId(id);
+        newRoom.setNumberOfResidents(roomDTO.getNumberOfResidents());
+        newRoom.setRoomNumber(roomDTO.getRoomNumber());
+        newRoom.setRoomType(roomType);
+        Room oldRoom = roomDAO.getRoom(id);
+        System.out.println(oldRoom);
+        System.out.println(newRoom);
         try {
-            newRoom.setObjectId(id);
-            Room oldRoom = roomDAO.getRoom(id);
             roomDAO.updateRoom(newRoom, oldRoom);
         } catch (TransactionException e) {
             LOGGER.warn("Catched transactionException!!!", e);

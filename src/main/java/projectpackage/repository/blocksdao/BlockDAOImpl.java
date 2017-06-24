@@ -5,20 +5,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.blocks.Block;
 import projectpackage.model.rooms.Room;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.*;
 
 import java.util.List;
 
 /**
  * Created by Arizel on 16.05.2017.
  */
+@Transactional
 @Repository
 public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     private static final Logger LOGGER = Logger.getLogger(BlockDAOImpl.class);
@@ -50,17 +50,18 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
         }
     }
 
+    @Transactional(propagation= Propagation.REQUIRED, rollbackFor = RequiredFieldAbsenceException.class)
     @Override
-    public int insertBlock(Block block) throws TransactionException {
+    public Integer insertBlock(Block block) throws TransactionException {
+        if (block == null) return null;
+
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObject, objectId, null, 8, null, null);
-
-            jdbcTemplate.update(insertAttribute, 35, objectId, null, block.getBlockStartDate());
-            jdbcTemplate.update(insertAttribute, 36, objectId, null, block.getBlockFinishDate());
-            jdbcTemplate.update(insertAttribute, 37, objectId, block.getReason(), null);
-
-            jdbcTemplate.update(insertObjReference, 34, objectId, block.getRoom().getObjectId());
+            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 8, null, null);
+            insertStartDate(block, objectId);
+            insertFinishDate(block, objectId);
+            insertReason(objectId, block);
+            insertRoom(objectId, block);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -68,23 +69,17 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     }
 
     @Override
-    public void updateBlock(Block newBlock, Block oldBlock) throws TransactionException {
+    public Integer updateBlock(Block newBlock, Block oldBlock) throws TransactionException {
+        if (oldBlock == null || newBlock == null) return null;
         try {
-            if (oldBlock.getBlockStartDate().getTime() != newBlock.getBlockStartDate().getTime()) {
-                jdbcTemplate.update(updateAttribute, null, newBlock.getBlockStartDate(), newBlock.getObjectId(), 35);
-            }
-            if (oldBlock.getBlockFinishDate().getTime() != newBlock.getBlockFinishDate().getTime()) {
-                jdbcTemplate.update(updateAttribute, null, newBlock.getBlockFinishDate(), newBlock.getObjectId(), 36);
-            }
-            if (!oldBlock.getReason().equals(newBlock.getReason())) {
-                jdbcTemplate.update(updateAttribute, newBlock.getReason(), null, newBlock.getObjectId(), 37);
-            }
-            if (oldBlock.getRoom().getObjectId() != newBlock.getRoom().getObjectId()) {
-                jdbcTemplate.update(updateReference, newBlock.getRoom().getObjectId(), newBlock.getObjectId(), 34);
-            }
+            updateStartDate(newBlock, oldBlock);
+            updateFinishDate(newBlock, oldBlock);
+            updateReason(newBlock, oldBlock);
+            updateRoom(newBlock, oldBlock);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
+        return newBlock.getObjectId();
     }
 
     @Override
@@ -98,5 +93,79 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
         if (null == block) throw new DeletedObjectNotExistsException(this);
 
         deleteSingleEntityById(id);
+    }
+
+    private void insertStartDate(Block block, Integer objectId) {
+        if (block.getBlockStartDate() != null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 35, objectId, null, block.getBlockStartDate());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertFinishDate(Block block, Integer objectId) {
+        if (block.getBlockFinishDate() != null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 36, objectId, null, block.getBlockFinishDate());
+        } else {
+
+        }
+    }
+
+    private void insertReason(Integer objectId, Block block) {
+        if (block.getReason() != null && !block.getReason().isEmpty()) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 37, objectId, block.getReason(), null);
+        } else {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 37, objectId, null, null);
+        }
+    }
+
+    private void insertRoom(Integer objectId, Block block) {
+        if (block.getRoom() != null) {
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 34, objectId, block.getRoom().getObjectId());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateStartDate(Block newBlock, Block oldBlock) {
+        if (oldBlock.getBlockStartDate() != null && newBlock.getBlockFinishDate() != null) {
+            if (oldBlock.getBlockStartDate().getTime() != newBlock.getBlockStartDate().getTime()) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newBlock.getBlockStartDate(), newBlock.getObjectId(), 35);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateFinishDate(Block newBlock, Block oldBlock) {
+        if (oldBlock.getBlockFinishDate() != null && newBlock.getBlockFinishDate() != null) {
+            if (oldBlock.getBlockFinishDate().getTime() != newBlock.getBlockFinishDate().getTime()) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newBlock.getBlockFinishDate(), newBlock.getObjectId(), 36);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateReason(Block newBlock, Block oldBlock) {
+        if (oldBlock.getReason() != null && newBlock.getReason() != null && !newBlock.getReason().isEmpty()) {
+            if (!oldBlock.getReason().equals(newBlock.getReason())) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newBlock.getReason(), null, newBlock.getObjectId(), 37);
+            }
+        } else if (newBlock.getReason() != null && !newBlock.getReason().isEmpty()) {
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, newBlock.getReason(), null, newBlock.getObjectId(), 37);
+        } else if (oldBlock.getReason() != null) {
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newBlock.getObjectId(), 37);
+        }
+    }
+
+    private void updateRoom(Block newBlock, Block oldBlock) {
+        if (oldBlock.getRoom() != null && newBlock.getRoom() != null) {
+            if (oldBlock.getRoom().getObjectId() != newBlock.getRoom().getObjectId()) {
+                jdbcTemplate.update(UPDATE_REFERENCE, newBlock.getRoom().getObjectId(), newBlock.getObjectId(), 34);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
     }
 }

@@ -8,10 +8,7 @@ import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.JournalRecord;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.*;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -55,17 +52,15 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
     }
 
     @Override
-    public int insertJournalRecord(JournalRecord journalRecord) throws TransactionException {
+    public Integer insertJournalRecord(JournalRecord journalRecord) throws TransactionException {
+        if (journalRecord == null) return null;
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObject, objectId, journalRecord.getOrderId(), 16, null, null);
-
-            jdbcTemplate.update(insertAttribute, 54, objectId, journalRecord.getCount(), null);
-            jdbcTemplate.update(insertAttribute, 55, objectId, journalRecord.getCost(), null);
-            jdbcTemplate.update(insertAttribute, 56, objectId, null, journalRecord.getUsedDate());
-
-            jdbcTemplate.update(insertObjReference, 53, objectId, journalRecord.getMaintenance().getObjectId());
-
+            jdbcTemplate.update(INSERT_OBJECT, objectId, journalRecord.getOrderId(), 16, null, null);
+            insertCount(journalRecord, objectId);
+            insertCost(journalRecord, objectId);
+            insertUsedDate(journalRecord, objectId);
+            insertMaintenance(journalRecord, objectId);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -73,23 +68,17 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
     }
 
     @Override
-    public void updateJournalRecord(JournalRecord newJournalRecord, JournalRecord oldJournalRecord) throws TransactionException {
+    public Integer updateJournalRecord(JournalRecord newJournalRecord, JournalRecord oldJournalRecord) throws TransactionException {
+        if (oldJournalRecord == null || newJournalRecord == null) return null;
         try {
-            if (!oldJournalRecord.getCount().equals(newJournalRecord.getCount())) {
-                jdbcTemplate.update(updateAttribute, newJournalRecord.getCount(), null, newJournalRecord.getObjectId(), 54);
-            }
-            if (!oldJournalRecord.getCost().equals(newJournalRecord.getCost())) {
-                jdbcTemplate.update(updateAttribute, newJournalRecord.getCost(), null, newJournalRecord.getObjectId(), 55);
-            }
-            if (oldJournalRecord.getUsedDate().getTime() !=(newJournalRecord.getUsedDate().getTime())) {
-                jdbcTemplate.update(updateAttribute, null, newJournalRecord.getUsedDate(), newJournalRecord.getObjectId(), 56);
-            }
-            if (oldJournalRecord.getMaintenance().getObjectId() != newJournalRecord.getMaintenance().getObjectId()) {
-                jdbcTemplate.update(updateReference, newJournalRecord.getMaintenance().getObjectId(), newJournalRecord.getObjectId(), 53);
-            }
+            updateCount(newJournalRecord, oldJournalRecord);
+            updateCost(newJournalRecord, oldJournalRecord);
+            updateUsedDate(newJournalRecord, oldJournalRecord);
+            updateMaintenance(newJournalRecord, oldJournalRecord);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
+        return newJournalRecord.getObjectId();
     }
 
     @Override
@@ -103,5 +92,78 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
         if (null == journalRecord) throw new DeletedObjectNotExistsException(this);
 
         deleteSingleEntityById(id);
+    }
+
+    private void insertMaintenance(JournalRecord journalRecord, Integer objectId) {
+        if (journalRecord.getMaintenance() != null) {
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 53, objectId, journalRecord.getMaintenance().getObjectId());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertUsedDate(JournalRecord journalRecord, Integer objectId) {
+        if (journalRecord.getUsedDate() != null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 56, objectId, null, journalRecord.getUsedDate());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertCost(JournalRecord journalRecord, Integer objectId) {
+        if (journalRecord.getCost() != null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 55, objectId, journalRecord.getCost(), null);
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertCount(JournalRecord journalRecord, Integer objectId) {
+        if (journalRecord.getCount() != null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 54, objectId, journalRecord.getCount(), null);
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateCount(JournalRecord newJournalRecord, JournalRecord oldJournalRecord) {
+        if (oldJournalRecord.getCount() != null && newJournalRecord.getCount() != null) {
+            if (!oldJournalRecord.getCount().equals(newJournalRecord.getCount())) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newJournalRecord.getCount(), null, newJournalRecord.getObjectId(), 54);
+            }
+        } else {
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, newJournalRecord.getCount(), null, newJournalRecord.getObjectId(), 54);
+        }
+    }
+
+    private void updateCost(JournalRecord newJournalRecord, JournalRecord oldJournalRecord) {
+        if (oldJournalRecord.getCost() != null && newJournalRecord.getCost() != null) {
+            if (!oldJournalRecord.getCost().equals(newJournalRecord.getCost())) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newJournalRecord.getCost(), null, newJournalRecord.getObjectId(), 55);
+            }
+        } else {
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, newJournalRecord.getCost(), null, newJournalRecord.getObjectId(), 55);
+        }
+    }
+
+    private void updateUsedDate(JournalRecord newJournalRecord, JournalRecord oldJournalRecord) {
+        if (oldJournalRecord.getUsedDate() != null && newJournalRecord.getUsedDate() != null) {
+            if (oldJournalRecord.getUsedDate().getTime() != (newJournalRecord.getUsedDate().getTime())) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newJournalRecord.getUsedDate(), newJournalRecord.getObjectId(), 56);
+            }
+        } else {
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newJournalRecord.getUsedDate(), newJournalRecord.getObjectId(), 56);
+        }
+    }
+
+    private void updateMaintenance(JournalRecord newJournalRecord, JournalRecord oldJournalRecord) {
+        if (oldJournalRecord.getMaintenance() != null && newJournalRecord.getMaintenance() != null) {
+            if (oldJournalRecord.getMaintenance().getObjectId() != newJournalRecord.getMaintenance().getObjectId()) {
+                jdbcTemplate.update(UPDATE_REFERENCE, newJournalRecord.getMaintenance().getObjectId(),
+                        newJournalRecord.getObjectId(), 53);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
     }
 }

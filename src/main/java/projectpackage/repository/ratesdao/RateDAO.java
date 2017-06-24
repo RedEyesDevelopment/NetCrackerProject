@@ -14,7 +14,6 @@ import java.util.List;
 public interface RateDAO {
     public Rate getRate(Integer id);
     public List<Rate> getAllRates();
-    public int insertRate(Rate rate) throws TransactionException;
-//    public void updateRate(Rate newRate, Rate oldRate) throws TransactionException;
+    public Integer insertRate(Rate rate) throws TransactionException;
     public void deleteRate(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

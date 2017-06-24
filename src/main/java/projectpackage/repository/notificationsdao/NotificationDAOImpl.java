@@ -18,12 +18,10 @@ import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.*;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -90,7 +88,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                     .fetchInnerChild(JournalRecord.class).fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
                     .closeFetch().closeFetch()
                     .fetchInnerReference(Room.class, "RoomToOrder")
-                    .fetchInnerReference(RoomType.class, "RoomTypeToRoom").closeFetch()
+                    .fetchInnerReference(RoomType.class, "RoomTypeToRoom").closeFetch().closeFetch()
                     .fetchInnerReference(Category.class, "OrderToCategory")
                     .fetchInnerChild(Complimentary.class)
                     .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary").closeAllFetches()
@@ -105,19 +103,17 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     }
 
     @Override
-    public int insertNotification(Notification notification) throws TransactionException {
+    public Integer insertNotification(Notification notification) throws TransactionException {
+        if (notification == null) return null;
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObject, objectId, null, 4, null, null);
-
-            jdbcTemplate.update(insertAttribute, 22, objectId, notification.getMessage(), null);
-            jdbcTemplate.update(insertAttribute, 23, objectId, null, notification.getSendDate());
-            jdbcTemplate.update(insertAttribute, 25, objectId, null, notification.getExecutedDate());
-
-            jdbcTemplate.update(insertObjReference, 21, objectId, notification.getAuthor().getObjectId());
-            jdbcTemplate.update(insertObjReference, 26, objectId, notification.getNotificationType().getObjectId());
-            jdbcTemplate.update(insertObjReference, 24, objectId, notification.getExecutedBy().getObjectId());
-            jdbcTemplate.update(insertObjReference, 27, objectId, notification.getOrder().getObjectId());
+            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 4, null, null);
+            insertSendDate(notification, objectId);
+            insertMessage(objectId, notification);
+            insertAuthor(objectId, notification);
+            insertNotificationType(objectId, notification);
+            insertOrder(objectId, notification);
+            insertExecutedByAndDate(objectId, notification);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -125,39 +121,19 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     }
 
     @Override
-    public void updateNotification(Notification newNotification, Notification oldNotification) throws TransactionException {
+    public Integer updateNotification(Notification newNotification, Notification oldNotification) throws TransactionException {
+        if (oldNotification == null || newNotification == null) return null;
         try {
-            if (!oldNotification.getMessage().equals(newNotification.getMessage())) {
-                jdbcTemplate.update(updateAttribute, newNotification.getMessage(), null,
-                        newNotification.getObjectId(), 22);
-            }
-            if (oldNotification.getSendDate().getTime() != newNotification.getSendDate().getTime()) {
-                jdbcTemplate.update(updateAttribute, null, newNotification.getSendDate(),
-                        newNotification.getObjectId(), 23);
-            }
-            if (oldNotification.getExecutedDate().getTime() != newNotification.getExecutedDate().getTime()) {
-                jdbcTemplate.update(updateAttribute, null, newNotification.getExecutedDate(),
-                        newNotification.getObjectId(), 25);
-            }
-            if (oldNotification.getAuthor().getObjectId() != newNotification.getAuthor().getObjectId()) {
-                jdbcTemplate.update(updateReference, newNotification.getAuthor().getObjectId(),
-                        newNotification.getObjectId(), 21);
-            }
-            if (oldNotification.getNotificationType().getObjectId() != newNotification.getNotificationType().getObjectId()) {
-                jdbcTemplate.update(updateReference, newNotification.getNotificationType().getObjectId(),
-                        newNotification.getObjectId(), 26);
-            }
-            if (oldNotification.getExecutedBy().getObjectId() != newNotification.getExecutedBy().getObjectId()) {
-                jdbcTemplate.update(updateReference, newNotification.getExecutedBy().getObjectId(),
-                        newNotification.getObjectId(), 24);
-            }
-            if (oldNotification.getOrder().getObjectId() != newNotification.getOrder().getObjectId()) {
-                jdbcTemplate.update(updateReference, newNotification.getOrder().getObjectId(),
-                        newNotification.getObjectId(), 27);
-            }
+            updateMessage(newNotification, oldNotification);
+            updateSendDate(newNotification, oldNotification);
+            updateAuthor(newNotification, oldNotification);
+            updateNotificationType(newNotification, oldNotification);
+            updateOrder(newNotification, oldNotification);
+            updateDateAndExecutedBy(newNotification, oldNotification);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
+        return newNotification.getObjectId();
     }
 
     @Override
@@ -171,5 +147,137 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         if (null == notification) throw new DeletedObjectNotExistsException(this);
 
         deleteSingleEntityById(id);
+    }
+
+    private void insertSendDate(Notification notification, Integer objectId) {
+        if (notification.getSendDate() != null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 23, objectId, null, notification.getSendDate());
+        } else {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 23, objectId, null, new Date());
+        }
+    }
+
+    private void insertMessage(Integer objectId, Notification notification) {
+        if (notification.getMessage() != null && !notification.getMessage().isEmpty()) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 22, objectId, notification.getMessage(), null);
+        } else {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 22, objectId, null, null);
+        }
+    }
+
+    private void insertAuthor(Integer objectId, Notification notification) {
+        if (notification.getAuthor() != null) {
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 21, objectId, notification.getAuthor().getObjectId());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertNotificationType(Integer objectId, Notification notification) {
+        if (notification.getNotificationType() != null) {
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 26, objectId, notification.getNotificationType().getObjectId());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertOrder(Integer objectId, Notification notification) {
+        if (notification.getOrder() != null) {
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 27, objectId, notification.getOrder().getObjectId());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertExecutedByAndDate(Integer objectId, Notification notification) {
+        if (notification.getExecutedBy() != null && notification.getExecutedDate() != null) {
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 24, objectId, notification.getExecutedBy().getObjectId());
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 25, objectId, null, notification.getExecutedDate());
+        }
+    }
+
+    private void updateMessage(Notification newNotification, Notification oldNotification) {
+        if (oldNotification.getMessage() != null && newNotification.getMessage() != null
+                && !newNotification.getMessage().isEmpty()) {
+            if (!oldNotification.getMessage().equals(newNotification.getMessage())) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newNotification.getMessage(), null,
+                        newNotification.getObjectId(), 22);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateSendDate(Notification newNotification, Notification oldNotification) {
+        if (oldNotification.getSendDate() != null && newNotification.getSendDate() != null) {
+            if (oldNotification.getSendDate().getTime() != newNotification.getSendDate().getTime()) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newNotification.getSendDate(),
+                        newNotification.getObjectId(), 23);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateAuthor(Notification newNotification, Notification oldNotification) {
+        if (oldNotification.getAuthor() != null && newNotification.getAuthor() != null) {
+            if (oldNotification.getAuthor().getObjectId() != newNotification.getAuthor().getObjectId()) {
+                jdbcTemplate.update(UPDATE_REFERENCE, newNotification.getAuthor().getObjectId(),
+                        newNotification.getObjectId(), 21);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateNotificationType(Notification newNotification, Notification oldNotification) {
+        if (oldNotification.getNotificationType() != null && newNotification.getNotificationType() != null) {
+            if (oldNotification.getNotificationType().getObjectId() != newNotification.getNotificationType().getObjectId()) {
+                jdbcTemplate.update(UPDATE_REFERENCE, newNotification.getNotificationType().getObjectId(),
+                        newNotification.getObjectId(), 26);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateOrder(Notification newNotification, Notification oldNotification) {
+        if (oldNotification.getOrder() != null && newNotification.getOrder() != null) {
+            if (oldNotification.getOrder().getObjectId() != newNotification.getOrder().getObjectId()) {
+                jdbcTemplate.update(UPDATE_REFERENCE, newNotification.getOrder().getObjectId(),
+                        newNotification.getObjectId(), 27);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateDateAndExecutedBy(Notification newNotification, Notification oldNotification) {
+        if ((newNotification.getExecutedBy() == null && newNotification.getExecutedDate() != null)
+                || (newNotification.getExecutedBy() != null && newNotification.getExecutedDate() == null)) {
+            throw new RequiredFieldAbsenceException();
+        }
+        if (oldNotification.getExecutedBy() == null && newNotification.getExecutedBy() != null) {
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 24,
+                    newNotification.getObjectId(), newNotification.getExecutedBy().getObjectId());
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newNotification.getExecutedDate(),
+                    newNotification.getObjectId(), 25);
+        }
+        if (oldNotification.getExecutedBy() != null && newNotification.getExecutedBy() != null) {
+            if (oldNotification.getExecutedBy().getObjectId() != newNotification.getExecutedBy().getObjectId()) {
+                jdbcTemplate.update(UPDATE_REFERENCE, newNotification.getExecutedBy().getObjectId(),
+                        newNotification.getObjectId(), 24);
+            }
+            if (oldNotification.getExecutedDate().getTime() != newNotification.getExecutedDate().getTime()) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newNotification.getExecutedDate(),
+                        newNotification.getObjectId(), 25);
+            }
+        }
+        if (oldNotification.getExecutedBy() != null && newNotification.getExecutedBy() == null) {
+            jdbcTemplate.update(DELETE_REFERENCE, oldNotification.getObjectId(),
+                    24, oldNotification.getExecutedBy().getObjectId());
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null,
+                    newNotification.getObjectId(), 25);
+        }
     }
 }

@@ -1,26 +1,28 @@
 BEGIN
 
-	DBMS_SCHEDULER.CREATE_SCHEDULER (
-		Schedule_name => 'YEAR_SCHEDULER',
-		Start_date => '01-JAN-2017 1.00.00AM US/Pacific',
-		Repeat_interval => 'FREQ=MOUNTHLY; INTERVAL=12'
+	DBMS_SCHEDULER.CREATE_SCHEDULE (
+		Schedule_name => 'YEAR_SCHEDULE',
+		Start_date => to_timestamp_tz('31-12-16 1:00:00 AM Europe/Athens',
+									  'DD-MM-RR HH:MI:SS PM TZR'),
+		Repeat_interval => 'FREQ=YEARLY; INTERVAL=1'
 	);
 
-	DBMS_SCHEDULER.CREATE_PROGRAM
-	(Program_name => 'YEAR_PROGRAM',
-	Program_type => 'STORED_PROCEDURE',
-	Program_action => 'HOTEL.Year_tasks.Execute_tasks',
-	Enabled => TRUE);
+	DBMS_SCHEDULER.CREATE_PROGRAM (
+		Program_name => 'YEAR_PROGRAM',
+		Program_type => 'STORED_PROCEDURE',
+		Program_action => 'HOTEL.Year_tasks.Execute_tasks',
+		Enabled => TRUE
+	);
 
 	DBMS_SCHEDULER.CREATE_JOB (
 		Job_name => 'YEAR_JOB',
 		Program_name => 'YEAR_PROGRAM',
-		Schedule_name => 'YEAR_SCHEDULER',
+		Schedule_name => 'YEAR_SCHEDULE',
 		Enabled => TRUE
 	);
 
 END;
-
+/
 
 
 

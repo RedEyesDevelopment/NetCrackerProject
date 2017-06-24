@@ -14,8 +14,8 @@ public interface PhoneService {
 
     public List<Phone> getAllPhones();
     public List<Phone> getAllPhones(String orderingParameter, boolean ascend);
-    public Phone getSinglePhoneById(int id);
-    public IUDAnswer deletePhone(int id);
+    public Phone getSinglePhoneById(Integer id);
+    public IUDAnswer deletePhone(Integer id);
     public IUDAnswer insertPhone(Phone phone);
-    public IUDAnswer updatePhone(int id, Phone newPhone);
+    public IUDAnswer updatePhone(Integer id, Phone newPhone);
 }

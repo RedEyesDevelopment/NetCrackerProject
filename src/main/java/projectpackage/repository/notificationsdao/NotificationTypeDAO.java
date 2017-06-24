@@ -14,7 +14,7 @@ import java.util.List;
 public interface NotificationTypeDAO {
     public NotificationType getNotificationType(Integer id);
     public List<NotificationType> getAllNotificationTypes();
-    public int insertNotificationType(NotificationType notificationType) throws TransactionException;
-    public void updateNotificationType(NotificationType newNotificationType, NotificationType oldNotificationType) throws TransactionException;
+    public Integer insertNotificationType(NotificationType notificationType) throws TransactionException;
+    public Integer updateNotificationType(NotificationType newNotificationType, NotificationType oldNotificationType) throws TransactionException;
     public void deleteNotificationType(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

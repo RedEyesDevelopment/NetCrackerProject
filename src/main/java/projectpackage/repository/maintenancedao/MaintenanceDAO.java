@@ -14,7 +14,7 @@ import java.util.List;
 public interface MaintenanceDAO {
     public Maintenance getMaintenance(Integer id);
     public List<Maintenance> getAllMaintenances();
-    public int insertMaintenance(Maintenance maintenance) throws TransactionException;
-    public void updateMaintenance(Maintenance newMaintenance, Maintenance oldMaintenance) throws TransactionException;
-    public void deleteMaintenance(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;//TODO доделать проверки на связи
+    public Integer insertMaintenance(Maintenance maintenance) throws TransactionException;
+    public Integer updateMaintenance(Maintenance newMaintenance, Maintenance oldMaintenance) throws TransactionException;
+    public void deleteMaintenance(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

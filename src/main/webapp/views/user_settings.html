@@ -3,29 +3,29 @@
     <div class="form_main col-md-4 col-sm-5 col-xs-7">
         <h4 class="heading"><strong>User </strong> settings <span></span></h4>
         <div class="form">
-            <form class="user-form" action="" method="" id="contactFrm" name="contactFrm" ng-controller="userSettingsController" novalidate ng-submit='updateUser($event)'>
+            <form class="user-form" action="" method="" id="contactFrm" name="contactFrm" novalidate ng-submit='updateUser($event)'>
 
 
                 <!-- Edit -->
                 <!-- NAME -->
                 <div class="firstname">
                     <label>First Name</label>
-                    <p class="changable" ng-model="userFirstName">{{yourData.data.firstName}}</p>
+                    <p class="changable" id="userFirstName">{{yourData.data.firstName}}</ng-model></p>
                 </div>
                 <!-- SURNAME -->
                 <div class="lastname">
                     <label>Last Name: </label>
-                    <p class="changable" ng-model="userLastName">{{yourData.data.lastName}}</p>
+                    <p class="changable" id="userLastName">{{yourData.data.lastName}}</p>
                 </div>
                 <!-- MAIL -->
                 <div class="mail">
                     <label>Your Email: </label>
-                    <p class="changable" ng-model="userEmail">{{yourData.data.email}}</p>
+                    <p class="changable" id="userEmail">{{yourData.data.email}}</p>
                 </div>
                 <!-- PWD -->
                 <div class="yourpass">
                     <label>Your Password: </label>
-                    <p class="changable" ng-model="userPassword">{{yourData.data.password}}</p>
+                    <p class="changable" id="userPassword">{{yourData.data.password}}</p>
                 </div>
                 <!-- NUMBERS -->
                 <div class="numbers">
@@ -55,12 +55,19 @@
                 </div>
                 <!-- END DEL NUMBER -->
                 <!-- End edit -->
-                <button id="dat-button" type="submit" class="btn btn-default" ng-click='updateUser($event)'>Update</button>
+                <button id="dat-button" type="submit" class="btn btn-default" ng-click='updateUser()'>Update</button>
+                <div ng-show="wasUpdatedUser">
+                    <p class="bg-primary">User was updated successful!</p>
+                </div>
+                <div ng-show="notUpdatedUser">
+                    <p class="bg-warning">{{messageUpdate}}</p>
+                </div>
             </form>
         </div>
     </div>
 
 </div>
+
 <script>
     $(document).ready(function(){
     $("#loginLink").click(function(){
@@ -95,6 +102,7 @@
                 if ($(this).val() != "") {
                     connectWith.val($(this).val()).change();
                     elem.text($(this).val());
+                    {{yourData.data.firstName = $(this).val()}}
                 }
 
                 $(this).remove();

@@ -54,7 +54,6 @@ public class ReactEAV {
     }
 
     public ReacTask fetchRootChild(Class innerEntityClass) {
-        System.out.println();
         checkInnerRelations(rootNode.getObjectClass(), dataBucket.getOuterRelationsMap().get(innerEntityClass).keySet());
         ReacTask newReacTask = fetchingOrderCreation(innerEntityClass, false, null, null, false, null);
         return newReacTask;

@@ -4,10 +4,10 @@
 
 <web-app>
 
-    <display-name>DIE BITCH!</display-name>
+    <display-name>NetCracker Project - HOTELS</display-name>
 
     <welcome-file-list>
-        <welcome-file>/views/index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 
 

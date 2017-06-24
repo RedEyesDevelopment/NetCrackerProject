@@ -1,5 +1,7 @@
 package projectpackage.repository.authdao;
 
+import projectpackage.repository.Commitable;
+import projectpackage.repository.Rollbackable;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.model.auth.Phone;
@@ -11,10 +13,10 @@ import java.util.List;
 /**
  * Created by Lenovo on 04.05.2017.
  */
-public interface PhoneDAO {
+public interface PhoneDAO extends Commitable, Rollbackable{
     public Phone getPhone(Integer id);
     public List<Phone> getAllPhones();
-    public int insertPhone(Phone phone) throws TransactionException;
-    public void updatePhone(Phone newPhone, Phone oldPhone) throws TransactionException;
+    public Integer insertPhone(Phone phone) throws TransactionException;
+    public Integer updatePhone(Phone newPhone, Phone oldPhone) throws TransactionException;
     public void deletePhone(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

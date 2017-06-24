@@ -11,10 +11,7 @@ import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.support.daoexceptions.*;
 
 import java.util.Date;
 import java.util.List;
@@ -56,71 +53,23 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
     }
 
     @Override
-    public int insertModificationHistory(Order newOrder, Order oldOrder) throws TransactionException {
+    public Integer insertModificationHistory(Order newOrder, Order oldOrder) throws TransactionException {
+        if (newOrder == null || oldOrder == null) return null;
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObject, objectId, oldOrder.getObjectId(), 12, null, null);
-
-            if (oldOrder.getRegistrationDate().getTime() != newOrder.getRegistrationDate().getTime()) {
-                jdbcTemplate.update(insertAttribute, 61, objectId, null, oldOrder.getRegistrationDate());
-            } else {
-                jdbcTemplate.update(insertAttribute, 61, objectId, null, null);
-            }
-
-            if (oldOrder.getIsPaidFor()) {
-                jdbcTemplate.update(insertAttribute, 62, objectId, "true", null);
-            } else if (!oldOrder.getIsPaidFor()) {
-                jdbcTemplate.update(insertAttribute, 62, objectId, "false", null);
-            } else {
-                jdbcTemplate.update(insertAttribute, 63, objectId, null, null);
-            }
-
-            if (oldOrder.getIsConfirmed()) {
-                jdbcTemplate.update(insertAttribute, 63, objectId, "true", null);
-            } else if (!oldOrder.getIsConfirmed()){
-                jdbcTemplate.update(insertAttribute, 63, objectId, "false", null);
-            } else {
-                jdbcTemplate.update(insertAttribute, 63, objectId, null, null);
-            }
-
-            if (oldOrder.getLivingStartDate().getTime() != newOrder.getLivingStartDate().getTime()) {
-                jdbcTemplate.update(insertAttribute, 64, objectId, null, oldOrder.getLivingStartDate());
-            } else {
-                jdbcTemplate.update(insertAttribute, 64, objectId, null, null);
-            }
-
-            if (oldOrder.getLivingFinishDate().getTime() != newOrder.getLivingFinishDate().getTime()) {
-                jdbcTemplate.update(insertAttribute, 65, objectId, null, oldOrder.getLivingFinishDate());
-            } else {
-                jdbcTemplate.update(insertAttribute, 65, objectId, null, null);
-            }
-
-            if (!oldOrder.getSum().equals(newOrder.getSum())) {
-                jdbcTemplate.update(insertAttribute, 66, objectId, oldOrder.getSum(), null);
-            } else {
-                jdbcTemplate.update(insertAttribute, 66, objectId, null, null);
-            }
-
-            if (!oldOrder.getComment().equals(newOrder.getComment())) {
-                jdbcTemplate.update(insertAttribute, 67, objectId, oldOrder.getComment(), null);
-            } else {
-                jdbcTemplate.update(insertAttribute, 67, objectId, null, null);
-            }
-
-            if (oldOrder.getCategory().getObjectId() != newOrder.getCategory().getObjectId()) {
-                jdbcTemplate.update(insertObjReference, 68, objectId, oldOrder.getCategory().getObjectId());
-            }
-
-            if (oldOrder.getRoom().getObjectId() != newOrder.getRoom().getObjectId()) {
-                jdbcTemplate.update(insertObjReference, 59, objectId, oldOrder.getRoom().getObjectId());
-            }
-
-            if (oldOrder.getClient().getObjectId() != newOrder.getClient().getObjectId()) {
-                jdbcTemplate.update(insertObjReference, 60, objectId, oldOrder.getClient().getObjectId());
-            }
-
-            jdbcTemplate.update(insertAttribute, 43, objectId, null, new Date());
-            jdbcTemplate.update(insertObjReference, 42, objectId, oldOrder.getLastModificator().getObjectId());
+            jdbcTemplate.update(INSERT_OBJECT, objectId, oldOrder.getObjectId(), 12, null, null);
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 43, objectId, null, new Date());
+            insertRegistrationDate(newOrder, oldOrder, objectId);
+            insertIsPaidFor(newOrder, oldOrder, objectId);
+            insertIsConfirmed(newOrder, oldOrder, objectId);
+            insertLivingStartDate(newOrder, oldOrder, objectId);
+            insertLivingFinishDate(newOrder, oldOrder, objectId);
+            insertSum(newOrder, oldOrder, objectId);
+            insertComment(newOrder, oldOrder, objectId);
+            insertCategory(newOrder, oldOrder, objectId);
+            insertRoom(newOrder, oldOrder, objectId);
+            insertClient(newOrder, oldOrder, objectId);
+            insertLastMidificator(newOrder, oldOrder, objectId);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -128,7 +77,8 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
     }
 
     @Override
-    public void deleteModificationHistory(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+    public void deleteModificationHistory(int id)
+            throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
         ModificationHistory modificationHistory = null;
         try {
             modificationHistory = getModificationHistory(id);
@@ -139,4 +89,133 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
 
         deleteSingleEntityById(id);
     }
+
+    private void insertLastMidificator(Order newOrder, Order oldOrder, Integer objectId) {
+        if (oldOrder.getLastModificator() != null && newOrder.getLastModificator() != null) {
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 42, objectId, oldOrder.getLastModificator().getObjectId());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertClient(Order newOrder, Order oldOrder, Integer objectId) {
+        if (oldOrder.getClient() != null && newOrder.getClient() != null) {
+            if (oldOrder.getClient().getObjectId() != newOrder.getClient().getObjectId()) {
+                jdbcTemplate.update(INSERT_OBJ_REFERENCE, 60, objectId, oldOrder.getClient().getObjectId());
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertRoom(Order newOrder, Order oldOrder, Integer objectId) {
+        if (oldOrder.getRoom() != null && newOrder.getRoom() != null) {
+            if (oldOrder.getRoom().getObjectId() != newOrder.getRoom().getObjectId()) {
+                jdbcTemplate.update(INSERT_OBJ_REFERENCE, 59, objectId, oldOrder.getRoom().getObjectId());
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertCategory(Order newOrder, Order oldOrder, Integer objectId) {
+        if (oldOrder.getCategory() != null && newOrder.getCategory() != null) {
+            if (oldOrder.getCategory().getObjectId() != newOrder.getCategory().getObjectId()) {
+                jdbcTemplate.update(INSERT_OBJ_REFERENCE, 68, objectId, oldOrder.getCategory().getObjectId());
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertComment(Order newOrder, Order oldOrder, Integer objectId) {
+        if (oldOrder.getComment() != null && newOrder.getComment() != null && !newOrder.getComment().isEmpty()) {
+            if (!oldOrder.getComment().equals(newOrder.getComment())) {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 67, objectId, oldOrder.getComment(), null);
+            } else {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 67, objectId, null, null);
+            }
+        } else if (newOrder.getComment() != null && !newOrder.getComment().isEmpty()) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 67, objectId, oldOrder.getComment(), null);
+        } else if (oldOrder.getComment() != null){
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 67, objectId, null, null);
+        }
+    }
+
+    private void insertSum(Order newOrder, Order oldOrder, Integer objectId) {
+        if (oldOrder.getSum() != null && newOrder.getSum() != null) {
+            if (!oldOrder.getSum().equals(newOrder.getSum())) {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 66, objectId, oldOrder.getSum(), null);
+            } else {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 66, objectId, null, null);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertLivingFinishDate(Order newOrder, Order oldOrder, Integer objectId) {
+        if (oldOrder.getLivingFinishDate() != null && newOrder.getLivingFinishDate() != null) {
+            if (oldOrder.getLivingFinishDate().getTime() != newOrder.getLivingFinishDate().getTime()) {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 65, objectId, null, oldOrder.getLivingFinishDate());
+            } else {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 65, objectId, null, null);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertLivingStartDate(Order newOrder, Order oldOrder, Integer objectId) {
+        if (oldOrder.getLivingStartDate() != null && newOrder.getLivingStartDate() != null) {
+            if (oldOrder.getLivingStartDate().getTime() != newOrder.getLivingStartDate().getTime()) {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 64, objectId, null, oldOrder.getLivingStartDate());
+            } else {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 64, objectId, null, null);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertIsConfirmed(Order newOrder, Order oldOrder, Integer objectId) {
+        if (oldOrder.getIsConfirmed() != null && newOrder.getIsConfirmed() != null) {
+            if (oldOrder.getIsConfirmed()) {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 63, objectId, "true", null);
+            } else if (!oldOrder.getIsConfirmed()) {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 63, objectId, "false", null);
+            } else {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 63, objectId, null, null);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertIsPaidFor(Order newOrder, Order oldOrder, Integer objectId) {
+        if (oldOrder.getIsPaidFor() != null && newOrder.getIsPaidFor() != null) {
+            if (oldOrder.getIsPaidFor()) {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 62, objectId, "true", null);
+            } else if (!oldOrder.getIsPaidFor()) {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 62, objectId, "false", null);
+            } else {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 63, objectId, null, null);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertRegistrationDate(Order newOrder, Order oldOrder, Integer objectId) {
+        if (oldOrder.getRegistrationDate() != null && newOrder.getRegistrationDate() != null) {
+            if (oldOrder.getRegistrationDate().getTime() != newOrder.getRegistrationDate().getTime()) {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 61, objectId, null, oldOrder.getRegistrationDate());
+            } else {
+                jdbcTemplate.update(INSERT_ATTRIBUTE, 61, objectId, null, null);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
 }

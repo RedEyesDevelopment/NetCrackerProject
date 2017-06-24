@@ -24,6 +24,8 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <executable>true</executable>
+                    <finalName>ROOT</finalName>
+                    <outputDirectory>C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>

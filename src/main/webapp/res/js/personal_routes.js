@@ -22,7 +22,6 @@ app.factory('sharedData' , function() {
 
 });
 
-
 app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
     $locationProvider.hashPrefix('');
 
@@ -58,15 +57,17 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
 }]);
 
 
-app.controller('userSettingsController', ['$scope', '$http', '$location' , 'sharedData' , function ($scope, $http, $location, sharedData) {
+app.controller('userSettingsController', ['$scope', '$http', '$location' , 'sharedData', '$timeout', function ($scope, $http, $location, sharedData, $timeout) {
+    //$scope.userFlag = true;
 
     var user;
 
     $http({
-        url: 'http://localhost:8080/users/901',
+        url: 'http://localhost:8080/users/myself',
         method: 'GET',
-
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        headers: {
+            'Content-Type': 'application/json'
+        },
 
     }).then(function (data) {
         $scope.yourData = data;
@@ -75,34 +76,44 @@ app.controller('userSettingsController', ['$scope', '$http', '$location' , 'shar
     });
 
 
-    $scope.updateUser = function (eve) {
+    $scope.updateUser = function () {
         console.log('I am into user update');
+        console.log(user.data.objectId);
+        console.log(document.getElementById("userEmail").innerHTML);
+        console.log(document.getElementById("userPassword").innerHTML);
+        console.log(document.getElementById("userFirstName").innerHTML);
+        console.log(document.getElementById("userLastName").innerHTML);
+        console.log(user.data.additionalInfo);
+        console.log(user.data.enabled);
+        console.log(user.data.role.roleName);
+        console.log('I am into user update after');
+        console.log('http://localhost:8080/users/' + user.data.objectId)
 
         $http({
-            url: 'http://localhost:8080/users/901',
+            url: 'http://localhost:8080/users/' + user.data.objectId,
             method: 'PUT',
             data: {
-                "objectId": 901,
-                "email": "krasavchik@gmail.com",
-                "password": "lkjaytuayiaaotwiuy",
-                "firstName": "Johnny",
-                "lastName": "Depp",
-                "additionalInfo": "Капитан!",
-                "enabled": true,
+                "objectId": user.data.objectId,
+                "email": document.getElementById("userEmail").innerHTML,
+                "password": document.getElementById("userPassword").innerHTML,
+                "firstName": document.getElementById("userFirstName").innerHTML,
+                "lastName": document.getElementById("userLastName").innerHTML,
+                "additionalInfo": user.data.additionalInfo,
+                "enabled": user.data.enabled,
                 "role": {
-                    "objectId": 3,
-                    "roleName": "CLIENT"
+                    "objectId": user.data.role.objectId,
+                    "roleName": user.data.role.roleName
                 },
                 "phones": [
                     {
-                        "objectId": 1102,
-                        "userId": 901,
-                        "phoneNumber": "08001234518"
+                        "objectId": user.data.phones[0].objectId,
+                        "userId": user.data.phones[0].userId,
+                        "phoneNumber": user.data.phones[0].phoneNumber
                     },
                     {
-                        "objectId": 1101,
-                        "userId": 901,
-                        "phoneNumber": "08001234517"
+                        "objectId": user.data.phones[0].objectId,
+                        "userId": user.data.phones[0].userId,
+                        "phoneNumber": user.data.phones[0].phoneNumber
                     }
                 ]
             },
@@ -115,13 +126,29 @@ app.controller('userSettingsController', ['$scope', '$http', '$location' , 'shar
 
         }).then(function(data) {
 
-            sharedData.setData(data);
+            if (data.data.successful == true) $scope.wasUpdatedUser = true;
+            //$scope.wasUpdatedUser = false;
 
+            $timeout(function () {
+                console.log($scope.wasUpdatedUser)
 
-            $location.path('/rooms');
+                $scope.wasUpdatedUser = false;
 
+            }, 5000);
+
+            console.log(data.data);
 
         }, function(response) {
+            if (response.data.successful == false) $scope.notUpdatedUser = true;
+
+            $timeout(function () {
+                console.log($scope.wasUpdatedUser)
+
+                $scope.notUpdatedUser = false;
+
+            }, 5000);
+
+            $scope.messageUpdate = response.data.message;
             console.log(response);
             console.log("I_AM_TEAPOT!")
         });
@@ -203,16 +230,66 @@ app.controller('userSettingsController', ['$scope', '$http', '$location' , 'shar
 }]);
 
 
-//
-// app.controller('roomTypeController', ['$scope', '$http', 'sharedData' , function ($scope, $http, sharedData) {
-//
-//     var book = sharedData.getData();
-//
-//     $scope.list = book.data;
-//     window.scrollTo(0,1000);
-//
-//     $scope.bookApartment = function (id) {
-//         console.log(id);
-//     }
-//
-// }]);
+
+app.controller('orderListController', ['$scope', '$http', 'sharedData' , function ($scope, $http, sharedData) {
+
+    $http({
+        url: 'http://localhost:8080/orders/byUser',
+        method: 'GET',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+
+    }).then(function (data) {
+        $scope.yourData = data;
+        console.log(data);
+    });
+
+
+}]);
+
+
+app.controller('sendMessageController', ['$scope', '$http', 'sharedData', '$document', '$timeout', function ($scope, $http, sharedData, $document, $timeout) {
+
+    $scope.onSendMessage = function () {
+        console.log("I am here!");
+
+        $http({
+            url: 'http://localhost:8080/clients/sendMessage',
+            method: 'POST',
+            data: {
+                "themeMessage": $scope.themeMessage,
+                "message": $scope.message
+            },
+
+        }).then(function (data) {
+            $scope.yourData = data;
+
+            if(data.data.successful == true) {
+                $scope.succesfulSentMessage = true;
+                $scope.themeMessage = "";
+                $scope.message = "";
+
+                $timeout(function () {
+                    console.log($scope.succesfulSentMessage)
+
+                    $scope.succesfulSentMessage = false;
+
+                }, 5000);
+            }
+
+        }, function (response) {
+            if (response.data.successful == false) {
+                $scope.notSentMessage = true;
+
+                $timeout(function () {
+
+                    $scope.notSentMessage = false;
+
+                }, 5000);
+
+                $scope.messageResponse = response.data.message;
+            }
+        });
+
+    }
+
+}]);

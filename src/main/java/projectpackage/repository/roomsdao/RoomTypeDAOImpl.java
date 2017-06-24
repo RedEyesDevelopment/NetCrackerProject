@@ -15,10 +15,7 @@ import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.ratesdao.RateDAO;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.support.daoexceptions.*;
 import projectpackage.repository.support.rowmappers.IdRowMapper;
 
 import java.math.BigDecimal;
@@ -91,19 +88,43 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
     }
 
     @Override
-    public int insertRoomType(RoomType roomType) throws TransactionException {
+    public Integer insertRoomType(RoomType roomType) throws TransactionException {
+        if (roomType == null) return null;
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObject, objectId, null, 5, null, null);
-
-            jdbcTemplate.update(insertAttribute, 28, objectId, roomType.getRoomTypeTitle(), null);
-            jdbcTemplate.update(insertAttribute, 29, objectId, roomType.getContent(), null);
-
+            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 5, null, null);
+            insertTitle(roomType, objectId);
+            insertContent(roomType, objectId);
             createRateForNewRoomType(objectId);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
         return objectId;
+    }
+
+    @Override
+    public Integer updateRoomType(RoomType newRoomType, RoomType oldRoomType) throws TransactionException {
+        if (oldRoomType == null || newRoomType == null) return null;
+        try {
+            updateTitle(newRoomType, oldRoomType);
+            updateContent(newRoomType, oldRoomType);
+        } catch (DataIntegrityViolationException e) {
+            throw new TransactionException(this, e.getMessage());
+        }
+        return newRoomType.getObjectId();
+    }
+
+    @Override
+    public void deleteRoomType(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        RoomType roomType = null;
+        try {
+            roomType = getRoomType(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == roomType) throw new DeletedObjectNotExistsException(this);
+
+        deleteSingleEntityById(id);
     }
 
     private void createRateForNewRoomType(Integer objectId) throws TransactionException {
@@ -136,30 +157,42 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
         rateDAO.insertRate(rate);
     }
 
-    @Override
-    public void updateRoomType(RoomType newRoomType, RoomType oldRoomType) throws TransactionException {
-        try {
-            if (!oldRoomType.getRoomTypeTitle().equals(newRoomType.getRoomTypeTitle())) {
-                jdbcTemplate.update(updateAttribute, newRoomType.getRoomTypeTitle(), null, newRoomType.getObjectId(), 28);
-            }
-            if (!oldRoomType.getContent().equals(newRoomType.getContent())) {
-                jdbcTemplate.update(updateAttribute, newRoomType.getContent(), null, newRoomType.getObjectId(), 29);
-            }
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
+    private void insertContent(RoomType roomType, Integer objectId) {
+        if (roomType.getContent() != null && !roomType.getContent().isEmpty()) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 29, objectId, roomType.getContent(), null);
+        } else {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 29, objectId, null, null);
         }
     }
 
-    @Override
-    public void deleteRoomType(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
-        RoomType roomType = null;
-        try {
-            roomType = getRoomType(id);
-        } catch (ClassCastException e) {
-            throw new WrongEntityIdException(this, e.getMessage());
+    private void insertTitle(RoomType roomType, Integer objectId) {
+        if (roomType.getRoomTypeTitle() != null && !roomType.getRoomTypeTitle().isEmpty()) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 28, objectId, roomType.getRoomTypeTitle(), null);
+        } else {
+            throw new RequiredFieldAbsenceException();
         }
-        if (null == roomType) throw new DeletedObjectNotExistsException(this);
+    }
 
-        deleteSingleEntityById(id);
+    private void updateTitle(RoomType newRoomType, RoomType oldRoomType) {
+        if (oldRoomType.getRoomTypeTitle() != null && newRoomType.getRoomTypeTitle() != null
+                && !newRoomType.getRoomTypeTitle().isEmpty()) {
+            if (!oldRoomType.getRoomTypeTitle().equals(newRoomType.getRoomTypeTitle())) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newRoomType.getRoomTypeTitle(), null, newRoomType.getObjectId(), 28);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateContent(RoomType newRoomType, RoomType oldRoomType) {
+        if (oldRoomType.getContent() != null && newRoomType.getContent() != null && !newRoomType.getContent().isEmpty()) {
+            if (!oldRoomType.getContent().equals(newRoomType.getContent())) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newRoomType.getContent(), null, newRoomType.getObjectId(), 29);
+            }
+        } else if (newRoomType.getContent() != null && !newRoomType.getContent().isEmpty()) {
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, newRoomType.getContent(), null, newRoomType.getObjectId(), 29);
+        } else if (oldRoomType.getContent() != null) {
+            jdbcTemplate.update(UPDATE_ATTRIBUTE, null, null, newRoomType.getObjectId(), 29);
+        }
     }
 }

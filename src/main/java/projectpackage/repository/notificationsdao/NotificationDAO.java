@@ -15,7 +15,7 @@ public interface NotificationDAO {
     public List<Notification> getAllNotificationsForInMemoryService();
     public Notification getNotification(Integer id);
     public List<Notification> getAllNotifications();
-    public int insertNotification(Notification notification) throws TransactionException;
-    public void updateNotification(Notification newNotification, Notification oldNotification) throws TransactionException;
+    public Integer insertNotification(Notification notification) throws TransactionException;
+    public Integer updateNotification(Notification newNotification, Notification oldNotification) throws TransactionException;
     public void deleteNotification(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
 }

@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -28,6 +29,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
+
+        http.sessionManagement().sessionFixation().none();
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
+
         http
                 .logout().invalidateHttpSession(true).logoutUrl("/auth/logout").logoutRequestMatcher(new AntPathRequestMatcher("/logout")).and()
 //                .formLogin().loginPage("/login").usernameParameter("username").passwordParameter("password").failureUrl("/login?error").and()
@@ -37,6 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth").permitAll()
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/users").anonymous()
+                .antMatchers("/rooms/**").permitAll()
                 .antMatchers("/orders/**").permitAll()
                 .antMatchers("/statistics/**").permitAll()
                 .antMatchers("/orders").permitAll()
@@ -44,7 +50,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //.antMatchers("/users/**").hasAnyAuthority("CLIENT", "ADMIN");
                 .antMatchers("/users/**").permitAll();
 
-        http.requiresChannel().antMatchers("/auth/login").requiresSecure();
+//        http.requiresChannel().antMatchers("/auth/login").requiresSecure();
+//        http.requiresChannel().antMatchers("/auth/logout").requiresSecure();
+//        http.requiresChannel().antMatchers("/auth/giveSessionData").requiresSecure();
     }
 
     @Autowired
@@ -71,3 +79,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new UserDetailsServiceImpl();
     }
 }
+
+//BASIC CONFIG:
+//        http.csrf().disable();
+//        http.httpBasic().and()
+//        .logout().invalidateHttpSession(true).logoutUrl("/auth/logout").logoutRequestMatcher(new AntPathRequestMatcher("/logout")).and()
+////                .formLogin().loginPage("/login").usernameParameter("username").passwordParameter("password").failureUrl("/login?error").and()
+////                .formLogin().loginPage("/auth/login")
+//        .authorizeRequests()
+//        .antMatchers("/", "/home").permitAll()
+//        .antMatchers("/auth").permitAll()
+//        .antMatchers("/auth/**").permitAll()
+//        .antMatchers("/users").anonymous()
+//        .antMatchers("/orders/**").permitAll()
+//        .antMatchers("/statistics/**").permitAll()
+//        .antMatchers("/orders").permitAll()
+//        .antMatchers("/dto/**").permitAll()
+//        .antMatchers("/users/**").hasAnyAuthority("CLIENT", "ADMIN");
+//
+//        http.requiresChannel().antMatchers("/auth/login").requiresSecure();
+//        http.requiresChannel().antMatchers("/auth/logout").requiresSecure();
+//        http.requiresChannel().antMatchers("/auth/giveSessionData").requiresSecure();

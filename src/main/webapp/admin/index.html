@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="adminDesktop">
+
+<head>
+    <meta charset="utf-8">
+    
+    <title>NC Hotel</title>
+
+    <!-- Bootstrap -->
+    <!-- Latest compiled and minified CSS -->
+    <link   rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link   rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+            integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    
+    <!-- Styles for admin -->
+    <link href="style/adminStyle.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="../res/css/font-awesome-4.7.0/css/font-awesome.min.css">
+
+    <!-- Angular libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-route.min.js"></script>
+    <script src="https://code.angularjs.org/1.6.4/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-resource.js" type="text/javascript"></script>
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous">
+    </script>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script
+            src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous">
+    </script>
+
+    <!-- Main Application -->
+    <script src="adminDesktop.js"></script>
+    <!-- Controllers -->
+    <script src="page/notifications/notificationsCtrl.js"></script>
+    <script src="page/orders/ordersCtrl.js"></script>
+    <script src="page/users/usersCtrl.js"></script>
+    <script src="page/rooms/roomsCtrl.js"></script>
+    <script src="page/blocks/blocksCtrl.js"></script>
+    <script src="page/maintenances/maintenancesCtrl.js"></script>
+    <script src="page/categories/categoriesCtrl.js"></script>
+    <script src="page/notificationTypes/notificationTypesCtrl.js"></script>
+    <script src="page/roomTypes/roomTypesCtrl.js"></script>
+</head>
+    
+<body>
+
+    <ng-include src="'page/template/header.html'"></ng-include>
+
+
+    <div class="container">
+
+        <ng-include src="'page/template/aside.html'"></ng-include>
+        
+        <div id='desktop' ng-view></div>
+
+    </div>
+
+</body>
+</html>

@@ -1,6 +1,7 @@
 package projectpackage.service.roomservice;
 
 import projectpackage.dto.RoomStatDTO;
+import projectpackage.dto.RoomDTO;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.dto.IUDAnswer;
@@ -23,6 +24,6 @@ public interface RoomService {
     public List<Room> getBookedRoomsOnPeriod(Date start, Date finish);
     public RoomStatDTO getAllRoomsOnPeriod(Date start, Date finish);
     public IUDAnswer deleteRoom(int id);
-    public IUDAnswer insertRoom(Room room);
-    public IUDAnswer updateRoom(int id, Room newRoom);
+    public IUDAnswer insertRoom(RoomDTO roomDTO);
+    public IUDAnswer updateRoom(Integer id, RoomDTO roomDTO);
 }

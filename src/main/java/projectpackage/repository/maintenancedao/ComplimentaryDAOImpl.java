@@ -8,10 +8,7 @@ import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.Complimentary;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.*;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -51,11 +48,12 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     }
 
     @Override
-    public int insertComplimentary(Complimentary complimentary) throws TransactionException {
+    public Integer insertComplimentary(Complimentary complimentary) throws TransactionException {
+        if (complimentary == null) return null;
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObject, objectId, complimentary.getCategoryId(), 15, null, null);
-            jdbcTemplate.update(insertObjReference, 51, objectId, complimentary.getMaintenance().getObjectId());
+            jdbcTemplate.update(INSERT_OBJECT, objectId, complimentary.getCategoryId(), 15, null, null);
+            insertMaintenance(complimentary, objectId);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -63,15 +61,14 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     }
 
     @Override
-    public void updateComplimentary(Complimentary newComplimentary, Complimentary oldComplimentary) throws TransactionException {
+    public Integer updateComplimentary(Complimentary newComplimentary, Complimentary oldComplimentary) throws TransactionException {
+        if (oldComplimentary == null || newComplimentary == null) return null;
         try {
-            if (oldComplimentary.getMaintenance().getObjectId() != newComplimentary.getMaintenance().getObjectId()) {
-                jdbcTemplate.update(updateReference, newComplimentary.getMaintenance().getObjectId(), newComplimentary.getObjectId(), 51);
-            }
+            updateMaintenance(newComplimentary, oldComplimentary);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
-
         }
+        return newComplimentary.getObjectId();
     }
 
     @Override
@@ -85,5 +82,24 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
         if (null == complimentary) throw new DeletedObjectNotExistsException(this);
 
         deleteSingleEntityById(id);
+    }
+
+    private void updateMaintenance(Complimentary newComplimentary, Complimentary oldComplimentary) {
+        if (oldComplimentary.getMaintenance() != null && newComplimentary.getMaintenance() != null) {
+            if (oldComplimentary.getMaintenance().getObjectId() != newComplimentary.getMaintenance().getObjectId()) {
+                jdbcTemplate.update(UPDATE_REFERENCE, newComplimentary.getMaintenance().getObjectId(),
+                        newComplimentary.getObjectId(), 51);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void insertMaintenance(Complimentary complimentary, Integer objectId) {
+        if (complimentary.getMaintenance() != null) {
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 51, objectId, complimentary.getMaintenance().getObjectId());
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
     }
 }

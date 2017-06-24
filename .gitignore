@@ -4,9 +4,10 @@
 
 # IntelliJ project files
 .idea/*
-.idea/runConfigurations/
+!.idea/runConfigurations/
 *.iml
 out
 gen
 src/temp/
 
+!/.idea/runConfigurations/RUN_FOREST_RUN.xml

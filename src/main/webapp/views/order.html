@@ -1,0 +1,36 @@
+<div class="finishOrder" ng-if="doesNeedToShowFinishOrder">
+    <div class="my-border col-sm-offset-3 col-sm-6">
+    <h2 class="text-center">Booked order</h2>
+	<p class="order-confirm">
+		<b>Roomtype:</b> {{ finishOrder.roomTypeName }}
+	</p>
+	<p class="order-confirm">
+		{{ finishOrder.roomTypeDescription }}
+	</p>
+	<p class="order-confirm">
+		<b>Ordered for:</b> {{ finishOrder.client }}
+	</p>
+	<p class="order-confirm">
+		Room ordered for {{ finishOrder.livingPersons }} people.
+	</p>
+	<p class="order-confirm">
+        <b>Date:</b> From {{ finishOrder.arrival | date:'dd MMMM yyyy' }} to {{ finishOrder.departure | date:'dd MMMM yyyy' }}
+	</p>
+	<p class="order-confirm">
+		<b>Category:</b> {{ finishOrder.categoryName }}
+	</p>
+	<p class="order-confirm">
+		<b>Categody cost:</b> ${{ finishOrder.categoryCost}}
+	</p>
+	<p class="order-confirm">
+		<b>Living cost:</b> ${{ finishOrder.livingCost}}
+	</p>
+	<p class="order-confirm">
+		<b>Total cost:</b> ${{ finishOrder.categoryCost + finishOrder.livingCost}}
+	</p>
+    <div class="text-center">
+            <button type="submit" id="acceptButton" class="btn btn-success" ng-click="book()">Accept</button>
+            <button type="submit" id="declineButton" class="btn btn-danger" ng-click="cancel()">Decline</button>
+    </div>
+    </div>
+</div>

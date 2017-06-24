@@ -7,11 +7,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Phone;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.*;
 
 import java.util.List;
 
@@ -44,11 +41,12 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
     }
 
     @Override
-    public int insertPhone(Phone phone) throws TransactionException {
+    public Integer insertPhone(Phone phone) throws TransactionException {
+        if (phone == null) return null;
         Integer objectId = nextObjectId();
         try {
-            jdbcTemplate.update(insertObject, objectId, phone.getUserId(), 9, null, null);
-            jdbcTemplate.update(insertAttribute, 38, objectId, phone.getPhoneNumber(), null);
+            jdbcTemplate.update(INSERT_OBJECT, objectId, phone.getUserId(), 9, null, null);
+            insertPhoneNumber(objectId, phone);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
@@ -56,14 +54,14 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
     }
 
     @Override
-    public void updatePhone(Phone newPhone, Phone oldPhone) throws TransactionException {
+    public Integer updatePhone(Phone newPhone, Phone oldPhone) throws TransactionException {
+        if (oldPhone == null || newPhone == null) return null;
         try {
-            if (!oldPhone.getPhoneNumber().equals(newPhone.getPhoneNumber())) {
-                jdbcTemplate.update(updateAttribute, newPhone.getPhoneNumber(), null, newPhone.getObjectId(), 38);
-            }
+            updatePhoneNumber(newPhone, oldPhone);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
+        return newPhone.getObjectId();
     }
 
     @Override
@@ -77,5 +75,23 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
         if (null == phone) throw new DeletedObjectNotExistsException(this);
 
         deleteSingleEntityById(id);
+    }
+
+    private void insertPhoneNumber(Integer objectId, Phone phone) {
+        if (phone.getPhoneNumber() == null || phone.getPhoneNumber().isEmpty()) {
+            throw new RequiredFieldAbsenceException();
+        } else {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 38, objectId, phone.getPhoneNumber(), null);
+        }
+    }
+
+    private void updatePhoneNumber(Phone newPhone, Phone oldPhone) {
+        if (oldPhone.getPhoneNumber() != null && newPhone.getPhoneNumber() != null && !newPhone.getPhoneNumber().isEmpty()) {
+            if (!oldPhone.getPhoneNumber().equals(newPhone.getPhoneNumber())) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newPhone.getPhoneNumber(), null, newPhone.getObjectId(), 38);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
     }
 }

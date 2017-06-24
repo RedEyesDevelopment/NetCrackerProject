@@ -7,10 +7,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.rates.Price;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.RequiredFieldAbsenceException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -46,45 +44,37 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
         }
     }
 
-//    @Override
-//    public int insertPrice(Price price) throws TransactionException {
-//        Integer objectId = nextObjectId();
-//        try {
-//            jdbcTemplate.update(insertObject, objectId, price.getRateId(), 7, null, null);
-//            jdbcTemplate.update(insertAttribute, 32, objectId, price.getNumberOfPeople(), null);
-//            jdbcTemplate.update(insertAttribute, 33, objectId, price.getRate(), null);
-//        } catch (DataIntegrityViolationException e) {
-//            throw new TransactionException(this, e.getMessage());
-//        }
-//        return objectId;
-//    }
-
     @Override
-    public void updatePrice(Price newPrice, Price oldPrice) throws TransactionException {
+    public Integer updatePrice(Price newPrice, Price oldPrice) throws TransactionException {
+        if (newPrice == null || oldPrice == null) return null;
         try {
-            if (!oldPrice.getNumberOfPeople().equals(newPrice.getNumberOfPeople())) {
-                jdbcTemplate.update(updateAttribute, newPrice.getNumberOfPeople(), null,
-                        newPrice.getObjectId(), 32);
-            }
-            if (!oldPrice.getRate().equals(newPrice.getRate())) {
-                jdbcTemplate.update(updateAttribute, newPrice.getRate(), null,
-                        newPrice.getObjectId(), 33);
-            }
+            updateNumberOfPeople(newPrice, oldPrice);
+            updateRate(newPrice, oldPrice);
         } catch (DataIntegrityViolationException e) {
             throw new TransactionException(this, e.getMessage());
         }
+        return newPrice.getObjectId();
     }
 
-//    @Override
-//    public void deletePrice(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
-//        Price price = null;
-//        try {
-//            price = getPrice(id);
-//        } catch (ClassCastException e) {
-//            throw new WrongEntityIdException(this, e.getMessage());
-//        }
-//        if (null == price) throw new DeletedObjectNotExistsException(this);
-//
-//        deleteSingleEntityById(id);
-//    }
+    private void updateNumberOfPeople(Price newPrice, Price oldPrice) {
+        if (oldPrice.getNumberOfPeople() != null && newPrice.getNumberOfPeople() != null) {
+            if (!oldPrice.getNumberOfPeople().equals(newPrice.getNumberOfPeople())) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newPrice.getNumberOfPeople(), null,
+                        newPrice.getObjectId(), 32);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
+
+    private void updateRate(Price newPrice, Price oldPrice) {
+        if (oldPrice.getRate() != null && newPrice.getRate() != null) {
+            if (!oldPrice.getRate().equals(newPrice.getRate())) {
+                jdbcTemplate.update(UPDATE_ATTRIBUTE, newPrice.getRate(), null,
+                        newPrice.getObjectId(), 33);
+            }
+        } else {
+            throw new RequiredFieldAbsenceException();
+        }
+    }
 }
