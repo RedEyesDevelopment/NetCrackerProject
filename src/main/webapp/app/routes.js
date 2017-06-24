@@ -3,17 +3,9 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
     $routeProvider
 
         // Book routes
-        .when('/book/rooms', {
-            templateUrl: './room_type.html',
-            controller: 'roomTypeController'
-        })
-        .when('/book/order', {
-            templateUrl: './order.html',
-            controller: 'finishOrderController'
-        })
-        .when('/book/fineBooked', {
-            templateUrl: './fineBooked.html',
-            controller: 'fineBookedController'
+        .when('/book', {
+            templateUrl: 'app/book/book.html',
+            controller: 'bookCtrl'
         })
 
         // Personal area routes
@@ -70,13 +62,13 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
 
         // otherwise
         .when('/', {
-            templateUrl: './room_type.html',
-            controller: 'roomTypeController'
+            templateUrl: 'app/book/book.html',
+            controller: 'bookCtrl'
         })
-        .otherwise({
-            templateUrl: './room_type.html',
-            controller: 'roomTypeController'
-        })
+        // .otherwise({
+        //     templateUrl: './room_type.html',
+        //     controller: 'roomTypeController'
+        // })
 }]);
 
 

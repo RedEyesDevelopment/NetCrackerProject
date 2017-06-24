@@ -1,4 +1,4 @@
-adminDesktop.controller('roomsCtrl', ['$scope', '$http', function($scope, $http){
+app.controller('roomsCtrl', ['$scope', '$http', function($scope, $http){
 
 
 	/* Функции на получения всех комнат и типов комнат, вызываются сразу */
@@ -130,6 +130,7 @@ adminDesktop.controller('roomsCtrl', ['$scope', '$http', function($scope, $http)
 				numberOfResidents : $scope.room.numberOfResidents,
 				roomType : getObjectInArrayById($scope.listOfRoomTypes, $scope.room.type)
 			});
+			$scope.prepareToAddRoom();
 			$scope.added = true;
 		}, function(response) {
 			console.log("Smth wrong!!");

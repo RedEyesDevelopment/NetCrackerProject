@@ -1,4 +1,4 @@
-var app = angular.module('adminDesktop', ['ngRoute', 'ngAnimate', 'ngResource']);
+var app = angular.module('app', ['ngRoute', 'ngAnimate', 'ngResource']);
 
 
 
