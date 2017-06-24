@@ -3,7 +3,6 @@ package projectpackage.repository.roomsdao;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -15,7 +14,8 @@ import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.ratesdao.RateDAO;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
-import projectpackage.repository.support.daoexceptions.*;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.repository.support.rowmappers.IdRowMapper;
 
 import java.math.BigDecimal;
@@ -88,34 +88,31 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
     }
 
     @Override
-    public Integer insertRoomType(RoomType roomType) throws TransactionException {
+    public Integer insertRoomType(RoomType roomType) {
         if (roomType == null) return null;
         Integer objectId = nextObjectId();
-        try {
-            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 5, null, null);
-            insertTitle(roomType, objectId);
-            insertContent(roomType, objectId);
-            createRateForNewRoomType(objectId);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+
+        jdbcTemplate.update(INSERT_OBJECT, objectId, null, 5, null, null);
+        insertTitle(roomType, objectId);
+        insertContent(roomType, objectId);
+        createRateForNewRoomType(objectId);
+
         return objectId;
     }
 
     @Override
-    public Integer updateRoomType(RoomType newRoomType, RoomType oldRoomType) throws TransactionException {
+    public Integer updateRoomType(RoomType newRoomType, RoomType oldRoomType) {
         if (oldRoomType == null || newRoomType == null) return null;
-        try {
-            updateTitle(newRoomType, oldRoomType);
-            updateContent(newRoomType, oldRoomType);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+
+        updateTitle(newRoomType, oldRoomType);
+        updateContent(newRoomType, oldRoomType);
+
         return newRoomType.getObjectId();
     }
 
     @Override
-    public void deleteRoomType(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+    public void deleteRoomType(Integer id) {
+        if (id == null) throw new IllegalArgumentException();
         RoomType roomType = null;
         try {
             roomType = getRoomType(id);
@@ -127,7 +124,7 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
         deleteSingleEntityById(id);
     }
 
-    private void createRateForNewRoomType(Integer objectId) throws TransactionException {
+    private void createRateForNewRoomType(Integer objectId) {
         Rate rate = new Rate();
         rate.setRoomTypeId(objectId);
         Calendar calendar = Calendar.getInstance();
@@ -169,7 +166,7 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
         if (roomType.getRoomTypeTitle() != null && !roomType.getRoomTypeTitle().isEmpty()) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 28, objectId, roomType.getRoomTypeTitle(), null);
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -180,7 +177,7 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newRoomType.getRoomTypeTitle(), null, newRoomType.getObjectId(), 28);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 

@@ -2,13 +2,10 @@ package projectpackage.repository.ratesdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.rates.Price;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.RequiredFieldAbsenceException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
@@ -45,14 +42,12 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
     }
 
     @Override
-    public Integer updatePrice(Price newPrice, Price oldPrice) throws TransactionException {
+    public Integer updatePrice(Price newPrice, Price oldPrice) {
         if (newPrice == null || oldPrice == null) return null;
-        try {
-            updateNumberOfPeople(newPrice, oldPrice);
-            updateRate(newPrice, oldPrice);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+
+        updateNumberOfPeople(newPrice, oldPrice);
+        updateRate(newPrice, oldPrice);
+
         return newPrice.getObjectId();
     }
 
@@ -63,7 +58,7 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
                         newPrice.getObjectId(), 32);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -74,7 +69,7 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
                         newPrice.getObjectId(), 33);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 }

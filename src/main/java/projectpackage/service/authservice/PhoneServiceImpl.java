@@ -10,7 +10,6 @@ import projectpackage.model.auth.User;
 import projectpackage.repository.authdao.PhoneDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.service.phoneregex.PhoneRegexService;
 
@@ -65,33 +64,37 @@ public class PhoneServiceImpl implements PhoneService{
 
     @Override
     public IUDAnswer deletePhone(Integer id) {
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             phoneDAO.deletePhone(id);
         } catch (ReferenceBreakException e) {
-            LOGGER.warn("Entity has references on self", e);
-            return new IUDAnswer(id,false, e.printReferencesEntities());
+            phoneDAO.rollback();
+            LOGGER.warn(ON_ENTITY_REFERENCE, e);
+            return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.printReferencesEntities());
         } catch (DeletedObjectNotExistsException e) {
-            LOGGER.warn("Entity with that id does not exist!", e);
-            return new IUDAnswer(id, "deletedObjectNotExists");
+            phoneDAO.rollback();
+            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+            return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
         } catch (WrongEntityIdException e) {
-            LOGGER.warn("This id belong another entity class!", e);
-            return new IUDAnswer(id, "wrongDeleteId");
+            phoneDAO.rollback();
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            phoneDAO.rollback();
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
         }
+        phoneDAO.commit();
         return new IUDAnswer(id, true);
     }
 
     @Override
     public IUDAnswer insertPhone(Phone phone) {
         boolean isValid = phoneRegexService.match(phone.getPhoneNumber());
-        if (!isValid) return new IUDAnswer(false, "wrongPhoneNumber");
+        if (!isValid) return new IUDAnswer(false, WRONG_PHONE_NUMBER);
         Integer phoneId = null;
-        try {
-            phoneId = phoneDAO.insertPhone(phone);
-            LOGGER.info("Get from DB phoneId = " + phoneId);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(phoneId, false, "transactionInterrupt");
-        }
+        phoneId = phoneDAO.insertPhone(phone);
+
         return new IUDAnswer(phoneId,true);
     }
 
@@ -99,15 +102,15 @@ public class PhoneServiceImpl implements PhoneService{
     public IUDAnswer updatePhone(Integer id, Phone newPhone) {
         boolean isValid = phoneRegexService.match(newPhone.getPhoneNumber());
         if (!isValid) return new IUDAnswer(false, "wrongPhoneNumber");
-
         try {
             newPhone.setObjectId(id);
             Phone oldPhone = phoneDAO.getPhone(id);
             phoneDAO.updatePhone(newPhone, oldPhone);
             return new IUDAnswer(id,true);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
             return new IUDAnswer(id,false, "transactionInterrupt");
         }
     }
 }
+// throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException

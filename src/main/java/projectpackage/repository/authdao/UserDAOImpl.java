@@ -2,7 +2,6 @@ package projectpackage.repository.authdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -13,7 +12,9 @@ import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
-import projectpackage.repository.support.daoexceptions.*;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.DuplicateEmailException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 
@@ -66,47 +67,39 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     }
 
     @Override
-    public Integer insertUser(User user) throws TransactionException, DuplicateEmailException {
+    public Integer insertUser(User user) {
         if (user == null) return null;
         Integer objectId = nextObjectId();
         checkEmailForDuplicate(user.getEmail());
-        try {
-            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 3, null, null);
-            insertEmail(objectId, user);
-            insertPassword(objectId, user);
-            insertFirstName(objectId, user);
-            insertLastName(objectId, user);
-            insertAdditionalInfo(objectId, user);
-            insertEnabled(objectId, user);
-            insertRole(objectId, user);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+        jdbcTemplate.update(INSERT_OBJECT, objectId, null, 3, null, null);
+        insertEmail(objectId, user);
+        insertPassword(objectId, user);
+        insertFirstName(objectId, user);
+        insertLastName(objectId, user);
+        insertAdditionalInfo(objectId, user);
+        insertEnabled(objectId, user);
+        insertRole(objectId, user);
+
         return objectId;
     }
 
-    /**
-     * Метод получает нового юзера и старого, затем сравнивает их поля и выполняет запросы по шаблону
-     */
     @Override
-    public Integer updateUser(User newUser, User oldUser) throws TransactionException {
+    public Integer updateUser(User newUser, User oldUser) {
         if (newUser == null || oldUser == null) return null;
-        try {
-            updateEmail(newUser, oldUser);
-            updatePassword(newUser, oldUser);
-            updateFirstName(newUser, oldUser);
-            updateLastName(newUser, oldUser);
-            updateAdditionalInfo(newUser, oldUser);
-            updateEnabled(newUser, oldUser);
-            updateRole(newUser, oldUser);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+        updateEmail(newUser, oldUser);
+        updatePassword(newUser, oldUser);
+        updateFirstName(newUser, oldUser);
+        updateLastName(newUser, oldUser);
+        updateAdditionalInfo(newUser, oldUser);
+        updateEnabled(newUser, oldUser);
+        updateRole(newUser, oldUser);
+
         return newUser.getObjectId();
     }
 
     @Override
-    public void deleteUser(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+    public void deleteUser(Integer id) {
+        if (id == null) throw new IllegalArgumentException();
         User user = null;
         try {
             user = getUser(id);
@@ -122,7 +115,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         if (user.getEmail() != null && !user.getEmail().isEmpty()) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 15, objectId, user.getEmail(), null);
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -130,7 +123,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 16, objectId, user.getPassword(), null);
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -138,7 +131,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         if (user.getFirstName() != null && !user.getFirstName().isEmpty()) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 17, objectId, user.getFirstName(), null);
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -146,7 +139,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         if (user.getLastName() != null && !user.getLastName().isEmpty()) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 18, objectId, user.getLastName(), null);
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -170,7 +163,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         if (user.getRole() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 20, objectId, user.getRole().getObjectId());
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -180,7 +173,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newUser.getEmail(), null, newUser.getObjectId(), 15);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -191,7 +184,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newUser.getPassword(), null, newUser.getObjectId(), 16);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -201,7 +194,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newUser.getFirstName(), null, newUser.getObjectId(), 17);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -211,11 +204,10 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newUser.getLastName(), null, newUser.getObjectId(), 18);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
-    // TODO check
     private void updateAdditionalInfo(User newUser, User oldUser) {
         if (oldUser.getAdditionalInfo() != null && newUser.getAdditionalInfo() != null && !newUser.getAdditionalInfo().isEmpty()) {
             if (!oldUser.getAdditionalInfo().equals(newUser.getAdditionalInfo())) {
@@ -248,7 +240,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
                 jdbcTemplate.update(UPDATE_REFERENCE, newUser.getRole().getObjectId(), newUser.getObjectId(), 20);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 }

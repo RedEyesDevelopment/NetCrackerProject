@@ -2,13 +2,14 @@ package projectpackage.repository.authdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Phone;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
-import projectpackage.repository.support.daoexceptions.*;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 
@@ -40,32 +41,42 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
         }
     }
 
+    /**
+     * @throws IllegalArgumentException if phone has fields which are empty or null.
+     * @param phone
+     * @return objectId of new phone
+     */
     @Override
-    public Integer insertPhone(Phone phone) throws TransactionException {
+    public Integer insertPhone(Phone phone) {
         if (phone == null) return null;
         Integer objectId = nextObjectId();
-        try {
-            jdbcTemplate.update(INSERT_OBJECT, objectId, phone.getUserId(), 9, null, null);
-            insertPhoneNumber(objectId, phone);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+        jdbcTemplate.update(INSERT_OBJECT, objectId, phone.getUserId(), 9, null, null);
+        insertPhoneNumber(objectId, phone);
         return objectId;
     }
 
+    /**
+     * @throws IllegalArgumentException if oldPhone or newPhone has fields which are empty or null.
+     * @param newPhone
+     * @param oldPhone
+     * @return objectId of newPhone
+     */
     @Override
-    public Integer updatePhone(Phone newPhone, Phone oldPhone) throws TransactionException {
+    public Integer updatePhone(Phone newPhone, Phone oldPhone) {
         if (oldPhone == null || newPhone == null) return null;
-        try {
-            updatePhoneNumber(newPhone, oldPhone);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+        updatePhoneNumber(newPhone, oldPhone);
         return newPhone.getObjectId();
     }
 
+    /**
+     * @throws WrongEntityIdException if id for delete operation belong another entity.
+     * @throws DeletedObjectNotExistsException if id for delete operation belong object which does not exists.
+     * @throws ReferenceBreakException if id belong entity, which have references on self.
+     * @param id
+     */
     @Override
-    public void deletePhone(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+    public void deletePhone(Integer id) {
+        if (id == null) throw new IllegalArgumentException();
         Phone phone = null;
         try{
             phone = getPhone(id);
@@ -79,7 +90,7 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
 
     private void insertPhoneNumber(Integer objectId, Phone phone) {
         if (phone.getPhoneNumber() == null || phone.getPhoneNumber().isEmpty()) {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         } else {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 38, objectId, phone.getPhoneNumber(), null);
         }
@@ -91,7 +102,7 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newPhone.getPhoneNumber(), null, newPhone.getObjectId(), 38);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 }

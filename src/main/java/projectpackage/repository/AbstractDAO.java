@@ -57,7 +57,7 @@ public abstract class AbstractDAO implements Commitable, Rollbackable{
                 String message = e.getSQLException().getMessage();
                 message = message.substring(11);
                 ReferenceBreakException rbe = new ReferenceBreakException(message.split(" "));
-                LOGGER.info("Someone tried delete Entity, witch have references on self.");
+                LOGGER.info("Someone tried delete Entity, which have references on self.");
                 throw rbe;
             } else {
                 throw e;

@@ -2,7 +2,6 @@ package projectpackage.repository.ordersdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.Complimentary;
@@ -10,7 +9,8 @@ import projectpackage.model.maintenances.Maintenance;
 import projectpackage.model.orders.Category;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
-import projectpackage.repository.support.daoexceptions.*;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 
@@ -55,33 +55,30 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
     }
 
     @Override
-    public Integer insertCategory(Category category) throws TransactionException {
+    public Integer insertCategory(Category category) {
         if (category == null) return null;
         Integer objectId = nextObjectId();
-        try {
-            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 13, null, null);
-            insertPrice(category, objectId);
-            insertTitle(category, objectId);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+
+        jdbcTemplate.update(INSERT_OBJECT, objectId, null, 13, null, null);
+        insertPrice(category, objectId);
+        insertTitle(category, objectId);
+
         return objectId;
     }
 
     @Override
-    public Integer updateCategory(Category newCategory, Category oldCategory) throws TransactionException {
+    public Integer updateCategory(Category newCategory, Category oldCategory) {
         if (newCategory == null || oldCategory == null) return null;
-        try {
-            updateCategoryTitle(newCategory, oldCategory);
-            updateCategoryPrice(newCategory, oldCategory);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+
+        updateCategoryTitle(newCategory, oldCategory);
+        updateCategoryPrice(newCategory, oldCategory);
+
         return newCategory.getObjectId();
     }
 
     @Override
-    public void deleteCategory(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+    public void deleteCategory(Integer id) {
+        if (id == null) throw new IllegalArgumentException();
         Category category = null;
         try {
             category = getCategory(id);
@@ -97,7 +94,7 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
         if (category.getCategoryTitle() != null && !category.getCategoryTitle().isEmpty()) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 45, objectId, category.getCategoryTitle(), null);
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -105,7 +102,7 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
         if (category.getCategoryPrice() != null) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 46, objectId, category.getCategoryPrice(), null);
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -116,7 +113,7 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newCategory.getCategoryTitle(), null, newCategory.getObjectId(), 45);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -126,7 +123,7 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newCategory.getCategoryPrice(), null, newCategory.getObjectId(), 46);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 }

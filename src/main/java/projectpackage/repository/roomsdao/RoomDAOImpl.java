@@ -2,7 +2,6 @@ package projectpackage.repository.roomsdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -11,11 +10,13 @@ import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.*;
 import projectpackage.repository.ratesdao.RateDAOImpl;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.repository.support.rowmappers.IdRowMapper;
 
 import java.util.*;
@@ -111,35 +112,32 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     }
 
     @Override
-    public Integer insertRoom(Room room) throws TransactionException {
+    public Integer insertRoom(Room room) {
         if (room == null) return null;
         Integer objectId = nextObjectId();
-        try {
-            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 1, null, null);
-            insertRoomNumber(room, objectId);
-            insertNumberOfResidents(room, objectId);
-            insertRoomType(room, objectId);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+
+        jdbcTemplate.update(INSERT_OBJECT, objectId, null, 1, null, null);
+        insertRoomNumber(room, objectId);
+        insertNumberOfResidents(room, objectId);
+        insertRoomType(room, objectId);
+
         return objectId;
     }
 
     @Override
-    public Integer updateRoom(Room newRoom, Room oldRoom) throws TransactionException {
+    public Integer updateRoom(Room newRoom, Room oldRoom) {
         if (oldRoom == null || newRoom == null) return null;
-        try {
-            updateRoomNumber(newRoom, oldRoom);
-            updateNumberOfResidents(newRoom, oldRoom);
-            updateRoomType(newRoom, oldRoom);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+
+        updateRoomNumber(newRoom, oldRoom);
+        updateNumberOfResidents(newRoom, oldRoom);
+        updateRoomType(newRoom, oldRoom);
+
         return newRoom.getObjectId();
     }
 
     @Override
-    public void deleteRoom(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+    public void deleteRoom(Integer id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        if (id == null) throw new IllegalArgumentException();
         Room room = null;
         try {
             room = getRoom(id);
@@ -156,7 +154,7 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
         if (room.getRoomType() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 4, objectId, room.getRoomType().getObjectId());
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -164,7 +162,7 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
         if (room.getNumberOfResidents() != null) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 2, objectId, room.getNumberOfResidents(), null);
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -172,7 +170,7 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
         if (room.getRoomNumber() != null) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 1, objectId, room.getRoomNumber(), null);
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -183,7 +181,7 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newRoom.getRoomNumber(), null, newRoom.getObjectId(), 1);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -193,7 +191,7 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newRoom.getNumberOfResidents(), null, newRoom.getObjectId(), 2);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -203,7 +201,7 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
                 jdbcTemplate.update(UPDATE_REFERENCE, newRoom.getRoomType().getObjectId(), newRoom.getObjectId(), 4);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 }

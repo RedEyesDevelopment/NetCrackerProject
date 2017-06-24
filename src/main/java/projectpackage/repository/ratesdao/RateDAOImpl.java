@@ -12,7 +12,6 @@ import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.math.BigDecimal;
@@ -48,7 +47,7 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
     }
 
     @Override
-    public Integer insertRate(Rate rate) throws TransactionException {
+    public Integer insertRate(Rate rate) {
         if (rate == null) return null;
         Long price1 = null;
         Long price2 = null;
@@ -73,7 +72,8 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
     }
 
     @Override
-    public void deleteRate(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+    public void deleteRate(Integer id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+        if (id == null) throw new IllegalArgumentException();
         Rate rate = null;
         try {
             rate = getRate(id);

@@ -2,7 +2,6 @@ package projectpackage.repository.notificationsdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Phone;
@@ -18,8 +17,9 @@ import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.*;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.Date;
 import java.util.List;
@@ -103,41 +103,38 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     }
 
     @Override
-    public Integer insertNotification(Notification notification) throws TransactionException {
+    public Integer insertNotification(Notification notification) {
         if (notification == null) return null;
         Integer objectId = nextObjectId();
-        try {
-            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 4, null, null);
-            insertSendDate(notification, objectId);
-            insertMessage(objectId, notification);
-            insertAuthor(objectId, notification);
-            insertNotificationType(objectId, notification);
-            insertOrder(objectId, notification);
-            insertExecutedByAndDate(objectId, notification);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+
+        jdbcTemplate.update(INSERT_OBJECT, objectId, null, 4, null, null);
+        insertSendDate(notification, objectId);
+        insertMessage(objectId, notification);
+        insertAuthor(objectId, notification);
+        insertNotificationType(objectId, notification);
+        insertOrder(objectId, notification);
+        insertExecutedByAndDate(objectId, notification);
+
         return objectId;
     }
 
     @Override
-    public Integer updateNotification(Notification newNotification, Notification oldNotification) throws TransactionException {
+    public Integer updateNotification(Notification newNotification, Notification oldNotification) {
         if (oldNotification == null || newNotification == null) return null;
-        try {
-            updateMessage(newNotification, oldNotification);
-            updateSendDate(newNotification, oldNotification);
-            updateAuthor(newNotification, oldNotification);
-            updateNotificationType(newNotification, oldNotification);
-            updateOrder(newNotification, oldNotification);
-            updateDateAndExecutedBy(newNotification, oldNotification);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+
+        updateMessage(newNotification, oldNotification);
+        updateSendDate(newNotification, oldNotification);
+        updateAuthor(newNotification, oldNotification);
+        updateNotificationType(newNotification, oldNotification);
+        updateOrder(newNotification, oldNotification);
+        updateDateAndExecutedBy(newNotification, oldNotification);
+
         return newNotification.getObjectId();
     }
 
     @Override
-    public void deleteNotification(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+    public void deleteNotification(Integer id) {
+        if (id == null) throw new IllegalArgumentException();
         Notification notification = null;
         try {
             notification = getNotification(id);
@@ -169,7 +166,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         if (notification.getAuthor() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 21, objectId, notification.getAuthor().getObjectId());
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -177,7 +174,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         if (notification.getNotificationType() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 26, objectId, notification.getNotificationType().getObjectId());
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -185,7 +182,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         if (notification.getOrder() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 27, objectId, notification.getOrder().getObjectId());
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -204,7 +201,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                         newNotification.getObjectId(), 22);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -215,7 +212,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                         newNotification.getObjectId(), 23);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -226,7 +223,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                         newNotification.getObjectId(), 21);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -237,7 +234,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                         newNotification.getObjectId(), 26);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -248,14 +245,14 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                         newNotification.getObjectId(), 27);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
     private void updateDateAndExecutedBy(Notification newNotification, Notification oldNotification) {
         if ((newNotification.getExecutedBy() == null && newNotification.getExecutedDate() != null)
                 || (newNotification.getExecutedBy() != null && newNotification.getExecutedDate() == null)) {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
         if (oldNotification.getExecutedBy() == null && newNotification.getExecutedBy() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 24,

@@ -3,7 +3,6 @@ package projectpackage.repository.ordersdao;
 import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.User;
@@ -11,7 +10,8 @@ import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
-import projectpackage.repository.support.daoexceptions.*;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.Date;
 import java.util.List;
@@ -53,32 +53,30 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
     }
 
     @Override
-    public Integer insertModificationHistory(Order newOrder, Order oldOrder) throws TransactionException {
+    public Integer insertModificationHistory(Order newOrder, Order oldOrder) {
         if (newOrder == null || oldOrder == null) return null;
         Integer objectId = nextObjectId();
-        try {
-            jdbcTemplate.update(INSERT_OBJECT, objectId, oldOrder.getObjectId(), 12, null, null);
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 43, objectId, null, new Date());
-            insertRegistrationDate(newOrder, oldOrder, objectId);
-            insertIsPaidFor(newOrder, oldOrder, objectId);
-            insertIsConfirmed(newOrder, oldOrder, objectId);
-            insertLivingStartDate(newOrder, oldOrder, objectId);
-            insertLivingFinishDate(newOrder, oldOrder, objectId);
-            insertSum(newOrder, oldOrder, objectId);
-            insertComment(newOrder, oldOrder, objectId);
-            insertCategory(newOrder, oldOrder, objectId);
-            insertRoom(newOrder, oldOrder, objectId);
-            insertClient(newOrder, oldOrder, objectId);
-            insertLastMidificator(newOrder, oldOrder, objectId);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+
+        jdbcTemplate.update(INSERT_OBJECT, objectId, oldOrder.getObjectId(), 12, null, null);
+        jdbcTemplate.update(INSERT_ATTRIBUTE, 43, objectId, null, new Date());
+        insertRegistrationDate(newOrder, oldOrder, objectId);
+        insertIsPaidFor(newOrder, oldOrder, objectId);
+        insertIsConfirmed(newOrder, oldOrder, objectId);
+        insertLivingStartDate(newOrder, oldOrder, objectId);
+        insertLivingFinishDate(newOrder, oldOrder, objectId);
+        insertSum(newOrder, oldOrder, objectId);
+        insertComment(newOrder, oldOrder, objectId);
+        insertCategory(newOrder, oldOrder, objectId);
+        insertRoom(newOrder, oldOrder, objectId);
+        insertClient(newOrder, oldOrder, objectId);
+        insertLastMidificator(newOrder, oldOrder, objectId);
+
         return objectId;
     }
 
     @Override
-    public void deleteModificationHistory(int id)
-            throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+    public void deleteModificationHistory(Integer id) {
+        if (id == null) throw new IllegalArgumentException();
         ModificationHistory modificationHistory = null;
         try {
             modificationHistory = getModificationHistory(id);
@@ -94,7 +92,7 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
         if (oldOrder.getLastModificator() != null && newOrder.getLastModificator() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 42, objectId, oldOrder.getLastModificator().getObjectId());
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -104,7 +102,7 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
                 jdbcTemplate.update(INSERT_OBJ_REFERENCE, 60, objectId, oldOrder.getClient().getObjectId());
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -114,7 +112,7 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
                 jdbcTemplate.update(INSERT_OBJ_REFERENCE, 59, objectId, oldOrder.getRoom().getObjectId());
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -124,7 +122,7 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
                 jdbcTemplate.update(INSERT_OBJ_REFERENCE, 68, objectId, oldOrder.getCategory().getObjectId());
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -150,7 +148,7 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
                 jdbcTemplate.update(INSERT_ATTRIBUTE, 66, objectId, null, null);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -162,7 +160,7 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
                 jdbcTemplate.update(INSERT_ATTRIBUTE, 65, objectId, null, null);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -174,7 +172,7 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
                 jdbcTemplate.update(INSERT_ATTRIBUTE, 64, objectId, null, null);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -188,7 +186,7 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
                 jdbcTemplate.update(INSERT_ATTRIBUTE, 63, objectId, null, null);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -202,7 +200,7 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
                 jdbcTemplate.update(INSERT_ATTRIBUTE, 63, objectId, null, null);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -214,7 +212,7 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
                 jdbcTemplate.update(INSERT_ATTRIBUTE, 61, objectId, null, null);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
