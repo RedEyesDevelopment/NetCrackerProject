@@ -8,7 +8,6 @@ import projectpackage.model.maintenances.Complimentary;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.model.orders.Category;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
@@ -28,30 +27,23 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
     @Override
     public Category getCategory(Integer id) {
         if (null == id) return null;
-        try {
-            return (Category) manager.createReactEAV(Category.class)
-                    .fetchRootChild(Complimentary.class)
-                    .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
-                    .closeAllFetches()
-                    .getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+
+        return (Category) manager.createReactEAV(Category.class)
+                .fetchRootChild(Complimentary.class)
+                .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
+                .closeAllFetches()
+                .getSingleEntityWithId(id);
+
     }
 
     @Override
     public List<Category> getAllCategories() {
-        try {
-            return manager.createReactEAV(Category.class)
-                    .fetchRootChild(Complimentary.class)
-                    .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
-                    .closeAllFetches()
-                    .getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+
+        return manager.createReactEAV(Category.class)
+                .fetchRootChild(Complimentary.class)
+                .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
+                .closeAllFetches()
+                .getEntityCollection();
     }
 
     @Override

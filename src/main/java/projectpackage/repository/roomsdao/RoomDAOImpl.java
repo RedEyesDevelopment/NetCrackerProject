@@ -13,7 +13,6 @@ import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.ratesdao.RateDAOImpl;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
@@ -34,27 +33,18 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     @Override
     public Room getRoom(Integer id) {
         if (null==id) return null;
-        try {
-            return (Room) manager.createReactEAV(Room.class).addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
-                    .fetchRootReference(RoomType.class, "RoomTypeToRoom")
-                    .fetchInnerChild(Rate.class).fetchInnerChild(Price.class).closeAllFetches()
-                    .getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+
+        return (Room) manager.createReactEAV(Room.class).addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
+                .fetchRootReference(RoomType.class, "RoomTypeToRoom")
+                .fetchInnerChild(Rate.class).fetchInnerChild(Price.class).closeAllFetches()
+                .getSingleEntityWithId(id);
     }
 
     @Override
     public List<Room> getAllRooms() {
-        try {
-            return manager.createReactEAV(Room.class).addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
-                    .fetchRootReference(RoomType.class, "RoomTypeToRoom")
-                    .fetchInnerChild(Rate.class).fetchInnerChild(Price.class).closeAllFetches().getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+        return manager.createReactEAV(Room.class).addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
+                .fetchRootReference(RoomType.class, "RoomTypeToRoom")
+                .fetchInnerChild(Rate.class).fetchInnerChild(Price.class).closeAllFetches().getEntityCollection();
     }
 
     @Override

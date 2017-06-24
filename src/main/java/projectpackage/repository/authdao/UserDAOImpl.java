@@ -11,7 +11,6 @@ import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.DuplicateEmailException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
@@ -44,26 +43,17 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     @Override
     public User getUser(Integer id) {
         if (id == null) return null;
-        try {
-            return (User) manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches()
-                    .fetchRootReference(Role.class, "RoleToUser").closeAllFetches()
-                    .getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+
+        return (User) manager.createReactEAV(User.class).fetchRootChild(Phone.class)
+                .closeAllFetches().fetchRootReference(Role.class, "RoleToUser")
+                .closeAllFetches().getSingleEntityWithId(id);
     }
 
     @Override
     public List<User> getAllUsers() {
-        try {
-            return manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches()
-                    .fetchRootReference(Role.class, "RoleToUser").closeAllFetches()
-                    .getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+        return manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches()
+                .fetchRootReference(Role.class, "RoleToUser").closeAllFetches()
+                .getEntityCollection();
     }
 
     @Override

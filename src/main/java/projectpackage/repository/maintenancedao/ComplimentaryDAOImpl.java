@@ -7,12 +7,10 @@ import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.Complimentary;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
-import java.util.IllegalFormatCodePointException;
 import java.util.List;
 
 
@@ -27,26 +25,17 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     @Override
     public Complimentary getComplimentary(Integer id) {
         if (id == null) return null;
-        try {
-            return (Complimentary) manager.createReactEAV(Complimentary.class)
-                    .fetchRootReference(Maintenance.class, "MaintenanceToComplimentary")
-                    .closeAllFetches().getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+
+        return (Complimentary) manager.createReactEAV(Complimentary.class)
+                .fetchRootReference(Maintenance.class, "MaintenanceToComplimentary")
+                .closeAllFetches().getSingleEntityWithId(id);
     }
 
     @Override
     public List<Complimentary> getAllComplimentaries() {
-        try {
-            return manager.createReactEAV(Complimentary.class)
-                    .fetchRootReference(Maintenance.class, "MaintenanceToComplimentary")
-                    .closeAllFetches().getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+        return manager.createReactEAV(Complimentary.class)
+                .fetchRootReference(Maintenance.class, "MaintenanceToComplimentary")
+                .closeAllFetches().getEntityCollection();
     }
 
     @Override

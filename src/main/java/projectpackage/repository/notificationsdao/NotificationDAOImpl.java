@@ -49,57 +49,48 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     @Override
     public Notification getNotification(Integer id) {
         if (id == null) return null;
-        try {
-            return (Notification) manager.createReactEAV(Notification.class)
-                    .fetchRootReference(User.class, "UserToNotificationAsAuthor")
-                    .fetchInnerReference(Role.class, "RoleToUser").closeFetch()
-                    .fetchInnerChild(Phone.class)
-                    .closeAllFetches()
-                    .fetchRootReference(NotificationType.class, "NotificationTypeToNotification")
-                    .fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches()
-                    .fetchRootReference(Order.class, "OrderToNotification")
-                    .fetchInnerChild(JournalRecord.class).fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
-                    .closeFetch().closeFetch()
-                    .fetchInnerReference(Room.class, "RoomToOrder")
-                    .fetchInnerReference(RoomType.class, "RoomTypeToRoom").closeFetch().closeFetch()
-                    .fetchInnerReference(Category.class, "OrderToCategory")
-                    .fetchInnerChild(Complimentary.class)
-                    .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary").closeAllFetches()
-                    .fetchRootReference(User.class, "UserToNotificationAsExecutor")
-                    .fetchInnerChild(Phone.class)
-                    .closeAllFetches()
-                    .getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+
+        return (Notification) manager.createReactEAV(Notification.class)
+                .fetchRootReference(User.class, "UserToNotificationAsAuthor")
+                .fetchInnerReference(Role.class, "RoleToUser").closeFetch()
+                .fetchInnerChild(Phone.class)
+                .closeAllFetches()
+                .fetchRootReference(NotificationType.class, "NotificationTypeToNotification")
+                .fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches()
+                .fetchRootReference(Order.class, "OrderToNotification")
+                .fetchInnerChild(JournalRecord.class).fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
+                .closeFetch().closeFetch()
+                .fetchInnerReference(Room.class, "RoomToOrder")
+                .fetchInnerReference(RoomType.class, "RoomTypeToRoom").closeFetch().closeFetch()
+                .fetchInnerReference(Category.class, "OrderToCategory")
+                .fetchInnerChild(Complimentary.class)
+                .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary").closeAllFetches()
+                .fetchRootReference(User.class, "UserToNotificationAsExecutor")
+                .fetchInnerChild(Phone.class)
+                .closeAllFetches()
+                .getSingleEntityWithId(id);
     }
 
     @Override
     public List<Notification> getAllNotifications() {
-        try {
-            return manager.createReactEAV(Notification.class)
-                    .fetchRootReference(User.class, "UserToNotificationAsAuthor")
-                    .fetchInnerChild(Phone.class).closeFetch()
-                    .fetchInnerReference(Role.class, "RoleToUser").closeAllFetches()
-                    .fetchRootReference(NotificationType.class, "NotificationTypeToNotification")
-                    .fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches()
-                    .fetchRootReference(Order.class, "OrderToNotification")
-                    .fetchInnerChild(JournalRecord.class).fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
-                    .closeFetch().closeFetch()
-                    .fetchInnerReference(Room.class, "RoomToOrder")
-                    .fetchInnerReference(RoomType.class, "RoomTypeToRoom").closeFetch().closeFetch()
-                    .fetchInnerReference(Category.class, "OrderToCategory")
-                    .fetchInnerChild(Complimentary.class)
-                    .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary").closeAllFetches()
-                    .fetchRootReference(User.class, "UserToNotificationAsExecutor")
-                    .fetchInnerChild(Phone.class)
-                    .closeAllFetches()
-                    .getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+        return manager.createReactEAV(Notification.class)
+                .fetchRootReference(User.class, "UserToNotificationAsAuthor")
+                .fetchInnerChild(Phone.class).closeFetch()
+                .fetchInnerReference(Role.class, "RoleToUser").closeAllFetches()
+                .fetchRootReference(NotificationType.class, "NotificationTypeToNotification")
+                .fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches()
+                .fetchRootReference(Order.class, "OrderToNotification")
+                .fetchInnerChild(JournalRecord.class).fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
+                .closeFetch().closeFetch()
+                .fetchInnerReference(Room.class, "RoomToOrder")
+                .fetchInnerReference(RoomType.class, "RoomTypeToRoom").closeFetch().closeFetch()
+                .fetchInnerReference(Category.class, "OrderToCategory")
+                .fetchInnerChild(Complimentary.class)
+                .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary").closeAllFetches()
+                .fetchRootReference(User.class, "UserToNotificationAsExecutor")
+                .fetchInnerChild(Phone.class)
+                .closeAllFetches()
+                .getEntityCollection();
     }
 
     @Override

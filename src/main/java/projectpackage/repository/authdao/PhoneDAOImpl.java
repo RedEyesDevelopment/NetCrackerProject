@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Phone;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
@@ -23,22 +22,13 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
     @Override
     public Phone getPhone(Integer id) {
         if (id == null) return null;
-        try {
-            return (Phone) manager.createReactEAV(Phone.class).getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+
+        return (Phone) manager.createReactEAV(Phone.class).getSingleEntityWithId(id);
     }
 
     @Override
     public List<Phone> getAllPhones() {
-        try {
-            return manager.createReactEAV(Phone.class).getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+        return manager.createReactEAV(Phone.class).getEntityCollection();
     }
 
     /**

@@ -37,56 +37,66 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User getSingleUserById(int id) {
+	public User getSingleUserById(Integer id) {
 		User user = userDAO.getUser(id);
 		if (user == null) LOGGER.info("Returned NULL!!!");
 		return user;
 	}
 
 	@Override
-	public IUDAnswer deleteUser(int id) {
-		User user = userDAO.getUser(id);
-		user.setEnabled(false);
-		return updateUser(id, user);
+	public IUDAnswer deleteUser(Integer id) {
+        if (id == null) return new IUDAnswer(false, NULL_ID);
+        try {
+            userDAO.deleteUser(id);
+        } catch (ReferenceBreakException e) {
+            return userDAO.rollback(id, ON_ENTITY_REFERENCE, e);
+        } catch (DeletedObjectNotExistsException e) {
+            userDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
+        } catch (WrongEntityIdException e) {
+            userDAO.rollback(id, WRONG_DELETED_ID, e);
+        } catch (IllegalArgumentException e) {
+            userDAO.rollback(id, NULL_ID, e);
+        }
+        userDAO.commit();
+        return new IUDAnswer(id, true);
 	}
 
 	@Override
 	public IUDAnswer insertUser(User user) {
-
 		Phone phone = user.getPhones().iterator().next();
 		boolean isValid = phoneRegexService.match(phone.getPhoneNumber());
-		if (!isValid) return new IUDAnswer(false, "wrongPhoneNumber");
+		if (!isValid) return new IUDAnswer(false, WRONG_PHONE_NUMBER);
 
 		Integer userId = null;
 		try {
 			userId = userDAO.insertUser(user);
-			LOGGER.info("Get from DB userId = " + userId);
-		} catch (TransactionException e) {
-			LOGGER.warn("Catched transactionException!!!", e);
-			return new IUDAnswer(userId, false, "transactionInterrupt");
+		} catch (IllegalArgumentException e) {
+			userDAO.rollback(WRONG_FIELD, e);
 		} catch (DuplicateEmailException e) {
-			return new IUDAnswer(false, "duplicateEmail");
+			userDAO.rollback(DUPLICATE_EMAIL, e);
 		}
 		phone.setUserId(userId);
 		try {
 			phone.setObjectId(phoneDAO.insertPhone(phone));
-		} catch (TransactionException e) {
-			LOGGER.warn("Catched transactionException!!!", e);
-			return new IUDAnswer(false, "transactionInterrupt");
+		} catch (IllegalArgumentException e) {
+		    phoneDAO.rollback(WRONG_FIELD, e);
 		}
+		phoneDAO.commit();
 		return new IUDAnswer(userId, true);
 	}
 
 	@Override
-	public IUDAnswer updateUser(int id, User newUser) {
+	public IUDAnswer updateUser(Integer id, User newUser) {
 		try {
 			newUser.setObjectId(id);
 			User oldUser = userDAO.getUser(id);
 			userDAO.updateUser(newUser, oldUser);
-		} catch (TransactionException e) {
-			LOGGER.warn("Catched transactionException!!!", e);
-			return new IUDAnswer(id, false, "transactionInterrupt");
+		} catch (IllegalArgumentException e) {
+		    userDAO.rollback(WRONG_FIELD, e);
 		}
+		userDAO.commit();
 		return new IUDAnswer(id, true);
 	}
+
+
 }

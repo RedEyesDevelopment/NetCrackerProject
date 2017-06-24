@@ -19,7 +19,6 @@ import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
@@ -39,64 +38,55 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     @Override
     public Order getOrder(Integer id) {
         if (null == id) return null;
-        try {
-            return (Order) manager.createReactEAV(Order.class)
-                    .fetchRootReference(User.class, "UserToOrderAsClient")
-                    .fetchInnerChild(Phone.class).closeFetch()
-                    .fetchInnerReference(Role.class, "RoleToUser")
-                    .closeAllFetches()
-                    .fetchRootReference(User.class, "UserToOrderAsLastModificator")
-                    .fetchInnerReference(Role.class, "RoleToUser").closeFetch()
-                    .fetchInnerChild(Phone.class)
-                    .closeAllFetches()
-                    .fetchRootReference(Room.class, "RoomToOrder").addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
-                    .fetchInnerReference(RoomType.class, "RoomTypeToRoom")
-                    .fetchInnerChild(Rate.class)
-                    .fetchInnerChild(Price.class)
-                    .closeAllFetches()
-                    .fetchRootChild(JournalRecord.class)
-                    .fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
-                    .closeAllFetches()
-                    .fetchRootReference(Category.class, "OrderToCategory")
-                    .fetchInnerChild(Complimentary.class)
-                    .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
-                    .closeAllFetches()
-                    .getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+
+        return (Order) manager.createReactEAV(Order.class)
+                .fetchRootReference(User.class, "UserToOrderAsClient")
+                .fetchInnerChild(Phone.class).closeFetch()
+                .fetchInnerReference(Role.class, "RoleToUser")
+                .closeAllFetches()
+                .fetchRootReference(User.class, "UserToOrderAsLastModificator")
+                .fetchInnerReference(Role.class, "RoleToUser").closeFetch()
+                .fetchInnerChild(Phone.class)
+                .closeAllFetches()
+                .fetchRootReference(Room.class, "RoomToOrder").addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
+                .fetchInnerReference(RoomType.class, "RoomTypeToRoom")
+                .fetchInnerChild(Rate.class)
+                .fetchInnerChild(Price.class)
+                .closeAllFetches()
+                .fetchRootChild(JournalRecord.class)
+                .fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
+                .closeAllFetches()
+                .fetchRootReference(Category.class, "OrderToCategory")
+                .fetchInnerChild(Complimentary.class)
+                .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
+                .closeAllFetches()
+                .getSingleEntityWithId(id);
     }
 
     @Override
     public List<Order> getAllOrder() {
-        try {
-            return (List<Order>) manager.createReactEAV(Order.class)
-                    .fetchRootReference(User.class, "UserToOrderAsClient")
-                    .fetchInnerChild(Phone.class).closeFetch()
-                    .fetchInnerReference(Role.class, "RoleToUser")
-                    .closeAllFetches()
-                    .fetchRootReference(User.class, "UserToOrderAsLastModificator")
-                    .fetchInnerReference(Role.class, "RoleToUser").closeFetch()
-                    .fetchInnerChild(Phone.class)
-                    .closeAllFetches()
-                    .fetchRootReference(Room.class, "RoomToOrder").addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
-                    .fetchInnerReference(RoomType.class, "RoomTypeToRoom")
-                    .fetchInnerChild(Rate.class)
-                    .fetchInnerChild(Price.class)
-                    .closeAllFetches()
-                    .fetchRootChild(JournalRecord.class)
-                    .fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
-                    .closeAllFetches()
-                    .fetchRootReference(Category.class, "OrderToCategory")
-                    .fetchInnerChild(Complimentary.class)
-                    .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
-                    .closeAllFetches()
-                    .getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+        return (List<Order>) manager.createReactEAV(Order.class)
+                .fetchRootReference(User.class, "UserToOrderAsClient")
+                .fetchInnerChild(Phone.class).closeFetch()
+                .fetchInnerReference(Role.class, "RoleToUser")
+                .closeAllFetches()
+                .fetchRootReference(User.class, "UserToOrderAsLastModificator")
+                .fetchInnerReference(Role.class, "RoleToUser").closeFetch()
+                .fetchInnerChild(Phone.class)
+                .closeAllFetches()
+                .fetchRootReference(Room.class, "RoomToOrder").addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
+                .fetchInnerReference(RoomType.class, "RoomTypeToRoom")
+                .fetchInnerChild(Rate.class)
+                .fetchInnerChild(Price.class)
+                .closeAllFetches()
+                .fetchRootChild(JournalRecord.class)
+                .fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
+                .closeAllFetches()
+                .fetchRootReference(Category.class, "OrderToCategory")
+                .fetchInnerChild(Complimentary.class)
+                .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
+                .closeAllFetches()
+                .getEntityCollection();
     }
 
     @Override

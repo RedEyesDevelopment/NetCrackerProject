@@ -8,6 +8,7 @@ import projectpackage.dto.IUDAnswer;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.User;
 import projectpackage.repository.authdao.PhoneDAO;
+import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
@@ -40,12 +41,16 @@ public class PhoneServiceImpl implements PhoneService{
     @Override
     public List<Phone> getAllPhonesByUser(User user) {
         List<Phone> answer = new ArrayList<>();
-        String email = user.getEmail();
-        List<Phone> allUser = getAllPhones();
-        for (Phone phone : allUser) {
-            if (user.getPhones().contains(phone)) {
-                answer.add(phone);
+        try {
+            String email = user.getEmail();
+            List<Phone> allUser = getAllPhones();
+            for (Phone phone : allUser) {
+                if (user.getPhones().contains(phone)) {
+                    answer.add(phone);
+                }
             }
+        } catch (ResultEntityNullException e) {
+            LOGGER.warn("Returned NULL!!!");
         }
         return answer;
     }
@@ -68,21 +73,13 @@ public class PhoneServiceImpl implements PhoneService{
         try {
             phoneDAO.deletePhone(id);
         } catch (ReferenceBreakException e) {
-            phoneDAO.rollback();
-            LOGGER.warn(ON_ENTITY_REFERENCE, e);
-            return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.printReferencesEntities());
+            return phoneDAO.rollback(id, ON_ENTITY_REFERENCE, e);
         } catch (DeletedObjectNotExistsException e) {
-            phoneDAO.rollback();
-            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
-            return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
+            phoneDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
         } catch (WrongEntityIdException e) {
-            phoneDAO.rollback();
-            LOGGER.warn(WRONG_DELETED_ID, e);
-            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
+            phoneDAO.rollback(id, WRONG_DELETED_ID, e);
         } catch (IllegalArgumentException e) {
-            phoneDAO.rollback();
-            LOGGER.warn(WRONG_DELETED_ID, e);
-            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
+            phoneDAO.rollback(id, NULL_ID, e);
         }
         phoneDAO.commit();
         return new IUDAnswer(id, true);
@@ -93,24 +90,27 @@ public class PhoneServiceImpl implements PhoneService{
         boolean isValid = phoneRegexService.match(phone.getPhoneNumber());
         if (!isValid) return new IUDAnswer(false, WRONG_PHONE_NUMBER);
         Integer phoneId = null;
-        phoneId = phoneDAO.insertPhone(phone);
-
+        try {
+            phoneId = phoneDAO.insertPhone(phone);
+        } catch (IllegalArgumentException e) {
+            phoneDAO.rollback(WRONG_FIELD, e);
+        }
+        phoneDAO.commit();
         return new IUDAnswer(phoneId,true);
     }
 
     @Override
     public IUDAnswer updatePhone(Integer id, Phone newPhone) {
         boolean isValid = phoneRegexService.match(newPhone.getPhoneNumber());
-        if (!isValid) return new IUDAnswer(false, "wrongPhoneNumber");
+        if (!isValid) return new IUDAnswer(id, false, WRONG_PHONE_NUMBER);
         try {
             newPhone.setObjectId(id);
             Phone oldPhone = phoneDAO.getPhone(id);
             phoneDAO.updatePhone(newPhone, oldPhone);
-            return new IUDAnswer(id,true);
         } catch (IllegalArgumentException e) {
-            LOGGER.warn(WRONG_FIELD, e);
-            return new IUDAnswer(id,false, "transactionInterrupt");
+            phoneDAO.rollback(WRONG_FIELD, e);
         }
+        phoneDAO.commit();
+        return new IUDAnswer(id,true);
     }
 }
-// throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException

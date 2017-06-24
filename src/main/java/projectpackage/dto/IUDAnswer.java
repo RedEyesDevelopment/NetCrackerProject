@@ -29,6 +29,12 @@ public class IUDAnswer {
         this.successful = successful;
     }
 
+    public IUDAnswer(boolean successful, String message, String additionalInfo) {
+        this.successful = successful;
+        this.message = message;
+        this.additionalInfo = additionalInfo;
+    }
+
     public IUDAnswer(Integer objectId, boolean successful, String message, String additionalInfo) {
         this.objectId = objectId;
         this.successful = successful;

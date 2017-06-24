@@ -10,6 +10,6 @@ import java.util.List;
 public interface RoleService {
     public List<Role> getAllRoles();
     public List<Role> getAllRoles(String orderingParameter, boolean ascend);
-    public Role getSingleRoleById(int id);
+    public Role getSingleRoleById(Integer id);
     public Role getSingleRoleByRoleName(String rolename);
 }

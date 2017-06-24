@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import projectpackage.model.maintenances.JournalRecord;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
@@ -28,28 +27,20 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
     @Override
     public JournalRecord getJournalRecord(Integer id) {
         if (null == id) return null;
-        try {
-            return (JournalRecord) manager.createReactEAV(JournalRecord.class)
-                    .fetchRootReference(Maintenance.class, "MaintenanceToJournalRecord")
-                    .closeAllFetches()
-                    .getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+
+        return (JournalRecord) manager.createReactEAV(JournalRecord.class)
+                .fetchRootReference(Maintenance.class, "MaintenanceToJournalRecord")
+                .closeAllFetches()
+                .getSingleEntityWithId(id);
     }
 
     @Override
     public List<JournalRecord> getAllJournalRecords() {
-        try {
-            return manager.createReactEAV(JournalRecord.class)
-                    .fetchRootReference(Maintenance.class, "MaintenanceToJournalRecord")
-                    .closeAllFetches()
-                    .getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+
+        return manager.createReactEAV(JournalRecord.class)
+                .fetchRootReference(Maintenance.class, "MaintenanceToJournalRecord")
+                .closeAllFetches()
+                .getEntityCollection();
     }
 
     @Override
