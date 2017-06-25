@@ -11,7 +11,6 @@ import java.util.List;
  */
 public interface RateService extends MessageBook{
     public List<Rate> getAllRates();
-    public List<Rate> getAllRates(String orderingParameter, boolean ascend);
     public Rate getSingleRateById(Integer id);
     public IUDAnswer insertRate(Rate rate);
 }

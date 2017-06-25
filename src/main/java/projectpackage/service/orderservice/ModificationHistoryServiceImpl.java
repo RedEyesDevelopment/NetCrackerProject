@@ -26,20 +26,10 @@ public class ModificationHistoryServiceImpl implements ModificationHistoryServic
     ModificationHistoryDAO modificationHistoryDAO;
 
     @Override
-    public List<ModificationHistory> getAllModificationHistory(String orderingParameter, boolean ascend) {
-        return null;
-    }
-
-    @Override
     public List<ModificationHistory> getAllModificationHistory() {
         List<ModificationHistory> modificationHistories = modificationHistoryDAO.getAllModificationHistories();
         if (modificationHistories == null) LOGGER.info("Returned NULL!!!");
         return modificationHistories;
-    }
-
-    @Override
-    public List<ModificationHistory> getAllModificationHistoryByOrder(Order order) {
-        return null;
     }
 
     @Override

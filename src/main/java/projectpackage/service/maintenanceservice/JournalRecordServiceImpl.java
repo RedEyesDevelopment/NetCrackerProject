@@ -43,12 +43,7 @@ public class JournalRecordServiceImpl implements JournalRecordService{
     }
 
     @Override
-    public List<JournalRecord> getAllJournalRecords(String orderingParameter, boolean ascend) {
-        return null;
-    }
-
-    @Override
-    public List<JournalRecord> getJournalRecordsByOrder(int orderId) {
+    public List<JournalRecord> getJournalRecordsByOrder(Integer orderId) {
         List<JournalRecord> answer = new ArrayList<>();
         List<JournalRecord> allJournalRecords = getAllJournalRecords();
         for (JournalRecord journalRecord : allJournalRecords) {

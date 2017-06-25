@@ -36,11 +36,6 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> getAllCategories(String orderingParameter, boolean ascend) {
-        return null;
-    }
-
-    @Override
     public Category getSingleCategoryById(Integer id) {
         Category category = categoryDAO.getCategory(id);
         if (null == category) LOGGER.info("Returned NULL!!!");

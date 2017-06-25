@@ -10,9 +10,7 @@ import java.util.List;
  * Created by Dima on 21.05.2017.
  */
 public interface MaintenanceService extends MessageBook{
-
     public List<Maintenance> getAllMaintenances();
-    public List<Maintenance> getAllMaintenances(String orderingParameter, boolean ascend);
     public Maintenance getSingleMaintenanceById(Integer id);
     public IUDAnswer deleteMaintenance(Integer id);
     public IUDAnswer insertMaintenance(Maintenance maintenance);

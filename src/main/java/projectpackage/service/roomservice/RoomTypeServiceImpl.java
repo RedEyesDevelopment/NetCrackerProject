@@ -34,26 +34,6 @@ public class RoomTypeServiceImpl implements RoomTypeService{
     CategoryService categoryService;
 
     @Override
-    public List<RoomType> getRoomTypes(Date date) {
-        return null;
-    }
-
-    @Override
-    public List<RoomType> getRoomTypes(Date date, long maxRate) {
-        return null;
-    }
-
-    @Override
-    public List<RoomType> getRoomTypes(Date date, int numberOfPeople) {
-        return null;
-    }
-
-    @Override
-    public List<RoomType> getRoomTypes(Date date, long maxRate, int numberOfPeople) {
-        return null;
-    }
-
-    @Override
     public List<OrderDTO> getRoomTypes(Date startDate, Date finishDate, int numberOfPeople, int categoryId) {
         List<OrderDTO> list = new ArrayList<>();
         Set<Integer> availableRoomTypes = roomTypeDAO.getAvailableRoomTypes(numberOfPeople, new java.sql.Date(startDate.getTime()), new java.sql.Date(finishDate.getTime()));
@@ -88,11 +68,6 @@ public class RoomTypeServiceImpl implements RoomTypeService{
         List<RoomType> roomTypes = roomTypeDAO.getAllRoomTypes();
         if (roomTypes == null) LOGGER.info("Returned NULL!!!");
         return roomTypes;
-    }
-
-    @Override
-    public List<RoomType> getAllRoomTypes(String orderingParameter, boolean ascend) {
-        return null;
     }
 
     @Override

@@ -11,8 +11,7 @@ import java.util.List;
  */
 public interface JournalRecordService extends MessageBook{
     public List<JournalRecord> getAllJournalRecords();
-    public List<JournalRecord> getAllJournalRecords(String orderingParameter, boolean ascend);
-    public List<JournalRecord> getJournalRecordsByOrder(int orderId);
+    public List<JournalRecord> getJournalRecordsByOrder(Integer orderId);
     public JournalRecord getSingleEntityById(Integer id);
     public IUDAnswer deleteJournalRecord(Integer id);
     public IUDAnswer insertJournalRecord(JournalRecord journalRecord);

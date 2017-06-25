@@ -29,11 +29,6 @@ public class PriceServiceImpl implements PriceService{
     }
 
     @Override
-    public List<Price> getAllPrices(String orderingParameter, boolean ascend) {
-        return null;
-    }
-
-    @Override
     public Price getSinglePriceById(Integer id) {
         Price price = priceDAO.getPrice(id);
         if (price == null) LOGGER.info("Returned NULL!!!");

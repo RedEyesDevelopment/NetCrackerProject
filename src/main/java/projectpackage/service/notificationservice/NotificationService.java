@@ -23,7 +23,6 @@ public interface NotificationService extends MessageBook{
 
     public List<Notification> getAllNotificationsForInMemoryService();
     public List<Notification> getAllNotifications();
-    public List<Notification> getAllNotifications(String orderingParameter, boolean ascend);
     public Notification getSingleNotificationById(Integer id);
     public IUDAnswer deleteNotification(Integer id);
     public IUDAnswer insertNotification(Notification notification);

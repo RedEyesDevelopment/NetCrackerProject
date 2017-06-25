@@ -12,9 +12,7 @@ import java.util.List;
  */
 public interface NotificationTypeService extends MessageBook{
     public List<NotificationType> getNotificationTypeByRole(Role role);
-
     public List<NotificationType> getAllNotificationTypes();
-    public List<NotificationType> getAllNotificationTypes(String orderingParameter, boolean ascend);
     public NotificationType getSingleNotificationTypeById(Integer id);
     public IUDAnswer deleteNotificationType(Integer id);
     public IUDAnswer insertNotificationType(NotificationType notificationType);

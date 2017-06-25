@@ -18,7 +18,6 @@ public interface OrderService extends MessageBook{
     public List<Order> getOrdersByRoom(Room room);
     public List<Order> getOrdersByClient(User user);
     public List<Order> getOrdersByRegistrationDate(Date date);
-    public List<Order> getOrdersBySum(long minSum, long maxSum);
     public List<Order> getCurrentOrders();//livingStartDate < SYSDATE < livingFinishDate ясно?
     public List<Order> getPreviousOrders();//livingFinishDate < SYSDATE
     public List<Order> getFutureOrders();//livingStartDate > SYSDATE
@@ -30,7 +29,6 @@ public interface OrderService extends MessageBook{
             category, long summ);
     public Order createOrderTemplate(User client, OrderDTO dto);
     public List<Order> getAllOrders();
-    public List<Order> getAllOrders(String orderingParameter, boolean ascend);
     public Order getSingleOrderById(Integer id);
     public IUDAnswer deleteOrder(Integer id);
     public IUDAnswer insertOrder(Order order);

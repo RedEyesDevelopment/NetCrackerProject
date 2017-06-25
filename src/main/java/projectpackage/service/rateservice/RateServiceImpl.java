@@ -29,11 +29,6 @@ public class RateServiceImpl implements RateService{
     }
 
     @Override
-    public List<Rate> getAllRates(String orderingParameter, boolean ascend) {
-        return null;
-    }
-
-    @Override
     public Rate getSingleRateById(Integer id) {
         Rate rate = rateDAO.getRate(id);
         if (rate == null) LOGGER.info("Returned NULL!!!");

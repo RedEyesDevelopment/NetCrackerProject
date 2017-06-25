@@ -33,11 +33,6 @@ public class OrderServiceImpl implements OrderService{
     RoomDAO roomDAO;
 
     @Override
-    public List<Order> getAllOrders(String orderingParameter, boolean ascend) {
-        return null;
-    }
-
-    @Override
     public List<Order> getAllOrders() {
         List<Order> orders = orderDAO.getAllOrder();
         if (orders == null) LOGGER.info("Returned NULL!!!");
@@ -80,12 +75,6 @@ public class OrderServiceImpl implements OrderService{
             }
         }
         return answer;
-    }
-
-    // todo необходимо пояснение что должен делать этот метод
-    @Override
-    public List<Order> getOrdersBySum(long minSum, long maxSum) {
-        return null;
     }
 
     @Override
@@ -142,7 +131,6 @@ public class OrderServiceImpl implements OrderService{
                 answer.add(order);
             }
         }
-        // todo хорошо потестить правильно ли выборка работает
         return answer;
     }
 
@@ -195,13 +183,13 @@ public class OrderServiceImpl implements OrderService{
             order.setLivingStartDate(start);
             order.setLivingFinishDate(finish);
             order.setSum(summ);
-            order.setComment("");
+            order.setComment("Nothing added!");
             order.setLastModificator(client);
             order.setRoom(room);
             order.setClient(client);
             return insertOrder(order);
         } else {
-            return new IUDAnswer(false, "emptyRoomNotFound");
+            return new IUDAnswer(false, EMPTY_ROOM_NOT_FOUND);
         }
     }
 

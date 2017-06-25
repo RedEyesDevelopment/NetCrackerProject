@@ -31,11 +31,6 @@ public class NotificationServiceImpl implements NotificationService{
     NotificationDAO notificationDAO;
 
     @Override
-    public List<Notification> getAllNotifications(String orderingParameter, boolean ascend) {
-        return null;
-    }
-
-    @Override
     public List<Notification> getAllNotifications() {
         List<Notification> notifications = notificationDAO.getAllNotifications();
         if (notifications == null) LOGGER.info("Returned NULL!!!");

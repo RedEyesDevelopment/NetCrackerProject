@@ -32,11 +32,6 @@ public class MaintenanceServiceImpl implements MaintenanceService {
     }
 
     @Override
-    public List<Maintenance> getAllMaintenances(String orderingParameter, boolean ascend) {
-        return null;
-    }
-
-    @Override
     public Maintenance getSingleMaintenanceById(Integer id) {
         Maintenance maintenance = maintenanceDAO.getMaintenance(id);
         if (null == maintenance) LOGGER.info("Returned NULL!!!");

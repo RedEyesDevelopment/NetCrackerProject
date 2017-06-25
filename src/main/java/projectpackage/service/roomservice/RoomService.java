@@ -14,13 +14,10 @@ import java.util.List;
  * Created by Arizel on 16.05.2017.
  */
 public interface RoomService extends MessageBook{
-    public List<Room> getRoomsByNumberOfResidents(int count);
+    public List<Room> getRoomsByNumberOfResidents(Integer count);
     public List<Room> getRoomsByType(RoomType roomType);
-
     public List<Room> getAllRooms();
-    public List<Room> getAllRooms(String orderingParameter, boolean ascend);
     public Room getSingleRoomById(Integer id);
-    public List<Room> doesBlockedRoomOnDay(Room room, Date date);
     public List<Room> getFreeRoomsOnPeriod(Date start, Date finish);
     public List<Room> getBookedRoomsOnPeriod(Date start, Date finish);
     public RoomStatDTO getAllRoomsOnPeriod(Date start, Date finish);

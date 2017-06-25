@@ -28,11 +28,6 @@ public class BlockServiceImpl implements BlockService{
     BlockDAO blockDAO;
 
     @Override
-    public List<Block> getAllBlocks(String orderingParameter, boolean ascend) {
-        return null;
-    }
-
-    @Override
     public List<Block> getAllBlocks() {
         List<Block> blocks = blockDAO.getAllBlocks();
         if (blocks == null) LOGGER.info("Returned NULL!!!");
@@ -50,12 +45,6 @@ public class BlockServiceImpl implements BlockService{
             }
         }
         return answer;
-    }
-
-    // todo нужно ли это?
-    @Override
-    public List<Block> getBlocksInRange(Date startDate, Date finishDate) {
-        return null;
     }
 
     @Override

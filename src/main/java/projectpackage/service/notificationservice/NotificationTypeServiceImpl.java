@@ -35,11 +35,6 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
     }
 
     @Override
-    public List<NotificationType> getAllNotificationTypes(String orderingParameter, boolean ascend) {
-        return null;
-    }
-
-    @Override
     public List<NotificationType> getNotificationTypeByRole(Role role) {
         List<NotificationType> answer = new ArrayList<>();
         List<NotificationType> allNotificationTypes = getAllNotificationTypes();

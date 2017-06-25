@@ -11,7 +11,6 @@ import java.util.List;
  */
 public interface PriceService extends MessageBook{
     public List<Price> getAllPrices();
-    public List<Price> getAllPrices(String orderingParameter, boolean ascend);
     public Price getSinglePriceById(Integer id);
     public IUDAnswer updatePrice(Integer id, Price newPrice);
 }

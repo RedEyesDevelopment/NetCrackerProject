@@ -35,7 +35,7 @@ public class RoomServiceImpl implements RoomService {
     RoomTypeDAO roomTypeDAO;
 
     @Override
-    public List<Room> getRoomsByNumberOfResidents(int count) {
+    public List<Room> getRoomsByNumberOfResidents(Integer count) {
         List<Room> answer = new ArrayList<Room>();
         List<Room> allRooms = getAllRooms();
         for (Room room : allRooms) {
@@ -67,20 +67,10 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<Room> getAllRooms(String orderingParameter, boolean ascend) {
-        return null;
-    }
-
-    @Override
     public Room getSingleRoomById(Integer id) {
         Room room = roomDAO.getRoom(id);
         if (room == null) LOGGER.info("Returned NULL!!!");
         return room;
-    }
-
-    @Override
-    public List<Room> doesBlockedRoomOnDay(Room room, Date date) {
-        return null;
     }
 
     @Override

@@ -11,7 +11,6 @@ import java.util.List;
  */
 public interface CategoryService extends MessageBook{
     public List<Category> getAllCategories();
-    public List<Category> getAllCategories(String orderingParameter, boolean ascend);
     public Category getSingleCategoryById(Integer id);
     public IUDAnswer deleteCategory(Integer id);
     public IUDAnswer insertCategory(Category category);
