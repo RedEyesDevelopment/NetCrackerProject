@@ -3,6 +3,7 @@ package projectpackage.service.roomservice;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.dto.OrderDTO;
 import projectpackage.model.rooms.RoomType;
+import projectpackage.service.MessageBook;
 
 import java.util.Date;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * Created by Arizel on 16.05.2017.
  */
-public interface RoomTypeService {
+public interface RoomTypeService extends MessageBook{
     public List<RoomType> getRoomTypes(Date date);
     public List<RoomType> getRoomTypes(Date date, long maxRate);
     public List<RoomType> getRoomTypes(Date date, int numberOfPeople);
@@ -21,8 +22,8 @@ public interface RoomTypeService {
 
     public List<RoomType> getAllRoomTypes();
     public List<RoomType> getAllRoomTypes(String orderingParameter, boolean ascend);
-    public RoomType getSingleRoomTypeById(int id);
-    public IUDAnswer deleteRoomType(int id);
+    public RoomType getSingleRoomTypeById(Integer id);
+    public IUDAnswer deleteRoomType(Integer id);
     public IUDAnswer insertRoomType(RoomType roomType);
-    public IUDAnswer updateRoomType(int id, RoomType newRoomType);
+    public IUDAnswer updateRoomType(Integer id, RoomType newRoomType);
 }

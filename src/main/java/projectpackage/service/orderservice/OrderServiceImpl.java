@@ -14,7 +14,6 @@ import projectpackage.repository.ordersdao.OrderDAO;
 import projectpackage.repository.roomsdao.RoomDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.ArrayList;
@@ -226,52 +225,55 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public Order getSingleOrderById(int id) {
+    public Order getSingleOrderById(Integer id) {
         Order order = orderDAO.getOrder(id);
         if (order == null) LOGGER.info("Returned NULL!!!");
         return order;
     }
 
     @Override
-    public IUDAnswer deleteOrder(int id) {
+    public IUDAnswer deleteOrder(Integer id) {
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             orderDAO.deleteOrder(id);
         } catch (ReferenceBreakException e) {
-            LOGGER.warn("Entity has references on self", e);
-            return new IUDAnswer(id,false, e.printReferencesEntities());
+            return orderDAO.rollback(id, ON_ENTITY_REFERENCE, e);
         } catch (DeletedObjectNotExistsException e) {
-            LOGGER.warn("Entity with that id does not exist!", e);
-            return new IUDAnswer(id, "deletedObjectNotExists");
+            return orderDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
         } catch (WrongEntityIdException e) {
-            LOGGER.warn("This id belong another entity class!", e);
-            return new IUDAnswer(id, "wrongDeleteId");
+            return orderDAO.rollback(id, WRONG_DELETED_ID, e);
+        } catch (IllegalArgumentException e) {
+            return orderDAO.rollback(id, NULL_ID, e);
         }
+        orderDAO.commit();
         return new IUDAnswer(id, true);
     }
 
     @Override
     public IUDAnswer insertOrder(Order order) {
+        if (order == null) return null;
         Integer orderId = null;
         try {
             orderId = orderDAO.insertOrder(order);
-            LOGGER.info("Get from DB orderId = " + orderId);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(orderId,false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return orderDAO.rollback(WRONG_FIELD, e);
         }
-        return new IUDAnswer(orderId,true, "orderCreated");
+        orderDAO.commit();
+        return new IUDAnswer(orderId,true, ORDER_CREATED);
     }
 
     @Override
-    public IUDAnswer updateOrder(int id, Order newOrder) {
+    public IUDAnswer updateOrder(Integer id, Order newOrder) {
+        if (newOrder == null) return null;
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             newOrder.setObjectId(id);
             Order oldOrder = orderDAO.getOrder(id);
             orderDAO.updateOrder(newOrder, oldOrder);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return orderDAO.rollback(WRONG_FIELD, e);
         }
+        orderDAO.commit();
         return new IUDAnswer(id,true);
     }
 }

@@ -6,6 +6,7 @@ import projectpackage.model.auth.User;
 import projectpackage.model.orders.Category;
 import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
+import projectpackage.service.MessageBook;
 
 import java.util.Date;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 /**
  * Created by Arizel on 16.05.2017.
  */
-public interface OrderService {
+public interface OrderService extends MessageBook{
     public List<Order> getOrdersByRoom(Room room);
     public List<Order> getOrdersByClient(User user);
     public List<Order> getOrdersByRegistrationDate(Date date);
@@ -30,8 +31,8 @@ public interface OrderService {
     public Order createOrderTemplate(User client, OrderDTO dto);
     public List<Order> getAllOrders();
     public List<Order> getAllOrders(String orderingParameter, boolean ascend);
-    public Order getSingleOrderById(int id);
-    public IUDAnswer deleteOrder(int id);
+    public Order getSingleOrderById(Integer id);
+    public IUDAnswer deleteOrder(Integer id);
     public IUDAnswer insertOrder(Order order);
-    public IUDAnswer updateOrder(int id, Order newOrder);
+    public IUDAnswer updateOrder(Integer id, Order newOrder);
 }

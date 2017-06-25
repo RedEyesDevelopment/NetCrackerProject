@@ -1,11 +1,13 @@
 package projectpackage.repository.roomsdao;
 
 import projectpackage.model.rooms.Room;
+import projectpackage.repository.Commitable;
+import projectpackage.repository.Rollbackable;
 
 import java.util.Date;
 import java.util.List;
 
-public interface RoomDAO {
+public interface RoomDAO extends Commitable, Rollbackable {
     public Room getRoom(Integer id);
     public List<Room> getAllRooms();
     public Room getFreeRoom(int roomTypeId, int numberOfResidents, Date start, Date finish);

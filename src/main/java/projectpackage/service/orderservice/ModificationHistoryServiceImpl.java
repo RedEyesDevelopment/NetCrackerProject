@@ -4,14 +4,13 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
-import projectpackage.dto.IUDAnswer;
+import projectpackage.repository.ordersdao.ModificationHistoryDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.ordersdao.ModificationHistoryDAO;
 
 import java.util.List;
 
@@ -44,7 +43,7 @@ public class ModificationHistoryServiceImpl implements ModificationHistoryServic
     }
 
     @Override
-    public ModificationHistory getSingleModificationHistoryById(int id) {
+    public ModificationHistory getSingleModificationHistoryById(Integer id) {
         ModificationHistory modificationHistory = modificationHistoryDAO.getModificationHistory(id);
         if (modificationHistory == null) LOGGER.info("Returned NULL!!!");
         return modificationHistory;
@@ -52,31 +51,32 @@ public class ModificationHistoryServiceImpl implements ModificationHistoryServic
 
     @Override
     public IUDAnswer insertModificationHistory(Order newOrder, Order oldOrder) {
+        if (newOrder == null || oldOrder == null) return null;
         Integer modificationId = null;
         try {
             modificationId = modificationHistoryDAO.insertModificationHistory(newOrder, oldOrder);
-            LOGGER.info("Get from DB modificationHistoryId = " + modificationId);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(modificationId,false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return modificationHistoryDAO.rollback(WRONG_FIELD, e);
         }
+        modificationHistoryDAO.commit();
         return new IUDAnswer(modificationId,true);
     }
 
     @Override
-    public IUDAnswer deleteModificationHistory(int id) {
+    public IUDAnswer deleteModificationHistory(Integer id) {
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             modificationHistoryDAO.deleteModificationHistory(id);
         } catch (ReferenceBreakException e) {
-            LOGGER.warn("Entity has references on self", e);
-            return new IUDAnswer(id,false, e.printReferencesEntities());
+            return modificationHistoryDAO.rollback(id, ON_ENTITY_REFERENCE, e);
         } catch (DeletedObjectNotExistsException e) {
-            LOGGER.warn("Entity with that id does not exist!", e);
-            return new IUDAnswer(id, "deletedObjectNotExists");
+            return modificationHistoryDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
         } catch (WrongEntityIdException e) {
-            LOGGER.warn("This id belong another entity class!", e);
-            return new IUDAnswer(id, "wrongDeleteId");
+            return modificationHistoryDAO.rollback(id, WRONG_DELETED_ID, e);
+        } catch (IllegalArgumentException e) {
+            return modificationHistoryDAO.rollback(id, NULL_ID, e);
         }
+        modificationHistoryDAO.commit();
         return new IUDAnswer(id, true);
     }
 }

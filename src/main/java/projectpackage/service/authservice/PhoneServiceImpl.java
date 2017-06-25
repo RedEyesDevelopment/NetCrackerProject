@@ -75,11 +75,11 @@ public class PhoneServiceImpl implements PhoneService{
         } catch (ReferenceBreakException e) {
             return phoneDAO.rollback(id, ON_ENTITY_REFERENCE, e);
         } catch (DeletedObjectNotExistsException e) {
-            phoneDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
+            return phoneDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
         } catch (WrongEntityIdException e) {
-            phoneDAO.rollback(id, WRONG_DELETED_ID, e);
+            return phoneDAO.rollback(id, WRONG_DELETED_ID, e);
         } catch (IllegalArgumentException e) {
-            phoneDAO.rollback(id, NULL_ID, e);
+            return phoneDAO.rollback(id, NULL_ID, e);
         }
         phoneDAO.commit();
         return new IUDAnswer(id, true);
@@ -87,13 +87,14 @@ public class PhoneServiceImpl implements PhoneService{
 
     @Override
     public IUDAnswer insertPhone(Phone phone) {
+        if (phone == null) return null;
         boolean isValid = phoneRegexService.match(phone.getPhoneNumber());
         if (!isValid) return new IUDAnswer(false, WRONG_PHONE_NUMBER);
         Integer phoneId = null;
         try {
             phoneId = phoneDAO.insertPhone(phone);
         } catch (IllegalArgumentException e) {
-            phoneDAO.rollback(WRONG_FIELD, e);
+            return phoneDAO.rollback(WRONG_FIELD, e);
         }
         phoneDAO.commit();
         return new IUDAnswer(phoneId,true);
@@ -101,6 +102,8 @@ public class PhoneServiceImpl implements PhoneService{
 
     @Override
     public IUDAnswer updatePhone(Integer id, Phone newPhone) {
+        if (newPhone == null) return null;
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         boolean isValid = phoneRegexService.match(newPhone.getPhoneNumber());
         if (!isValid) return new IUDAnswer(id, false, WRONG_PHONE_NUMBER);
         try {
@@ -108,7 +111,7 @@ public class PhoneServiceImpl implements PhoneService{
             Phone oldPhone = phoneDAO.getPhone(id);
             phoneDAO.updatePhone(newPhone, oldPhone);
         } catch (IllegalArgumentException e) {
-            phoneDAO.rollback(WRONG_FIELD, e);
+            return phoneDAO.rollback(WRONG_FIELD, e);
         }
         phoneDAO.commit();
         return new IUDAnswer(id,true);

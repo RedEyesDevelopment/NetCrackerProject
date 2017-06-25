@@ -4,14 +4,13 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.model.auth.Role;
 import projectpackage.model.notifications.NotificationType;
-import projectpackage.dto.IUDAnswer;
+import projectpackage.repository.notificationsdao.NotificationTypeDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.notificationsdao.NotificationTypeDAO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,52 +52,55 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
     }
 
     @Override
-    public NotificationType getSingleNotificationTypeById(int id) {
+    public NotificationType getSingleNotificationTypeById(Integer id) {
         NotificationType notificationType = notificationTypeDAO.getNotificationType(id);
         if (notificationType == null) LOGGER.info("Returned NULL!!!");
         return notificationType;
     }
 
     @Override
-    public IUDAnswer deleteNotificationType(int id) {
+    public IUDAnswer deleteNotificationType(Integer id) {
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             notificationTypeDAO.deleteNotificationType(id);
         } catch (ReferenceBreakException e) {
-            LOGGER.warn("Entity has references on self", e);
-            return new IUDAnswer(id,false, e.printReferencesEntities());
+            return notificationTypeDAO.rollback(id, ON_ENTITY_REFERENCE, e);
         } catch (DeletedObjectNotExistsException e) {
-            LOGGER.warn("Entity with that id does not exist!", e);
-            return new IUDAnswer(id, "deletedObjectNotExists");
+            return notificationTypeDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
         } catch (WrongEntityIdException e) {
-            LOGGER.warn("This id belong another entity class!", e);
-            return new IUDAnswer(id, "wrongDeleteId");
+            return notificationTypeDAO.rollback(id, WRONG_DELETED_ID, e);
+        } catch (IllegalArgumentException e) {
+            return notificationTypeDAO.rollback(id, NULL_ID, e);
         }
+        notificationTypeDAO.commit();
         return new IUDAnswer(id, true);
     }
 
     @Override
     public IUDAnswer insertNotificationType(NotificationType notificationType) {
+        if (notificationType == null) return null;
         Integer notifTypeId = null;
         try {
             notifTypeId = notificationTypeDAO.insertNotificationType(notificationType);
-            LOGGER.info("Get from DB notificationTypeId = " + notifTypeId);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(notifTypeId,false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return notificationTypeDAO.rollback(WRONG_FIELD, e);
         }
+        notificationTypeDAO.commit();
         return new IUDAnswer(notifTypeId,true);
     }
 
     @Override
-    public IUDAnswer updateNotificationType(int id, NotificationType newNotificationType) {
+    public IUDAnswer updateNotificationType(Integer id, NotificationType newNotificationType) {
+        if (newNotificationType == null) return null;
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             newNotificationType.setObjectId(id);
             NotificationType oldNotificationType = notificationTypeDAO.getNotificationType(id);
             notificationTypeDAO.updateNotificationType(newNotificationType, oldNotificationType);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return notificationTypeDAO.rollback(WRONG_FIELD, e);
         }
+        notificationTypeDAO.commit();
         return new IUDAnswer(id,true);
     }
 }

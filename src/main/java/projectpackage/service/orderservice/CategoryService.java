@@ -2,18 +2,18 @@ package projectpackage.service.orderservice;
 
 import projectpackage.model.orders.Category;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.service.MessageBook;
 
 import java.util.List;
 
 /**
  * Created by Dima on 21.05.2017.
  */
-public interface CategoryService {
-
+public interface CategoryService extends MessageBook{
     public List<Category> getAllCategories();
     public List<Category> getAllCategories(String orderingParameter, boolean ascend);
-    public Category getSingleCategoryById(int id);
-    public IUDAnswer deleteCategory(int id);
+    public Category getSingleCategoryById(Integer id);
+    public IUDAnswer deleteCategory(Integer id);
     public IUDAnswer insertCategory(Category category);
-    public IUDAnswer updateCategory(int id, Category newCategory);
+    public IUDAnswer updateCategory(Integer id, Category newCategory);
 }

@@ -5,15 +5,14 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.dto.IUDAnswer;
-import projectpackage.dto.RoomStatDTO;
 import projectpackage.dto.RoomDTO;
+import projectpackage.dto.RoomStatDTO;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.roomsdao.RoomDAO;
 import projectpackage.repository.roomsdao.RoomTypeDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.ArrayList;
@@ -73,7 +72,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Room getSingleRoomById(int id) {
+    public Room getSingleRoomById(Integer id) {
         Room room = roomDAO.getRoom(id);
         if (room == null) LOGGER.info("Returned NULL!!!");
         return room;
@@ -122,27 +121,28 @@ public class RoomServiceImpl implements RoomService {
 
 
     @Override
-    public IUDAnswer deleteRoom(int id) {
+    public IUDAnswer deleteRoom(Integer id) {
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             roomDAO.deleteRoom(id);
         } catch (ReferenceBreakException e) {
-            LOGGER.warn("Entity has references on self", e);
-            return new IUDAnswer(id, false, e.printReferencesEntities());
+            return roomDAO.rollback(id, ON_ENTITY_REFERENCE, e);
         } catch (DeletedObjectNotExistsException e) {
-            LOGGER.warn("Entity with that id does not exist!", e);
-            return new IUDAnswer(id, "deletedObjectNotExists");
+            return roomDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
         } catch (WrongEntityIdException e) {
-            LOGGER.warn("This id belong another entity class!", e);
-            return new IUDAnswer(id, "wrongDeleteId");
+            return roomDAO.rollback(id, WRONG_DELETED_ID, e);
+        } catch (IllegalArgumentException e) {
+            return roomDAO.rollback(id, NULL_ID, e);
         }
+        roomDAO.commit();
         return new IUDAnswer(id, true);
     }
 
     @Override
     public IUDAnswer insertRoom(RoomDTO roomDTO) {
-        if (roomDTO == null) return new IUDAnswer(false, "transactionInterrupt");
+        if (roomDTO == null) return null;
         if (roomDTO.getNumberOfResidents() > 3 || roomDTO.getNumberOfResidents() < 1) {
-            return new IUDAnswer(false, "transactionInterrupt");
+            return new IUDAnswer(false, INCORRECT_NUMBER_OF_RESIDENTS);
         }
         Integer roomId = null;
         RoomType roomType = roomTypeDAO.getRoomType(roomDTO.getRoomType());
@@ -152,23 +152,19 @@ public class RoomServiceImpl implements RoomService {
         room.setRoomType(roomType);
         try {
             roomId = roomDAO.insertRoom(room);
-            LOGGER.info("Get from DB roomId = " + roomId);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(roomId, false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return roomDAO.rollback(WRONG_FIELD, e);
         }
+        roomDAO.commit();
         return new IUDAnswer(roomId, true);
     }
 
     @Override
     public IUDAnswer updateRoom(Integer id, RoomDTO roomDTO) {
-        System.out.println("****************** IN SERVICE ******************");
-        System.out.println(roomDTO);
-        System.out.println(id);
-        if (id == null) return new IUDAnswer(false, "transactionInterrupt");
-        if (roomDTO == null) return new IUDAnswer(false, "transactionInterrupt");
+        if (roomDTO == null) return null;
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         if (roomDTO.getNumberOfResidents() > 3 || roomDTO.getNumberOfResidents() < 1) {
-            return new IUDAnswer(false, "transactionInterrupt");
+            return new IUDAnswer(false, INCORRECT_NUMBER_OF_RESIDENTS);
         }
         RoomType roomType = roomTypeDAO.getRoomType(roomDTO.getRoomType());
         Room newRoom = new Room();
@@ -177,14 +173,12 @@ public class RoomServiceImpl implements RoomService {
         newRoom.setRoomNumber(roomDTO.getRoomNumber());
         newRoom.setRoomType(roomType);
         Room oldRoom = roomDAO.getRoom(id);
-        System.out.println(oldRoom);
-        System.out.println(newRoom);
         try {
             roomDAO.updateRoom(newRoom, oldRoom);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id, false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return roomDAO.rollback(WRONG_FIELD, e);
         }
+        roomDAO.commit();
         return new IUDAnswer(id, true);
     }
 }
