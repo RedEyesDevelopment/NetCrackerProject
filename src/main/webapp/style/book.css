@@ -7,7 +7,7 @@
 }
 
 .jumbotron {
-  margin: 0px auto;
+  margin: -10px auto 0;
   color: white;
   text-shadow: black 0.3em 0.3em 0.3em;
   padding: 70px 30px;

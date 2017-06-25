@@ -23,42 +23,42 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
         // })
 
         // // Admin routes
-        // .when('/admin/notifications', {
-        //     templateUrl: 'page/notifications/notifications.html',
-        //     controller: 'notificationsCtrl'
-        // })
-        // .when('/admin/orders', {
-        //     templateUrl: 'page/orders/orders.html',
-        //     controller: 'ordersCtrl'
-        // })
-        // .when('/admin/users', {
-        //     templateUrl: 'page/users/users.html',
-        //     controller: 'usersCtrl'
-        // })
-        // .when('/admin/rooms', {
-        //     templateUrl: 'page/rooms/rooms.html',
-        //     controller: 'roomsCtrl'
-        // })
-        // .when('/admin/blocks', {
-        //     templateUrl: 'page/blocks/blocks.html',
-        //     controller: 'blocksCtrl'
-        // })
-        // .when('/admin/maintenances', {
-        //     templateUrl: 'page/maintenances/maintenances.html',
-        //     controller: 'maintenancesCtrl'
-        // })
-        // .when('/admin/categories', {
-        //     templateUrl: 'page/categories/categories.html',
-        //     controller: 'categoriesCtrl'
-        // })
-        // .when('/admin/notificationTypes', {
-        //     templateUrl: 'page/notificationTypes/notificationTypes.html',
-        //     controller: 'notificationTypesCtrl'
-        // })
-        // .when('/admin/roomTypes', {
-        //     templateUrl: 'page/roomTypes/roomTypes.html',
-        //     controller: 'roomTypesCtrl'
-        // })
+        .when('/admin/notifications', {
+            templateUrl: 'app/admin/notifications/notifications.html',
+            controller: 'notificationsCtrl'
+        })
+        .when('/admin/orders', {
+            templateUrl: 'app/admin/orders/orders.html',
+            controller: 'ordersCtrl'
+        })
+        .when('/admin/users', {
+            templateUrl: 'app/admin/users/users.html',
+            controller: 'usersCtrl'
+        })
+        .when('/admin/rooms', {
+            templateUrl: 'app/admin/rooms/rooms.html',
+            controller: 'roomsCtrl'
+        })
+        .when('/admin/blocks', {
+            templateUrl: 'app/admin/blocks/blocks.html',
+            controller: 'blocksCtrl'
+        })
+        .when('/admin/maintenances', {
+            templateUrl: 'app/admin/maintenances/maintenances.html',
+            controller: 'maintenancesCtrl'
+        })
+        .when('/admin/categories', {
+            templateUrl: 'app/admin/categories/categories.html',
+            controller: 'categoriesCtrl'
+        })
+        .when('/admin/notificationTypes', {
+            templateUrl: 'app/admin/notificationTypes/notificationTypes.html',
+            controller: 'notificationTypesCtrl'
+        })
+        .when('/admin/roomTypes', {
+            templateUrl: 'app/admin/roomTypes/roomTypes.html',
+            controller: 'roomTypesCtrl'
+        })
 
         // otherwise
         .when('/', {

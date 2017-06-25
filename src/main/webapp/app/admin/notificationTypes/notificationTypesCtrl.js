@@ -1,3 +1,3 @@
-adminDesktop.controller('notificationTypesCtrl', ['$scope', function($scope){
+app.controller('notificationTypesCtrl', ['$scope', function($scope){
 	$scope.page = 'NotificationTypes!';
 }])
