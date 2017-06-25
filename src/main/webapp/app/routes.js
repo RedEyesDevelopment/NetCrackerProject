@@ -2,7 +2,7 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
 	$locationProvider.hashPrefix('');
     $routeProvider
 
-        // Book routes
+        // Book route
         .when('/book', {
             templateUrl: 'app/book/book.html',
             controller: 'bookCrtl'
@@ -61,14 +61,14 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
         // })
 
         // otherwise
-        // .when('/', {
-        //     templateUrl: './app/book/book.html',
-        //     controller: 'bookCtrl'
-        // })
-        // .otherwise({
-        //     templateUrl: './room_type.html',
-        //     controller: 'roomTypeController'
-        // })
+        .when('/', {
+            templateUrl: 'app/book/book.html',
+            controller: 'bookCrtl'
+        })
+        .otherwise({
+            templateUrl: 'app/book/book.html',
+            controller: 'bookCrtl'
+        })
 }]);
 
 

@@ -2,13 +2,62 @@
     <div class="container">
         <div id="navbar" class="navbar-collapse collapse">
             <div class="toMain"><a href="http://localhost:8080/views/index.html"><i class="fa fa-home" aria-hidden="true"></i> NC Hotel</a></div>
-            <ul class="nav navbar-nav navbar-right">
+
+            <ul class="nav navbar-nav navbar-right" ng-if="!auth.isAuthorized">
                 <li><a role="button" id="loginLink" data-toggle="modal" data-target="#loginModal">Log in</a></li>
                 <li><a role="button" id="signupLink" data-toggle="modal" data-target="#creationModal">Sign up</a></li>
             </ul>
+            
+            <ul class="nav navbar-nav navbar-right" ng-if="auth.isAuthorized">
+                <li class="dropdown">
+                    <p class="dropdown-toggle" data-toggle="dropdown">
+                        <img src="res/img/user_photo.jpg" class="img-circle" width="25" height="25">
+                        <p>Alex</p>
+                    </p>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <div class="navbar-login">
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <p class="text-center">
+                                        <div class="profile-picture">
+                                            <img src="res/img/user_photo.jpg" class="img-circle" width="75" height="75">
+                                        </div>
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <p class="text-left">Alex Murlyan</p>
+                                        <p class="text-left small">some@email.com</p>
+                                        <p class="text-left">
+                                            <a href="#" class="btn btn-primary btn-block btn-sm">Update data</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="navbar-login navbar-login-session">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <p class="btn btn-danger btn-block" ng-click="logout()"> Log out </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- LOG USER END -->
+                <!-- <li><a role="button" id="loginLink">Log in</a></li>
+                <li><a role="button" id="signupLink">Sign up</a></li> -->
+            </ul>
+
+
         </div>
     </div>
 </nav>
+
 
 <div class="modal fade" id="loginModal" role="dialog">
     <div class="modal-dialog modal-sm">
@@ -17,30 +66,35 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Login</h4>
             </div>
-            <div class="modal-body" ng-controller="login">
-                <form id="authorizeform" method="POST" name='dataavailable' novalidate ng-submit='validateauthform($event)'>
-                    <p>  
-                        <label for="loginform">Email:</label>
-                        <input type="text" id="loginform" name="login" title ="Login" placeholder="Enter login" ng-model="userLogin">
-                    </p>
-                    <p>
-                        <label for="passform">Password:</label>
-                        <input type="password" id="passform" name="password" title="Password" placeholder="Enter password" ng-model="userPassword">
-                    </p>
-                    <div id="autherror">
-                        <p>Email or password is incorrect</p>
-                    </div>
-                    <div class="formFooter">
-                        <button type="submit" class="btn btn-success" ng-click='login()'>Login</button>
-                        <button type="button" id="loginformclose" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    </div>
-                </form>
-            </div>
+            <form id="authorizeform" novalidate>
+                <p>  
+                    <label for="loginform">Email:</label>
+                    <input type="text" id="loginform" ng-model="auth.incoming.login" ng-model="userLogin" placeholder="Enter login">
+                </p>
+                <p>
+                    <label for="passform">Password:</label>
+                    <input type="password" id="passform" ng-model="auth.incoming.password" ng-model="userPassword" placeholder="Enter password">
+                </p>
+                <div ng-if="auth.incoming.failed" class="failedAuth">
+                    Email or password is incorrect.
+                </div>
+                <div class="formFooter">
+                    <button type="submit" class="btn btn-success" ng-click='login()'>Login</button>
+                    <button type="button" id="loginformclose" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="creationModal" role="dialog" ng-controller="registration">
+
+
+
+
+
+
+
+<div class="modal fade" id="creationModal" role="dialog">
     <div class="modal-dialog modal-sm">
         <div class="modal-content windowRegistration">
             <div class="modal-header popupheader">

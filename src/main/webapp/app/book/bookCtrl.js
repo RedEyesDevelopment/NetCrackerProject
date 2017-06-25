@@ -1,7 +1,7 @@
 app.controller('bookCrtl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
 
     /* Сразу получить все категории */
-    getAllСategories = function() {
+    (function() {
         $http({
             url: 'http://localhost:8080/categories',
             method: 'GET',
@@ -15,7 +15,7 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', function ($scope, $h
             console.log("Smth wrong!!");
             console.log(response);
         });
-    }();
+    }());
 
     $scope.book = {}
     $scope.auth = window.auth;
