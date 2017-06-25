@@ -2,6 +2,11 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
     function ($scope, $http, $location, sharedData, ROLE) {
 
     $scope.auth = {};
+    $scope.registration = {
+        emailRegex : '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}',
+        passwordRegex : '(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!_%*#?&])[A-Za-z\d$@$!_%*#?&]{8,}',
+        phoneRegex : '\+\d{1,2}\(\d{3}\)\d{2}-\d{2}-\d{3}|\+\d{12}|\d{7}|[0]\d{9}'
+    }
 
     var setRoleFromSever = function() {
         $http({
@@ -53,7 +58,7 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
     });
 
     $scope.login = function() {
-        $scope.auth.incoming.failed = false;
+        $scope.hideFailAuthMessage();
         $http({
             url: 'http://localhost:8080/auth/login',
             method: 'POST',
@@ -67,7 +72,7 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
             setAuthDataFromServer();
             if (data.data) {
                 // if authorized
-                $('#loginformclose').trigger('click');
+                $('#loginFormClose').trigger('click');
             } else {
                 // WARNING!! DRY VIOLATION!!!
                 $scope.auth.incoming.failed = true;
@@ -80,38 +85,32 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
         });
     };
 
+    $scope.hideFailAuthMessage = function() {
+        $scope.auth.incoming.failed = false;
+    };
+
+    $scope.hideNotTheSamePasswordsMessage = function() {
+        $scope.registration.passwordsNotTheSame = false;
+    };
+
     $scope.logout = function() {
         // тут запрос на сервер  ------------------------------------------------ TODO
         $scope.auth.role = ROLE.NA;
     };
 
-
-
-
-
-
-    $scope.submit = function(eve) {
-
-        $('.windowRegistration').height(390);
-        $('.errorMessage').hide();
-        $('.passwordLabel').css({
-            'color' : 'black'
-        });
-        $('.emailLabel').css({
-            'color' : 'black'
-        });
-
-        if ($scope.userPasswordRepeat === $scope.userPassword) {
+    $scope.registration = function() {
+        $scope.hideNotTheSamePasswordsMessage();
+        if ($scope.registration.userPasswordRepeat === $scope.registration.userPassword) {
             $http({
                 url: 'http://localhost:8080/users/registration',
                 method: 'POST',
                 data: {
                     "objectId": 0,
-                    "email": $scope.userEmail,
-                    "password": $scope.userPassword,
-                    "firstName": $scope.userName,
-                    "lastName": $scope.userSurname,
-                    "additionalInfo": $scope.userInfo,
+                    "email": $scope.registration.userEmail,
+                    "password": $scope.registration.userPassword,
+                    "firstName": $scope.registration.userName,
+                    "lastName": $scope.registration.userSurname,
+                    "additionalInfo": $scope.registration.userInfo,
                     "enabled": true,
                     "role": {
                         "objectId": 0,
@@ -125,26 +124,17 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
                         }
                     ]
                 },
-                //headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-                headers: {'Content-Type': 'application/json'}
+                headers: {'Content-Type' : 'application/json'}
             }).then(function (data) {
                 console.log(data);
-                alert("Registration done!");
+                $('#registrationFormClose').trigger('click');
+                setAuthDataFromServer();
             }, function (response) {
                 console.log(response);
-                console.log("I_AM_TEAPOT!");
-                $('.emailLabel').css({
-                    'color' : 'red'
-                });
-                $('.windowRegistration').height(420);
-                $('.errorMessage').text(response.data.message).show(300);
+                // тут отобразить отказ от сервера
             });
         } else {
-            $('.passwordLabel').css({
-                'color' : 'red'
-            });
-            $('.errorMessage').text('Passwords not the same!').show(300);
-            $('.windowRegistration').height(420);
+            $scope.registration.passwordsNotTheSame = true;
         }
     }
 

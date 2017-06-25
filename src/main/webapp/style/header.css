@@ -6,30 +6,69 @@
           background-repeat: repeat-x;
     }
 
-#autherror {
-    display: none;
+.formFooter {
+	text-align: center;
 }
 
-.windowRegistration {
-	height: 390px;
+/* Authorization form */
+#authorizeform {
+	padding: 15px;
+}
+
+#authorizeform p {
+	margin-bottom: 15px;
+}
+
+#authorizeform p::after {
+	content: '.';
+	height: 0;
+	overflow: hidden;
+	display: block;
+	clear: both;
+}
+
+#authorizeform p label {
+	display: inline-block;
+	float: left;
 }
 
 #authorizeform p input {
+	display: inline-block;
 	float: right;
+	padding: 1px;
 }
 
+#authorizeform .failedAuth {
+	color: red;
+	text-align: center;
+	margin-bottom: 15px;
+}
+/* ---------------------- */
+
+/* Registration form */
+#registrationForm {
+	padding: 15px;
+}
 
 #registrationForm p input {
 	float: right;
 }
 
-.phoneExample {
-	text-align: center;
+#registrationForm .description {
 	color: gray;
 }
 
-.formFooter {
+#registrationForm .description .phoneExample {
 	text-align: center;
+}
+
+#registrationForm .description .passwordDesc {
+	text-align: justify;
+}
+
+#registrationForm .description .passwordsNotTheSame {
+	text-align: center;
+	color: red;
 }
 
 .errorMessage {
@@ -38,4 +77,4 @@
 	color: red;
 	margin-bottom: 10px;
 }
-
+/* ---------------------- */

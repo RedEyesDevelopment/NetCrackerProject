@@ -1,14 +1,6 @@
-
-body{
-  margin: auto;
-}
-
-textarea{
+textarea {
   resize: none;
 }
-/*.container{
-  margin-top: 75px;
-}*/
 
 /* Profile container */
 .profile {
@@ -176,13 +168,13 @@ padding:0 0 0 15px;
 
 
 /*EDITABLE*/
-input[type="text"] { 
+/*input[type="text"] { 
     padding: 0.4em; 
     font-family: Arial; 
     display: inherit;
     margin: 10px 0;
     width: 100px;
-  }
+  }*/
 
 /* Inline Edit */
 p.hover { 
@@ -199,11 +191,11 @@ form div label{
     
 
 }
-form div p{
+/*form div p{
   color: #5a7391;
   font-family: roboto;
   padding: 10px 0;
-}
+}*/
 
 .add-number{
   color: green;

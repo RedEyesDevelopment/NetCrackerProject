@@ -1,10 +1,10 @@
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
         <div id="navbar" class="navbar-collapse collapse">
-            <div class="toMain"><a href="http://localhost:8080/views/index.html"><i class="fa fa-home" aria-hidden="true"></i> NC Hotel</a></div>
+            <div class="toMain"><a href="http://localhost:8080/index.html"><i class="fa fa-home" aria-hidden="true"></i> NC Hotel</a></div>
 
             <ul class="nav navbar-nav navbar-right" ng-if="!auth.isAuthorized">
-                <li><a role="button" id="loginLink" data-toggle="modal" data-target="#loginModal">Log in</a></li>
+                <li><a role="button" id="loginLink" ng-click="hideFailMessage()" data-toggle="modal" data-target="#loginModal">Log in</a></li>
                 <li><a role="button" id="signupLink" data-toggle="modal" data-target="#creationModal">Sign up</a></li>
             </ul>
             
@@ -69,29 +69,25 @@
             <form id="authorizeform" novalidate>
                 <p>  
                     <label for="loginform">Email:</label>
-                    <input type="text" id="loginform" ng-model="auth.incoming.login" ng-model="userLogin" placeholder="Enter login">
+                    <input type="text" id="loginform" ng-model="auth.incoming.login"
+                            ng-change="hideFailAuthMessage()" placeholder="Enter login">
                 </p>
                 <p>
                     <label for="passform">Password:</label>
-                    <input type="password" id="passform" ng-model="auth.incoming.password" ng-model="userPassword" placeholder="Enter password">
+                    <input type="password" id="passform" ng-model="auth.incoming.password"
+                            ng-change="hideFailAuthMessage()" placeholder="Enter password">
                 </p>
                 <div ng-if="auth.incoming.failed" class="failedAuth">
                     Email or password is incorrect.
                 </div>
                 <div class="formFooter">
                     <button type="submit" class="btn btn-success" ng-click='login()'>Login</button>
-                    <button type="button" id="loginformclose" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" id="loginFormClose" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-
-
-
-
-
 
 
 <div class="modal fade" id="creationModal" role="dialog">
@@ -101,49 +97,59 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Register</h4>
             </div>
-            <form id="usercreationForm" method="post" ng-submit='submit($event)'>
-                <div class="modal-body" id="registrationForm">
-                    <p>
-                        <label for="logincform" class="emailLabel">Email:</label>
-                        <input type="text" id="logincform" name="email" title ="email"
-                                required placeholder="Enter email" ng-model="userEmail"
-                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$">
-                    </p>
-                    <p>
-                        <label for="passcform" class="passwordLabel">Password:</label>
-                        <input type="password" id="passcform" name="password" title ="Password"
-                                required placeholder="Enter password" ng-model="userPassword"
-                                pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$">
-                    </p>
-                    <p>
-                        <label for="passcrform" class="passwordLabel">Repeat:</label>
-                        <input type="password" id="passcrform" name="password" title ="Password"
-                                required placeholder="Password confirmation" ng-model="userPasswordRepeat">
-                    </p>
-                    <p>
-                        <label for="nameform">Name:</label>
-                        <input type="text" id="nameform" name="name" title ="Username"
-                                required placeholder="Enter your name" ng-model="userName">
-                    </p>
-                    <p>
-                        <label for="surnameform">Surname:</label>
-                        <input type="text" id="surnameform" name="surname" title ="Surname"
-                                required placeholder="Enter your surname" ng-model="userSurname">
-                    </p>
-                    <p>
-                        <label for="teleform">Phone:</label>
-                        <input type="text" id="teleform" name="telephone" title="phone"
-                                required placeholder="Enter your phone" ng-model="userPhone"
-                                pattern="\+\d{1,2}\(\d{3}\)\d{2}-\d{2}-\d{3}|\+\d{12}|\d{7}|[0]\d{9}">
-                    </p>
+            <form novalidate id="registrationForm" name="registrationForm">
+                <p>
+                    <label for="logincform" class="emailLabel">Email:</label>
+                    <input type="text" id="logincform" placeholder="Enter email"
+                           ng-model="registration.userEmail" ng-required="true"
+                           ng-pattern="registration.emailRegex" name="email">
+                </p>
+                <p>
+                    <label for="passcform" class="passwordLabel">Password:</label>
+                    <input type="password" id="passcform" placeholder="Enter password"
+                           ng-model="registration.userPassword" ng-required="true"
+                           ng-pattern="registration.passwordRegex" name="password"
+                           ng-change="hideNotTheSamePasswordsMessage()">
+                </p>
+                <p>
+                    <label for="passcrform" class="passwordLabel">Repeat:</label>
+                    <input type="password" id="passcrform" placeholder="Password confirmation"
+                           ng-model="registration.userPasswordRepeat" ng-required="true"
+                           ng-change="hideNotTheSamePasswordsMessage()">
+                </p>
+                <p>
+                    <label for="nameform">Name:</label>
+                    <input type="text" id="nameform" placeholder="Enter your name"
+                           ng-model="registration.userName" ng-required="true">
+                </p>
+                <p>
+                    <label for="surnameform">Surname:</label>
+                    <input type="text" id="surnameform" placeholder="Enter your surname"
+                           ng-model="registration.userSurname" ng-required="true">
+                </p>
+                <p>
+                    <label for="teleform">Phone:</label>
+                    <input type="text" id="teleform" placeholder="Enter your phone"
+                           ng-model="registration.userPhone" ng-required="true"
+                           ng-pattern="registration.phoneRegex" name="phone">
+                </p>
+                <div class="description">
                     <p class="phoneExample">
                         e.g. +123456789012 or&nbsp;0501234567 or&nbsp;1234567 or&nbsp;+1(000)12-34-567
                     </p>
+                    <p class="passwordDesc">
+                        Password should be at least 8 characters long and should contain one number,one character and one special character.
+                    </p>
+                    <p class="passwordsNotTheSame" ng-if="registration.passwordsNotTheSame">
+                        Passwords do not match!
+                    </p>
                 </div>
-                <div class="errorMessage"></div>
                 <div class="modal-footer, formFooter">
-                    <button type="submit" class="btn btn-success">Register</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button class="btn btn-success" ng-click="registration()"
+                            ng-disabled="registrationForm.$invalid || email.$invalid || password.$invalid || phone.$invalid">
+                        Register
+                    </button>
+                    <button class="btn btn-danger" id="#registrationFormClose" data-dismiss="modal">Close</button>
                 </div>
             </form>
         </div>
