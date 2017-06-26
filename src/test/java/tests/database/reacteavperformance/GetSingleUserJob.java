@@ -2,7 +2,6 @@ package tests.database.reacteavperformance;
 
 import projectpackage.model.auth.User;
 import projectpackage.repository.reacteav.ReactEAVManager;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -18,12 +17,7 @@ public class GetSingleUserJob extends PerformanceJob {
     @Override
     public void doaJob() {
         diy = System.currentTimeMillis();
-        User user = null;
-        try {
-            user = (User) manager.createReactEAV(User.class).getSingleEntityWithId(USERID);
-        } catch (ResultEntityNullException e) {
-            System.out.println(e);
-        }
+        User user = (User) manager.createReactEAV(User.class).getSingleEntityWithId(USERID);
         assertNotNull(user);
         insertResult(System.currentTimeMillis()-diy);
     }

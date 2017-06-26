@@ -8,11 +8,10 @@ import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Role;
 import projectpackage.model.notifications.NotificationType;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 
@@ -29,26 +28,16 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     @Override
     public NotificationType getNotificationType(Integer id) {
         if (id == null) return null;
-        try {
             return (NotificationType) manager.createReactEAV(NotificationType.class)
                     .fetchRootReference(Role.class, "RoleToNotificationType")
                     .closeAllFetches().getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
     }
 
     @Override
     public List<NotificationType> getAllNotificationTypes() {
-        try {
             return (List<NotificationType>) manager.createReactEAV(NotificationType.class)
                     .fetchRootReference(Role.class, "RoleToNotification")
                     .closeAllFetches().getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
     }
 
     @Override

@@ -4,7 +4,6 @@ import projectpackage.model.auth.User;
 import projectpackage.repository.reacteav.ReactEAVManager;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.VariableWhereCondition;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -23,12 +22,7 @@ public class GetUsersWithVariableConditionJob extends PerformanceJob {
     @Override
     public void doaJob() {
         diy = System.currentTimeMillis();
-        List<User> users = null;
-        try {
-            users = manager.createReactEAV(User.class).addCondition(new VariableWhereCondition("objectId", "901"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            e.printStackTrace();
-        }
+        List<User> users = manager.createReactEAV(User.class).addCondition(new VariableWhereCondition("objectId", "901"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).getEntityCollection();
         assertEquals(1 ,users.size());
         insertResult(System.currentTimeMillis()-diy);
     }

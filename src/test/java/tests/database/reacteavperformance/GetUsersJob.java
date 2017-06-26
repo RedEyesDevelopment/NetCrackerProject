@@ -2,7 +2,6 @@ package tests.database.reacteavperformance;
 
 import projectpackage.model.auth.User;
 import projectpackage.repository.reacteav.ReactEAVManager;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -21,12 +20,8 @@ public class GetUsersJob extends PerformanceJob {
     @Override
     public void doaJob() {
         diy = System.currentTimeMillis();
-        List<User> list = null;
-        try {
-            list = (List<User>) manager.createReactEAV(User.class).getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            System.out.println(e);
-        }
+        List<User> list = (List<User>) manager.createReactEAV(User.class).getEntityCollection();
+
         assertEquals(4 ,list.size());
         insertResult(System.currentTimeMillis()-diy);
     }

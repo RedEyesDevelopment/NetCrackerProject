@@ -18,11 +18,10 @@ import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 
@@ -38,20 +37,12 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
 
     @Override
     public List<Notification> getAllNotificationsForInMemoryService() {
-        List<Notification> notifs = null;
-        try {
-            notifs = (List<Notification>) manager.createReactEAV(Notification.class).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class,"RoleToNotificationType").closeAllFetches().getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
-        return notifs;
+        return (List<Notification>) manager.createReactEAV(Notification.class).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class,"RoleToNotificationType").closeAllFetches().getEntityCollection();
     }
 
     @Override
     public Notification getNotification(Integer id) {
         if (id == null) return null;
-        try {
             return (Notification) manager.createReactEAV(Notification.class)
                     .fetchRootReference(User.class, "UserToNotificationAsAuthor")
                     .fetchInnerReference(Role.class, "RoleToUser").closeFetch()
@@ -71,15 +62,10 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                     .fetchInnerChild(Phone.class)
                     .closeAllFetches()
                     .getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
     }
 
     @Override
     public List<Notification> getAllNotifications() {
-        try {
             return manager.createReactEAV(Notification.class)
                     .fetchRootReference(User.class, "UserToNotificationAsAuthor")
                     .fetchInnerChild(Phone.class).closeFetch()
@@ -98,10 +84,6 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                     .fetchInnerChild(Phone.class)
                     .closeAllFetches()
                     .getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
     }
 
     @Override

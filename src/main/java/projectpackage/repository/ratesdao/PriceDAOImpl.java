@@ -7,11 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.rates.Price;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 
@@ -28,22 +24,12 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
     @Override
     public Price getPrice(Integer id) {
         if (null == id) return null;
-        try {
             return (Price) manager.createReactEAV(Price.class).getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
     }
 
     @Override
     public List<Price> getAllPrices() {
-        try {
             return manager.createReactEAV(Price.class).getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
     }
 
 //    @Override

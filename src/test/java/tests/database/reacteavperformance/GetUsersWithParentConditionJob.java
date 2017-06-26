@@ -3,7 +3,6 @@ package tests.database.reacteavperformance;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.User;
 import projectpackage.repository.reacteav.ReactEAVManager;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.ParentsDAO;
 
 import java.util.LinkedList;
@@ -24,12 +23,8 @@ public class GetUsersWithParentConditionJob extends PerformanceJob {
     public void doaJob() {
         diy = System.currentTimeMillis();
         Integer parentId = parentsDAO.getParentId(1101);
-        User user = null;
-        try {
-            user = (User) manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches().getSingleEntityWithId(parentId);
-        } catch (ResultEntityNullException e) {
-            e.printStackTrace();
-        }
+        User user = (User) manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches().getSingleEntityWithId(parentId);
+
         assertNotNull(user);
         insertResult(System.currentTimeMillis()-diy);
     }

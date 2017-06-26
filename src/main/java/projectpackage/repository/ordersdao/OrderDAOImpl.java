@@ -18,13 +18,12 @@ import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 
@@ -42,7 +41,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     @Override
     public Order getOrder(Integer id) {
         if (null == id) return null;
-        try {
             return (Order) manager.createReactEAV(Order.class)
                     .fetchRootReference(User.class, "UserToOrderAsClient")
                     .fetchInnerChild(Phone.class).closeFetch()
@@ -65,15 +63,10 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                     .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
                     .closeAllFetches()
                     .getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
     }
 
     @Override
     public List<Order> getAllOrder() {
-        try {
             return (List<Order>) manager.createReactEAV(Order.class)
                     .fetchRootReference(User.class, "UserToOrderAsClient")
                     .fetchInnerChild(Phone.class).closeFetch()
@@ -96,10 +89,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                     .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
                     .closeAllFetches()
                     .getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
     }
 
     @Override

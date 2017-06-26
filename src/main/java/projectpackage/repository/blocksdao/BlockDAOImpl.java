@@ -8,11 +8,10 @@ import org.springframework.stereotype.Repository;
 import projectpackage.model.blocks.Block;
 import projectpackage.model.rooms.Room;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 
@@ -30,24 +29,14 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     @Override
     public Block getBlock(Integer id) {
         if (id == null) return null;
-        try {
             return (Block) manager.createReactEAV(Block.class).fetchRootReference(Room.class, "RoomToBlock")
                     .closeAllFetches().getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
     }
 
     @Override
     public List<Block> getAllBlocks() {
-        try {
             return manager.createReactEAV(Block.class).fetchRootReference(Room.class, "RoomToBlock")
                     .closeAllFetches().getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
     }
 
     @Override

@@ -10,7 +10,6 @@ import projectpackage.model.auth.User;
 import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
@@ -33,26 +32,16 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
     @Override
     public ModificationHistory getModificationHistory(Integer id) {
         if (null == id) return null;
-        try {
             return (ModificationHistory) manager.createReactEAV(ModificationHistory.class)
                     .fetchRootReference(User.class,"UserToModificationHistory")
                     .closeAllFetches().getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
     }
 
     @Override
     public List<ModificationHistory> getAllModificationHistories() {
-        try {
             return (List<ModificationHistory>) manager.createReactEAV(ModificationHistory.class)
                     .fetchRootReference(User.class,"UserToModificationHistory")
                     .closeAllFetches().getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
     }
 
     @Override

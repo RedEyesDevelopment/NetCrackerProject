@@ -4,7 +4,6 @@ import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.repository.reacteav.ReactEAVManager;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.LinkedList;
 
@@ -23,12 +22,7 @@ public class GetSingleUserWithInnerJob extends PerformanceJob {
     @Override
     public void doaJob() {
         diy = System.currentTimeMillis();
-        User user = null;
-        try {
-            user = (User) manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches().fetchRootReference(Role.class, "RoleToUser").closeAllFetches().getSingleEntityWithId(USERID);
-        } catch (ResultEntityNullException e) {
-            System.out.println(e);
-        }
+        User user = (User) manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches().fetchRootReference(Role.class, "RoleToUser").closeAllFetches().getSingleEntityWithId(USERID);
         assertNotNull(user);
         assertNotNull(user.getRole());
         if (user.getObjectId()!=999) assertNotNull(user.getPhones());

@@ -14,7 +14,6 @@ import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.ratesdao.RateDAO;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
@@ -44,24 +43,14 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
     @Override
     public RoomType getRoomType(Integer id) {
         if (null == id) return null;
-        try {
             return (RoomType) manager.createReactEAV(RoomType.class).fetchRootChild(Rate.class)
                     .fetchInnerChild(Price.class).closeAllFetches().getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
     }
 
     @Override
     public List<RoomType> getAllRoomTypes() {
-        try {
             return manager.createReactEAV(RoomType.class).fetchRootChild(Rate.class).fetchInnerChild(Price.class)
                     .closeAllFetches().getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
     }
 
     @Override

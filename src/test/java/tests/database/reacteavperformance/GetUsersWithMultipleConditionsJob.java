@@ -6,7 +6,6 @@ import projectpackage.repository.reacteav.ReactEAVManager;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.StringWhereCondition;
 import projectpackage.repository.reacteav.conditions.VariableWhereCondition;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -25,12 +24,7 @@ public class GetUsersWithMultipleConditionsJob extends PerformanceJob {
     @Override
     public void doaJob() {
         diy = System.currentTimeMillis();
-        List<User> users = null;
-        try {
-            users = manager.createReactEAV(User.class).addCondition(new StringWhereCondition("R_REFOB1.REFERENCE=3"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).fetchRootReference(Role.class, "RoleToUser").addCondition(new VariableWhereCondition("roleName", "CLIENT"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).closeAllFetches().getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            e.printStackTrace();
-        }
+        List<User> users = manager.createReactEAV(User.class).addCondition(new StringWhereCondition("R_REFOB1.REFERENCE=3"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).fetchRootReference(Role.class, "RoleToUser").addCondition(new VariableWhereCondition("roleName", "CLIENT"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).closeAllFetches().getEntityCollection();
         assertNotNull(users);
         insertResult(System.currentTimeMillis()-diy);
     }
