@@ -124,8 +124,12 @@ public class UserController {
     @RequestMapping(value = "/myself")
     public ResponseEntity<Resource<User>> getUser(HttpServletRequest request){
         User user = (User) request.getSession().getAttribute("USER");
-
-        Resource<User> resource = new Resource<User>(user);
+        Resource<User> resource;
+        if (null!=user){
+            resource = new Resource<User>(user);
+        } else {
+            resource = new Resource<>(new User());
+        }
 
         return new ResponseEntity<Resource<User>>(resource, HttpStatus.OK);
     }
