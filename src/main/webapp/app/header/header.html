@@ -29,7 +29,7 @@
                                         <p class="text-left">{{ auth.myself.firstName }} {{ auth.myself.lastName }}</p>
                                         <p class="text-left small">{{ auth.myself.email }}</p>
                                         <p class="text-left">
-                                            <a href="#" class="btn btn-primary btn-block btn-sm">Personal settings</a>
+                                            <a href="#/personal/settings" class="btn btn-primary btn-block btn-sm">Personal settings</a>
                                             <a href="#/admin/rooms" class="btn btn-primary btn-block btn-sm" ng-if="auth.isAdmin">Admin desktop</a>
                                         </p>
                                     </div>
@@ -98,15 +98,15 @@
                 <p>
                     <label for="logincform" class="emailLabel">Email:</label>
                     <input type="text" id="logincform" placeholder="Enter email"
-                           ng-model="registrationData.userEmail" ng-required="true"
-                           ng-pattern="regExp.emailRegex">
+                           ng-model="registrationData.userEmail" ng-required="true">
+                           <!-- ng-pattern="regExp.emailRegex"> -->
                 </p>
                 <p>
                     <label for="passcform" class="passwordLabel">Password:</label>
                     <input type="password" id="passcform" placeholder="Enter password"
                            ng-model="registrationData.userPassword" ng-required="true"
-                           ng-change="hideNotTheSamePasswordsMessage()"
-                           ng-pattern="regExp.passwordRegex">
+                           ng-change="hideNotTheSamePasswordsMessage()">
+                           <!-- ng-pattern="regExp.passwordRegex"> -->
                 </p>
                 <p>
                     <label for="passcrform" class="passwordLabel">Repeat:</label>

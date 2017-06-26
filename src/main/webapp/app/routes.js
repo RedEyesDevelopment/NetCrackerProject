@@ -9,10 +9,10 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
         })
 
         // Personal area routes
-        // .when('/personal/settings', {
-        //     templateUrl: 'user_settings.html',
-        //     controller: 'userSettingsController'
-        // })
+        .when('/personal/settings', {
+            templateUrl: 'app/personalArea/settings/settings.html',
+            controller: 'settingsCtrl'
+        })
         // .when('/personal/sendmessage', {
         //     templateUrl: 'send_message.html',
         //     controller: 'sendMessageController'

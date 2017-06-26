@@ -2,7 +2,7 @@
 <html lang="en" ng-app="app">
 <head>
 	<meta charset="UTF-8">
-	<title>NC Hotel</title>
+	<title>NC Holet</title>
 
 				<!-- BOOTSTRAP -->
 
@@ -19,11 +19,10 @@
 	<!-- Google Fonts -->
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet'  type='text/css'>    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/5.1.1/bootstrap-social.css" rel='stylesheet'  type='text/css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.1.1/ekko-lightbox.css" rel='stylesheet'  type='text/css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.1.1/ekko-lightbox.min.css" rel='stylesheet'  type='text/css'>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="style/font-awesome-4.7.0/css/font-awesome.min.css">
-    
-                <!-- LIGHTBOX CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.2.0/ekko-lightbox.min.css" rel='stylesheet'  type='text/css'>
 
 
     			<!-- ANGULAR LIBRARIES -->
@@ -49,11 +48,6 @@
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
             crossorigin="anonymous">
     </script>
-    
-    
-                <!-- LIGHTBOX JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.2.0/ekko-lightbox.min.js"></script>
-    <script src="app/book/lightbox.js"></script>
 
 	
 				<!-- STYLES -->
@@ -65,7 +59,7 @@
     <link href="style/book.css" rel="stylesheet">
 
     <!-- Styles for personal area !-->
-    <!-- <link href="style/personalArea.css" rel="stylesheet"> -->
+    <link href="style/personalArea.css" rel="stylesheet">
 
     <!-- Styles for admin -->
     <link href="style/admin.css" rel="stylesheet">
@@ -89,6 +83,13 @@
 
     <!-- Controllers for header -->
     <script src="app/header/headerCtrl.js"></script>
+
+
+    <!-- Services for personalArea -->
+    <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+
+    <!-- Controllers for personalArea -->
+    <script src="app/personalArea/settings/settingsCtrl.js"></script>
 
 
     <!-- Services for book -->
@@ -116,7 +117,7 @@
 
     <ng-include src="'app/header/header.html'" ng-controller="headerCtrl"></ng-include>
 
-        <ng-view></ng-view> 
-    
+    <ng-view></ng-view> 
+	
 </body>
 </html>
