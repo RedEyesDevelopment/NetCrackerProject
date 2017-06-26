@@ -1,5 +1,5 @@
 <div class="row row-content choosingRoomType">
-    <p id="notauth" ng-show="auth!=CLIENT">
+    <p id="noteForNotAuth" ng-if="!limitAuth.isAuthorized">
         You can book any room only if you authorized as a client. Authorize if you already have a profile or register a new user.
     </p>
     <div class="col-xs-12">
@@ -35,26 +35,27 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="media-body">
-                        <h2 class="media-heading">{{roomType.roomTypeName}}</h2>
+                        <h3 class="media-heading">{{roomType.roomTypeName}}</h3>
                         <p>{{roomType.roomTypeDescription}}</p>
                         <h1 class="text-center">
-                                                <span class="label label-success" ng-show="roomType.available">AVAILABLE</span>
-                                                <span class="label label-danger" ng-show="!roomType.available">NOT AVAILABLE</span>
+                            <span class="label label-success" ng-show="roomType.available">AVAILABLE</span>
+                            <span class="label label-danger" ng-show="!roomType.available">NOT AVAILABLE</span>
                         </h1>
                     </div>
                 </div>
                 <div class="col-sm-4">
-                    <div class="media-body my-border text-center" ng-show="roomType.available">
-                        <h2 class="media-heading">Accomodation price</h2>
+                    <div class="media-body my-border text-center cost" ng-show="roomType.available">
+                        <h3 class="media-heading firstPar">Accomodation price</h3>
                         <p class="price">${{(roomType.livingCost / 100)}}</p>
-                        <h2 class="media-heading">Service price</h2>
+                        <h3 class="media-heading">Service price</h3>
                         <p class="price">${{(roomType.categoryCost / 100) }}</p>
-                        <h2 class="media-heading">Total</h2>
+                        <h3 class="media-heading">Total</h3>
                         <p class="price">${{ roomType.livingCost / 100 + roomType.categoryCost / 100 }}</p>
                         <div class="text-center">
-                            <form name='book'>
-                                
-                                <button type="submit" ng-click='issueOder(roomType.roomTypeId)'  class="btn btn-lg" ng-show="window.auth==CLIENT">BOOK</button>
+                            <form name='book'>                                
+                                <button ng-click='issueOder(roomType.roomTypeId)' class="btn btn-success">
+                                    BOOK
+                                </button>
                             </form>
                         </div>
                     </div>

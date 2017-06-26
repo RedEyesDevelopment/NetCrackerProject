@@ -1,5 +1,4 @@
 <div class="row row-content booking">
-    <p id="worngauth" ng-show="window.auth!=CLIENT">You can book room only if you are authorized client. Authorize if you already have a profile on our site, or register a new user.</p>
     <div class="col-sm-push-1 col-sm-pull-1 col-sm-10">
         <h2>BOOK NOW</h2>
         <div>
@@ -47,8 +46,9 @@
                         </div>
                     </p>
                 </div>
-                <div class="col-xs-12 form-group text-center">
+                <div class="col-xs-12 form-group search">
                     <button class="btn" ng-click="searchRoomTypes()" ng-disabled='available.$invalid'>
+                        <i class="fa fa-search" aria-hidden="true"></i>
                         SEARCH AVAILABILITY
                     </button>
                 </div>

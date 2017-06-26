@@ -1,4 +1,5 @@
-app.controller('bookCrtl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
+app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
+    function ($scope, $http, $location, sharedData) {
 
     /* Сразу получить все категории */
     (function() {
@@ -18,14 +19,13 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', function ($scope, $h
     }());
 
     $scope.book = {}
-    $scope.auth = window.auth;
-
+    $scope.limitAuth = {}
     $scope.stage = "booking";
     $scope.doesNeedToShowBookForm = true;
+    sharedData.setBookCtrlLimitAuth($scope.limitAuth);
 
 
     $scope.searchRoomTypes = function () {
-        console.log($scope.book);
         $http({
             url: 'http://localhost:8080/orders/searchavailability',
             method: 'POST',
@@ -42,7 +42,9 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', function ($scope, $h
             console.log(data);
             $scope.listOfRoomTypes = data.data;
             $scope.stage = "choosingRoomType";
-            window.scrollTo(0,1000);
+            setTimeout(function() {
+                $('body').animate({ scrollTop : 770 }, 300);
+            }, 600);
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
@@ -54,21 +56,25 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', function ($scope, $h
     }
 
     $scope.issueOder = function (roomTypeId) {
-        $http({
-            url: 'http://localhost:8080/orders/book/' + roomTypeId,
-            method: 'GET',
-            headers: {
-                'Content-Type' : 'application/json'
-            }
-        }).then(function(data) {
-            console.log(data);
-            $scope.finishOrder = data.data;
-            $scope.doesNeedToShowBookForm = false;
-            $scope.stage = "finishOrdering";
-        }, function(response) {
-            console.log("Smth wrong!!");
-            console.log(response);
-        });
+        if ($scope.limitAuth.isAuthorized) {            
+            $http({
+                url: 'http://localhost:8080/orders/book/' + roomTypeId,
+                method: 'GET',
+                headers: {
+                    'Content-Type' : 'application/json'
+                }
+            }).then(function(data) {
+                console.log(data);
+                $scope.finishOrder = data.data;
+                $scope.doesNeedToShowBookForm = false;
+                $scope.stage = "finishOrdering";
+            }, function(response) {
+                console.log("Smth wrong!!");
+                console.log(response);
+            });
+        } else {
+            $('#signupLink').trigger('click');
+        }
     }
 
     $scope.acceptOrder = function() {
@@ -96,10 +102,12 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', function ($scope, $h
             }
         }).then(function(data) {
             console.log(data);
+            $scope.searchRoomTypes();
             $scope.stage = "choosingRoomType";
             $scope.doesNeedToShowBookForm = true;
         }, function(response) {
-            console.log("We are in response");
+            console.log("Smth wrong!!");
+            console.log(response);
         });
     }
 
@@ -109,14 +117,3 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', function ($scope, $h
     }
 
 }]);
-
-// function eventFire(el, etype){
-//   if (el.fireEvent) {
-//     el.fireEvent('on' + etype);
-//   } else {
-//     var evObj = document.createEvent('Events');
-//     evObj.initEvent(etype, true, false);
-//     el.dispatchEvent(evObj);
-//   }
-// }
-

@@ -65,7 +65,6 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
 
     /* Следит за изменениями роли, и в соответствии с ней меняет значение $scope.auth */
     $scope.$watch('auth.role', function(newRole) {
-        console.log("CHANGE!");
         $scope.auth.isAuthorized = false;
         $scope.auth.isAdmin = false;
         $scope.auth.isReception = false;
@@ -84,6 +83,7 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
                 $scope.auth.isClient = true;
                 break;
         }
+        sharedData.changeBookCtrlLimitAuth();
     });
 
     $scope.login = function() {
@@ -158,7 +158,7 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
                 $('#registrationFormClose').trigger('click');
                 $scope.auth.incoming.login = $scope.registrationData.userEmail;
                 $scope.auth.incoming.password = $scope.registrationData.userPassword;
-                // $scope.registrationData = {}
+                $scope.registrationData = {}
                 $scope.login();
             }, function (response) {
                 console.log(response);
