@@ -130,7 +130,6 @@ public class UserController {
         } else {
             resource = new Resource<>(new User());
         }
-
         return new ResponseEntity<Resource<User>>(resource, HttpStatus.OK);
     }
 }
