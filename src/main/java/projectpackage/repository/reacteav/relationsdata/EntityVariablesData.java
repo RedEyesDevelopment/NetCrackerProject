@@ -1,22 +1,25 @@
 package projectpackage.repository.reacteav.relationsdata;
 
-/**
- * Created by Lenovo on 07.05.2017.
- */
 public class EntityVariablesData {
     private Class parameterClass;
-    private String databaseAttrtypeCodeValue;
+    private String databaseNativeCodeValue;
+    private Integer databaseAttrtypeIdValue;
 
-    public EntityVariablesData(Class parameterClass, String databaseAttrtypeCodeValue) {
+    public EntityVariablesData(Class parameterClass, String databaseNativeCodeValue, Integer databaseAttrtypeIdValue) {
         this.parameterClass = parameterClass;
-        this.databaseAttrtypeCodeValue = databaseAttrtypeCodeValue;
+        this.databaseNativeCodeValue = databaseNativeCodeValue;
+        this.databaseAttrtypeIdValue = databaseAttrtypeIdValue;
     }
 
     public Class getParameterClass() {
         return parameterClass;
     }
 
-    public String getDatabaseAttrtypeCodeValue() {
-        return databaseAttrtypeCodeValue;
+    public String getDatabaseNativeCodeValue() {
+        return databaseNativeCodeValue;
+    }
+
+    public Integer getDatabaseAttrtypeIdValue() {
+        return databaseAttrtypeIdValue;
     }
 }

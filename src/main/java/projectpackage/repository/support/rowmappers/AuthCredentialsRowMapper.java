@@ -1,4 +1,4 @@
-package projectpackage.repository.securitydao;
+package projectpackage.repository.support.rowmappers;
 
 import org.springframework.jdbc.core.RowMapper;
 import projectpackage.model.security.AuthCredentials;

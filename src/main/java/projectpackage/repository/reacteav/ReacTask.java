@@ -10,17 +10,14 @@ import projectpackage.repository.reacteav.support.ReactEntityValidator;
 
 import java.util.*;
 
-/**
- * Created by Gvozd on 06.05.2017.
- */
 public class ReacTask {
 
     @Autowired
-    ReactEntityValidator validator = new ReactEntityValidator();
+    private ReactEntityValidator validator = new ReactEntityValidator();
     private ReactEAV reactEAV;
     private ReacTask parentTask;
     private Class objectClass;
-    private String thisClassObjectTypeName;
+    private int thisClassObjectTypeName;
     private List resultList;
     private boolean forSingleObject;
     private Integer targetId;
@@ -28,7 +25,9 @@ public class ReacTask {
     private boolean ascend;
     private String referenceId;
     private List<ReacTask> innerObjects;
-    private Object entity = null;
+    private List<Integer> idsListForChildFetchesOfInnerEntities;
+    private List<Integer> parentalIdsForChildFetch;
+    private Set<Integer> objectIdsForReferenceFetch;
     private LinkedHashMap<String, EntityVariablesData> currentEntityParameters;
     private HashMap<Class, EntityOuterRelationshipsData> currentEntityOuterLinks;
     private HashMap<String, EntityReferenceRelationshipsData> currentEntityReferenceRelations;
@@ -48,15 +47,7 @@ public class ReacTask {
         if (null != referenceId) this.referenceId = referenceId;
         this.referenceIdRelations = new HashMap<>();
         this.currentEntityReferenceTasks = new HashMap<>();
-
-        //Кастуем класс
-        try {
-            entity = objectClass.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        this.idsListForChildFetchesOfInnerEntities =new ArrayList<>(6);
 
         this.currentEntityParameters = reactEAV.getDataBucket().getEntityVariablesMap().get(objectClass);
         if (null == currentEntityParameters) currentEntityParameters = new LinkedHashMap<>();
@@ -73,6 +64,46 @@ public class ReacTask {
     void addCurrentEntityReferenceTasks(int thisId, EntityReferenceTaskData currentEntityReferenceRelation) {
         if (null != currentEntityReferenceRelation) {
             this.currentEntityReferenceTasks.put(thisId, currentEntityReferenceRelation);
+        }
+    }
+
+    List<Integer> getParentalIdsForChildFetch() {
+        return parentalIdsForChildFetch;
+    }
+
+    Set<Integer> getObjectIdsForReferenceFetch() {
+        return objectIdsForReferenceFetch;
+    }
+
+    void manageParentAndReferenceLists() {
+        this.parentalIdsForChildFetch = null;
+        if (null!=parentTask) {
+            for (Class clazz:currentEntityOuterLinks.keySet()){
+                if (clazz.equals(parentTask.getObjectClass())){
+                    this.parentalIdsForChildFetch = parentTask.getIdsListForChildFetchesOfInnerEntities();
+                }
+            }
+            this.objectIdsForReferenceFetch = null;
+            if (!parentTask.getReferenceIdRelations().isEmpty()){
+                for (EntityReferenceIdRelation parentRelation : parentTask.getReferenceIdRelations().values()) {
+                    if (parentRelation.getInnerClass().equals(this.getObjectClass())) {
+                        if (null == objectIdsForReferenceFetch) {
+                            objectIdsForReferenceFetch = new HashSet<>();
+                        }
+                        this.objectIdsForReferenceFetch.add(parentRelation.getOuterId());
+                    }
+                }
+            }
+        }
+    }
+
+    private List<Integer> getIdsListForChildFetchesOfInnerEntities() {
+        return idsListForChildFetchesOfInnerEntities;
+    }
+
+    void addIdForChildFetches(Integer newObjectId) {
+        if (null!= newObjectId) {
+            this.idsListForChildFetchesOfInnerEntities.add(newObjectId);
         }
     }
 
@@ -100,7 +131,7 @@ public class ReacTask {
         this.objectClass = objectClass;
     }
 
-    String getThisClassObjectTypeName() {
+    int getThisClassObjectTypeName() {
         return thisClassObjectTypeName;
     }
 
@@ -175,13 +206,13 @@ public class ReacTask {
     }
 
     public ReacTask fetchInnerChild(Class innerEntityClass) {
-        ReacTask newTask = fetchingOrderCreation(innerEntityClass, false, null, null, false, null);
+        ReacTask newTask = fetchingOrderCreation(innerEntityClass, null);
         checkInnerRelations(this.objectClass, newTask.getCurrentEntityOuterLinks().keySet());
         return newTask;
     }
 
     public ReacTask fetchInnerReference(Class innerEntityClass, String referenceId) {
-        ReacTask newTask =fetchingOrderCreation(innerEntityClass, false, null, null, false, referenceId);
+        ReacTask newTask =fetchingOrderCreation(innerEntityClass, referenceId);
         boolean innerHasIt = false;
         for (EntityReferenceRelationshipsData data : newTask.getCurrentEntityReferenceRelations().values()) {
             if (data.getOuterClass().equals(this.objectClass)) {
@@ -189,15 +220,14 @@ public class ReacTask {
             }
         }
         if (!innerHasIt) {
-            WrongFetchException exception = new WrongFetchException(this.objectClass, innerEntityClass, this.toString());
-            throw exception;
+            throw new WrongFetchException(this.objectClass, innerEntityClass, this.toString());
         }
         return newTask;
     }
 
-    private ReacTask fetchingOrderCreation(Class innerEntityClass, boolean forSingleObject, Integer targetId, String orderingParameter, boolean ascend, String referenceId) {
+    private ReacTask fetchingOrderCreation(Class innerEntityClass, String referenceId) {
         validator.isTargetClassAReactEntity(innerEntityClass);
-        ReacTask childNode = new ReacTask(this, reactEAV, innerEntityClass, forSingleObject, targetId, orderingParameter, ascend, referenceId);
+        ReacTask childNode = new ReacTask(this, reactEAV, innerEntityClass, false, null, null, false, referenceId);
         this.addInnerObject(childNode);
         return childNode;
     }
@@ -208,8 +238,7 @@ public class ReacTask {
             if (currentClass.equals(clazz)) rootHasIt = true;
         }
         if (!rootHasIt) {
-            WrongFetchException exception = new WrongFetchException(this.objectClass, clazz, this.toString());
-            throw exception;
+            throw new WrongFetchException(this.objectClass, clazz, this.toString());
         }
     }
 

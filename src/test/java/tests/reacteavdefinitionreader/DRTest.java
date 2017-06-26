@@ -32,7 +32,8 @@ public class DRTest {
             for (Map.Entry<String, EntityVariablesData> entry1:entry.getValue().entrySet()){
                 System.out.println("    STRING KEY="+entry1.getKey());
                 System.out.println("        PARAMETER CLASS="+entry1.getValue().getParameterClass());
-                System.out.println("        DATABASE ATTRTYPE CODE VALUE="+entry1.getValue().getDatabaseAttrtypeCodeValue());
+                System.out.println("        DATABASE NATIVE CODE VALUE="+entry1.getValue().getDatabaseNativeCodeValue());
+                System.out.println("        DATABASE ATTRTYPE ID VALUE="+entry1.getValue().getDatabaseAttrtypeIdValue());
             }
             System.out.println();
         }
@@ -59,15 +60,15 @@ public class DRTest {
                 System.out.println("        INNER ID KEY="+entry1.getValue().getInnerIdKey());
             }
         }
-        assertEquals(12, objectVariables.keySet().size());
-        assertEquals(4, outerRelations.keySet().size());
-        assertEquals(6, referenceRelations.keySet().size());
+        assertEquals(16, objectVariables.keySet().size());
+        assertEquals(6, outerRelations.keySet().size());
+        assertEquals(8, referenceRelations.keySet().size());
         int per=0;
         for (HashMap<String, EntityReferenceRelationshipsData> rr: referenceRelations.values()){
             for (EntityReferenceRelationshipsData data:rr.values()){
                 per++;
             }
         }
-        assertEquals(11, per);
+        assertEquals(15, per);
     }
 }

@@ -1,8 +1,5 @@
 package projectpackage.repository.reacteav.support;
 
-/**
- * Created by Gvozd on 06.05.2017.
- */
 public class ObjectTableNameGenerator {
     private String tableName;
     private int counter;
@@ -17,8 +14,8 @@ public class ObjectTableNameGenerator {
         return getCurrentTableName();
     }
 
-    public String getCurrentTableName() {
-        return new StringBuilder(tableName).append(counter).toString();
+    private String getCurrentTableName() {
+        return tableName + counter;
     }
 
     public int getTablesCounter() {

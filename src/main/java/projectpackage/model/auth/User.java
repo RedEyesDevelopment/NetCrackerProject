@@ -5,36 +5,35 @@ import projectpackage.model.notifications.Notification;
 import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
-import projectpackage.repository.reacteav.annotations.ReactField;
+import projectpackage.repository.reacteav.annotations.ReactAttrField;
+import projectpackage.repository.reacteav.annotations.ReactNativeField;
 import projectpackage.repository.reacteav.annotations.ReactReference;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 import java.util.Set;
 
 @Data
-@ReactEntity(entityTypeName = "User")
-@ReactReference(referenceName = "UserToNotificationAsAuthor", outerEntityClass = Notification.class, outerFieldName = "author", outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "21")
-@ReactReference(referenceName = "UserToNotificationAsExecutor", outerEntityClass = Notification.class, outerFieldName = "executedBy", outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "24")
-@ReactReference(referenceName = "UserToModificationHistory", outerEntityClass = ModificationHistory.class, outerFieldName = "modifAuthor", outerFieldKey = "objectId", innerFieldKey = "objectId")
-@ReactReference(referenceName = "UserToOrderAsClient", outerEntityClass = Order.class, outerFieldName = "client",
-        outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "7")
-@ReactReference(referenceName = "UserToOrderAsLastModificator", outerEntityClass = Order.class, outerFieldName = "lastModificator",
-        outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "44")
+@ReactEntity(entityTypeId = 3)
+@ReactReference(referenceName = "UserToNotificationAsAuthor", outerEntityClass = Notification.class, outerFieldName = "author", attrIdField = "21")
+@ReactReference(referenceName = "UserToNotificationAsExecutor", outerEntityClass = Notification.class, outerFieldName = "executedBy", attrIdField = "24")
+@ReactReference(referenceName = "UserToModificationHistory", outerEntityClass = ModificationHistory.class, outerFieldName = "modifAuthor")
+@ReactReference(referenceName = "UserToOrderAsClient", outerEntityClass = Order.class, outerFieldName = "client", attrIdField = "7")
+@ReactReference(referenceName = "UserToOrderAsLastModificator", outerEntityClass = Order.class, outerFieldName = "lastModificator", attrIdField = "44")
 public class User implements ReactEntityWithId, Cloneable {
 
-    @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
+    @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Email")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 15)
     private String email;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Password")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 16)
     private String password;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "First_name")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 17)
     private String firstName;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Last_name")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 18)
     private String lastName;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Additional_info")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 19)
     private String additionalInfo;
-    @ReactField(valueObjectClass = Boolean.class, databaseAttrtypeCodeValue = "Enabled")
+    @ReactAttrField(valueObjectClass = Boolean.class, databaseAttrtypeIdValue = 3)
     private Boolean enabled;
 
     private Role role;

@@ -1,8 +1,5 @@
 package projectpackage.repository.reacteav.relationsdata;
 
-/**
- * Created by Lenovo on 19.05.2017.
- */
 public class EntityAttrIdType {
     private String InnerClassObjectTypeName;
     private Integer attrId;

@@ -1,5 +1,6 @@
 package projectpackage.repository.reacteav;
 
+import lombok.extern.log4j.Log4j;
 import projectpackage.repository.reacteav.exceptions.WrongFieldNameException;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 import projectpackage.repository.reacteav.relationsdata.EntityOuterRelationshipsData;
@@ -9,10 +10,8 @@ import projectpackage.repository.reacteav.relationsdata.EntityReferenceTaskData;
 import java.lang.reflect.Field;
 import java.util.*;
 
-/**
- * Created by Lenovo on 08.05.2017.
- */
-public class DataInsertor {
+@Log4j
+class DataInsertor {
     private ReacTask outerEntity;
     private ReacTask innerEntity;
 
@@ -24,19 +23,18 @@ public class DataInsertor {
     void connectBy() {
         if (outerEntity.hasReferencedObjects()) {
             for (Map.Entry<Integer, EntityReferenceIdRelation> entry : outerEntity.getReferenceIdRelations().entrySet()) {
-                Class targetClass = entry.getValue().getInnerClass();
                 Field parentToInputField = null;
                 String fieldName = null;
 
                 for (Map.Entry<Integer, EntityReferenceTaskData> taskdata : outerEntity.getCurrentEntityReferenceTasks().entrySet()) {
-                    if (taskdata.getKey().equals(entry.getValue().getReferenceTaskId())){
+                    if (taskdata.getKey().equals(entry.getValue().getReferenceTaskId())) {
                         fieldName = taskdata.getValue().getThisFieldName();
                     }
                 }
                 try {
                     parentToInputField = outerEntity.getObjectClass().getDeclaredField(fieldName);
                 } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
+                    log.error(e);
                 }
                 parentToInputField.setAccessible(true);
 
@@ -44,9 +42,6 @@ public class DataInsertor {
                 for (Object outerObject : outerEntity.getResultList()) {
                     boolean doNotModifyTheField = false;
                     for (Object innerObject : innerEntity.getResultList()) {
-
-                        ReactEntityWithId outer = (ReactEntityWithId) outerObject;
-                        ReactEntityWithId inner = (ReactEntityWithId) innerObject;
 
                         if (entry.getValue().getOuterId() == getEntityId(innerObject) && entry.getValue().getInnerId() == getEntityId(outerObject)) {
                             insertInnerEntity(outerObject, innerObject, parentToInputField, doNotModifyTheField);
@@ -85,18 +80,15 @@ public class DataInsertor {
                                 doNotModifyTheField = true;
                             }
                         } catch (IllegalAccessException e) {
-                            e.printStackTrace();
+                            log.error(e);
                         }
                     }
                 }
             }
-
         }
-
-//        outerEntity.getInnerObjects().remove(innerEntity);
     }
 
-    void insertInnerEntity(Object outer, Object inner, Field outerField, boolean doNotModifyTheField) {
+    private void insertInnerEntity(Object outer, Object inner, Field outerField, boolean doNotModifyTheField) {
         try {
             outerField.setAccessible(true);
             if (outerField.getType().equals(Set.class)) {
@@ -121,7 +113,7 @@ public class DataInsertor {
                 outerField.set(outer, inner);
             }
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 

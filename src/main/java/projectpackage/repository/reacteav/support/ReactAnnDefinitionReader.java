@@ -1,7 +1,7 @@
 package projectpackage.repository.reacteav.support;
 
+import lombok.extern.log4j.Log4j;
 import org.reflections.Reflections;
-import org.springframework.stereotype.Component;
 import projectpackage.repository.reacteav.annotations.*;
 import projectpackage.repository.reacteav.relationsdata.EntityOuterRelationshipsData;
 import projectpackage.repository.reacteav.relationsdata.EntityReferenceRelationshipsData;
@@ -11,7 +11,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
 
-@Component
+@Log4j
 public class ReactAnnDefinitionReader {
     private String packageName;
     private Set<Class> classList;
@@ -19,23 +19,22 @@ public class ReactAnnDefinitionReader {
     private static final Class REFERENCEANNOTATION = ReactReference.class;
     private static final Class REFERENCEBUCKETANNOTATION = References.class;
     private static final Class CHILDANNOTATION = ReactChild.class;
-    private static final Class FIELDANNOTATION = ReactField.class;
+    private static final Class ATTRFIELDANNOTATION = ReactAttrField.class;
+    private static final Class NATIVEFIELDANNOTATION = ReactNativeField.class;
 
     public ReactAnnDefinitionReader(String packageName) {
         this.packageName = packageName;
         this.classList = new HashSet<>();
-
         Reflections reflections = new Reflections(packageName);
-        Set<Class> allClasses = reflections.getTypesAnnotatedWith(ENTITYANNOTATION);
-        classList = allClasses;
+        classList = (Set<Class>) reflections.getTypesAnnotatedWith(ENTITYANNOTATION);
     }
 
-    public Map<Class, String> makeClassesMap() {
-        Map<Class, String> makeClassesMap = new HashMap<>();
+    public Map<Class, Integer> makeClassesMap() {
+        Map<Class, Integer> makeClassesMap = new HashMap<>();
         for (Class clazz : classList) {
             if (clazz.isAnnotationPresent(ENTITYANNOTATION)) {
                 ReactEntity annotation = (ReactEntity) clazz.getAnnotation(ENTITYANNOTATION);
-                String entityTypeName = annotation.entityTypeName();
+                int entityTypeName = annotation.entityTypeId();
                 makeClassesMap.put(clazz, entityTypeName);
             }
         }
@@ -67,14 +66,25 @@ public class ReactAnnDefinitionReader {
         for (Class clazz : classList) {
             LinkedHashMap<String, EntityVariablesData> thisClassData = new LinkedHashMap<>();
             for (Field field : clazz.getDeclaredFields()) {
-                if (field.isAnnotationPresent(FIELDANNOTATION)) {
+                if (field.isAnnotationPresent(ATTRFIELDANNOTATION)) {
                     Annotation[] annotations = field.getAnnotations();
                     for (Annotation annotation : annotations) {
-                        ReactField reactField = (ReactField) annotation;
+                        ReactAttrField reactAttrField = (ReactAttrField) annotation;
                         String fieldName = field.getName();
-                        String fieldDatabaseName = reactField.databaseAttrtypeCodeValue();
-                        Class objectType = reactField.valueObjectClass();
-                        EntityVariablesData data = new EntityVariablesData(objectType, fieldDatabaseName);
+                        int fieldDatabaseName = reactAttrField.databaseAttrtypeIdValue();
+                        Class objectType = reactAttrField.valueObjectClass();
+                        EntityVariablesData data = new EntityVariablesData(objectType, null, fieldDatabaseName);
+                        thisClassData.put(fieldName, data);
+                    }
+                }
+                if (field.isAnnotationPresent(NATIVEFIELDANNOTATION)) {
+                    Annotation[] annotations = field.getAnnotations();
+                    for (Annotation annotation : annotations) {
+                        ReactNativeField reactAttrField = (ReactNativeField) annotation;
+                        String fieldName = field.getName();
+                        String fieldDatabaseName = reactAttrField.databaseObjectCodeValue();
+                        Class objectType = reactAttrField.valueObjectClass();
+                        EntityVariablesData data = new EntityVariablesData(objectType, fieldDatabaseName, null);
                         thisClassData.put(fieldName, data);
                     }
                 }
@@ -101,7 +111,7 @@ public class ReactAnnDefinitionReader {
                         try {
                             referenceAttrId = Integer.parseInt(reactReference.attrIdField());
                         } catch (Throwable e) {
-                            e.printStackTrace();
+                            log.error(e);
                         }
                     }
                     EntityReferenceRelationshipsData data = new EntityReferenceRelationshipsData(outerClass, outerFieldName, innerFieldKey, outerFieldKey, referenceAttrId);
@@ -122,7 +132,7 @@ public class ReactAnnDefinitionReader {
                         try {
                             referenceAttrId = Integer.parseInt(reactReference.attrIdField());
                         } catch (Throwable e) {
-                            e.printStackTrace();
+                            log.error(e);
                         }
                     }
                     EntityReferenceRelationshipsData data = new EntityReferenceRelationshipsData(outerClass, outerFieldName, innerFieldKey, outerFieldKey, referenceAttrId);
@@ -132,10 +142,6 @@ public class ReactAnnDefinitionReader {
             }
         }
         return objectReferenceRelations;
-    }
-
-    public void printPackageName() {
-        System.out.println(packageName);
     }
 
     public void printClassesList() {

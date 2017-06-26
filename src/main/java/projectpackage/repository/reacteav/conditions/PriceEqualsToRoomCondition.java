@@ -4,19 +4,16 @@ import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
-import projectpackage.repository.reacteav.TaskToTaskConditionExecutor;
+import projectpackage.repository.reacteav.AfterQueryConditionExecutor;
 
 import java.util.*;
 
-/**
- * Created by Lenovo on 20.05.2017.
- */
-public class PriceEqualsToRoomCondition implements ReactCondition {
+public class PriceEqualsToRoomCondition implements ReactConditionAfterExecution {
     private List<Object> objects;
 
     @Override
     public Class getNeededConditionExecutor() {
-        return TaskToTaskConditionExecutor.class;
+        return AfterQueryConditionExecutor.class;
     }
 
     @Override
@@ -52,7 +49,7 @@ public class PriceEqualsToRoomCondition implements ReactCondition {
         setRates(newRates);
     }
 
-    public void setRates(Map<Integer, Set<Rate>> newRates){
+    private void setRates(Map<Integer, Set<Rate>> newRates){
         for (Object obj : objects) {
             Room room = (Room) obj;
             for (Map.Entry<Integer, Set<Rate>> entry:newRates.entrySet()){

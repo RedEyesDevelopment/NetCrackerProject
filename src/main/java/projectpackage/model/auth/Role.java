@@ -3,19 +3,20 @@ package projectpackage.model.auth;
 import lombok.Data;
 import projectpackage.model.notifications.NotificationType;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
-import projectpackage.repository.reacteav.annotations.ReactField;
+import projectpackage.repository.reacteav.annotations.ReactAttrField;
+import projectpackage.repository.reacteav.annotations.ReactNativeField;
 import projectpackage.repository.reacteav.annotations.ReactReference;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 @Data
-@ReactEntity(entityTypeName = "Role")
-@ReactReference(referenceName = "RoleToUser", outerEntityClass = User.class, outerFieldName = "role", outerFieldKey = "objectId", innerFieldKey = "objectId", attrIdField = "20")
-@ReactReference(referenceName = "RoleToNotificationType", outerEntityClass = NotificationType.class, outerFieldName = "orientedRole", outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactEntity(entityTypeId = 10)
+@ReactReference(referenceName = "RoleToUser", outerEntityClass = User.class, outerFieldName = "role", attrIdField = "20")
+@ReactReference(referenceName = "RoleToNotificationType", outerEntityClass = NotificationType.class, outerFieldName = "orientedRole")
 public class Role implements ReactEntityWithId, Cloneable {
 
-    @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
+    @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Role_name")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 39)
     private String roleName;
 
     @Override

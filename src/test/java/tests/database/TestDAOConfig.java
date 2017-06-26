@@ -32,7 +32,6 @@ import projectpackage.repository.ratesdao.PriceDAOImpl;
 import projectpackage.repository.ratesdao.RateDAO;
 import projectpackage.repository.ratesdao.RateDAOImpl;
 import projectpackage.repository.reacteav.ReactEAVManager;
-import projectpackage.repository.reacteav.support.ReactAnnDefinitionReader;
 import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
 import projectpackage.repository.reacteav.support.ReactEntityValidator;
 import projectpackage.repository.roomsdao.RoomDAO;
@@ -41,7 +40,8 @@ import projectpackage.repository.roomsdao.RoomTypeDAO;
 import projectpackage.repository.roomsdao.RoomTypeDAOImpl;
 import projectpackage.repository.securitydao.AuthCredentialsDAO;
 import projectpackage.repository.securitydao.AuthCredentialsDAOImpl;
-import projectpackage.repository.support.CustomConnectionCustomizer;
+import projectpackage.repository.support.ParentDAOImpl;
+import projectpackage.repository.support.ParentsDAO;
 import projectpackage.service.adminservice.InMemoryNotifService;
 import projectpackage.service.adminservice.InMemoryNotifServiceImpl;
 import projectpackage.service.authservice.*;
@@ -153,7 +153,6 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
 //        config.addDataSourceProperty("cachePrepStmts", "true");
 //        config.addDataSourceProperty("prepStmtCacheSize", "250");
 //        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-//        config.setAutoCommit(false);
 //        return new HikariDataSource(config);
 //    }
 
@@ -202,6 +201,8 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
         comboPooledDataSource.setForceIgnoreUnresolvedTransactions(true);
         comboPooledDataSource.setAutoCommitOnClose(false);
         comboPooledDataSource.setConnectionCustomizerClassName(CustomConnectionCustomizer.class.getName());
+        //c3p0 helper threads - специальные треды что чистят пулы и смотрят за ними
+        comboPooledDataSource.setNumHelperThreads(10);
 
         return comboPooledDataSource;
     }
@@ -389,13 +390,8 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
     ReactConstantConfiguration reactConstantConfiguration() { return new ReactConstantConfiguration(); }
 
     @Bean
-    ReactAnnDefinitionReader reactAnnDefinitionReader(){
-        return new ReactAnnDefinitionReader(modelPackage);
-    }
-
-    @Bean
     ReactEAVManager reactEAVManager(){
-        return new ReactEAVManager(reactConstantConfiguration(),reactAnnDefinitionReader());
+        return new ReactEAVManager(reactConstantConfiguration(),modelPackage);
     }
 
     @Bean
@@ -419,4 +415,7 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
     InMemoryNotifService inMemoryNotifService(){
         return new InMemoryNotifServiceImpl();
     }
+
+    @Bean
+    ParentsDAO parentsDAO(){ return new ParentDAOImpl();}
 }

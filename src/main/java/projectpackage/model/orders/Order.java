@@ -6,7 +6,8 @@ import projectpackage.model.maintenances.JournalRecord;
 import projectpackage.model.notifications.Notification;
 import projectpackage.model.rooms.Room;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
-import projectpackage.repository.reacteav.annotations.ReactField;
+import projectpackage.repository.reacteav.annotations.ReactAttrField;
+import projectpackage.repository.reacteav.annotations.ReactNativeField;
 import projectpackage.repository.reacteav.annotations.ReactReference;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
@@ -14,25 +15,25 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@ReactEntity(entityTypeName = "Order")
+@ReactEntity(entityTypeId = 2)
 @ReactReference(referenceName = "OrderToNotification", outerEntityClass = Notification.class, outerFieldName =
-        "order", outerFieldKey = "objectId", innerFieldKey = "objectId")
+        "order")
 public class Order implements ReactEntityWithId, Cloneable {
-    @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
+    @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
-    @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Registration_date")
+    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = 8)
     private Date registrationDate;
-    @ReactField(valueObjectClass = Boolean.class, databaseAttrtypeCodeValue = "Is_paid_for")
+    @ReactAttrField(valueObjectClass = Boolean.class, databaseAttrtypeIdValue = 9)
     private Boolean isPaidFor;
-    @ReactField(valueObjectClass = Boolean.class, databaseAttrtypeCodeValue = "Is_confirmed")
+    @ReactAttrField(valueObjectClass = Boolean.class, databaseAttrtypeIdValue = 10)
     private Boolean isConfirmed;
-    @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Living_start_date")
+    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = 11)
     private Date livingStartDate;
-    @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Living_finish_date")
+    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = 12)
     private Date livingFinishDate;
-    @ReactField(valueObjectClass = Long.class, databaseAttrtypeCodeValue = "Sum")
+    @ReactAttrField(valueObjectClass = Long.class, databaseAttrtypeIdValue = 13)
     private Long sum;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Comment")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 14)
     private String comment;
 
     private Category category;

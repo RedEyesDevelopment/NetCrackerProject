@@ -3,7 +3,8 @@ package projectpackage.model.orders;
 import lombok.Data;
 import projectpackage.model.maintenances.Complimentary;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
-import projectpackage.repository.reacteav.annotations.ReactField;
+import projectpackage.repository.reacteav.annotations.ReactAttrField;
+import projectpackage.repository.reacteav.annotations.ReactNativeField;
 import projectpackage.repository.reacteav.annotations.ReactReference;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
@@ -13,16 +14,15 @@ import java.util.Set;
  * Created by Arizel on 19.05.2017.
  */
 @Data
-@ReactEntity(entityTypeName = "Category")
-@ReactReference(referenceName = "OrderToCategory", outerEntityClass = Order.class, outerFieldName = "category",
-        outerFieldKey = "objectId", innerFieldKey = "objectId")
+@ReactEntity(entityTypeId = 13)
+@ReactReference(referenceName = "OrderToCategory", outerEntityClass = Order.class, outerFieldName = "category")
 public class Category implements ReactEntityWithId, Cloneable {
-    @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
+    @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
 
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Category_title")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 45)
     private String categoryTitle;
-    @ReactField(valueObjectClass = Long.class, databaseAttrtypeCodeValue = "Category_price")
+    @ReactAttrField(valueObjectClass = Long.class, databaseAttrtypeIdValue = 46)
     private Long categoryPrice;
 
     private Set<Complimentary> complimentaries;

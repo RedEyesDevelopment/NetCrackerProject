@@ -4,21 +4,22 @@ import lombok.Data;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Order;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
-import projectpackage.repository.reacteav.annotations.ReactField;
+import projectpackage.repository.reacteav.annotations.ReactAttrField;
+import projectpackage.repository.reacteav.annotations.ReactNativeField;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 import java.util.Date;
 
 @Data
-@ReactEntity(entityTypeName = "Notification")
+@ReactEntity(entityTypeId = 4)
 public class Notification implements ReactEntityWithId, Cloneable {
-    @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
+    @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Message")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 22)
     private String message;
-    @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Send_date")
+    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = 23)
     private Date sendDate;
-    @ReactField(valueObjectClass = Date.class, databaseAttrtypeCodeValue = "Executed_date")
+    @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = 25)
     private Date executedDate;
 
     private User author;

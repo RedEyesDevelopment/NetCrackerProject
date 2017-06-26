@@ -1,5 +1,6 @@
 package projectpackage.repository.reacteav;
 
+import lombok.extern.log4j.Log4j;
 import org.springframework.jdbc.core.RowMapper;
 import projectpackage.repository.reacteav.exceptions.WrongTypeClassException;
 import projectpackage.repository.reacteav.relationsdata.EntityReferenceIdRelation;
@@ -14,20 +15,19 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@Log4j
 public class ReactEntityRowMapper implements RowMapper {
-    Class clazz;
-    ReacTask task;
-    LinkedHashMap<String, EntityVariablesData> parameters;
-    HashMap<Integer, EntityReferenceTaskData> referenceData;
-    HashMap<Integer, EntityReferenceIdRelation> objectReferenceTable;
-    String dataStringPrefix;
+    private Class clazz;
+    private ReacTask task;
+    private LinkedHashMap<String, EntityVariablesData> parameters;
+    private HashMap<Integer, EntityReferenceTaskData> referenceData;
+    private String dataStringPrefix;
 
-    public ReactEntityRowMapper(ReacTask task, String dataStringPrefix) {
+    ReactEntityRowMapper(ReacTask task, String dataStringPrefix) {
         this.task = task;
         this.clazz = task.getObjectClass();
         this.parameters = task.getCurrentEntityParameters();
         this.referenceData = task.getCurrentEntityReferenceTasks();
-        this.objectReferenceTable = task.getReferenceIdRelations();
         this.dataStringPrefix = dataStringPrefix;
     }
 
@@ -36,10 +36,8 @@ public class ReactEntityRowMapper implements RowMapper {
         Object targetReacEntityObject = null;
         try {
             targetReacEntityObject = clazz.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (InstantiationException | IllegalAccessException e) {
+            log.error(e);
         }
 
         for (Map.Entry<String, EntityVariablesData> entry : parameters.entrySet()) {
@@ -49,7 +47,7 @@ public class ReactEntityRowMapper implements RowMapper {
             try {
                 field = targetReacEntityObject.getClass().getDeclaredField(objectParameterKey);
             } catch (NoSuchFieldException e) {
-                e.printStackTrace();
+                log.error(e);
             }
             boolean fieldWasPrivate = false;
             if (!field.isAccessible()) {
@@ -59,6 +57,7 @@ public class ReactEntityRowMapper implements RowMapper {
             Class throwedClass = null;
             try {
                 if (objectParameterKey.equals("objectId")) {
+                    task.addIdForChildFetches(resultSet.getInt(objectParameterKey));
                     for (Map.Entry<Integer, EntityReferenceTaskData> data : referenceData.entrySet()) {
                         Integer referenceLinkName = resultSet.getInt(data.getValue().getInnerIdParameterNameForQueryParametersMap());
                         Integer objectKeyId = resultSet.getInt(objectParameterKey);

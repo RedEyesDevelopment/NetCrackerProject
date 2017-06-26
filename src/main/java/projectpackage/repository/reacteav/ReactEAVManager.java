@@ -11,20 +11,15 @@ import projectpackage.repository.reacteav.support.ReactEntityValidator;
 
 @Component
 public class ReactEAVManager {
-
     @Autowired
     private ReactEntityValidator validator;
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    @Autowired
     private ReactConstantConfiguration reactConstantConfiguration;
-    @Autowired
-    private ReactAnnDefinitionReader reactAnnDefinitionReader;
-
     private ReactConnectionsDataBucket dataBucket;
 
-    public ReactEAVManager(ReactConstantConfiguration configuration, ReactAnnDefinitionReader reader) {
-        this.reactAnnDefinitionReader=reader;
+    public ReactEAVManager(ReactConstantConfiguration configuration, String modelsPackage) {
+        ReactAnnDefinitionReader reactAnnDefinitionReader = new ReactAnnDefinitionReader(modelsPackage);
         this.reactConstantConfiguration=configuration;
         this.dataBucket = new ReactConnectionsDataBucket(reactAnnDefinitionReader.makeClassesMap(), reactAnnDefinitionReader.makeObjectsVariablesMap(), reactAnnDefinitionReader.makeOuterRelationshipsMap(), reactAnnDefinitionReader.makeObjectsReferenceRelationsMap());
     }
@@ -32,14 +27,11 @@ public class ReactEAVManager {
     public ReactEAV createReactEAV(Class entityClass) {
         validator.isTargetClassAReactEntity(entityClass);
         if (null != entityClass) {
-            ReactEAV reactEAV = new ReactEAV(entityClass, namedParameterJdbcTemplate, reactConstantConfiguration, dataBucket);
-            return reactEAV;
+            ReactQueryBuilder builder = new ReactQueryBuilder(reactConstantConfiguration);
+            ReacQueryTasksPreparator preparator = new ReacQueryTasksPreparator(reactConstantConfiguration,dataBucket);
+            return new ReactEAV(entityClass, namedParameterJdbcTemplate, reactConstantConfiguration, dataBucket, builder,preparator,validator);
         } else {
-            WrongEntityClassException exception;
-            if (null == entityClass) {
-                exception = new WrongEntityClassException("Null is not a valid object");
-            } else exception = new WrongEntityClassException(null, entityClass);
-            throw exception;
+            throw new WrongEntityClassException("Null is not a valid object");
         }
     }
 }

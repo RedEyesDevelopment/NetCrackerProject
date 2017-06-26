@@ -3,19 +3,20 @@ package projectpackage.model.auth;
 import lombok.Data;
 import projectpackage.repository.reacteav.annotations.ReactChild;
 import projectpackage.repository.reacteav.annotations.ReactEntity;
-import projectpackage.repository.reacteav.annotations.ReactField;
+import projectpackage.repository.reacteav.annotations.ReactAttrField;
+import projectpackage.repository.reacteav.annotations.ReactNativeField;
 import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 @Data
-@ReactEntity(entityTypeName = "Phone")
-@ReactChild(outerEntityClass = User.class, outerFieldName = "phones", outerFieldKey = "objectId", innerFieldKey = "userId")
+@ReactEntity(entityTypeId = 9)
+@ReactChild(outerEntityClass = User.class, outerFieldName = "phones", innerFieldKey = "userId")
 public class Phone implements ReactEntityWithId, Cloneable {
 
-    @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%OBJECT_ID")
+    @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
-    @ReactField(valueObjectClass = Integer.class, databaseAttrtypeCodeValue = "%PARENT_ID")
+    @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%PARENT_ID")
     private int userId;
-    @ReactField(valueObjectClass = String.class, databaseAttrtypeCodeValue = "Phone_number")
+    @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 38)
     private String phoneNumber;
 
     @Override
