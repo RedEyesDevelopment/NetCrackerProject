@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import projectpackage.model.auth.User;
 import projectpackage.model.security.AuthCredentials;
 import projectpackage.repository.securitydao.AuthCredentialsDAO;
 
@@ -33,6 +34,16 @@ public class SecurityServiceImpl implements SecurityService {
     private AuthCredentialsDAO authCredentialsDAO;
 
     @Override
+    public boolean cryptUserPass(User user) {
+        if (null!=user && null!=user.getPassword()){
+            String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+            user.setPassword(encodedPassword);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public int getAuthenticatedUserId(String s){
         AuthCredentials credentials = authCredentialsDAO.getUserByUsername(s);
         return credentials.getUserId();
@@ -42,7 +53,6 @@ public class SecurityServiceImpl implements SecurityService {
     public Boolean autologin(String username, String password) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         String encodedPassword = bCryptPasswordEncoder.encode(password);
-        System.out.println("**************************************************" + encodedPassword);
         Collection<? extends GrantedAuthority> authorities;
         if(null!=userDetails.getAuthorities()){
             authorities =userDetails.getAuthorities();

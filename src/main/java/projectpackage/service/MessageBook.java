@@ -18,4 +18,5 @@ public interface MessageBook {
     String ON_ENTITY_REFERENCE = "Cannot delete entity with reference on self!";
     String NULL_ID = "Id cannot be null!";
     String INCORRECT_NUMBER_OF_RESIDENTS = "Number of residents cannot be less then 1 and more then 3!";
+    String WRONG_PASSWORD = "Password is null, can not encrypt null password!";
 }
