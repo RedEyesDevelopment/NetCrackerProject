@@ -1,0 +1,121 @@
+body {
+	margin-top: 51px;
+}
+
+.popupheader {
+    color: #fff;
+     background-image: -webkit-linear-gradient(top, #3c3c3c 0,#222 100%);
+          background-image: -o-linear-gradient(top,#3c3c3c 0,#222 100%);
+          background-image: linear-gradient(to bottom,#3c3c3c 0,#222 100%);
+          background-repeat: repeat-x;
+    }
+
+.formFooter {
+	text-align: center;
+}
+
+/* Authorization form */
+#authorizeform {
+	padding: 15px;
+}
+
+#authorizeform p {
+	margin-bottom: 15px;
+}
+
+#authorizeform p::after {
+	content: '.';
+	height: 0;
+	overflow: hidden;
+	display: block;
+	clear: both;
+}
+
+#authorizeform p label {
+	display: inline-block;
+	float: left;
+}
+
+#authorizeform p input {
+	display: inline-block;
+	float: right;
+	padding: 1px;
+}
+
+#authorizeform .failedAuth {
+	color: red;
+	text-align: center;
+	margin-bottom: 15px;
+}
+/* ---------------------- */
+
+/* Registration form */
+#registrationForm {
+	padding: 15px;
+}
+
+#registrationForm p input {
+	float: right;
+}
+
+#registrationForm .description {
+	color: gray;
+}
+
+#registrationForm .description .phoneExample {
+	text-align: center;
+}
+
+#registrationForm .description .passwordDesc {
+	text-align: justify;
+}
+
+#registrationForm .description .passwordsNotTheSame {
+	text-align: center;
+	color: red;
+}
+
+.errorMessage {
+	display: none;
+	text-align: center;
+	color: red;
+	margin-bottom: 10px;
+}
+/* ---------------------- */
+
+/* ------- Profile -------- */
+#profile-head .dropdown-toggle {
+	height: 51px;
+	margin: 0;
+}
+
+#profile-head .face {
+	text-align: center;
+	padding: 4px 5px 2px 5px;
+	cursor: pointer;
+	color: white;
+}
+
+#profile-head .face p {
+	margin: 0;
+	color: white;
+}
+
+#profile-head .face:hover {
+	background: #565656;
+}
+
+#profile-head .face .img-circle {
+	height: 25px;
+	width: 25px;
+}
+
+#profile-head .dropdown-menu {
+    padding: 5px;
+    width: 270px;
+}
+
+#profile-head .dropdown-menu .img-circle {
+	height: 90px;
+	width: 90px;
+}

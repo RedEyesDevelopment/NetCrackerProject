@@ -1,0 +1,156 @@
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div id="navbar" class="navbar-collapse collapse">
+            <div class="toMain"><a href="http://localhost:8080/index.html"><i class="fa fa-home" aria-hidden="true"></i> NC Hotel</a></div>
+
+            <ul class="nav navbar-nav navbar-right" ng-if="!auth.isAuthorized">
+                <li><a role="button" id="loginLink" ng-click="hideFailMessage()" data-toggle="modal" data-target="#loginModal">Log in</a></li>
+                <li><a role="button" id="signupLink" data-toggle="modal" data-target="#creationModal">Sign up</a></li>
+            </ul>
+            
+            <ul class="nav navbar-nav navbar-right" id="profile-head" ng-if="auth.isAuthorized">
+                <li class="dropdown">
+                    <div class="dropdown-toggle" data-toggle="dropdown">
+                        <div class="face">
+                            <img src="res/img/user_photo.jpg" class="img-circle">
+                            <p>{{ auth.myself.firstName }}</p>
+                        </div>
+                    </div>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <div class="navbar-login">
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="profile-picture">
+                                            <img src="res/img/user_photo.jpg" class="img-circle">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <p class="text-left">{{ auth.myself.firstName }} {{ auth.myself.lastName }}</p>
+                                        <p class="text-left small">{{ auth.myself.email }}</p>
+                                        <p class="text-left">
+                                            <a href="#" class="btn btn-primary btn-block btn-sm">Personal settings</a>
+                                            <a href="#/admin/rooms" class="btn btn-primary btn-block btn-sm" ng-if="auth.isAdmin">Admin desktop</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="navbar-login navbar-login-session">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <p class="btn btn-danger btn-block" ng-click="logout()"> Log out </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+
+        </div>
+    </div>
+</nav>
+
+
+<div class="modal fade" id="loginModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header popupheader">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Login</h4>
+            </div>
+            <form id="authorizeform" novalidate>
+                <p>  
+                    <label for="loginform">Email:</label>
+                    <input type="text" id="loginform" ng-model="auth.incoming.login"
+                            ng-change="hideFailAuthMessage()" placeholder="Enter login">
+                </p>
+                <p>
+                    <label for="passform">Password:</label>
+                    <input type="password" id="passform" ng-model="auth.incoming.password"
+                            ng-change="hideFailAuthMessage()" placeholder="Enter password">
+                </p>
+                <div ng-if="auth.incoming.failed" class="failedAuth">
+                    Email or password is incorrect.
+                </div>
+                <div class="formFooter">
+                    <button type="submit" class="btn btn-success" ng-click='login()'>Login</button>
+                    <button type="button" id="loginFormClose" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="creationModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content windowRegistration">
+            <div class="modal-header popupheader">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Register</h4>
+            </div>
+            <form novalidate id="registrationForm" name="registrationForm">
+                <p>
+                    <label for="logincform" class="emailLabel">Email:</label>
+                    <input type="text" id="logincform" placeholder="Enter email"
+                           ng-model="registrationData.userEmail" ng-required="true"
+                           ng-pattern="regExp.emailRegex">
+                </p>
+                <p>
+                    <label for="passcform" class="passwordLabel">Password:</label>
+                    <input type="password" id="passcform" placeholder="Enter password"
+                           ng-model="registrationData.userPassword" ng-required="true"
+                           ng-change="hideNotTheSamePasswordsMessage()"
+                           ng-pattern="regExp.passwordRegex">
+                </p>
+                <p>
+                    <label for="passcrform" class="passwordLabel">Repeat:</label>
+                    <input type="password" id="passcrform" placeholder="Password confirmation"
+                           ng-model="registrationData.userPasswordRepeat" ng-required="true"
+                           ng-change="hideNotTheSamePasswordsMessage()">
+                </p>
+                <p>
+                    <label for="nameform">Name:</label>
+                    <input type="text" id="nameform" placeholder="Enter your name"
+                           ng-model="registrationData.userName" ng-required="true">
+                </p>
+                <p>
+                    <label for="surnameform">Surname:</label>
+                    <input type="text" id="surnameform" placeholder="Enter your surname"
+                           ng-model="registrationData.userSurname" ng-required="true">
+                </p>
+                <p>
+                    <label for="teleform">Phone:</label>
+                    <input type="text" id="teleform" placeholder="Enter your phone"
+                           ng-model="registrationData.userPhone" ng-required="true">
+                           <!-- ng-pattern="regExp.phoneRegex" name="phone"> -->
+                </p>
+                <div class="description">
+                    <p class="phoneExample">
+                        e.g. +123456789012 or&nbsp;0501234567 or&nbsp;1234567 or&nbsp;+1(000)12-34-567
+                    </p>
+                    <p class="passwordDesc">
+                        Password should be at least 8 characters. And should consist with letters and digits.
+                    </p>
+                    <p class="passwordsNotTheSame" ng-if="registrationData.passwordsNotTheSame">
+                        Passwords do not match!
+                    </p>
+                </div>
+                <div class="modal-footer, formFooter">
+                    <button class="btn btn-success" ng-click="registration()"
+                            ng-disabled="registrationForm.$invalid">
+                            <!-- registrationForm.$invalid || !email.$valid || !password.$valid || !phone.$valid -->
+                        Register
+                    </button>
+                    <button class="btn btn-danger" id="registrationFormClose" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>

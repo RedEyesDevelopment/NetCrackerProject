@@ -1,0 +1,34 @@
+<div class="book">
+
+    <div class="jumbotron bg-image">
+        <div class="container">
+            <div class="row row-header">
+                <div class="col-sm-10">
+                    <h1>NC Hotel</h1>
+                    <p>
+                        The cultural landmarks of New York City — and the iconic beauty of Central Park — just steps away. It’s all the vibrancy of Manhattan with the quiet comforts of a stately, tree-lined neighborhood. NC Hotel is accessible to Manhattan’s downtown destinations and uptown landmarks. Feel like staying in? Rooms are available — some with balconies overlooking the NYC skyline and the Hudson River, and all with modern comforts. Plus, we have two acclaimed restaurants and a bar right in the hotel. Options abound.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div ng-if="doesNeedToShowBookForm">
+            <ng-include src="'app/book/booking.html'"></ng-include>
+        </div>
+        <div ng-switch on="stage">
+            <div ng-switch-when="choosingRoomType">
+                <ng-include src="'app/book/choosingRoomType.html'"></ng-include>
+            </div>
+            <div ng-switch-when="finishOrdering">
+                <ng-include src="'app/book/finishOrdering.html'"></ng-include>
+            </div>
+            <div ng-switch-when="thanking">
+                <ng-include src="'app/book/thanking.html'"></ng-include>
+            </div>    
+        </div>
+    </div>
+
+
+</div>
