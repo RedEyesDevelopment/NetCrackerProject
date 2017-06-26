@@ -1,0 +1,72 @@
+<div class="settings container">
+
+	<ng-include src="'app/personalArea/template/aside.html'"></ng-include>
+
+
+	<div class="col-sm-9">
+
+	    <h1> User settings </h1>
+	    <div class="settingsForm">
+	        <form class="user-form" id="contactFrm" name="contactFrm" novalidate ng-submit='updateUser($event)'>
+
+
+	                <!-- Edit -->
+	                <!-- NAME -->
+	                <div class="firstname">
+	                    <label>First Name</label>
+	                    <p class="changable" id="userFirstName">{{yourData.data.firstName}}</p>
+	                </div>
+	                <!-- SURNAME -->
+	                <div class="lastname">
+	                    <label>Last Name: </label>
+	                    <p class="changable" id="userLastName">{{yourData.data.lastName}}</p>
+	                </div>
+	                <!-- MAIL -->
+	                <div class="mail">
+	                    <label>Your Email: </label>
+	                    <p class="changable" id="userEmail">{{yourData.data.email}}</p>
+	                </div>
+	                <!-- PWD -->
+	                <div class="yourpass">
+	                    <label>Your Password: </label>
+	                    <p class="changable" id="userPassword">{{yourData.data.password}}</p>
+	                </div>
+	                <!-- NUMBERS -->
+	                <div class="numbers">
+	                    <label>Your Numbers: </label>
+
+
+	                    <!-- ADD DEL NUMBER -->
+	                    <form role="form" action="/wohoo" method="POST">
+	                        <div class="multi-number-wrapper">
+
+	                            <div class="multi-numbers">
+
+	                                <div class="multi-number" ng-repeat="phones in yourData.data.phones">
+	                                    <p class="changable" type="text" name="stuff[]">{{phones.phoneNumber}}</p>
+	                                    <button type="button" class="remove-number">-</button>
+
+
+	                                </div>
+
+	                            </div>
+
+	                            <button type="button" class="add-number">+</button>
+
+	                        </div>
+	                    </form>
+
+	                </div>
+	                <!-- END DEL NUMBER -->
+	                <!-- End edit -->
+	                <button id="dat-button" type="submit" class="btn btn-default" ng-click='updateUser()'>Update</button>
+	                <div ng-show="wasUpdatedUser">
+	                    <p class="bg-primary">User was updated successful!</p>
+	                </div>
+	                <div ng-show="notUpdatedUser">
+	                    <p class="bg-warning">{{messageUpdate}}</p>
+	                </div>
+	        </form>
+	    </div>
+	</div>
+</div>

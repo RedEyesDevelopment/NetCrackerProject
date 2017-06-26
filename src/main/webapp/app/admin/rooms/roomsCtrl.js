@@ -71,7 +71,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}
 
 	$scope.prepareToEditRoom = function(roomId, index) {
-		console.log();
+		console.log(sharedData.getLinks().https);
 		$http({
 			url: 'http://localhost:8080/rooms/' + roomId,
 			method: 'GET',

@@ -86,7 +86,23 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
             }
         }).then(function(data) {
             console.log(data);
+            sendOrderPdf(data.data.objectId);
             $scope.stage = "thanking";
+        }, function(response) {
+            console.log("Smth wrong!!");
+            console.log(response);
+        });
+    }
+
+    var sendOrderPdf = function(orderId) {
+        $http({
+            url: 'http://localhost:8080/pdf/order/' + orderId,
+            method: 'GET',
+            headers: {
+                'Content-Type' : 'application/json'
+            }
+        }).then(function(data) {
+            console.log(data);
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
@@ -112,6 +128,7 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
     }
 
     $scope.thanks = function() {
+        $scope.book = {};
         $scope.stage = "booking";
         $scope.doesNeedToShowBookForm = true;
     }

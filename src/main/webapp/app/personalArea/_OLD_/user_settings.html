@@ -1,0 +1,138 @@
+<div class="col-md-9 order-content">
+
+    <div class="form_main col-md-4 col-sm-5 col-xs-7">
+        <h4 class="heading"><strong>User </strong> settings <span></span></h4>
+        <div class="form">
+            <form class="user-form" action="" method="" id="contactFrm" name="contactFrm" novalidate ng-submit='updateUser($event)'>
+
+
+                <!-- Edit -->
+                <!-- NAME -->
+                <div class="firstname">
+                    <label>First Name</label>
+                    <p class="changable" id="userFirstName">{{yourData.data.firstName}}</ng-model></p>
+                </div>
+                <!-- SURNAME -->
+                <div class="lastname">
+                    <label>Last Name: </label>
+                    <p class="changable" id="userLastName">{{yourData.data.lastName}}</p>
+                </div>
+                <!-- MAIL -->
+                <div class="mail">
+                    <label>Your Email: </label>
+                    <p class="changable" id="userEmail">{{yourData.data.email}}</p>
+                </div>
+                <!-- PWD -->
+                <div class="yourpass">
+                    <label>Your Password: </label>
+                    <p class="changable" id="userPassword">{{yourData.data.password}}</p>
+                </div>
+                <!-- NUMBERS -->
+                <div class="numbers">
+                    <label>Your Numbers: </label>
+
+
+                    <!-- ADD DEL NUMBER -->
+                    <form role="form" action="/wohoo" method="POST">
+                        <div class="multi-number-wrapper">
+
+                            <div class="multi-numbers">
+
+                                <div class="multi-number" ng-repeat="phones in yourData.data.phones">
+                                    <p class="changable" type="text" name="stuff[]">{{phones.phoneNumber}}</p>
+                                    <button type="button" class="remove-number">-</button>
+
+
+                                </div>
+
+                            </div>
+
+                            <button type="button" class="add-number">+</button>
+
+                        </div>
+                    </form>
+
+                </div>
+                <!-- END DEL NUMBER -->
+                <!-- End edit -->
+                <button id="dat-button" type="submit" class="btn btn-default" ng-click='updateUser()'>Update</button>
+                <div ng-show="wasUpdatedUser">
+                    <p class="bg-primary">User was updated successful!</p>
+                </div>
+                <div ng-show="notUpdatedUser">
+                    <p class="bg-warning">{{messageUpdate}}</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function(){
+    $("#loginLink").click(function(){
+        $('#loginModal').modal('show');
+    });
+
+    $("#signupLink").click(function(){
+        $('#signupModal').modal('show');
+    });
+
+
+    //EDIT FIELDS
+
+    $.fn.inlineEdit = function(replaceWith, connectWith) {
+
+        $(this).hover(function() {
+            $(this).addClass('hover');
+        }, function() {
+            $(this).removeClass('hover');
+        });
+
+        $(this).click(function() {
+
+            var elem = $(this);
+
+            elem.hide();
+            elem.after(replaceWith);
+            replaceWith.focus();
+
+            replaceWith.blur(function() {
+
+                if ($(this).val() != "") {
+                    connectWith.val($(this).val()).change();
+                    elem.text($(this).val());
+                    {{yourData.data.firstName = $(this).val()}}
+                }
+
+                $(this).remove();
+                elem.show();
+            });
+        });
+    };
+
+    var replaceWith = $('<input name="temp" type="text"  />'),
+        connectWith = $('input[name="hiddenField"]');
+
+    $('.changable').inlineEdit(replaceWith, connectWith);
+
+    //END EDIIT
+
+    //ADD NUMBER
+    $('.multi-number-wrapper').each(function() {
+        var $wrapper = $('.multi-numbers', this);
+        $(".add-number", $(this)).click(function(e) {
+            if ($('.multi-number', $wrapper).length < 5)
+                $('.multi-number:first-child', $wrapper).clone(true).appendTo($wrapper).find('p').val('').focus();
+        });
+        $('.multi-number .remove-number', $wrapper).click(function() {
+            if ($('.multi-number', $wrapper).length > 1)
+                $(this).parent('.multi-number').remove();
+        });
+    });
+    //END NUMBER
+
+});
+
+
+</script>
