@@ -23,6 +23,23 @@
 .book .img-thumbnail {
     max-height: 250px;
     max-width: 500px;
+    min-height: 250px;
+    min-width: 500px;
+    overflow: hidden;
+}
+
+.thumbnail {
+    max-height: 45px;
+    max-width: 90px;
+    min-height: 45px;
+    min-width: 70px;
+}
+
+.big-thumbnail {
+    min-width: 345px;
+    min-height: 200px;
+    max-height: 200px;
+    max-width: 345px;
     overflow: hidden;
 }
 
