@@ -13,6 +13,10 @@ public class IUDAnswer {
     private String message;
     private String additionalInfo;
 
+    public IUDAnswer(boolean successful) {
+        this.successful = successful;
+    }
+
     public IUDAnswer(Integer objectId, boolean successful, String message) {
         this.objectId = objectId;
         this.successful = successful;

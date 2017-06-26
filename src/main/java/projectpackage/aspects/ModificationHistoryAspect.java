@@ -5,7 +5,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import projectpackage.model.orders.Order;
-import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.service.orderservice.ModificationHistoryService;
 
 /**
@@ -31,7 +30,7 @@ public class ModificationHistoryAspect {
         boolean orderUpdateGoneSuccessful = true;
         try {
             joinPoint.proceed();
-        } catch (TransactionException e) {
+        } catch (IllegalArgumentException e) {
             orderUpdateGoneSuccessful = false;
         }
         if (orderUpdateGoneSuccessful) {

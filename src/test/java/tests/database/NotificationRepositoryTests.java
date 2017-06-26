@@ -96,7 +96,7 @@ public class NotificationRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getAllNotifications() {
-        List<Notification> list = notificationService.getAllNotifications("userId", true);
+        List<Notification> list = notificationService.getAllNotifications();
         for (Notification notification:list){
             System.out.println(notification);
         }

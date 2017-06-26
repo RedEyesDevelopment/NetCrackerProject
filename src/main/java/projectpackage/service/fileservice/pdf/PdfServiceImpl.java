@@ -54,8 +54,8 @@ public class PdfServiceImpl implements PdfService{
          urlPhoto = "static/NotFound.jpg";
         }
 
-//        String pathToPDF = "D:\\Order#" + order.getObjectId() + ".pdf";
-        String pathToPDF = path+"\\pdfs\\orders\\"+orderFileNameGenerator.generateFileName("OrderPayment",order.getObjectId())+".pdf";
+           //String pathToPDF = "D:\\Order#" + order.getObjectId() + ".pdf";
+        String pathToPDF = path+"\\pdfs\\orders\\" + orderFileNameGenerator.generateFileName("OrderPayment",order.getObjectId())+".pdf";
         Document document = new Document(PageSize.A4, 50, 50, 50, 50);
         try {
             PdfWriter.getInstance(document, new FileOutputStream(pathToPDF));
@@ -67,9 +67,6 @@ public class PdfServiceImpl implements PdfService{
             return null;
         }
         document.open();
-
-        Chapter chapter = new Chapter(1);
-        //chapter.setNumberDepth(0);
 
         Paragraph dearUser = new Paragraph("Dear " + order.getClient().getFirstName() +
                 " " + order.getClient().getLastName() + "!");
@@ -110,18 +107,26 @@ public class PdfServiceImpl implements PdfService{
         Anchor toSite = new Anchor("Url our site!");
         toSite.setReference(SITE_URL);
 
-        Section section = chapter.addSection(dearUser);
-        section.add(acceptanceOrder);
-        section.add(userRoomType);
-        section.add(roomTypeImage);
-        section.add(contentText);
-        section.add(lease);
-        section.add(priceText);
-        section.add(smallInfo);
-        section.add(toSite);
+//        Section section = chapter.addSection(dearUser);
+//        section.add(acceptanceOrder);
+//        section.add(userRoomType);
+//        section.add(roomTypeImage);
+//        section.add(contentText);
+//        section.add(lease);
+//        section.add(priceText);
+//        section.add(smallInfo);
+//        section.add(toSite);
 
         try {
-            document.add(chapter);
+            document.add(dearUser);
+            document.add(acceptanceOrder);
+            document.add(userRoomType);
+            document.add(roomTypeImage);
+            document.add(contentText);
+            document.add(lease);
+            document.add(priceText);
+            document.add(smallInfo);
+            document.add(toSite);
         } catch (DocumentException e) {
             LOGGER.warn("Error with orderPDF:" + e.getMessage());
             return null;
@@ -134,6 +139,7 @@ public class PdfServiceImpl implements PdfService{
 
     @Override
     public File createRoomStatisticPDF(List<Room> freeRooms, List<Order> orders, String path) {
+        //String pathToPDF = "D:\\" + dateFileNameGenerator.generateFileNameWithCurrentTime("Statistics") + ".pdf";
 
         String pathToPDF = path+"\\pdfs\\statistics\\"+ dateFileNameGenerator.generateFileNameWithCurrentTime("Statistics") + ".pdf";
         Document document = new Document(PageSize.A4, 50, 50, 50, 50);
