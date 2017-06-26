@@ -1,4 +1,4 @@
-.bg-image {
+.book .bg-image {
   background: url('../res/img/background.jpg') no-repeat center center;
   background-size: cover;
   width: 100%;
@@ -6,37 +6,96 @@
   left: 0;
 }
 
-.jumbotron {
+.book .jumbotron {
   margin: -10px auto 0;
   color: white;
   text-shadow: black 0.3em 0.3em 0.3em;
   padding: 70px 30px;
 }
 
-.img-thumbnail {
-    max-height: 250px;
-    max-width: 500px;
+.book #noteForNotAuth {
+  text-align: center;
+  font-size: 24px;
+  font-family: 'Times New Roman';
+  text-shadow: #444 1px 1px 3px;
 }
 
-.my-border {
+.book .img-thumbnail {
+    max-height: 250px;
+    max-width: 500px;
+    overflow: hidden;
+}
+
+.book h2 {
+    text-align: center;
+    margin: 0 0 20px 0;
+}
+
+.book h3 {
+    font-size: 30px;
+}
+
+.book .cost h3 {
+    margin: 10px 0 0 0;
+}
+
+.book .cost .firstPar {
+    margin: 0;
+}
+
+.book .cost p {
+  margin: 0;
+}
+
+.book .cost button {
+  margin-top: 10px;
+}
+
+.book .search {
+  margin: 10px 0 0 0;
+  text-align: center;
+}
+
+.book .my-border {
     border: 1px solid #dfdfdf;
     padding: 5px;
     border-radius: 10px;
 }
 
-.media-body {
+.book .media-body {
     padding: 15px;
 }
 
-.price {
+.book .price {
     font-size: 30px;
 }
 
-.row-content {
-    padding: 60px 0px;
+.book .row-content {
+    padding: 40px 0 30px 0;
 }
 
-ul.notifications  {
+.book .order-confirm {
+    font-family: 'Old Standard TT', sans-serif;
+    font-size: 18px;
+    padding-left: 25px;
+}
+
+.book .row-footer {
+  margin: 0px auto;
+  padding: 20px 0px;
+  background-color: #AfAfAf;
+}
+
+.book .fineBooked {
+  text-align: center;
+  padding: 15px;
+}
+
+.book .fineBooked p {
+  margin-bottom: 10px;
+}
+
+/*ul.notifications  {
     padding: 25px 0px;
     text-align: center;
 }
@@ -49,45 +108,4 @@ ul.notifications li {
     vertical-align: top;
     text-align: center;
     line-height: normal;
-}
-
-#form_subject{
-    height: 40px;
-}
-
-.toMain {
-    display: inline-block;
-    height: 50px;
-    line-height: 50px;
-}
-
-.toMain a {
-    text-decoration: none;
-    color: white;
-    font-size: 20px;
-}
-
-.toMain a i {
-    font-size: 24px;
-}
-
-.order-confirm {
-    font-family: 'Old Standard TT', sans-serif;
-    font-size: 18px;
-    padding-left: 25px;
-}
-
-.row-footer {
-  margin: 0px auto;
-  padding: 20px 0px;
-  background-color: #AfAfAf;
-}
-
-.fineBooked {
-  text-align: center;
-  padding: 15px;
-}
-
-.fineBooked p {
-  margin-bottom: 10px;
-}
+}*/
