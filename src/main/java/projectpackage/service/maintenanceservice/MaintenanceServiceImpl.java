@@ -4,13 +4,12 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import projectpackage.model.maintenances.Maintenance;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.model.maintenances.Maintenance;
+import projectpackage.repository.maintenancedao.MaintenanceDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.maintenancedao.MaintenanceDAO;
 
 import java.util.List;
 
@@ -33,57 +32,56 @@ public class MaintenanceServiceImpl implements MaintenanceService {
     }
 
     @Override
-    public List<Maintenance> getAllMaintenances(String orderingParameter, boolean ascend) {
-        return null;
-    }
-
-    @Override
-    public Maintenance getSingleMaintenanceById(int id) {
+    public Maintenance getSingleMaintenanceById(Integer id) {
         Maintenance maintenance = maintenanceDAO.getMaintenance(id);
         if (null == maintenance) LOGGER.info("Returned NULL!!!");
         return maintenance;
     }
 
     @Override
-    public IUDAnswer deleteMaintenance(int id) {
+    public IUDAnswer deleteMaintenance(Integer id) {
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             maintenanceDAO.deleteMaintenance(id);
         } catch (ReferenceBreakException e) {
-            LOGGER.warn("Entity has references on self", e);
-            return new IUDAnswer(id,false, e.printReferencesEntities());
+            return maintenanceDAO.rollback(id, ON_ENTITY_REFERENCE, e);
         } catch (DeletedObjectNotExistsException e) {
-            LOGGER.warn("Entity with that id does not exist!", e);
-            return new IUDAnswer(id, "deletedObjectNotExists");
+            return maintenanceDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
         } catch (WrongEntityIdException e) {
-            LOGGER.warn("This id belong another entity class!", e);
-            return new IUDAnswer(id, "wrongDeleteId");
+            return maintenanceDAO.rollback(id, WRONG_DELETED_ID, e);
+        } catch (IllegalArgumentException e) {
+            return maintenanceDAO.rollback(id, NULL_ID, e);
         }
+        maintenanceDAO.commit();
         return new IUDAnswer(id, true);
     }
 
     @Override
     public IUDAnswer insertMaintenance(Maintenance maintenance) {
+        if (maintenance == null) return null;
         Integer maintenanceId = null;
         try {
             maintenanceId = maintenanceDAO.insertMaintenance(maintenance);
             LOGGER.info("Get from DB maintenanceId = " + maintenanceId);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(maintenanceId,false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return maintenanceDAO.rollback(WRONG_FIELD, e);
         }
+        maintenanceDAO.commit();
         return new IUDAnswer(maintenanceId,true);
     }
 
     @Override
-    public IUDAnswer updateMaintenance(int id, Maintenance newMaintenance) {
+    public IUDAnswer updateMaintenance(Integer id, Maintenance newMaintenance) {
+        if (newMaintenance == null) return null;
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             newMaintenance.setObjectId(id);
             Maintenance oldMaintenance = maintenanceDAO.getMaintenance(id);
             maintenanceDAO.updateMaintenance(newMaintenance, oldMaintenance);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return maintenanceDAO.rollback(WRONG_FIELD, e);
         }
+        maintenanceDAO.commit();
         return new IUDAnswer(id,true);
     }
 }

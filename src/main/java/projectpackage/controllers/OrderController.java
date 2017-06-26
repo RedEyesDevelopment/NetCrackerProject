@@ -13,6 +13,7 @@ import projectpackage.dto.SearchAvailabilityParamsDTO;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Category;
 import projectpackage.model.orders.Order;
+import projectpackage.service.MessageBook;
 import projectpackage.service.authservice.UserService;
 import projectpackage.service.orderservice.CategoryService;
 import projectpackage.service.orderservice.OrderService;
@@ -102,7 +103,7 @@ public class OrderController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateOrder(@PathVariable("id") Integer id, @RequestBody Order changedOrder){
         if (!id.equals(changedOrder.getObjectId())){
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, "wrongId"), HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID), HttpStatus.NOT_ACCEPTABLE);
         }
         IUDAnswer result = orderService.updateOrder(id, changedOrder);
         HttpStatus status;

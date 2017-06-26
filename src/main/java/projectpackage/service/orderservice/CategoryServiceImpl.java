@@ -4,14 +4,13 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import projectpackage.model.orders.Category;
 import projectpackage.dto.IUDAnswer;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.model.orders.Category;
 import projectpackage.repository.maintenancedao.ComplimentaryDAO;
 import projectpackage.repository.ordersdao.CategoryDAO;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 
@@ -37,31 +36,27 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> getAllCategories(String orderingParameter, boolean ascend) {
-        return null;
-    }
-
-    @Override
-    public Category getSingleCategoryById(int id) {
+    public Category getSingleCategoryById(Integer id) {
         Category category = categoryDAO.getCategory(id);
         if (null == category) LOGGER.info("Returned NULL!!!");
         return category;
     }
 
     @Override
-    public IUDAnswer deleteCategory(int id) {
+    public IUDAnswer deleteCategory(Integer id) {
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             categoryDAO.deleteCategory(id);
         } catch (ReferenceBreakException e) {
-            LOGGER.warn("Entity has references on self", e);
-            return new IUDAnswer(id,false, e.printReferencesEntities());
+            return categoryDAO.rollback(id, ON_ENTITY_REFERENCE, e);
         } catch (DeletedObjectNotExistsException e) {
-            LOGGER.warn("Entity with that id does not exist!", e);
-            return new IUDAnswer(id, "deletedObjectNotExists");
+            return categoryDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
         } catch (WrongEntityIdException e) {
-            LOGGER.warn("This id belong another entity class!", e);
-            return new IUDAnswer(id, "wrongDeleteId");
+            return categoryDAO.rollback(id, WRONG_DELETED_ID, e);
+        } catch (IllegalArgumentException e) {
+            return categoryDAO.rollback(id, NULL_ID, e);
         }
+        categoryDAO.commit();
         return new IUDAnswer(id, true);
     }
 
@@ -70,24 +65,25 @@ public class CategoryServiceImpl implements CategoryService {
         Integer categoryId = null;
         try {
             categoryId = categoryDAO.insertCategory(category);
-            LOGGER.info("Get from DB categoryId = " + categoryId);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(categoryId,false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return categoryDAO.rollback(WRONG_FIELD, e);
         }
+        categoryDAO.commit();
         return new IUDAnswer(categoryId,true);
     }
 
     @Override
-    public IUDAnswer updateCategory(int id, Category newCategory) {
+    public IUDAnswer updateCategory(Integer id, Category newCategory) {
+        if (newCategory == null) return null;
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             newCategory.setObjectId(id);
             Category oldCategory = categoryDAO.getCategory(id);
             categoryDAO.updateCategory(newCategory, oldCategory);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return categoryDAO.rollback(WRONG_FIELD, e);
         }
+        categoryDAO.commit();
         return new IUDAnswer(id,true);
     }
 }

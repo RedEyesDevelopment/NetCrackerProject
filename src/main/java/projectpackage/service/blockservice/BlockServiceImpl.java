@@ -10,7 +10,6 @@ import projectpackage.model.rooms.Room;
 import projectpackage.repository.blocksdao.BlockDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.ArrayList;
@@ -27,11 +26,6 @@ public class BlockServiceImpl implements BlockService{
 
     @Autowired
     BlockDAO blockDAO;
-
-    @Override
-    public List<Block> getAllBlocks(String orderingParameter, boolean ascend) {
-        return null;
-    }
 
     @Override
     public List<Block> getAllBlocks() {
@@ -51,12 +45,6 @@ public class BlockServiceImpl implements BlockService{
             }
         }
         return answer;
-    }
-
-    // todo нужно ли это?
-    @Override
-    public List<Block> getBlocksInRange(Date startDate, Date finishDate) {
-        return null;
     }
 
     @Override
@@ -100,53 +88,55 @@ public class BlockServiceImpl implements BlockService{
     }
 
     @Override
-    public Block getSingleBlockById(int id) {
+    public Block getSingleBlockById(Integer id) {
         Block block = blockDAO.getBlock(id);
         if (block == null) LOGGER.info("Returned NULL!!!");
         return block;
     }
 
     @Override
-    public IUDAnswer deleteBlock(int id) {
+    public IUDAnswer deleteBlock(Integer id) {
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             blockDAO.deleteBlock(id);
         } catch (ReferenceBreakException e) {
-            LOGGER.warn("Entity has references on self", e);
-            return new IUDAnswer(id,false, e.printReferencesEntities());
+            return blockDAO.rollback(id, ON_ENTITY_REFERENCE, e);
         } catch (DeletedObjectNotExistsException e) {
-            LOGGER.warn("Entity with that id does not exist!", e);
-            return new IUDAnswer(id, "deletedObjectNotExists");
+            return blockDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
         } catch (WrongEntityIdException e) {
-            LOGGER.warn("This id belong another entity class!", e);
-            return new IUDAnswer(id, "wrongDeleteId");
+            return blockDAO.rollback(id, WRONG_DELETED_ID, e);
+        } catch (IllegalArgumentException e) {
+            return blockDAO.rollback(id, NULL_ID, e);
         }
+        blockDAO.commit();
         return new IUDAnswer(id, true);
     }
 
     @Override
     public IUDAnswer insertBlock(Block block) {
+        if (block == null) return null;
         Integer blockId = null;
         try {
             blockId = blockDAO.insertBlock(block);
-            LOGGER.info("Get from DB blockId = " + blockId);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(blockId, false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return blockDAO.rollback(WRONG_FIELD, e);
         }
+        blockDAO.commit();
         return new IUDAnswer(blockId,true);
     }
 
     @Override
-    public IUDAnswer updateBlock(int id, Block newBlock) {
+    public IUDAnswer updateBlock(Integer id, Block newBlock) {
+        if (newBlock == null) return null;
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             newBlock.setObjectId(id);
             Block oldBlock = blockDAO.getBlock(id);
-            LOGGER.info("Problem with old BLOCK!! " + oldBlock.getBlockStartDate() + "  " + oldBlock.getBlockFinishDate());
             blockDAO.updateBlock(newBlock, oldBlock);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id, false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return blockDAO.rollback(WRONG_FIELD, e);
         }
+        blockDAO.commit();
         return new IUDAnswer(id, true);
     }
 }

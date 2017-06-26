@@ -48,7 +48,7 @@ public class PDFTest extends AbstractPDFTest {
         order.setLivingStartDate(new Date());
         order.setLivingFinishDate(new Date());
         order.setSum(7478L);
-        order.setComment("Comment");
+        order.setComment("CommentTTTTTTTTTTTTTTTTT");
         order.setRoom(room);
         order.setClient(user);
         File file = pdfService.createOrderPDF(order, "");

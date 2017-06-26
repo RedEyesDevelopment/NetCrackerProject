@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.repository.reacteav.ReactEAVManager;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 
@@ -57,7 +58,7 @@ public abstract class AbstractDAO implements Commitable, Rollbackable{
                 String message = e.getSQLException().getMessage();
                 message = message.substring(11);
                 ReferenceBreakException rbe = new ReferenceBreakException(message.split(" "));
-                LOGGER.info("Someone tried delete Entity, witch have references on self.");
+                LOGGER.info("Someone tried delete Entity, which have references on self.");
                 throw rbe;
             } else {
                 throw e;
@@ -65,11 +66,22 @@ public abstract class AbstractDAO implements Commitable, Rollbackable{
         }
     }
 
+    @Override
     public void commit() {
         jdbcTemplate.execute("COMMIT");
     }
 
-    public void rollback() {
+    @Override
+    public IUDAnswer rollback(Integer id, String message, Exception e) {
+        IUDAnswer iudAnswer = rollback(message, e);
+        iudAnswer.setObjectId(id);
+        return iudAnswer;
+    }
+
+    @Override
+    public IUDAnswer rollback(String message, Exception e) {
         jdbcTemplate.execute("ROLLBACK");
+        LOGGER.warn(message, e);
+        return new IUDAnswer(false, message, e.getMessage());
     }
 }

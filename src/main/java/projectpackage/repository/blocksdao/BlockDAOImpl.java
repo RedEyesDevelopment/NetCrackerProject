@@ -2,16 +2,14 @@ package projectpackage.repository.blocksdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.blocks.Block;
 import projectpackage.model.rooms.Room;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
-import projectpackage.repository.support.daoexceptions.*;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 
@@ -30,60 +28,43 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     @Override
     public Block getBlock(Integer id) {
         if (id == null) return null;
-        try {
-            return (Block) manager.createReactEAV(Block.class).fetchRootReference(Room.class, "RoomToBlock")
-                    .closeAllFetches().getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+
+        return (Block) manager.createReactEAV(Block.class).fetchRootReference(Room.class, "RoomToBlock")
+                .closeAllFetches().getSingleEntityWithId(id);
     }
 
     @Override
     public List<Block> getAllBlocks() {
-        try {
-            return manager.createReactEAV(Block.class).fetchRootReference(Room.class, "RoomToBlock")
-                    .closeAllFetches().getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+        return manager.createReactEAV(Block.class).fetchRootReference(Room.class, "RoomToBlock")
+                .closeAllFetches().getEntityCollection();
     }
 
-    @Transactional(propagation= Propagation.REQUIRED, rollbackFor = RequiredFieldAbsenceException.class)
     @Override
-    public Integer insertBlock(Block block) throws TransactionException {
+    public Integer insertBlock(Block block) {
         if (block == null) return null;
-
         Integer objectId = nextObjectId();
-        try {
-            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 8, null, null);
-            insertStartDate(block, objectId);
-            insertFinishDate(block, objectId);
-            insertReason(objectId, block);
-            insertRoom(objectId, block);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+        jdbcTemplate.update(INSERT_OBJECT, objectId, null, 8, null, null);
+        insertStartDate(block, objectId);
+        insertFinishDate(block, objectId);
+        insertReason(objectId, block);
+        insertRoom(objectId, block);
         return objectId;
     }
 
     @Override
-    public Integer updateBlock(Block newBlock, Block oldBlock) throws TransactionException {
+    public Integer updateBlock(Block newBlock, Block oldBlock) {
         if (oldBlock == null || newBlock == null) return null;
-        try {
-            updateStartDate(newBlock, oldBlock);
-            updateFinishDate(newBlock, oldBlock);
-            updateReason(newBlock, oldBlock);
-            updateRoom(newBlock, oldBlock);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+        updateStartDate(newBlock, oldBlock);
+        updateFinishDate(newBlock, oldBlock);
+        updateReason(newBlock, oldBlock);
+        updateRoom(newBlock, oldBlock);
+
         return newBlock.getObjectId();
     }
 
     @Override
-    public void deleteBlock(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+    public void deleteBlock(Integer id) {
+        if (id == null) throw new IllegalArgumentException();
         Block block = null;
         try {
             block = getBlock(id);
@@ -99,7 +80,7 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
         if (block.getBlockStartDate() != null) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 35, objectId, null, block.getBlockStartDate());
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -123,7 +104,7 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
         if (block.getRoom() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 34, objectId, block.getRoom().getObjectId());
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -133,7 +114,7 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newBlock.getBlockStartDate(), newBlock.getObjectId(), 35);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -143,7 +124,7 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newBlock.getBlockFinishDate(), newBlock.getObjectId(), 36);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -165,7 +146,7 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
                 jdbcTemplate.update(UPDATE_REFERENCE, newBlock.getRoom().getObjectId(), newBlock.getObjectId(), 34);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 }

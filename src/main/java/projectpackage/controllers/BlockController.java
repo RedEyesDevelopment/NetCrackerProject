@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import projectpackage.model.auth.User;
 import projectpackage.model.blocks.Block;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.service.MessageBook;
 import projectpackage.service.blockservice.BlockService;
 
 import javax.cache.annotation.CacheRemoveAll;
@@ -82,7 +83,7 @@ public class BlockController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateBlock(@PathVariable("id") Integer id, @RequestBody Block changedBlock) {
         if (!id.equals(changedBlock.getObjectId())) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, "wrongId"),
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID),
                     HttpStatus.NOT_ACCEPTABLE);
         }
 

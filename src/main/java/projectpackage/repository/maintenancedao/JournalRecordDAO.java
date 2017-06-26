@@ -1,20 +1,18 @@
 package projectpackage.repository.maintenancedao;
 
 import projectpackage.model.maintenances.JournalRecord;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.Commitable;
+import projectpackage.repository.Rollbackable;
 
 import java.util.List;
 
 /**
  * Created by Lenovo on 21.05.2017.
  */
-public interface JournalRecordDAO {
+public interface JournalRecordDAO extends Commitable, Rollbackable{
     public JournalRecord getJournalRecord(Integer id);
     public List<JournalRecord> getAllJournalRecords();
-    public Integer insertJournalRecord(JournalRecord journalRecord) throws TransactionException;
-    public Integer updateJournalRecord(JournalRecord newJournalRecord, JournalRecord oldJournalRecord) throws TransactionException;
-    public void deleteJournalRecord(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
+    public Integer insertJournalRecord(JournalRecord journalRecord);
+    public Integer updateJournalRecord(JournalRecord newJournalRecord, JournalRecord oldJournalRecord);
+    public void deleteJournalRecord(Integer id);
 }

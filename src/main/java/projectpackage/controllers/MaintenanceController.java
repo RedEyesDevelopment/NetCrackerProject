@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import projectpackage.model.auth.User;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.service.MessageBook;
 import projectpackage.service.maintenanceservice.MaintenanceService;
 
 import javax.cache.annotation.CacheRemoveAll;
@@ -83,7 +84,7 @@ public class MaintenanceController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateMaintenance(@PathVariable("id") Integer id, @RequestBody Maintenance changedMaintenance) {
         if (!id.equals(changedMaintenance.getObjectId())) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, "wrongId"),
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID),
                     HttpStatus.NOT_ACCEPTABLE);
         }
 

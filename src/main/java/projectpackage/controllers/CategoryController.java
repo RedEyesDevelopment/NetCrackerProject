@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Category;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.service.MessageBook;
 import projectpackage.service.orderservice.CategoryService;
 
 import javax.cache.annotation.CacheRemoveAll;
@@ -81,7 +82,7 @@ public class CategoryController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateCategory(@PathVariable("id") Integer id, @RequestBody Category changedCategory){
         if (!id.equals(changedCategory.getObjectId())){
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, "wrongId"), HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID), HttpStatus.NOT_ACCEPTABLE);
         }
         IUDAnswer result = categoryService.updateCategory(id, changedCategory);
         HttpStatus status;

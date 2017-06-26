@@ -2,14 +2,13 @@ package projectpackage.repository.notificationsdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Role;
 import projectpackage.model.notifications.NotificationType;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.*;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 
@@ -26,57 +25,43 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     @Override
     public NotificationType getNotificationType(Integer id) {
         if (id == null) return null;
-        try {
-            return (NotificationType) manager.createReactEAV(NotificationType.class)
-                    .fetchRootReference(Role.class, "RoleToNotificationType")
-                    .closeAllFetches().getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+
+        return (NotificationType) manager.createReactEAV(NotificationType.class)
+                .fetchRootReference(Role.class, "RoleToNotificationType")
+                .closeAllFetches().getSingleEntityWithId(id);
     }
 
     @Override
     public List<NotificationType> getAllNotificationTypes() {
-        try {
-            return (List<NotificationType>) manager.createReactEAV(NotificationType.class)
-                    .fetchRootReference(Role.class, "RoleToNotification")
-                    .closeAllFetches().getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+        return (List<NotificationType>) manager.createReactEAV(NotificationType.class)
+                .fetchRootReference(Role.class, "RoleToNotification")
+                .closeAllFetches().getEntityCollection();
     }
 
     @Override
-    public Integer insertNotificationType(NotificationType notificationType) throws TransactionException {
+    public Integer insertNotificationType(NotificationType notificationType) {
         if (notificationType == null) return null;
         Integer objectId = nextObjectId();
-        try {
-            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 11, null, null);
-            insertNotificationTypeTitle(objectId, notificationType);
-            insertOrientedRole(objectId, notificationType);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+        jdbcTemplate.update(INSERT_OBJECT, objectId, null, 11, null, null);
+        insertNotificationTypeTitle(objectId, notificationType);
+        insertOrientedRole(objectId, notificationType);
+
         return objectId;
     }
 
     @Override
-    public Integer updateNotificationType(NotificationType newNotificationType, NotificationType oldNotificationType)
-            throws TransactionException {
+    public Integer updateNotificationType(NotificationType newNotificationType, NotificationType oldNotificationType) {
         if (oldNotificationType == null || newNotificationType == null) return null;
-        try {
-            updateTitle(newNotificationType, oldNotificationType);
-            updateRole(newNotificationType, oldNotificationType);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+
+        updateTitle(newNotificationType, oldNotificationType);
+        updateRole(newNotificationType, oldNotificationType);
+
         return newNotificationType.getObjectId();
     }
 
     @Override
-    public void deleteNotificationType(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+    public void deleteNotificationType(Integer id) {
+        if (id == null) throw new IllegalArgumentException();
         NotificationType notificationType = null;
         try {
             notificationType = getNotificationType(id);
@@ -92,7 +77,7 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
         if (notificationType.getNotificationTypeTitle() != null && !notificationType.getNotificationTypeTitle().isEmpty()) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 40, objectId, notificationType.getNotificationTypeTitle(), null);
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -100,7 +85,7 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
         if (notificationType.getOrientedRole() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 41, objectId, notificationType.getOrientedRole().getObjectId());
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -111,7 +96,7 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
                         newNotificationType.getObjectId(), 41);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -123,7 +108,7 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
                         newNotificationType.getObjectId(), 40);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 }

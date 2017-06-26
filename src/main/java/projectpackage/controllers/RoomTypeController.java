@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import projectpackage.model.auth.User;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.service.MessageBook;
 import projectpackage.service.roomservice.RoomTypeService;
 
 import javax.cache.annotation.CacheRemoveAll;
@@ -81,7 +82,7 @@ public class RoomTypeController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateRoomType(@PathVariable("id") Integer id, @RequestBody RoomType changedRoomType){
         if (!id.equals(changedRoomType.getObjectId())){
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, "wrongId"), HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID), HttpStatus.NOT_ACCEPTABLE);
         }
         IUDAnswer result = roomTypeService.updateRoomType(id, changedRoomType);
         HttpStatus status;

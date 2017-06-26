@@ -33,7 +33,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Role getSingleRoleById(int id) {
+    public Role getSingleRoleById(Integer id) {
         Role role = roleDAO.getRole(id);
         if (role == null) LOGGER.info("Returned NULL!!!");
         return role;

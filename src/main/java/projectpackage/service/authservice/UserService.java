@@ -2,13 +2,14 @@ package projectpackage.service.authservice;
 
 import projectpackage.model.auth.User;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.service.MessageBook;
 
 import java.util.List;
 
-public interface UserService {
+public interface UserService extends MessageBook{
     public List<User> getAllUsers();
-    public User getSingleUserById(int id);
-    public IUDAnswer deleteUser(int id);
+    public User getSingleUserById(Integer id);
+    public IUDAnswer deleteUser(Integer id);
     public IUDAnswer insertUser(User user);
-    public IUDAnswer updateUser(int id, User newUser);
+    public IUDAnswer updateUser(Integer id, User newUser);
 }

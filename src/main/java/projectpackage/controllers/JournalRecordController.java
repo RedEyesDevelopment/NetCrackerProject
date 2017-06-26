@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import projectpackage.model.auth.User;
 import projectpackage.model.maintenances.JournalRecord;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.service.MessageBook;
 import projectpackage.service.maintenanceservice.JournalRecordService;
 
 import javax.cache.annotation.CacheRemoveAll;
@@ -81,7 +82,7 @@ public class JournalRecordController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateJournalRecord(@PathVariable("id") Integer id, @RequestBody JournalRecord changedJournalRecord) {
         if (!id.equals(changedJournalRecord.getObjectId())) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, "wrongId"),
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID),
                     HttpStatus.NOT_ACCEPTABLE);
         }
 

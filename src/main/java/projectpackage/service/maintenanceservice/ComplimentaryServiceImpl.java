@@ -4,13 +4,12 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import projectpackage.model.maintenances.Complimentary;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.model.maintenances.Complimentary;
+import projectpackage.repository.maintenancedao.ComplimentaryDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.maintenancedao.ComplimentaryDAO;
 
 import java.util.List;
 
@@ -33,52 +32,56 @@ public class ComplimentaryServiceImpl implements ComplimentaryService {
     }
 
     @Override
-    public Complimentary getSingleComplimentaryById(int id) {
+    public Complimentary getSingleComplimentaryById(Integer id) {
         Complimentary complimentary = complimentaryDAO.getComplimentary(id);
         if (null == complimentary) LOGGER.info("Returned NULL!!!");
         return complimentary;
     }
 
     @Override
-    public IUDAnswer deleteComplimentary(int id) {
+    public IUDAnswer deleteComplimentary(Integer id) {
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             complimentaryDAO.deleteComplimentary(id);
         } catch (ReferenceBreakException e) {
-            LOGGER.warn("Entity has references on self", e);
-            return new IUDAnswer(id,false, e.printReferencesEntities());
+            return complimentaryDAO.rollback(id, ON_ENTITY_REFERENCE, e);
         } catch (DeletedObjectNotExistsException e) {
-            LOGGER.warn("Entity with that id does not exist!", e);
-            return new IUDAnswer(id, "deletedObjectNotExists");
+            return complimentaryDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
         } catch (WrongEntityIdException e) {
-            LOGGER.warn("This id belong another entity class!", e);
-            return new IUDAnswer(id, "wrongDeleteId");
+            return complimentaryDAO.rollback(id, WRONG_DELETED_ID, e);
+        } catch (IllegalArgumentException e) {
+            return complimentaryDAO.rollback(id, NULL_ID, e);
         }
+        complimentaryDAO.commit();
         return new IUDAnswer(id, true);
     }
 
     @Override
     public IUDAnswer insertComplimentary(Complimentary complimentary) {
+        if (complimentary == null) return null;
         Integer complimentaryId = null;
         try {
             complimentaryId = complimentaryDAO.insertComplimentary(complimentary);
             LOGGER.info("Get from DB complimentaryId = " + complimentaryId);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(complimentaryId,false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return complimentaryDAO.rollback(WRONG_FIELD, e);
         }
+        complimentaryDAO.commit();
         return new IUDAnswer(complimentaryId,true);
     }
 
     @Override
-    public IUDAnswer updateComplimentary(int id, Complimentary newComplimentary) {
+    public IUDAnswer updateComplimentary(Integer id, Complimentary newComplimentary) {
+        if (newComplimentary == null) return null;
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             newComplimentary.setObjectId(id);
             Complimentary oldComplimentary = complimentaryDAO.getComplimentary(id);
             complimentaryDAO.updateComplimentary(newComplimentary, oldComplimentary);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return complimentaryDAO.rollback(WRONG_FIELD, e);
         }
+        complimentaryDAO.commit();
         return new IUDAnswer(id,true);
     }
 }

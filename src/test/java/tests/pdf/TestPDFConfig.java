@@ -43,17 +43,21 @@ import projectpackage.repository.securitydao.AuthCredentialsDAO;
 import projectpackage.repository.securitydao.AuthCredentialsDAOImpl;
 import projectpackage.service.adminservice.AdminService;
 import projectpackage.service.adminservice.AdminServiceImpl;
+import projectpackage.service.adminservice.InMemoryNotifService;
+import projectpackage.service.adminservice.InMemoryNotifServiceImpl;
 import projectpackage.service.authservice.*;
 import projectpackage.service.blockservice.BlockService;
 import projectpackage.service.blockservice.BlockServiceImpl;
+import projectpackage.service.fileservice.files.DateFileNameGenerator;
+import projectpackage.service.fileservice.files.OrderFileNameGenerator;
+import projectpackage.service.fileservice.pdf.PdfService;
+import projectpackage.service.fileservice.pdf.PdfServiceImpl;
 import projectpackage.service.maintenanceservice.*;
 import projectpackage.service.notificationservice.NotificationService;
 import projectpackage.service.notificationservice.NotificationServiceImpl;
 import projectpackage.service.notificationservice.NotificationTypeService;
 import projectpackage.service.notificationservice.NotificationTypeServiceImpl;
 import projectpackage.service.orderservice.*;
-import projectpackage.service.fileservice.pdf.PdfService;
-import projectpackage.service.fileservice.pdf.PdfServiceImpl;
 import projectpackage.service.phoneregex.PhoneRegexService;
 import projectpackage.service.phoneregex.PhoneRegexServiceImpl;
 import projectpackage.service.rateservice.PriceService;
@@ -204,6 +208,22 @@ public class TestPDFConfig implements TransactionManagementConfigurer{
         DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
         dataSourceTransactionManager.setDataSource(dataSource());
         return dataSourceTransactionManager;
+    }
+
+
+    @Bean
+    OrderFileNameGenerator orderFileNameGenerator() {
+        return new OrderFileNameGenerator();
+    }
+
+    @Bean
+    DateFileNameGenerator dateFileNameGenerator() {
+        return new DateFileNameGenerator();
+    }
+
+    @Bean
+    InMemoryNotifService inMemoryNotifService() {
+        return new InMemoryNotifServiceImpl();
     }
 
     @Bean
@@ -389,6 +409,7 @@ public class TestPDFConfig implements TransactionManagementConfigurer{
     ReactEAVManager reactEAVManager(){
         return new ReactEAVManager(reactConstantConfiguration(),reactAnnDefinitionReader());
     }
+
 
     @Bean
     ReactEntityValidator reactEntityValidator(){

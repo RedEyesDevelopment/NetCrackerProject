@@ -5,7 +5,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import projectpackage.model.notifications.Notification;
-import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.service.adminservice.InMemoryNotifService;
 
 /**
@@ -28,7 +27,7 @@ public class NotificationInsertOrChangeAspect {
         boolean notificationInsertGoneSuccessful = true;
         try {
             joinPoint.proceed();
-        } catch (TransactionException e) {
+        } catch (IllegalArgumentException e) {
             notificationInsertGoneSuccessful = false;
         }
         if (notificationInsertGoneSuccessful) {
@@ -50,7 +49,7 @@ public class NotificationInsertOrChangeAspect {
         boolean notificationUpdateGoneSuccessful = true;
         try {
             joinPoint.proceed();
-        } catch (TransactionException e) {
+        } catch (IllegalArgumentException e) {
             notificationUpdateGoneSuccessful = false;
         }
         if (notificationUpdateGoneSuccessful && null!=newNot.getExecutedDate()) {

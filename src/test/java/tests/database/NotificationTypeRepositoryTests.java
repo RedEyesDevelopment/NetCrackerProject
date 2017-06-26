@@ -67,7 +67,7 @@ public class NotificationTypeRepositoryTests extends AbstractDatabaseTest {
     @Test
     @Rollback(true)
     public void getAllNotificationTypes() {
-        List<NotificationType> list = notificationTypeService.getAllNotificationTypes("notif_type_title", true);
+        List<NotificationType> list = notificationTypeService.getAllNotificationTypes();
         for (NotificationType notificationType : list) {
             LOGGER.info(notificationType);
             assertNotNull(notificationType);

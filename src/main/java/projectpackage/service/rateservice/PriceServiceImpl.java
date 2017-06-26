@@ -4,12 +4,8 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import projectpackage.model.rates.Price;
 import projectpackage.dto.IUDAnswer;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.model.rates.Price;
 import projectpackage.repository.ratesdao.PriceDAO;
 
 import java.util.List;
@@ -33,57 +29,24 @@ public class PriceServiceImpl implements PriceService{
     }
 
     @Override
-    public List<Price> getAllPrices(String orderingParameter, boolean ascend) {
-        return null;
-    }
-
-    @Override
-    public Price getSinglePriceById(int id) {
+    public Price getSinglePriceById(Integer id) {
         Price price = priceDAO.getPrice(id);
         if (price == null) LOGGER.info("Returned NULL!!!");
         return price;
     }
 
-//    @Override
-//    public IUDAnswer deletePrice(int id) {
-//        try {
-//            priceDAO.deletePrice(id);
-//        } catch (ReferenceBreakException e) {
-//            LOGGER.warn("Entity has references on self", e);
-//            return new IUDAnswer(id,false, e.printReferencesEntities());
-//        } catch (DeletedObjectNotExistsException e) {
-//            LOGGER.warn("Entity with that id does not exist!", e);
-//            return new IUDAnswer(id, "deletedObjectNotExists");
-//        } catch (WrongEntityIdException e) {
-//            LOGGER.warn("This id belong another entity class!", e);
-//            return new IUDAnswer(id, "wrongDeleteId");
-//        }
-//        return new IUDAnswer(id, true);
-//    }
-
-//    @Override
-//    public IUDAnswer insertPrice(Price price) {
-//        Integer priceId = null;
-//        try {
-//            priceId = priceDAO.insertPrice(price);
-//            LOGGER.info("Get from DB phoneId = " + priceId);
-//        } catch (TransactionException e) {
-//            LOGGER.warn("Catched transactionException!!!", e);
-//            return new IUDAnswer(priceId,false, "transactionInterrupt");
-//        }
-//        return new IUDAnswer(priceId,true);
-//    }
-
     @Override
-    public IUDAnswer updatePrice(int id, Price newPrice) {
+    public IUDAnswer updatePrice(Integer id, Price newPrice) {
+        if (newPrice == null) return null;
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             newPrice.setObjectId(id);
             Price oldPrice = priceDAO.getPrice(id);
             priceDAO.updatePrice(newPrice, oldPrice);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return priceDAO.rollback(WRONG_FIELD, e);
         }
+        priceDAO.commit();
         return new IUDAnswer(id,true);
     }
 }

@@ -1,21 +1,19 @@
 package projectpackage.repository.notificationsdao;
 
 import projectpackage.model.notifications.Notification;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.Commitable;
+import projectpackage.repository.Rollbackable;
 
 import java.util.List;
 
 /**
  * Created by Arizel on 16.05.2017.
  */
-public interface NotificationDAO {
+public interface NotificationDAO extends Commitable, Rollbackable{
     public List<Notification> getAllNotificationsForInMemoryService();
     public Notification getNotification(Integer id);
     public List<Notification> getAllNotifications();
-    public Integer insertNotification(Notification notification) throws TransactionException;
-    public Integer updateNotification(Notification newNotification, Notification oldNotification) throws TransactionException;
-    public void deleteNotification(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException;
+    public Integer insertNotification(Notification notification);
+    public Integer updateNotification(Notification newNotification, Notification oldNotification);
+    public void deleteNotification(Integer id);
 }

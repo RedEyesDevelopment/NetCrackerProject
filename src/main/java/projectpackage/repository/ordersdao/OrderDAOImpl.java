@@ -2,7 +2,6 @@ package projectpackage.repository.ordersdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Phone;
@@ -18,10 +17,10 @@ import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.*;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 
@@ -39,112 +38,100 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     @Override
     public Order getOrder(Integer id) {
         if (null == id) return null;
-        try {
-            return (Order) manager.createReactEAV(Order.class)
-                    .fetchRootReference(User.class, "UserToOrderAsClient")
-                    .fetchInnerChild(Phone.class).closeFetch()
-                    .fetchInnerReference(Role.class, "RoleToUser")
-                    .closeAllFetches()
-                    .fetchRootReference(User.class, "UserToOrderAsLastModificator")
-                    .fetchInnerReference(Role.class, "RoleToUser").closeFetch()
-                    .fetchInnerChild(Phone.class)
-                    .closeAllFetches()
-                    .fetchRootReference(Room.class, "RoomToOrder").addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
-                    .fetchInnerReference(RoomType.class, "RoomTypeToRoom")
-                    .fetchInnerChild(Rate.class)
-                    .fetchInnerChild(Price.class)
-                    .closeAllFetches()
-                    .fetchRootChild(JournalRecord.class)
-                    .fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
-                    .closeAllFetches()
-                    .fetchRootReference(Category.class, "OrderToCategory")
-                    .fetchInnerChild(Complimentary.class)
-                    .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
-                    .closeAllFetches()
-                    .getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+
+        return (Order) manager.createReactEAV(Order.class)
+                .fetchRootReference(User.class, "UserToOrderAsClient")
+                .fetchInnerChild(Phone.class).closeFetch()
+                .fetchInnerReference(Role.class, "RoleToUser")
+                .closeAllFetches()
+                .fetchRootReference(User.class, "UserToOrderAsLastModificator")
+                .fetchInnerReference(Role.class, "RoleToUser").closeFetch()
+                .fetchInnerChild(Phone.class)
+                .closeAllFetches()
+                .fetchRootReference(Room.class, "RoomToOrder").addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
+                .fetchInnerReference(RoomType.class, "RoomTypeToRoom")
+                .fetchInnerChild(Rate.class)
+                .fetchInnerChild(Price.class)
+                .closeAllFetches()
+                .fetchRootChild(JournalRecord.class)
+                .fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
+                .closeAllFetches()
+                .fetchRootReference(Category.class, "OrderToCategory")
+                .fetchInnerChild(Complimentary.class)
+                .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
+                .closeAllFetches()
+                .getSingleEntityWithId(id);
     }
 
     @Override
     public List<Order> getAllOrder() {
-        try {
-            return (List<Order>) manager.createReactEAV(Order.class)
-                    .fetchRootReference(User.class, "UserToOrderAsClient")
-                    .fetchInnerChild(Phone.class).closeFetch()
-                    .fetchInnerReference(Role.class, "RoleToUser")
-                    .closeAllFetches()
-                    .fetchRootReference(User.class, "UserToOrderAsLastModificator")
-                    .fetchInnerReference(Role.class, "RoleToUser").closeFetch()
-                    .fetchInnerChild(Phone.class)
-                    .closeAllFetches()
-                    .fetchRootReference(Room.class, "RoomToOrder").addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
-                    .fetchInnerReference(RoomType.class, "RoomTypeToRoom")
-                    .fetchInnerChild(Rate.class)
-                    .fetchInnerChild(Price.class)
-                    .closeAllFetches()
-                    .fetchRootChild(JournalRecord.class)
-                    .fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
-                    .closeAllFetches()
-                    .fetchRootReference(Category.class, "OrderToCategory")
-                    .fetchInnerChild(Complimentary.class)
-                    .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
-                    .closeAllFetches()
-                    .getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+        return (List<Order>) manager.createReactEAV(Order.class)
+                .fetchRootReference(User.class, "UserToOrderAsClient")
+                .fetchInnerChild(Phone.class).closeFetch()
+                .fetchInnerReference(Role.class, "RoleToUser")
+                .closeAllFetches()
+                .fetchRootReference(User.class, "UserToOrderAsLastModificator")
+                .fetchInnerReference(Role.class, "RoleToUser").closeFetch()
+                .fetchInnerChild(Phone.class)
+                .closeAllFetches()
+                .fetchRootReference(Room.class, "RoomToOrder").addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
+                .fetchInnerReference(RoomType.class, "RoomTypeToRoom")
+                .fetchInnerChild(Rate.class)
+                .fetchInnerChild(Price.class)
+                .closeAllFetches()
+                .fetchRootChild(JournalRecord.class)
+                .fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
+                .closeAllFetches()
+                .fetchRootReference(Category.class, "OrderToCategory")
+                .fetchInnerChild(Complimentary.class)
+                .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
+                .closeAllFetches()
+                .getEntityCollection();
     }
 
     @Override
-    public Integer insertOrder(Order order) throws TransactionException {
+    public Integer insertOrder(Order order) {
         if (order == null) return null;
         Integer objectId = nextObjectId();
-        try {
-            jdbcTemplate.update(INSERT_OBJECT, objectId, null, 2, null, null);
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 5, objectId, objectId, null);
 
-            insertRegistrationDate(order, objectId);
-            insertIsPaidFor(order, objectId);
-            insertIsConfirmed(order, objectId);
-            insertLivingStartDate(order, objectId);
-            insertLivingFinishDate(order, objectId);
-            insertSum(order, objectId);
-            insertComment(order, objectId);
-            insertLastModificator(order, objectId);
-            insertRoom(order, objectId);
-            insertClient(order, objectId);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+        jdbcTemplate.update(INSERT_OBJECT, objectId, null, 2, null, null);
+        jdbcTemplate.update(INSERT_ATTRIBUTE, 5, objectId, objectId, null);
+
+        insertRegistrationDate(order, objectId);
+        insertIsPaidFor(order, objectId);
+        insertIsConfirmed(order, objectId);
+        insertLivingStartDate(order, objectId);
+        insertLivingFinishDate(order, objectId);
+        insertSum(order, objectId);
+        insertComment(order, objectId);
+        insertLastModificator(order, objectId);
+        insertRoom(order, objectId);
+        insertClient(order, objectId);
+
         return objectId;
     }
 
     @Override
-    public Integer updateOrder(Order newOrder, Order oldOrder) throws TransactionException {
+    public Integer updateOrder(Order newOrder, Order oldOrder) {
         if (newOrder == null || oldOrder == null) return null;
-        try {
-            updateRegistrationDate(newOrder, oldOrder);
-            updateIsPaidFor(newOrder, oldOrder);
-            updateIsConfirmed(newOrder, oldOrder);
-            updateLivingStartDate(newOrder, oldOrder);
-            updateLivingFinishDate(newOrder, oldOrder);
-            updateSum(newOrder, oldOrder);
-            updateComment(newOrder, oldOrder);
-            updateLastModificator(newOrder, oldOrder);
-            updateRoom(newOrder, oldOrder);
-            updateClient(newOrder, oldOrder);
-        } catch (DataIntegrityViolationException e) {
-            throw new TransactionException(this, e.getMessage());
-        }
+
+        updateRegistrationDate(newOrder, oldOrder);
+        updateIsPaidFor(newOrder, oldOrder);
+        updateIsConfirmed(newOrder, oldOrder);
+        updateLivingStartDate(newOrder, oldOrder);
+        updateLivingFinishDate(newOrder, oldOrder);
+        updateSum(newOrder, oldOrder);
+        updateComment(newOrder, oldOrder);
+        updateLastModificator(newOrder, oldOrder);
+        updateRoom(newOrder, oldOrder);
+        updateClient(newOrder, oldOrder);
+
         return newOrder.getObjectId();
     }
 
     @Override
-    public void deleteOrder(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
+    public void deleteOrder(Integer id) {
+        if (id == null) throw new IllegalArgumentException();
         Order order = null;
         try {
             order = getOrder(id);
@@ -160,7 +147,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         if (order.getClient() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 7, objectId, order.getClient().getObjectId());
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -168,7 +155,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         if (order.getRoom() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 6, objectId, order.getRoom().getObjectId());
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -176,7 +163,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         if (order.getLastModificator() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 44, objectId, order.getLastModificator().getObjectId());
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -192,7 +179,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         if (order.getSum() != null) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 13, objectId, order.getSum(), null);
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -200,7 +187,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         if (order.getLivingFinishDate() != null) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 12, objectId, null, order.getLivingFinishDate());
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -208,7 +195,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         if (order.getLivingStartDate() != null) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 11, objectId, null, order.getLivingStartDate());
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -220,7 +207,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 jdbcTemplate.update(INSERT_ATTRIBUTE, 10, objectId, "false", null);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -232,7 +219,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 jdbcTemplate.update(INSERT_ATTRIBUTE, 9, objectId, "false", null);      //Is_paid_for
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -240,7 +227,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         if (order.getRegistrationDate() != null) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 8, objectId, null, order.getRegistrationDate());
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -250,7 +237,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 jdbcTemplate.update(UPDATE_REFERENCE, newOrder.getClient().getObjectId(), newOrder.getObjectId(), 7);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -260,7 +247,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 jdbcTemplate.update(UPDATE_REFERENCE, newOrder.getRoom().getObjectId(), newOrder.getObjectId(), 6);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -270,7 +257,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 jdbcTemplate.update(UPDATE_REFERENCE, newOrder.getLastModificator().getObjectId(), newOrder.getObjectId(), 44);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -292,7 +279,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newOrder.getSum(), null, newOrder.getObjectId(), 13);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -302,7 +289,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newOrder.getLivingFinishDate(), newOrder.getObjectId(), 12);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -312,7 +299,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newOrder.getLivingStartDate(), newOrder.getObjectId(), 11);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -326,7 +313,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 }
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -340,7 +327,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 }
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -350,7 +337,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, null, newOrder.getRegistrationDate(), newOrder.getObjectId(), 8);
             }
         } else {
-            throw new RequiredFieldAbsenceException();
+            throw new IllegalArgumentException();
         }
     }
 

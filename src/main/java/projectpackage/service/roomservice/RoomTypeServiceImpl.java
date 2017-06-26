@@ -10,12 +10,11 @@ import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.roomsdao.RoomTypeDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.TransactionException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.service.orderservice.CategoryService;
 
-import java.util.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -35,26 +34,6 @@ public class RoomTypeServiceImpl implements RoomTypeService{
     CategoryService categoryService;
 
     @Override
-    public List<RoomType> getRoomTypes(Date date) {
-        return null;
-    }
-
-    @Override
-    public List<RoomType> getRoomTypes(Date date, long maxRate) {
-        return null;
-    }
-
-    @Override
-    public List<RoomType> getRoomTypes(Date date, int numberOfPeople) {
-        return null;
-    }
-
-    @Override
-    public List<RoomType> getRoomTypes(Date date, long maxRate, int numberOfPeople) {
-        return null;
-    }
-
-    @Override
     public List<OrderDTO> getRoomTypes(Date startDate, Date finishDate, int numberOfPeople, int categoryId) {
         List<OrderDTO> list = new ArrayList<>();
         Set<Integer> availableRoomTypes = roomTypeDAO.getAvailableRoomTypes(numberOfPeople, new java.sql.Date(startDate.getTime()), new java.sql.Date(finishDate.getTime()));
@@ -67,7 +46,6 @@ public class RoomTypeServiceImpl implements RoomTypeService{
             long days = (finishDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000);
             Long categoryCost = categoryPrice * days;
             orderDTO.setCategoryCost(categoryCost);
-            //LOGGER.info( + "****************************************************");
             orderDTO.setLivingPersons(numberOfPeople);
             orderDTO.setRoomTypeId(roomType.getObjectId());
             orderDTO.setArrival(startDate);
@@ -93,57 +71,55 @@ public class RoomTypeServiceImpl implements RoomTypeService{
     }
 
     @Override
-    public List<RoomType> getAllRoomTypes(String orderingParameter, boolean ascend) {
-        return null;
-    }
-
-    @Override
-    public RoomType getSingleRoomTypeById(int id) {
+    public RoomType getSingleRoomTypeById(Integer id) {
         RoomType roomType = roomTypeDAO.getRoomType(id);
         if (roomType == null) LOGGER.info("Returned NULL!!!");
         return roomType;
     }
 
     @Override
-    public IUDAnswer deleteRoomType(int id) {
+    public IUDAnswer deleteRoomType(Integer id) {
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             roomTypeDAO.deleteRoomType(id);
         } catch (ReferenceBreakException e) {
-            LOGGER.warn("Entity has references on self", e);
-            return new IUDAnswer(id,false, e.printReferencesEntities());
+            return roomTypeDAO.rollback(id, ON_ENTITY_REFERENCE, e);
         } catch (DeletedObjectNotExistsException e) {
-            LOGGER.warn("Entity with that id does not exist!", e);
-            return new IUDAnswer(id, "deletedObjectNotExists");
+            return roomTypeDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
         } catch (WrongEntityIdException e) {
-            LOGGER.warn("This id belong another entity class!", e);
-            return new IUDAnswer(id, "wrongDeleteId");
+            return roomTypeDAO.rollback(id, WRONG_DELETED_ID, e);
+        } catch (IllegalArgumentException e) {
+            return roomTypeDAO.rollback(id, NULL_ID, e);
         }
+        roomTypeDAO.commit();
         return new IUDAnswer(id, true);
     }
 
     @Override
     public IUDAnswer insertRoomType(RoomType roomType) {
+        if (roomType == null) return null;
         Integer roomTypeId = null;
         try {
             roomTypeId = roomTypeDAO.insertRoomType(roomType);
-            LOGGER.info("Get from DB roomId = " + roomTypeId);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(roomTypeId,false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return roomTypeDAO.rollback(WRONG_FIELD, e);
         }
+        roomTypeDAO.commit();
         return new IUDAnswer(roomTypeId,true);
     }
 
     @Override
-    public IUDAnswer updateRoomType(int id, RoomType newRoomType) {
+    public IUDAnswer updateRoomType(Integer id, RoomType newRoomType) {
+        if (newRoomType == null) return null;
+        if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             newRoomType.setObjectId(id);
             RoomType oldRoomType = roomTypeDAO.getRoomType(id);
             roomTypeDAO.updateRoomType(newRoomType, oldRoomType);
-        } catch (TransactionException e) {
-            LOGGER.warn("Catched transactionException!!!", e);
-            return new IUDAnswer(id,false, "transactionInterrupt");
+        } catch (IllegalArgumentException e) {
+            return roomTypeDAO.rollback(WRONG_FIELD, e);
         }
+        roomTypeDAO.commit();
         return new IUDAnswer(id,true);
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import projectpackage.model.auth.User;
 import projectpackage.model.notifications.Notification;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.service.MessageBook;
 import projectpackage.service.notificationservice.NotificationService;
 
 import javax.cache.annotation.CacheRemoveAll;
@@ -83,7 +84,7 @@ public class NotificationController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateNotification(@PathVariable("id") Integer id, @RequestBody Notification changedNotification) {
         if (!id.equals(changedNotification.getObjectId())) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, "wrongId"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID), HttpStatus.BAD_REQUEST);
         }
         IUDAnswer result = notificationService.updateNotification(id, changedNotification);
         HttpStatus status;
