@@ -5,7 +5,10 @@ app.factory('sharedData', function(ROLE) {
 
     function setAuth(headerAuth) { auth = headerAuth; }
 
-    function setBookCtrlLimitAuth(limitAuth) { bookCtrlLimitAuth = limitAuth; }
+    function setBookCtrlLimitAuth(limitAuth) {
+        bookCtrlLimitAuth = limitAuth;
+        changeBookCtrlLimitAuth();
+    }
     function changeBookCtrlLimitAuth() {
         if (bookCtrlLimitAuth !== undefined) {
             bookCtrlLimitAuth.isAuthorized = auth.isAuthorized;
