@@ -62,7 +62,6 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         System.out.println(SEPARATOR);
     }
 
-    //Получить одного юзера, ошибка в айди - словить ResultEntityNullException
     @Test
     public void errorQueryTestOfSingleUser(){
         int userId=127;
