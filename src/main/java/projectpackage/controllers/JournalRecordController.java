@@ -31,7 +31,7 @@ public class JournalRecordController {
     JournalRecordService journalRecordService;
 
     @ResponseStatus(HttpStatus.OK)
-    @CacheResult(cacheName = "JournalRecordList")
+    @CacheResult(cacheName = "journalRecordList")
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public List<Resource<JournalRecord>> getJournalRecordList() {
         List<JournalRecord> JournalRecords = journalRecordService.getAllJournalRecords();
@@ -68,7 +68,7 @@ public class JournalRecordController {
         return response;
     }
 
-    @CacheRemoveAll(cacheName = "JournalRecordList")
+    @CacheRemoveAll(cacheName = "journalRecordList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> createJournalRecord(@RequestBody JournalRecord newJournalRecord) {
         IUDAnswer result = journalRecordService.insertJournalRecord(newJournalRecord);
@@ -78,7 +78,7 @@ public class JournalRecordController {
         return new ResponseEntity<IUDAnswer>(result, status);
     }
 
-    @CacheRemoveAll(cacheName = "JournalRecordList")
+    @CacheRemoveAll(cacheName = "journalRecordList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateJournalRecord(@PathVariable("id") Integer id, @RequestBody JournalRecord changedJournalRecord) {
         if (!id.equals(changedJournalRecord.getObjectId())) {
@@ -93,7 +93,7 @@ public class JournalRecordController {
         return new ResponseEntity<IUDAnswer>(result, status);
     }
 
-    @CacheRemoveAll(cacheName = "JournalRecordList")
+    @CacheRemoveAll(cacheName = "journalRecordList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> deleteJournalRecord(@PathVariable("id") Integer id) {
         IUDAnswer result = journalRecordService.deleteJournalRecord(id);
