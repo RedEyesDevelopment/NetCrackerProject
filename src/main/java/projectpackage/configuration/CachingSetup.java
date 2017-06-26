@@ -31,5 +31,6 @@ public class CachingSetup implements JCacheManagerCustomizer {
         cacheManager.createCache("roleList", new MutableConfiguration<>().setExpiryPolicyFactory(TouchedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS, 60))).setStoreByValue(false).setStatisticsEnabled(false));
         cacheManager.createCache("roomList", new MutableConfiguration<>().setExpiryPolicyFactory(TouchedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS, 60))).setStoreByValue(false).setStatisticsEnabled(false));
         cacheManager.createCache("roomTypeList", new MutableConfiguration<>().setExpiryPolicyFactory(TouchedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS, 60))).setStoreByValue(false).setStatisticsEnabled(false));
+        cacheManager.createCache("simpleRoomTypeList", new MutableConfiguration<>().setExpiryPolicyFactory(TouchedExpiryPolicy.factoryOf(new Duration(TimeUnit.SECONDS, 60))).setStoreByValue(false).setStatisticsEnabled(false));
     }
 }

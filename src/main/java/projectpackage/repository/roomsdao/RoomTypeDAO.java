@@ -14,6 +14,7 @@ import java.util.Set;
 public interface RoomTypeDAO extends Commitable, Rollbackable {
     public RoomType getRoomType(Integer id);
     public List<RoomType> getAllRoomTypes();
+    public List<RoomType> getSimpleRoomTypeList();
     public Set<Integer> getAvailableRoomTypes(int numberOfPeople, Date startDate, Date finishDate);
     public long getCostForLiving(RoomType roomType, int numberOfResidents, Date start, Date finish);
     public Integer insertRoomType(RoomType roomType);

@@ -71,6 +71,11 @@ public class RoomTypeServiceImpl implements RoomTypeService{
     }
 
     @Override
+    public List<RoomType> getSimpleRoomTypeList() {
+        return roomTypeDAO.getSimpleRoomTypeList();
+    }
+
+    @Override
     public RoomType getSingleRoomTypeById(Integer id) {
         RoomType roomType = roomTypeDAO.getRoomType(id);
         if (roomType == null) LOGGER.info("Returned NULL!!!");

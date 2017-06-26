@@ -52,6 +52,11 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
     }
 
     @Override
+    public List<RoomType> getSimpleRoomTypeList() {
+        return manager.createReactEAV(RoomType.class).getEntityCollection();
+    }
+
+    @Override
     public Set<Integer> getAvailableRoomTypes(int numberOfPeople, Date startDate, Date finishDate) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("num_of_res", numberOfPeople);

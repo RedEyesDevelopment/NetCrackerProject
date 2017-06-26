@@ -14,6 +14,7 @@ import java.util.List;
 public interface RoomTypeService extends MessageBook{
     public List<OrderDTO> getRoomTypes(Date startDate, Date finishDate, int numberOfPeople, int categoryId);
     public List<RoomType> getAllRoomTypes();
+    public List<RoomType> getSimpleRoomTypeList();
     public RoomType getSingleRoomTypeById(Integer id);
     public IUDAnswer deleteRoomType(Integer id);
     public IUDAnswer insertRoomType(RoomType roomType);

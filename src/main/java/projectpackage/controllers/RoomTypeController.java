@@ -1,11 +1,13 @@
 package projectpackage.controllers;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projectpackage.dto.JacksonMappingMarker;
 import projectpackage.model.auth.User;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.dto.IUDAnswer;
@@ -43,6 +45,15 @@ public class RoomTypeController {
             resources.add(roomTypeResource);
         }
         return resources;
+    }
+
+    //Get RoomType List
+    @JsonView(JacksonMappingMarker.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @CacheResult(cacheName = "simpleRoomTypeList")
+    @RequestMapping(value = "/simpleList", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public List<RoomType> getSimpleRoomTypeList(){
+        return roomTypeService.getAllRoomTypes();
     }
 
     //Get single RoomType by id
