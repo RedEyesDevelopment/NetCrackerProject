@@ -13,6 +13,7 @@ import projectpackage.service.authservice.UserService;
 import projectpackage.service.linksservice.LinksService;
 import projectpackage.service.securityservice.SecurityService;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -63,15 +64,16 @@ public class AuthorizationController {
         return linksService.getLinks();
     }
 
-//    @ResponseStatus(HttpStatus.OK)
-//    @RequestMapping(value = "/logout", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-//    public ResponseEntity<Boolean> doLogout(HttpServletRequest request) throws ServletException {
-//        User user = (User) request.getSession().getAttribute("USER");
-//        if (user != null) {
-//            request.logout();
-//        } else {
-//            return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
-//        }
-//        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-//    }
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/logout", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<Boolean> doLogout(HttpServletRequest request) throws ServletException {
+        User user = (User) request.getSession().getAttribute("USER");
+        if (user != null) {
+            request.logout();
+            request.getSession().invalidate();
+        } else {
+            return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
 }
