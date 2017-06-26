@@ -130,6 +130,8 @@ public class OrderController {
     @RequestMapping(value = "/book/{id}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<BookedOrderDTO> createOrderByRoomType(@PathVariable("id") Integer id, HttpServletRequest request) {
         User thisUser = (User) request.getSession().getAttribute("USER");
+        System.out.println("************************************USER IN SESSION****************************");
+        System.out.println(thisUser);
         List<OrderDTO> dtoData = (List<OrderDTO>) request.getSession().getAttribute("ORDERDATA");
         OrderDTO dto=null;
         for (OrderDTO order:dtoData){
@@ -138,11 +140,13 @@ public class OrderController {
                 break;
             }
         }
+        Category category = categoryService.getSingleCategoryById(dto.getCategoryId());
         Order order = orderService.createOrderTemplate(thisUser,dto);
+        order.setCategory(category);
+        System.out.println(order);
         request.getSession().removeAttribute("ORDERDATA");
         request.getSession().setAttribute("NEWORDER", order);
 
-        Category category = categoryService.getSingleCategoryById(dto.getCategoryId());
         BookedOrderDTO responseDto = new BookedOrderDTO(dto);
         responseDto.setCategoryName(category.getCategoryTitle());
         responseDto.setClient(new StringBuilder(thisUser.getFirstName()).append(thisUser.getLastName()).toString());
