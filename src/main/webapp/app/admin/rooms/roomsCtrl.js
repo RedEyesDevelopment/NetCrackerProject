@@ -1,8 +1,9 @@
-app.controller('roomsCtrl', ['$scope', '$http', function($scope, $http){
+app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util',
+	function($scope, $http, $location, sharedData, util) {
 
 
-	/* Функции на получения всех комнат и типов комнат, вызываются сразу */
-	getAllRooms = function() {
+	/* Функция на получения всех комнат и типов комнат, вызываются сразу */
+	(function() {
 		$http({
 			url: 'http://localhost:8080/rooms',
 			method: 'GET',
@@ -16,9 +17,9 @@ app.controller('roomsCtrl', ['$scope', '$http', function($scope, $http){
 			console.log("Smth wrong!!");
 			console.log(response);
 		});
-	}();
+	}());
 
-	getAllRoomTypes = function() {
+	(function() {
 		$http({
 			url: 'http://localhost:8080/roomtypes',
 			method: 'GET',
@@ -32,7 +33,13 @@ app.controller('roomsCtrl', ['$scope', '$http', function($scope, $http){
 			console.log("Smth wrong!!");
 			console.log(response);
 		});
-	}();
+	}());
+	/* редирект на главную если не админ */
+	(function() {
+		console.log("roomCrtl");
+		console.log(sharedData.getIsAdmin());
+		if (!sharedData.getIsAdmin()) $location.path('/');
+	}());
 
 	/* Инициализация служебных переменных */
 	function resetFlags() {
@@ -45,10 +52,13 @@ app.controller('roomsCtrl', ['$scope', '$http', function($scope, $http){
 	$scope.room = {};
 	resetFlags();
 
-	$scope.start = 0;
-	$scope.objectsOnPage = 3;
-
 	$scope.stage = "looking";
+
+	$scope.pager = {
+		startPaging : 0,
+		objectsOnPage : 3
+	}
+
 
 	/* Функции подготовки запросов */
 	$scope.prepareToAddRoom = function() {
@@ -123,12 +133,11 @@ app.controller('roomsCtrl', ['$scope', '$http', function($scope, $http){
 			headers: {'Content-Type': 'application/json'}
 		}).then(function(data) {
 			console.log(data);
-			console.log(getObjectInArrayById($scope.listOfRoomTypes, $scope.room.type));
 			$scope.listOfRooms.push({
 				objectId : data.data.objectId,
 				roomNumber : $scope.room.number,
 				numberOfResidents : $scope.room.numberOfResidents,
-				roomType : getObjectInArrayById($scope.listOfRoomTypes, $scope.room.type)
+				roomType : util.getObjectInArrayById($scope.listOfRoomTypes, $scope.room.type)
 			});
 			$scope.prepareToAddRoom();
 			$scope.added = true;
@@ -153,7 +162,7 @@ app.controller('roomsCtrl', ['$scope', '$http', function($scope, $http){
 			console.log(data);
 			$scope.listOfRooms[$scope.indexForOperation].roomNumber = $scope.room.number;
 			$scope.listOfRooms[$scope.indexForOperation].numberOfResidents = $scope.room.numberOfResidents;
-			$scope.listOfRooms[$scope.indexForOperation].roomType = getObjectInArrayById($scope.listOfRoomTypes, $scope.room.type);
+			$scope.listOfRooms[$scope.indexForOperation].roomType = util.getObjectInArrayById($scope.listOfRoomTypes, $scope.room.type);
 			$scope.updated = true;
 		}, function(response) {
 			console.log("Smth wrong!!");
@@ -177,26 +186,12 @@ app.controller('roomsCtrl', ['$scope', '$http', function($scope, $http){
 		});
 	}
 
-	/* Возвращает объект из массива по objectId */
-	function getObjectInArrayById(arr, id) {
-		for (var i = 0; i < arr.length; i++) {
-			if (arr[i].objectId == id) {
-				return arr[i];
-			}
-		};
-	}
 
 	/* Для листания страниц с объектами */
 	$scope.nextRooms = function() {
-		if ($scope.listOfRooms.length > $scope.start + $scope.objectsOnPage) {
-			$scope.start += $scope.objectsOnPage;
-		}
+		$scope.pager.startPaging = util.nextEntities($scope.listOfRooms.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
 	}
 	$scope.previousRooms = function() {
-		if ($scope.start - $scope.objectsOnPage >= 0) {
-			$scope.start -= $scope.objectsOnPage;
-		} else if ($scope.start > 0) {
-			$scope.start = 0;
-		}
+		$scope.pager.startPaging = util.previousEntities($scope.pager.startPaging, $scope.pager.objectsOnPage);
 	}
 }]);

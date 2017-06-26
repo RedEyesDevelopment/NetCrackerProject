@@ -11,8 +11,6 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
         // phoneRegex : '\+\d{1,2}\(\d{3}\)\d{2}\-\d{2}\-\d{3}|\+\d{12}|\d{7}|[0]\d{9}'
     }
 
-    console.log($scope);
-
     var setRoleFromSever = function() {
         $http({
             url: 'http://localhost:8080/auth/isauthorized',
@@ -67,6 +65,7 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
 
     /* Следит за изменениями роли, и в соответствии с ней меняет значение $scope.auth */
     $scope.$watch('auth.role', function(newRole) {
+        console.log("CHANGE!");
         $scope.auth.isAuthorized = false;
         $scope.auth.isAdmin = false;
         $scope.auth.isReception = false;
