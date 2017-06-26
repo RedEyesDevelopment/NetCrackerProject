@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import projectpackage.model.auth.User;
 import projectpackage.model.orders.Order;
 import projectpackage.service.adminservice.AdminService;
 import projectpackage.service.fileservice.mails.MailService;
@@ -18,7 +19,7 @@ import java.io.File;
  * Created by Lenovo on 06.06.2017.
  */
 @RestController
-@RequestMapping("/statistics")
+@RequestMapping("/pdf")
 
 public class FileController {
 
@@ -36,17 +37,19 @@ public class FileController {
 
     @RequestMapping(value = "/order", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public void getSearchForm(HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("USER");
         String path = request.getServletContext().getRealPath("/").toString();
         Order order = orderService.getSingleOrderById(300);
         File file = pdfService.createOrderPDF(order, path);
-        mailService.sendEmailWithAttachment("sashamerlyan@gmail.com", 1, file);
+        mailService.sendEmailWithAttachment(user.getEmail(), 1, file);
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public File getStatistic(HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("USER");
         String path = request.getServletContext().getRealPath("/").toString();
         File file = adminService.getStatistic(path);
-        mailService.sendEmailWithAttachment("fiendes03@gmail.com", 3, file);
+        mailService.sendEmailWithAttachment(user.getEmail(), 3, file);
         return file;
     }
 }
