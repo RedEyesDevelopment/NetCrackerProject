@@ -1,10 +1,7 @@
 package projectpackage.service.fileservice.pdf;
 
-
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +12,7 @@ import projectpackage.model.rooms.Room;
 import projectpackage.service.fileservice.files.DateFileNameGenerator;
 import projectpackage.service.fileservice.files.OrderFileNameGenerator;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -28,9 +22,6 @@ import java.util.List;
 @Service
 public class PdfServiceImpl implements PdfService{
     private static final Logger LOGGER = Logger.getLogger(PdfServiceImpl.class);
-
-    private final String SITE_URL = "https://www.youtube.com/watch?v=e2cx7hk-JQA&feature=youtu.be&t=8";//ЮРЛ нашего сайта, в будущем
-    //private final String URL_PHOTOS = "D:\\AndProjects\\Netcracker\\NetCrackerProject\\src\\main\\resources\\photos\\";//ЮРЛ всех наших фоток
     private final SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 
     @Autowired
@@ -41,115 +32,73 @@ public class PdfServiceImpl implements PdfService{
 
     @Override
     public File createOrderPDF(Order order, String path) {
-        String urlPhoto;
-        if (order.getRoom().getRoomType().getRoomTypeTitle().equals("Luxe")) {
-         urlPhoto = "static/Luxe.jpg";
-        } else if (order.getRoom().getRoomType().getRoomTypeTitle().equals("Semi-Luxe")) {
-         urlPhoto = "static/Luxe.jpg";
-        } else if (order.getRoom().getRoomType().getRoomTypeTitle().equals("Economy")) {
-         urlPhoto = "static/Luxe.jpg";
-        } else if (order.getRoom().getRoomType().getRoomTypeTitle().equals("President")) {
-         urlPhoto = "static/Luxe.jpg";
-        } else {
-         urlPhoto = "static/NotFound.jpg";
-        }
-
-           //String pathToPDF = "D:\\Order#" + order.getObjectId() + ".pdf";
-        String pathToPDF = path+"\\pdfs\\orders\\" + orderFileNameGenerator.generateFileName("OrderPayment",order.getObjectId())+".pdf";
-        Document document = new Document(PageSize.A4, 50, 50, 50, 50);
+        String pathToPDF = path + "\\pdfs\\orders\\" + orderFileNameGenerator
+                .generateFileName("OrderPayment",order.getObjectId()) + ".pdf";
+        PdfReader reader = null;
+        PdfStamper stamper = null;
         try {
-            PdfWriter.getInstance(document, new FileOutputStream(pathToPDF));
+            reader = new PdfReader(new FileInputStream(path + "\\pdfs\\orders\\template.pdf"));
+            stamper = new PdfStamper(reader, new FileOutputStream(pathToPDF));
+        } catch (IOException e) {
+            LOGGER.warn(PDF_ERROR, e);
+            return null;
         } catch (DocumentException e) {
-            LOGGER.warn("Error with orderPDF:" + e.getMessage());
-            return null;
-        } catch (FileNotFoundException e) {
-            LOGGER.warn("Error with orderPDF:" + e.getMessage());
+            LOGGER.warn(PDF_ERROR, e);
             return null;
         }
-        document.open();
 
-        Paragraph dearUser = new Paragraph("Dear " + order.getClient().getFirstName() +
-                " " + order.getClient().getLastName() + "!");
-        dearUser.setIndentationLeft(100);
+        PdfContentByte stream = stamper.getOverContent(1);
+        stream.beginText();
+        stream.setColorFill(BaseColor.WHITE);
 
-        Paragraph acceptanceOrder = new Paragraph("Your order accepted!");
-        acceptanceOrder.setIndentationLeft(100);
-
-        Paragraph userRoomType = new Paragraph("Your room of class " + order.getRoom().getRoomType().getRoomTypeTitle());
-        userRoomType.setIndentationLeft(100);
-
-        Image roomTypeImage = null;
+        BaseFont font = null;
         try {
-            roomTypeImage = Image.getInstance(urlPhoto);
-        } catch (BadElementException e) {
-            LOGGER.warn("Error with orderPDF:" + e.getMessage());
+            font = BaseFont.createFont();
+        } catch (DocumentException e) {
+            LOGGER.warn(PDF_ERROR, e);
             return null;
         } catch (IOException e) {
-            LOGGER.warn("Error with orderPDF:" + e.getMessage());
+            LOGGER.warn(PDF_ERROR, e);
             return null;
         }
-        roomTypeImage.scaleAbsolute(300f, 200f);
-        roomTypeImage.setIndentationLeft(100);
-
-        Paragraph contentText = new Paragraph(order.getComment());
-        contentText.setSpacingBefore(70);
-
-        Paragraph lease = new Paragraph("Living date :\n" + df.format(order.getLivingStartDate())
-                + "  -  " + df.format(order.getLivingFinishDate()));
-        lease.setSpacingBefore(50);
-
-        Paragraph priceText = new Paragraph("Price : " + order.getSum());
-        priceText.setSpacingBefore(10);
-
-        Paragraph smallInfo = new Paragraph("Pay up to 3am!");
-        smallInfo.setSpacingBefore(70);
-
-        Anchor toSite = new Anchor("Url our site!");
-        toSite.setReference(SITE_URL);
-
-//        Section section = chapter.addSection(dearUser);
-//        section.add(acceptanceOrder);
-//        section.add(userRoomType);
-//        section.add(roomTypeImage);
-//        section.add(contentText);
-//        section.add(lease);
-//        section.add(priceText);
-//        section.add(smallInfo);
-//        section.add(toSite);
+        stream.setFontAndSize(font, 16);
+        stream.setTextMatrix(190, 540);
+        stream.showText(String.valueOf(order.getObjectId()));
+        stream.setTextMatrix(230, 500);
+        stream.showText(order.getRoom().getRoomType().getRoomTypeTitle());
+        stream.setTextMatrix(190, 340);
+        stream.showText(order.getCategory().getCategoryTitle());
+        stream.setTextMatrix(175, 300);
+        stream.showText(df.format(order.getLivingStartDate()) + "  -  "
+                + df.format(order.getLivingFinishDate()));
+        stream.setTextMatrix(125, 260);
+        stream.showText(order.getSum() + "$");
+        stream.endText();
 
         try {
-            document.add(dearUser);
-            document.add(acceptanceOrder);
-            document.add(userRoomType);
-            document.add(roomTypeImage);
-            document.add(contentText);
-            document.add(lease);
-            document.add(priceText);
-            document.add(smallInfo);
-            document.add(toSite);
+            stamper.setFullCompression();
+            stamper.close();
         } catch (DocumentException e) {
-            LOGGER.warn("Error with orderPDF:" + e.getMessage());
+            LOGGER.warn(PDF_ERROR, e);
+            return null;
+        } catch (IOException e) {
+            LOGGER.warn(PDF_ERROR, e);
             return null;
         }
-        document.close();
-
-        File file = new File(pathToPDF);
-        return file;
+        return new File(pathToPDF);
     }
 
     @Override
     public File createRoomStatisticPDF(List<Room> freeRooms, List<Order> orders, String path) {
-        //String pathToPDF = "D:\\" + dateFileNameGenerator.generateFileNameWithCurrentTime("Statistics") + ".pdf";
-
         String pathToPDF = path+"\\pdfs\\statistics\\"+ dateFileNameGenerator.generateFileNameWithCurrentTime("Statistics") + ".pdf";
         Document document = new Document(PageSize.A4, 50, 50, 50, 50);
         try {
             PdfWriter.getInstance(document, new FileOutputStream(pathToPDF));
         } catch (DocumentException e) {
-            LOGGER.warn("Error with statisticPDF:" + e.getMessage());
+            LOGGER.warn(PDF_ERROR, e);
             return null;
         } catch (FileNotFoundException e) {
-            LOGGER.warn("Error with statisticPDF:" + e.getMessage());
+            LOGGER.warn(PDF_ERROR, e);
             return null;
         }
         document.open();
@@ -179,7 +128,7 @@ public class PdfServiceImpl implements PdfService{
         try {
             document.add(chapter);
         } catch (DocumentException e) {
-            LOGGER.warn("Error with statisticPDF:" + e.getMessage());
+            LOGGER.warn(PDF_ERROR, e);
             return null;
         }
 
@@ -249,7 +198,7 @@ public class PdfServiceImpl implements PdfService{
             try {
                 document.add(orderChapter);
             } catch (DocumentException e) {
-                LOGGER.warn("Error with statisticPDF:" + e.getMessage());
+                LOGGER.warn(PDF_ERROR, e);
                 return null;
             }
         }

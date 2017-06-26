@@ -36,9 +36,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}());
 	/* редирект на главную если не админ */
 	(function() {
-		console.log("roomCrtl");
-		console.log(sharedData.getIsAdmin());
-		if (!sharedData.getIsAdmin()) $location.path('/');
+		if (!sharedData.getIsAdmin()) { $location.path('/') };
 	}());
 
 	/* Инициализация служебных переменных */
@@ -46,7 +44,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		$scope.added = false;
 		$scope.updated = false;
 		$scope.deleted = false;
-	};
+	}
 
 	$scope.residents = [1, 2, 3];
 	$scope.room = {};
@@ -73,6 +71,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}
 
 	$scope.prepareToEditRoom = function(roomId, index) {
+		console.log();
 		$http({
 			url: 'http://localhost:8080/rooms/' + roomId,
 			method: 'GET',

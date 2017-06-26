@@ -22,11 +22,15 @@ app.factory('sharedData', function(ROLE) {
 
     function getLinks() { return auth.links; }
 
+    function getMyself() { return auth.myself }
+
+
     function getIsAdmin() { return auth.isAdmin; }
 
     function getIsReception() { return auth.isReception; }
 
     function getIsClient() { return auth.isClient; }
+
 
 
     return {
@@ -35,6 +39,8 @@ app.factory('sharedData', function(ROLE) {
         getRole: getRole,
         getIsAuthorized: getIsAuthorized,
         getLinks: getLinks,
+        getMyself: getMyself,
+
         getIsAdmin: getIsAdmin,
         getIsReception: getIsReception,
         getIsClient: getIsClient,

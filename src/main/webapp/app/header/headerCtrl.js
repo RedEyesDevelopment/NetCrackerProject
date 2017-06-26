@@ -82,6 +82,8 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
                 $scope.auth.isAuthorized = true;
                 $scope.auth.isClient = true;
                 break;
+            case ROLE.NA:
+                $location.path('/');
         }
         sharedData.changeBookCtrlLimitAuth();
     });
@@ -122,8 +124,17 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
     };
 
     $scope.logout = function() {
-        // тут запрос на сервер  ------------------------------------------------ TODO
-        $scope.auth.role = ROLE.NA;
+        $http({
+            url: 'http://localhost:8080/logout',
+            method: 'GET',
+            headers: {'Content-Type' : 'application/json'}
+        }).then(function (data) {
+            console.log(data);
+        }, function (response) {
+            console.log(response);
+            // WARNING!! DRY VIOLATION!!!
+            $scope.auth.role = ROLE.NA;
+        });
     };
 
     $scope.registration = function() {

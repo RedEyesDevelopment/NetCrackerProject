@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.model.auth.User;
+import projectpackage.model.orders.Category;
 import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
@@ -42,6 +43,7 @@ public class PDFTest extends AbstractPDFTest {
         user.setFirstName("Alex");
         user.setLastName("Merlyan");
         Order order = new Order();
+        order.setObjectId(573489578);
         order.setRegistrationDate(new Date());
         order.setIsPaidFor(false);
         order.setIsConfirmed(false);
@@ -51,7 +53,10 @@ public class PDFTest extends AbstractPDFTest {
         order.setComment("CommentTTTTTTTTTTTTTTTTT");
         order.setRoom(room);
         order.setClient(user);
-        File file = pdfService.createOrderPDF(order, "");
+        Category category = new Category();
+        category.setCategoryTitle("My category");
+        order.setCategory(category);
+        File file = pdfService.createOrderPDF(order, "D:\\AndProjects\\Netcracker\\NetCrackerProject\\src\\main\\webapp");
         LOGGER.info(file);
         LOGGER.info(SEPARATOR);
     }
