@@ -40,6 +40,7 @@ import projectpackage.repository.roomsdao.RoomTypeDAO;
 import projectpackage.repository.roomsdao.RoomTypeDAOImpl;
 import projectpackage.repository.securitydao.AuthCredentialsDAO;
 import projectpackage.repository.securitydao.AuthCredentialsDAOImpl;
+import projectpackage.repository.support.CustomConnectionCustomizer;
 import projectpackage.repository.support.ParentDAOImpl;
 import projectpackage.repository.support.ParentsDAO;
 import projectpackage.service.adminservice.InMemoryNotifService;

@@ -32,7 +32,6 @@ import projectpackage.repository.ratesdao.PriceDAOImpl;
 import projectpackage.repository.ratesdao.RateDAO;
 import projectpackage.repository.ratesdao.RateDAOImpl;
 import projectpackage.repository.reacteav.ReactEAVManager;
-import projectpackage.repository.reacteav.support.ReactAnnDefinitionReader;
 import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
 import projectpackage.repository.reacteav.support.ReactEntityValidator;
 import projectpackage.repository.roomsdao.RoomDAO;
@@ -401,13 +400,8 @@ public class TestPDFConfig implements TransactionManagementConfigurer{
     ReactConstantConfiguration reactConstantConfiguration() { return new ReactConstantConfiguration(); }
 
     @Bean
-    ReactAnnDefinitionReader reactAnnDefinitionReader(){
-        return new ReactAnnDefinitionReader(modelPackage);
-    }
-
-    @Bean
     ReactEAVManager reactEAVManager(){
-        return new ReactEAVManager(reactConstantConfiguration(),reactAnnDefinitionReader());
+        return new ReactEAVManager(reactConstantConfiguration(),modelPackage);
     }
 
 
