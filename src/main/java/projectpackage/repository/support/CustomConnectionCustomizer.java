@@ -21,6 +21,8 @@ public class CustomConnectionCustomizer implements ConnectionCustomizer{
 
     @Override
     public void onCheckOut(Connection connection, String s) throws Exception {
+        System.out.println("*****************************************************************");
+        System.out.println("s="+s);
         connection.setAutoCommit(false);
     }
 

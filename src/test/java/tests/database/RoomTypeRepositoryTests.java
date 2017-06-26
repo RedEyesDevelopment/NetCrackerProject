@@ -62,7 +62,10 @@ public class RoomTypeRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getRoomTypes(){
-
+        List<RoomType> list = roomTypeService.getSimpleRoomTypeList();
+        for (RoomType type:list){
+            System.out.println(type);
+        }
     }
 
     @Test
