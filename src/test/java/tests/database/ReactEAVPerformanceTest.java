@@ -14,7 +14,7 @@ import java.util.HashSet;
 
 @Log4j
 public class ReactEAVPerformanceTest extends AbstractDatabaseTest {
-    private static final int QUERYQUANTITY = 1000;
+    private static final int QUERYQUANTITY = 10;
 
     @Autowired
     ReactEAVManager reactEAVManager;

@@ -7,13 +7,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Phone;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.TransactionException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
@@ -23,24 +24,14 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
     JdbcTemplate jdbcTemplate;
 
     @Override
-    public Phone getPhone(Integer id) {
+    public Optional<Phone> getPhone(Integer id) {
         if (id == null) return null;
-        try {
-            return (Phone) manager.createReactEAV(Phone.class).getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+            return manager.createReactEAV(Phone.class).getSingleEntityWithId(id);
     }
 
     @Override
-    public List<Phone> getAllPhones() {
-        try {
+    public List<Optional<ReactEntityWithId>> getAllPhones() {
             return manager.createReactEAV(Phone.class).getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
     }
 
     @Override
@@ -68,14 +59,8 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
 
     @Override
     public void deletePhone(int id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
-        Phone phone = null;
-        try{
-            phone = getPhone(id);
-        } catch (ClassCastException e) {
-            throw new WrongEntityIdException(this, e.getMessage());
-        }
+        Optional<Phone> phone = getPhone(id);
         if (null == phone) throw new DeletedObjectNotExistsException(this);
-
         deleteSingleEntityById(id);
     }
 }

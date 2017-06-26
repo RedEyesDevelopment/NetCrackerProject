@@ -9,18 +9,15 @@ import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.ConditionExecutor;
 import projectpackage.repository.reacteav.conditions.ReactCondition;
 import projectpackage.repository.reacteav.conditions.ReactConditionData;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.reacteav.exceptions.WrongFetchException;
+import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 import projectpackage.repository.reacteav.querying.ReactQueryTaskHolder;
 import projectpackage.repository.reacteav.relationsdata.EntityReferenceRelationshipsData;
 import projectpackage.repository.reacteav.support.ReactConnectionsDataBucket;
 import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
 import projectpackage.repository.reacteav.support.ReactEntityValidator;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
+import java.util.*;
 
 @Log4j
 public class ReactEAV {
@@ -116,7 +113,7 @@ public class ReactEAV {
         }
     }
 
-    public Object getSingleEntityWithId(int targetId) throws ResultEntityNullException {
+    public Optional getSingleEntityWithId(int targetId){
         rootNode.setForSingleObject(true);
         rootNode.setTargetId(targetId);
         rootNode.setAscend(false);
@@ -126,13 +123,13 @@ public class ReactEAV {
         try {
             result = launchProcess().get(0);
         } catch (NullPointerException e) {
-            throw new ResultEntityNullException();
+            return null;
         }
         conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
-        return result;
+        return (Optional) result;
     }
 
-    public List getEntityCollection() throws ResultEntityNullException {
+    public List<Optional<ReactEntityWithId>> getEntityCollection(){
         rootNode.setForSingleObject(false);
         rootNode.setTargetId(null);
         rootNode.setAscend(false);
@@ -141,13 +138,13 @@ public class ReactEAV {
         List result;
         result = launchProcess();
         if (null == result) {
-            throw new ResultEntityNullException();
+            return Collections.emptyList();
         }
         conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
         return result;
     }
 
-    public List getEntityCollectionOrderByParameter(String orderingParameter, boolean ascend) throws ResultEntityNullException {
+    public List<ReactEntityWithId> getEntityCollectionOrderByParameter(String orderingParameter, boolean ascend) {
         rootNode.setForSingleObject(false);
         rootNode.setTargetId(null);
         rootNode.setAscend(ascend);
@@ -156,7 +153,7 @@ public class ReactEAV {
         List result;
         result = launchProcess();
         if (null == result) {
-            throw new ResultEntityNullException();
+            return Collections.emptyList();
         }
         conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
         return result;
