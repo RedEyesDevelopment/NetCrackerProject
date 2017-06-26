@@ -6,7 +6,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 import projectpackage.model.auth.Phone;
@@ -14,7 +13,6 @@ import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.support.daoexceptions.*;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 
 import java.util.List;
 
@@ -29,26 +27,16 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     @Override
     public User getUser(Integer id) {
         if (id == null) return null;
-        try {
             return (User) manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches()
                     .fetchRootReference(Role.class, "RoleToUser").closeAllFetches()
                     .getSingleEntityWithId(id);
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
     }
 
     @Override
     public List<User> getAllUsers() {
-        try {
             return manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches()
                     .fetchRootReference(Role.class, "RoleToUser").closeAllFetches()
                     .getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
     }
 
     @Override

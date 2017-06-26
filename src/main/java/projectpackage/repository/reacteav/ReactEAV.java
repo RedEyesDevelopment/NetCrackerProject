@@ -10,7 +10,6 @@ import projectpackage.repository.reacteav.conditions.ConditionExecutor;
 import projectpackage.repository.reacteav.conditions.ReactCondition;
 import projectpackage.repository.reacteav.conditions.ReactConditionData;
 import projectpackage.repository.reacteav.exceptions.WrongFetchException;
-import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 import projectpackage.repository.reacteav.querying.ReactQueryTaskHolder;
 import projectpackage.repository.reacteav.relationsdata.EntityReferenceRelationshipsData;
 import projectpackage.repository.reacteav.support.ReactConnectionsDataBucket;
@@ -113,7 +112,7 @@ public class ReactEAV {
         }
     }
 
-    public Optional getSingleEntityWithId(int targetId){
+    public Object getSingleEntityWithId(int targetId) {
         rootNode.setForSingleObject(true);
         rootNode.setTargetId(targetId);
         rootNode.setAscend(false);
@@ -126,10 +125,10 @@ public class ReactEAV {
             return null;
         }
         conditionExecution(ConditionExecutionMoment.AFTER_QUERY);
-        return (Optional) result;
+        return result;
     }
 
-    public List<Optional<ReactEntityWithId>> getEntityCollection(){
+    public List getEntityCollection() {
         rootNode.setForSingleObject(false);
         rootNode.setTargetId(null);
         rootNode.setAscend(false);
@@ -144,7 +143,7 @@ public class ReactEAV {
         return result;
     }
 
-    public List<ReactEntityWithId> getEntityCollectionOrderByParameter(String orderingParameter, boolean ascend) {
+    public List getEntityCollectionOrderByParameter(String orderingParameter, boolean ascend) {
         rootNode.setForSingleObject(false);
         rootNode.setTargetId(null);
         rootNode.setAscend(ascend);
