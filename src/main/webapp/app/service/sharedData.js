@@ -1,9 +1,17 @@
 app.factory('sharedData', function(ROLE) {
 
     var auth;
+    var bookCtrlLimitAuth;
 
     function setAuth(headerAuth) { auth = headerAuth; }
 
+    function setBookCtrlLimitAuth(limitAuth) { bookCtrlLimitAuth = limitAuth; }
+    function changeBookCtrlLimitAuth() {
+        if (bookCtrlLimitAuth !== undefined) {
+            bookCtrlLimitAuth.isAuthorized = auth.isAuthorized;
+            bookCtrlLimitAuth.role = auth.role;
+        }
+    }
 
     function getRole() { return auth.role; }
 
@@ -19,13 +27,16 @@ app.factory('sharedData', function(ROLE) {
 
 
     return {
+        setAuth: setAuth,
+
         getRole: getRole,
-	    getIsAuthorized: getIsAuthorized,
-	    getLinks: getLinks,
+        getIsAuthorized: getIsAuthorized,
+        getLinks: getLinks,
         getIsAdmin: getIsAdmin,
         getIsReception: getIsReception,
         getIsClient: getIsClient,
 
-        setAuth: setAuth
+        setBookCtrlLimitAuth: setBookCtrlLimitAuth,
+        changeBookCtrlLimitAuth: changeBookCtrlLimitAuth
     }
 });
