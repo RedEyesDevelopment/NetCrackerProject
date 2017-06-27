@@ -54,7 +54,7 @@ public class SecurityServiceImpl implements SecurityService {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         String encodedPassword = bCryptPasswordEncoder.encode(password);
         Collection<? extends GrantedAuthority> authorities;
-        if(null!=userDetails.getAuthorities()){
+        if(userDetails != null && null!=userDetails.getAuthorities()){
             authorities =userDetails.getAuthorities();
         }  else authorities = null;
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken

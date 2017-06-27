@@ -1,5 +1,93 @@
 <div class="container">
 
     <ng-include src="'app/admin/template/aside.html'"></ng-include>
-	{{ page }}
+
+    <div class="workspace col-sm-10">
+
+        <!-- Top of workspace -->
+        <div class="top col-sm-12">
+            <h2>Notification Types</h2>
+            <button class="btn btn-primary btn-md newEntity" ng-click="prepareToAddNotificationType()">New Notification Types</button>
+        </div>
+
+
+        <!-- List of objects in workspace -->
+        <div class="listOfObjects" ng-if="!modificationMode">
+            <ul class="pager">
+                <li><a ng-click="previousNotificationTypes()"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li>
+                <li><input type="number" min="1" max="999" ng-model="pager.objectsOnPage"></li>
+                <li><a ng-click="nextNotificationTypes()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
+            </ul>
+            <div ng-repeat="notificationType in listOfNotificationTypes | orderBy : 'notificationTypeTitle' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-5 col-sm-offset-1">
+                <div class="block-border">
+                    <p class="admin-notes"> Title: {{ notificationType.notificationTypeTitle }} </p>
+                    <p class="admin-notes"> Role: {{ notificationType.orientedRole.roleName }} </p>
+                    <div class="text-right">
+                        <button type="button" class="btn btn-primary btn-md"
+                                ng-click="prepareToEditNotificationType(notificationType.objectId, listOfNotificationTypes.indexOf(notificationType))">
+                            Edit
+                        </button>
+                        <button type="button" class="btn btn-warning btn-md"
+                                ng-click="prepareToDeleteNotificationType(notificationType.objectId, listOfNotificationTypes.indexOf(notificationType))"
+                                data-toggle="modal" data-target="#deleteConfirmModal">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Form for add or edit -->
+        <div class="editWindow" ng-if="modificationMode">
+            <div>
+                <button ng-click="back()" class="btn btn-info btn-sm back">
+                    <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back to notification types
+                </button>
+
+                <div class="answer">
+                    <!-- Successfully added -->
+                    <div ng-if="added">
+                        Successfully added! <i class="fa fa-check" aria-hidden="true"></i>
+                    </div>
+
+                    <!-- Successfully updated -->
+                    <div ng-if="updated">
+                        Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-offset-3 col-sm-5 createUpdateForm">
+                <form class="form-horizontal" name="createUpdateForm">
+                    <div class="form-group">
+                        <label for="notificationTypeTtl" class="col-sm-4 control-label">Title</label>
+                        <div class="col-sm-6 wrapInput">
+                            <input type="text" id="notificationTypeTtl" ng-required="true" ng-model="notificationType.notificationTypeTitle">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="notificationTypeRole" class="col-sm-6 control-label">Role</label>
+                        <div class="col-sm-6">
+                            <select id="notificationTypeRole" class="form-control" ng-required="true" ng-model="notificationType.orientedRole"
+                                    ng-options="role.objectId as role.roleName for role in listOfRoles">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="text-center">
+                            <button class="btn btn-primary" ng-disabled="createUpdateForm.$invalid" data-toggle="modal" data-target="#editConfirmModal">OK</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+
+<ng-include src="'app/admin/template/confirmModalWindows.html'"></ng-include>
+
+
+
+
+
+

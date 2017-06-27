@@ -6,9 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projectpackage.dto.IUDAnswer;
+import projectpackage.dto.NotificationTypeDTO;
+import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.model.notifications.NotificationType;
-import projectpackage.dto.IUDAnswer;
 import projectpackage.service.MessageBook;
 import projectpackage.service.notificationservice.NotificationTypeService;
 
@@ -20,6 +22,7 @@ import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static projectpackage.service.MessageBook.NULL_ENTITY;
 
 /**
  * Created by Lenovo on 28.05.2017.
@@ -37,6 +40,7 @@ public class NotificationTypeController {
     @GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public List<Resource<NotificationType>> getNotificationTypeList(){
         List<NotificationType> notificationTypes = notificationTypeService.getAllNotificationTypes();
+        System.out.println(notificationTypes.get(0).getOrientedRole());
         List<Resource<NotificationType>> resources = new ArrayList<>();
         for (NotificationType notificationType:notificationTypes){
             Resource<NotificationType> notificationTypeResource = new Resource<NotificationType>(notificationType);
@@ -56,7 +60,7 @@ public class NotificationTypeController {
         HttpStatus status;
         if (null!= notificationType){
             if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(NotificationTypeController.class).deleteNotificationType(notificationType.getObjectId())).withRel("delete"));
-            resource.add(linkTo(methodOn(NotificationTypeController.class).updateNotificationType(notificationType.getObjectId(), notificationType)).withRel("update"));
+            //resource.add(linkTo(methodOn(NotificationTypeController.class).updateNotificationType(notificationType.getObjectId(), notificationType)).withRel("update"));
             status = HttpStatus.ACCEPTED;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -68,7 +72,16 @@ public class NotificationTypeController {
     //Create notificationType, fetch into database
     @CacheRemoveAll(cacheName = "notificationTypeList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> createNotificationType(@RequestBody NotificationType newNotificationType){
+    public ResponseEntity<IUDAnswer> createNotificationType(@RequestBody NotificationTypeDTO notificationTypeDTO){
+        if (notificationTypeDTO == null || notificationTypeDTO.getOrientedRole() == null
+                || notificationTypeDTO.getNotificationTypeTitle() == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
+        }
+        NotificationType newNotificationType = new NotificationType();
+        Role role = new Role();
+        role.setObjectId(notificationTypeDTO.getOrientedRole());
+        newNotificationType.setOrientedRole(role);
+        newNotificationType.setNotificationTypeTitle(notificationTypeDTO.getNotificationTypeTitle());
         IUDAnswer result = notificationTypeService.insertNotificationType(newNotificationType);
         HttpStatus status;
         if (result.isSuccessful()) {
@@ -82,10 +95,18 @@ public class NotificationTypeController {
 //    	@Secured("ROLE_ADMIN")
     @CacheRemoveAll(cacheName = "notificationTypeList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> updateNotificationType(@PathVariable("id") Integer id, @RequestBody NotificationType changedNotificationType){
-        if (!id.equals(changedNotificationType.getObjectId())){
+    public ResponseEntity<IUDAnswer> updateNotificationType(@PathVariable("id") Integer id, @RequestBody NotificationTypeDTO notificationTypeDTO){
+        if (id == null || notificationTypeDTO.getOrientedRole() == null || notificationTypeDTO.getNotificationTypeTitle() == null){
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID), HttpStatus.NOT_ACCEPTABLE);
         }
+
+        Role role = new Role();
+        role.setObjectId(notificationTypeDTO.getOrientedRole());
+        NotificationType changedNotificationType = new NotificationType();
+        changedNotificationType.setObjectId(id);
+        changedNotificationType.setNotificationTypeTitle(notificationTypeDTO.getNotificationTypeTitle());
+        changedNotificationType.setOrientedRole(role);
+
         IUDAnswer result = notificationTypeService.updateNotificationType(id, changedNotificationType);
         HttpStatus status;
         if (result.isSuccessful()) {
