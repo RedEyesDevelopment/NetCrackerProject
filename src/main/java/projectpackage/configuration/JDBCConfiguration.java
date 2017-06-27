@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.TransactionManagementConfigure
 import projectpackage.repository.reacteav.ReactEAVManager;
 import projectpackage.repository.reacteav.support.ReactConstantConfiguration;
 import projectpackage.repository.reacteav.support.ReactEntityValidator;
+import projectpackage.repository.support.CustomConnectionCustomizer;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -80,6 +81,10 @@ public class JDBCConfiguration implements TransactionManagementConfigurer {
         comboPooledDataSource.setIdleConnectionTestPeriod(300);
         //имя специальной таблицы для тестирования соединения с БД
         comboPooledDataSource.setAutomaticTestTable("c3p0DatabaseTestTable");
+        comboPooledDataSource.setForceIgnoreUnresolvedTransactions(true);
+        comboPooledDataSource.setAutoCommitOnClose(false);
+        comboPooledDataSource.setConnectionCustomizerClassName(CustomConnectionCustomizer.class.getName());
+        comboPooledDataSource.setNumHelperThreads(10);
 
         return comboPooledDataSource;
     }

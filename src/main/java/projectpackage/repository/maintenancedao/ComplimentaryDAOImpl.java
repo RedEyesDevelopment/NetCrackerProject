@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.maintenances.Complimentary;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.repository.AbstractDAO;
@@ -38,6 +39,7 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
                 .closeAllFetches().getEntityCollection();
     }
 
+    @Transactional
     @Override
     public Integer insertComplimentary(Complimentary complimentary) {
         if (complimentary == null) return null;
@@ -48,6 +50,7 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
         return objectId;
     }
 
+    @Transactional
     @Override
     public Integer updateComplimentary(Complimentary newComplimentary, Complimentary oldComplimentary) {
         if (oldComplimentary == null || newComplimentary == null) return null;
@@ -56,6 +59,7 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
         return newComplimentary.getObjectId();
     }
 
+    @Transactional
     @Override
     public void deleteComplimentary(Integer id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
         if (id == null) throw new IllegalArgumentException();

@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.maintenances.Complimentary;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.model.orders.Category;
@@ -46,6 +47,7 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
                 .getEntityCollection();
     }
 
+    @Transactional
     @Override
     public Integer insertCategory(Category category) {
         if (category == null) return null;
@@ -58,6 +60,7 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
         return objectId;
     }
 
+    @Transactional
     @Override
     public Integer updateCategory(Category newCategory, Category oldCategory) {
         if (newCategory == null || oldCategory == null) return null;
@@ -68,6 +71,7 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
         return newCategory.getObjectId();
     }
 
+    @Transactional
     @Override
     public void deleteCategory(Integer id) {
         if (id == null) throw new IllegalArgumentException();

@@ -154,6 +154,7 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
 //        config.addDataSourceProperty("cachePrepStmts", "true");
 //        config.addDataSourceProperty("prepStmtCacheSize", "250");
 //        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+//        config.setAutoCommit(false);
 //        return new HikariDataSource(config);
 //    }
 

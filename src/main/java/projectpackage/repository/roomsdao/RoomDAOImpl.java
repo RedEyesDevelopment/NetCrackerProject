@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
@@ -101,6 +102,7 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
         return result;
     }
 
+    @Transactional
     @Override
     public Integer insertRoom(Room room) {
         if (room == null) return null;
@@ -114,6 +116,7 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
         return objectId;
     }
 
+    @Transactional
     @Override
     public Integer updateRoom(Room newRoom, Room oldRoom) {
         if (oldRoom == null || newRoom == null) return null;
@@ -125,6 +128,7 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
         return newRoom.getObjectId();
     }
 
+    @Transactional
     @Override
     public void deleteRoom(Integer id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
         if (id == null) throw new IllegalArgumentException();

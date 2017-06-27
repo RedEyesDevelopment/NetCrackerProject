@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.RoomType;
@@ -82,6 +83,7 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
         return bigDecimal.longValue();
     }
 
+    @Transactional
     @Override
     public Integer insertRoomType(RoomType roomType) {
         if (roomType == null) return null;
@@ -95,6 +97,7 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
         return objectId;
     }
 
+    @Transactional
     @Override
     public Integer updateRoomType(RoomType newRoomType, RoomType oldRoomType) {
         if (oldRoomType == null || newRoomType == null) return null;
@@ -105,6 +108,7 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
         return newRoomType.getObjectId();
     }
 
+    @Transactional
     @Override
     public void deleteRoomType(Integer id) {
         if (id == null) throw new IllegalArgumentException();

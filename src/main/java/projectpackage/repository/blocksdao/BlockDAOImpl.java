@@ -39,6 +39,7 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
                 .closeAllFetches().getEntityCollection();
     }
 
+    @Transactional
     @Override
     public Integer insertBlock(Block block) {
         if (block == null) return null;
@@ -51,6 +52,7 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
         return objectId;
     }
 
+    @Transactional
     @Override
     public Integer updateBlock(Block newBlock, Block oldBlock) {
         if (oldBlock == null || newBlock == null) return null;
@@ -62,6 +64,7 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
         return newBlock.getObjectId();
     }
 
+    @Transactional
     @Override
     public void deleteBlock(Integer id) {
         if (id == null) throw new IllegalArgumentException();

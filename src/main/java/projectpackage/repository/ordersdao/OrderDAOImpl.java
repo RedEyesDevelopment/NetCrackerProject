@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
@@ -88,6 +89,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 .getEntityCollection();
     }
 
+    @Transactional
     @Override
     public Integer insertOrder(Order order) {
         if (order == null) return null;
@@ -111,6 +113,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         return objectId;
     }
 
+    @Transactional
     @Override
     public Integer updateOrder(Order newOrder, Order oldOrder) {
         if (newOrder == null || oldOrder == null) return null;
@@ -130,6 +133,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         return newOrder.getObjectId();
     }
 
+    @Transactional
     @Override
     public void deleteOrder(Integer id) {
         if (id == null) throw new IllegalArgumentException();

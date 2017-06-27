@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
@@ -93,6 +94,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                 .getEntityCollection();
     }
 
+    @Transactional
     @Override
     public Integer insertNotification(Notification notification) {
         if (notification == null) return null;
@@ -109,6 +111,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         return objectId;
     }
 
+    @Transactional
     @Override
     public Integer updateNotification(Notification newNotification, Notification oldNotification) {
         if (oldNotification == null || newNotification == null) return null;
@@ -123,6 +126,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         return newNotification.getObjectId();
     }
 
+    @Transactional
     @Override
     public void deleteNotification(Integer id) {
         if (id == null) throw new IllegalArgumentException();

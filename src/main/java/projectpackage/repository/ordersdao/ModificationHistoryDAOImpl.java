@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
@@ -42,6 +43,7 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
                 .closeAllFetches().getEntityCollection();
     }
 
+    @Transactional
     @Override
     public Integer insertModificationHistory(Order newOrder, Order oldOrder) {
         if (newOrder == null || oldOrder == null) return null;
@@ -64,6 +66,7 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
         return objectId;
     }
 
+    @Transactional
     @Override
     public void deleteModificationHistory(Integer id) {
         if (id == null) throw new IllegalArgumentException();

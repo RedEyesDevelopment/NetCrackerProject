@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
@@ -56,6 +57,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
                 .getEntityCollection();
     }
 
+    @Transactional
     @Override
     public Integer insertUser(User user) {
         if (user == null) return null;
@@ -73,6 +75,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         return objectId;
     }
 
+    @Transactional
     @Override
     public Integer updateUser(User newUser, User oldUser) {
         if (newUser == null || oldUser == null) return null;
@@ -87,6 +90,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         return newUser.getObjectId();
     }
 
+    @Transactional
     @Override
     public void deleteUser(Integer id) {
         if (id == null) throw new IllegalArgumentException();

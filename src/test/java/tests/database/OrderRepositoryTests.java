@@ -198,11 +198,15 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
         order.setLivingFinishDate(new Date());
         order.setSum(7478L);
         order.setComment("Comment");
+        Category category = new Category();
+        category.setObjectId(450);
+        order.setCategory(category);
         order.setRoom(room);
         order.setClient(user);
         order.setLastModificator(user);
         IUDAnswer iudAnswer = orderService.insertOrder(order);
         assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info(iudAnswer.getObjectId());
         LOGGER.info("Create order result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }

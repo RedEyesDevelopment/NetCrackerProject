@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.Phone;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
@@ -36,6 +37,7 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
      * @param phone
      * @return objectId of new phone
      */
+    @Transactional
     @Override
     public Integer insertPhone(Phone phone) {
         if (phone == null) return null;
@@ -51,6 +53,7 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
      * @param oldPhone
      * @return objectId of newPhone
      */
+    @Transactional
     @Override
     public Integer updatePhone(Phone newPhone, Phone oldPhone) {
         if (oldPhone == null || newPhone == null) return null;
@@ -64,6 +67,7 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
      * @throws ReferenceBreakException if id belong entity, which have references on self.
      * @param id
      */
+    @Transactional
     @Override
     public void deletePhone(Integer id) {
         if (id == null) throw new IllegalArgumentException();
