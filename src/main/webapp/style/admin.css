@@ -24,20 +24,16 @@
 	width: 43px;
 }
 
-.workspace .listOfObjects .admin-grid {
-    display: inline-block;
-    margin: 20px 30px;
-}
-
-.workspace .listOfObjects .my-border {
-    border: 1px solid #dfdfdf;
-    padding: 30px;
+.workspace .listOfObjects .block-border {
+    border: 1px solid #d1d1d1;
+    padding: 20px;
+    margin: 15px 0;
     border-radius: 10px;
 }
 
 .workspace .listOfObjects .top-bottom-border {
-    border-top: 1px solid #dfdfdf;
-    border-bottom: 1px solid #dfdfdf;
+    border-top: 1px solid #d1d1d1;
+    border-bottom: 1px solid #d1d1d1;
     padding: 10px 0px;
 }
 
@@ -46,7 +42,6 @@
 }
 /* ---------------------------------- */
 
-
 /* ----- Form for add or update ----- */
 .editWindow .back {
     margin: 15px 0;
@@ -54,9 +49,17 @@
 }
 
 .editWindow .createUpdateForm {
-    border: 1px solid #dfdfdf;
+    border: 1px solid #d1d1d1;
     padding: 15px;
     border-radius: 10px;
+}
+
+.editWindow .createUpdateForm .wrapInput {
+    margin-top: 4px;
+}
+
+.editWindow .createUpdateForm .wrapInput input {
+    width: 100%;
 }
 
 .editWindow .createUpdateForm #roomNmbr {

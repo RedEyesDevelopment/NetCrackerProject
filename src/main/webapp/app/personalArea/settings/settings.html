@@ -91,7 +91,10 @@
 	                    	<input type="tel" id="phoneNumberInput"
 	                    		ng-model="phone.phoneNumber">
 	                	</div>
-						<button class="btn btn-default col-sm-2"
+	                	<button class="btn btn-default col-sm-1">
+							<i class="fa fa-times" aria-hidden="true"></i> Edit
+						</button>
+						<button class="btn btn-default col-sm-1"
 								ng-click="removePhoneFromList(myself.phones.indexOf(phone))">
 							<i class="fa fa-times" aria-hidden="true"></i> Delete
 						</button>

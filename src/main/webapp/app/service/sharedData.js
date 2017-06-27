@@ -2,17 +2,38 @@ app.factory('sharedData', function(ROLE) {
 
     var auth;
     var bookCtrlLimitAuth;
+    var paMyself;
+
 
     function setAuth(headerAuth) { auth = headerAuth; }
 
     function setBookCtrlLimitAuth(limitAuth) {
         bookCtrlLimitAuth = limitAuth;
-        changeBookCtrlLimitAuth();
     }
-    function changeBookCtrlLimitAuth() {
+    function setPersonalAreaMyself(self) { paMyself = self; }
+
+    function updateAuth() {
         if (bookCtrlLimitAuth !== undefined) {
             bookCtrlLimitAuth.isAuthorized = auth.isAuthorized;
             bookCtrlLimitAuth.role = auth.role;
+        }
+    }
+    function updateMyself() {
+        if (paMyself !== undefined) {
+            paMyself.objectId = auth.myself.objectId;
+            paMyself.additionalInfo = auth.myself.additionalInfo;
+            paMyself.email = auth.myself.email;
+            paMyself.firstName = auth.myself.firstName;
+            paMyself.lastName = auth.myself.lastName;
+            paMyself.phones = new Array();
+            console.log("RRR");
+            console.log(auth);
+            for (var i = 0; i < auth.myself.phones; i++) {
+                paMyself.phones.push({
+                    objectId: auth.myself.phones[i].objectId,
+                    phone: auth.myself.phones[i].phoneNumber
+                });
+            }
         }
     }
 
@@ -22,7 +43,7 @@ app.factory('sharedData', function(ROLE) {
 
     function getLinks() { return auth.links; }
 
-    function getMyself() { return auth.myself }
+    function getMyself() { return auth.myself; }
 
 
     function getIsAdmin() { return auth.isAdmin; }
@@ -30,6 +51,9 @@ app.factory('sharedData', function(ROLE) {
     function getIsReception() { return auth.isReception; }
 
     function getIsClient() { return auth.isClient; }
+
+
+    
 
 
 
@@ -46,6 +70,9 @@ app.factory('sharedData', function(ROLE) {
         getIsClient: getIsClient,
 
         setBookCtrlLimitAuth: setBookCtrlLimitAuth,
-        changeBookCtrlLimitAuth: changeBookCtrlLimitAuth
+        setPersonalAreaMyself: setPersonalAreaMyself,
+
+        updateAuth: updateAuth,
+        updateMyself: updateMyself
     }
 });

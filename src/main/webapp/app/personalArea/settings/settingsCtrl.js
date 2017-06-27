@@ -1,12 +1,16 @@
 app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 	function($scope, $http, $location, sharedData) {
 
-	$scope.myself = sharedData.getMyself();
-	console.log($scope.myself);
+	$scope.myself = {}
+	if (sharedData.getMyself() !== undefined) {
+		$scope.myself = sharedData.getMyself();
+	}
+	sharedData.setPersonalAreaMyself($scope.myself);	
 
 	
 	$scope.addEmptyPhone = function() {
-		$scope.myself.phones.push({});
+		// $scope.myself.phones.push({});
+		console.log($scope);
 	}
 
 	$scope.removePhoneFromList = function(index) {

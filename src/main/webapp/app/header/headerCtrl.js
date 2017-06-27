@@ -5,8 +5,8 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
     $scope.registrationData = {}
 
     $scope.regExp = {
-        emailRegex : '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}',
-        passwordRegex : '(?=.{8,})(?=.*[a-zA-Z]{1,})(?=.*\d{1,})'
+        // emailRegex : '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}',
+        // passwordRegex : '(?=.{8,})(?=.*[a-zA-Z]{1,})(?=.*\d{1,})'
         // phoneRegex : '+'//\d{1,2}\(\d{3}\)\d{2}\-\d{2}\-\d{3}|\+\d{12}|\d{7}|[0]\d{9}'
         // phoneRegex : '\+\d{1,2}\(\d{3}\)\d{2}\-\d{2}\-\d{3}|\+\d{12}|\d{7}|[0]\d{9}'
     }
@@ -45,6 +45,7 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
             method: 'GET',
             headers: {'Content-Type': 'application/json'}
         }).then(function (data) {
+            console.log("ans");
             console.log(data);
             $scope.auth.myself = data.data;
         }, function (response) {
@@ -63,7 +64,7 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
     sharedData.setAuth($scope.auth); // добавить в общую фабрику объект данных об авторизации
     setAuthDataFromServer();
 
-    /* Следит за изменениями роли, и в соответствии с ней меняет значение $scope.auth */
+    /* Следит за изменениями роли, и в соответствии с ней меняет значение */
     $scope.$watch('auth.role', function(newRole) {
         $scope.auth.isAuthorized = false;
         $scope.auth.isAdmin = false;
@@ -85,8 +86,13 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
             case ROLE.NA:
                 $location.path('/');
         }
-        sharedData.changeBookCtrlLimitAuth();
+        sharedData.updateAuth();
     });
+    
+    $scope.$watch('auth.myself', function(newMyself) {
+        // console.log($scope);
+        sharedData.updateMyself();
+    })
 
     $scope.login = function() {
         $scope.hideFailAuthMessage();
