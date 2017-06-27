@@ -34,7 +34,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-
     @Override
     public Order getOrder(Integer id) {
         if (null == id) return null;
@@ -107,6 +106,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         insertLastModificator(order, objectId);
         insertRoom(order, objectId);
         insertClient(order, objectId);
+        insertCategory(order, objectId);
 
         return objectId;
     }
@@ -125,6 +125,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         updateLastModificator(newOrder, oldOrder);
         updateRoom(newOrder, oldOrder);
         updateClient(newOrder, oldOrder);
+        updateCategory(newOrder, oldOrder);
 
         return newOrder.getObjectId();
     }
@@ -141,6 +142,14 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         if (null == order) throw new DeletedObjectNotExistsException(this);
 
         deleteSingleEntityById(id);
+    }
+
+    private void insertCategory(Order order, Integer objectId) {
+        if (order.getCategory() != null) {
+            jdbcTemplate.update(INSERT_OBJ_REFERENCE, 57, objectId, order.getCategory().getObjectId());
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     private void insertClient(Order order, Integer objectId) {
@@ -226,6 +235,16 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     private void insertRegistrationDate(Order order, Integer objectId) {
         if (order.getRegistrationDate() != null) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 8, objectId, null, order.getRegistrationDate());
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void updateCategory(Order newOrder, Order oldOrder) {
+        if (oldOrder.getCategory() != null && newOrder.getCategory() != null) {
+            if (oldOrder.getCategory().getObjectId() != newOrder.getCategory().getObjectId()) {
+                jdbcTemplate.update(UPDATE_REFERENCE, newOrder.getCategory().getObjectId(), newOrder.getObjectId(), 57);
+            }
         } else {
             throw new IllegalArgumentException();
         }

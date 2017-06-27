@@ -141,6 +141,8 @@ public class OrderController {
             }
         }
         Category category = categoryService.getSingleCategoryById(dto.getCategoryId());
+        System.out.println("************************************************************************CATEGORY");
+        System.out.println(category);
         Order order = orderService.createOrderTemplate(thisUser,dto);
         order.setCategory(category);
         System.out.println(order);
