@@ -73,13 +73,17 @@ public class PhoneServiceImpl implements PhoneService{
         try {
             phoneDAO.deletePhone(id);
         } catch (ReferenceBreakException e) {
-            return phoneDAO.rollback(id, ON_ENTITY_REFERENCE, e);
+            LOGGER.warn(ON_ENTITY_REFERENCE, e);
+            return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage());
         } catch (DeletedObjectNotExistsException e) {
-            return phoneDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
+            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+            return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
         } catch (WrongEntityIdException e) {
-            return phoneDAO.rollback(id, WRONG_DELETED_ID, e);
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
         } catch (IllegalArgumentException e) {
-            return phoneDAO.rollback(id, NULL_ID, e);
+            LOGGER.warn(NULL_ID, e);
+            return new IUDAnswer(id, false, NULL_ID, e.getMessage());
         }
         phoneDAO.commit();
         return new IUDAnswer(id, true);
@@ -94,7 +98,8 @@ public class PhoneServiceImpl implements PhoneService{
         try {
             phoneId = phoneDAO.insertPhone(phone);
         } catch (IllegalArgumentException e) {
-            return phoneDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
         phoneDAO.commit();
         return new IUDAnswer(phoneId,true);
@@ -111,7 +116,8 @@ public class PhoneServiceImpl implements PhoneService{
             Phone oldPhone = phoneDAO.getPhone(id);
             phoneDAO.updatePhone(newPhone, oldPhone);
         } catch (IllegalArgumentException e) {
-            return phoneDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(id,false, WRONG_FIELD, e.getMessage());
         }
         phoneDAO.commit();
         return new IUDAnswer(id,true);

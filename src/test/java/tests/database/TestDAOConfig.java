@@ -40,7 +40,7 @@ import projectpackage.repository.roomsdao.RoomTypeDAO;
 import projectpackage.repository.roomsdao.RoomTypeDAOImpl;
 import projectpackage.repository.securitydao.AuthCredentialsDAO;
 import projectpackage.repository.securitydao.AuthCredentialsDAOImpl;
-import projectpackage.repository.support.CustomConnectionCustomizer;
+import projectpackage.repository.support.RollbackableTransactionalCustomizer;
 import projectpackage.repository.support.ParentDAOImpl;
 import projectpackage.repository.support.ParentsDAO;
 import projectpackage.service.adminservice.InMemoryNotifService;
@@ -200,9 +200,9 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
         comboPooledDataSource.setIdleConnectionTestPeriod(300);
         //имя специальной таблицы для тестирования соединения с БД
         comboPooledDataSource.setAutomaticTestTable("c3p0DatabaseTestTable");
-//        comboPooledDataSource.setForceIgnoreUnresolvedTransactions(true);
+        comboPooledDataSource.setForceIgnoreUnresolvedTransactions(true);
         comboPooledDataSource.setAutoCommitOnClose(false);
-        comboPooledDataSource.setConnectionCustomizerClassName(CustomConnectionCustomizer.class.getName());
+        comboPooledDataSource.setConnectionCustomizerClassName(RollbackableTransactionalCustomizer.class.getName());
         //c3p0 helper threads - специальные треды что чистят пулы и смотрят за ними
         comboPooledDataSource.setNumHelperThreads(10);
 

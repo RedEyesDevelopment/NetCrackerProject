@@ -13,7 +13,6 @@ import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsExc
 import projectpackage.repository.support.daoexceptions.DuplicateEmailException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.service.MessageBook;
 import projectpackage.service.phoneregex.PhoneRegexService;
 import projectpackage.service.securityservice.SecurityService;
 
@@ -56,15 +55,19 @@ public class UserServiceImpl implements UserService {
         if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             userDAO.deleteUser(id);
-        } catch (ReferenceBreakException e) {
-            return userDAO.rollback(id, ON_ENTITY_REFERENCE, e);
-        } catch (DeletedObjectNotExistsException e) {
-            return userDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
-        } catch (WrongEntityIdException e) {
-            return userDAO.rollback(id, WRONG_DELETED_ID, e);
-        } catch (IllegalArgumentException e) {
-            return userDAO.rollback(id, NULL_ID, e);
-        }
+		} catch (ReferenceBreakException e) {
+			LOGGER.warn(ON_ENTITY_REFERENCE, e);
+			return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage());
+		} catch (DeletedObjectNotExistsException e) {
+			LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+			return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
+		} catch (WrongEntityIdException e) {
+			LOGGER.warn(WRONG_DELETED_ID, e);
+			return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
+		} catch (IllegalArgumentException e) {
+			LOGGER.warn(NULL_ID, e);
+			return new IUDAnswer(id, false, NULL_ID, e.getMessage());
+		}
         userDAO.commit();
         return new IUDAnswer(id, true);
 	}
@@ -77,16 +80,18 @@ public class UserServiceImpl implements UserService {
             if (!isValid) return new IUDAnswer(false, WRONG_PHONE_NUMBER);
         }
         if (!securityService.cryptUserPass(user)){
-        	return new IUDAnswer(false, MessageBook.WRONG_PASSWORD);
+        	return new IUDAnswer(false, WRONG_PASSWORD);
 		}
 
 		Integer userId = null;
 		try {
 			userId = userDAO.insertUser(user);
 		} catch (IllegalArgumentException e) {
-			return userDAO.rollback(WRONG_FIELD, e);
+			LOGGER.warn(WRONG_FIELD, e);
+			return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
 		} catch (DuplicateEmailException e) {
-			return userDAO.rollback(DUPLICATE_EMAIL, e);
+			LOGGER.warn(DUPLICATE_EMAIL, e);
+			return new IUDAnswer(false, DUPLICATE_EMAIL, e.getMessage());
 		}
 
         try {
@@ -95,9 +100,9 @@ public class UserServiceImpl implements UserService {
                 phone.setObjectId(phoneDAO.insertPhone(phone));
             }
         } catch (IllegalArgumentException e) {
-            return phoneDAO.rollback(WRONG_FIELD, e);
+			LOGGER.warn(WRONG_FIELD, e);
+			return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
-
 		phoneDAO.commit();
 		return new IUDAnswer(userId, true);
 	}
@@ -111,11 +116,14 @@ public class UserServiceImpl implements UserService {
 			User oldUser = userDAO.getUser(id);
 			userDAO.updateUser(newUser, oldUser);
 		} catch (IllegalArgumentException e) {
-		    return userDAO.rollback(WRONG_FIELD, e);
+			LOGGER.warn(WRONG_FIELD, e);
+			return new IUDAnswer(id, false, WRONG_FIELD, e.getMessage());
+		} catch (DuplicateEmailException e) {
+			LOGGER.warn(DUPLICATE_EMAIL, e);
+			return new IUDAnswer(id, false, DUPLICATE_EMAIL, e.getMessage());
 		}
 		userDAO.commit();
 		return new IUDAnswer(id, true);
 	}
-
 
 }

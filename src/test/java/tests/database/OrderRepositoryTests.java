@@ -167,7 +167,7 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getSingleOrderById(){
-        Order order = orderService.getSingleOrderById(300);
+        Order order = orderService.getSingleOrderById(2496);
         LOGGER.info(order);
         LOGGER.info(SEPARATOR);
     }

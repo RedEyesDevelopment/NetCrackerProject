@@ -59,13 +59,17 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
         try {
             notificationTypeDAO.deleteNotificationType(id);
         } catch (ReferenceBreakException e) {
-            return notificationTypeDAO.rollback(id, ON_ENTITY_REFERENCE, e);
+            LOGGER.warn(ON_ENTITY_REFERENCE, e);
+            return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage());
         } catch (DeletedObjectNotExistsException e) {
-            return notificationTypeDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
+            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+            return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
         } catch (WrongEntityIdException e) {
-            return notificationTypeDAO.rollback(id, WRONG_DELETED_ID, e);
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
         } catch (IllegalArgumentException e) {
-            return notificationTypeDAO.rollback(id, NULL_ID, e);
+            LOGGER.warn(NULL_ID, e);
+            return new IUDAnswer(id, false, NULL_ID, e.getMessage());
         }
         notificationTypeDAO.commit();
         return new IUDAnswer(id, true);
@@ -78,7 +82,8 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
         try {
             notifTypeId = notificationTypeDAO.insertNotificationType(notificationType);
         } catch (IllegalArgumentException e) {
-            return notificationTypeDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
         notificationTypeDAO.commit();
         return new IUDAnswer(notifTypeId,true);
@@ -93,7 +98,8 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
             NotificationType oldNotificationType = notificationTypeDAO.getNotificationType(id);
             notificationTypeDAO.updateNotificationType(newNotificationType, oldNotificationType);
         } catch (IllegalArgumentException e) {
-            return notificationTypeDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(id, false, WRONG_FIELD, e.getMessage());
         }
         notificationTypeDAO.commit();
         return new IUDAnswer(id,true);

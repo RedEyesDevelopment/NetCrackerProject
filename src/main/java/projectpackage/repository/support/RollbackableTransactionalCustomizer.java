@@ -8,7 +8,7 @@ import java.sql.Connection;
  * Created by Arizel on 23.06.2017.
  */
 
-public class CustomConnectionCustomizer implements ConnectionCustomizer{
+public class RollbackableTransactionalCustomizer implements ConnectionCustomizer{
     @Override
     public void onAcquire(Connection connection, String s) throws Exception {
 

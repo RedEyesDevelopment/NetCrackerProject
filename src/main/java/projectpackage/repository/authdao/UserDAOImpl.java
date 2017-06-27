@@ -79,6 +79,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     @Override
     public Integer updateUser(User newUser, User oldUser) {
         if (newUser == null || oldUser == null) return null;
+        checkEmailForDuplicate(newUser.getEmail());
         updateEmail(newUser, oldUser);
         updatePassword(newUser, oldUser);
         updateFirstName(newUser, oldUser);

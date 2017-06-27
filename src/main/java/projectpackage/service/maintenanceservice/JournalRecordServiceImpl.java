@@ -67,13 +67,17 @@ public class JournalRecordServiceImpl implements JournalRecordService{
         try {
             journalRecordDAO.deleteJournalRecord(id);
         } catch (ReferenceBreakException e) {
-            return journalRecordDAO.rollback(id, ON_ENTITY_REFERENCE, e);
+            LOGGER.warn(ON_ENTITY_REFERENCE, e);
+            return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage());
         } catch (DeletedObjectNotExistsException e) {
-            return journalRecordDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
+            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+            return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
         } catch (WrongEntityIdException e) {
-            return journalRecordDAO.rollback(id, WRONG_DELETED_ID, e);
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
         } catch (IllegalArgumentException e) {
-            return journalRecordDAO.rollback(id, NULL_ID, e);
+            LOGGER.warn(NULL_ID, e);
+            return new IUDAnswer(id, false, NULL_ID, e.getMessage());
         }
         journalRecordDAO.commit();
         return new IUDAnswer(id, true);
@@ -97,7 +101,8 @@ public class JournalRecordServiceImpl implements JournalRecordService{
         try {
             journalRecordId = journalRecordDAO.insertJournalRecord(journalRecord);
         } catch (IllegalArgumentException e) {
-            return journalRecordDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
         journalRecordDAO.commit();
         return new IUDAnswer(journalRecordId,true);
@@ -112,7 +117,8 @@ public class JournalRecordServiceImpl implements JournalRecordService{
             JournalRecord oldJournalRecord = journalRecordDAO.getJournalRecord(id);
             journalRecordDAO.updateJournalRecord(newJournalRecord, oldJournalRecord);
         } catch (IllegalArgumentException e) {
-            return journalRecordDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(id, false, WRONG_FIELD, e.getMessage());
         }
         journalRecordDAO.commit();
         return new IUDAnswer(id,true);

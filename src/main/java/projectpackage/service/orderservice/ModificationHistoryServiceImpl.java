@@ -46,7 +46,8 @@ public class ModificationHistoryServiceImpl implements ModificationHistoryServic
         try {
             modificationId = modificationHistoryDAO.insertModificationHistory(newOrder, oldOrder);
         } catch (IllegalArgumentException e) {
-            return modificationHistoryDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
         modificationHistoryDAO.commit();
         return new IUDAnswer(modificationId,true);
@@ -58,13 +59,17 @@ public class ModificationHistoryServiceImpl implements ModificationHistoryServic
         try {
             modificationHistoryDAO.deleteModificationHistory(id);
         } catch (ReferenceBreakException e) {
-            return modificationHistoryDAO.rollback(id, ON_ENTITY_REFERENCE, e);
+            LOGGER.warn(ON_ENTITY_REFERENCE, e);
+            return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage());
         } catch (DeletedObjectNotExistsException e) {
-            return modificationHistoryDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
+            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+            return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
         } catch (WrongEntityIdException e) {
-            return modificationHistoryDAO.rollback(id, WRONG_DELETED_ID, e);
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
         } catch (IllegalArgumentException e) {
-            return modificationHistoryDAO.rollback(id, NULL_ID, e);
+            LOGGER.warn(NULL_ID, e);
+            return new IUDAnswer(id, false, NULL_ID, e.getMessage());
         }
         modificationHistoryDAO.commit();
         return new IUDAnswer(id, true);

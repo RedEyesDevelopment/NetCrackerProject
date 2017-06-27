@@ -44,7 +44,8 @@ public class PriceServiceImpl implements PriceService{
             Price oldPrice = priceDAO.getPrice(id);
             priceDAO.updatePrice(newPrice, oldPrice);
         } catch (IllegalArgumentException e) {
-            return priceDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(id,false, WRONG_FIELD, e.getMessage());
         }
         priceDAO.commit();
         return new IUDAnswer(id,true);

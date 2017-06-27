@@ -44,13 +44,17 @@ public class ComplimentaryServiceImpl implements ComplimentaryService {
         try {
             complimentaryDAO.deleteComplimentary(id);
         } catch (ReferenceBreakException e) {
-            return complimentaryDAO.rollback(id, ON_ENTITY_REFERENCE, e);
+            LOGGER.warn(ON_ENTITY_REFERENCE, e);
+            return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage());
         } catch (DeletedObjectNotExistsException e) {
-            return complimentaryDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
+            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+            return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
         } catch (WrongEntityIdException e) {
-            return complimentaryDAO.rollback(id, WRONG_DELETED_ID, e);
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
         } catch (IllegalArgumentException e) {
-            return complimentaryDAO.rollback(id, NULL_ID, e);
+            LOGGER.warn(NULL_ID, e);
+            return new IUDAnswer(id, false, NULL_ID, e.getMessage());
         }
         complimentaryDAO.commit();
         return new IUDAnswer(id, true);
@@ -64,7 +68,8 @@ public class ComplimentaryServiceImpl implements ComplimentaryService {
             complimentaryId = complimentaryDAO.insertComplimentary(complimentary);
             LOGGER.info("Get from DB complimentaryId = " + complimentaryId);
         } catch (IllegalArgumentException e) {
-            return complimentaryDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
         complimentaryDAO.commit();
         return new IUDAnswer(complimentaryId,true);
@@ -79,7 +84,8 @@ public class ComplimentaryServiceImpl implements ComplimentaryService {
             Complimentary oldComplimentary = complimentaryDAO.getComplimentary(id);
             complimentaryDAO.updateComplimentary(newComplimentary, oldComplimentary);
         } catch (IllegalArgumentException e) {
-            return complimentaryDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(id, false, WRONG_FIELD, e.getMessage());
         }
         complimentaryDAO.commit();
         return new IUDAnswer(id,true);

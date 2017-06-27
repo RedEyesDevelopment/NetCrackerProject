@@ -41,7 +41,8 @@ public class RateServiceImpl implements RateService{
         try {
             rateId = rateDAO.insertRate(rate);
         } catch (IllegalArgumentException e) {
-            return rateDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
         rateDAO.commit();
         return new IUDAnswer(rateId,true);

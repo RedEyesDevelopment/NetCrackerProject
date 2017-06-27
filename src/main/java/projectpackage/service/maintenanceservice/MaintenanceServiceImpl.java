@@ -44,13 +44,17 @@ public class MaintenanceServiceImpl implements MaintenanceService {
         try {
             maintenanceDAO.deleteMaintenance(id);
         } catch (ReferenceBreakException e) {
-            return maintenanceDAO.rollback(id, ON_ENTITY_REFERENCE, e);
+            LOGGER.warn(ON_ENTITY_REFERENCE, e);
+            return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage());
         } catch (DeletedObjectNotExistsException e) {
-            return maintenanceDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
+            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+            return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
         } catch (WrongEntityIdException e) {
-            return maintenanceDAO.rollback(id, WRONG_DELETED_ID, e);
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
         } catch (IllegalArgumentException e) {
-            return maintenanceDAO.rollback(id, NULL_ID, e);
+            LOGGER.warn(NULL_ID, e);
+            return new IUDAnswer(id, false, NULL_ID, e.getMessage());
         }
         maintenanceDAO.commit();
         return new IUDAnswer(id, true);
@@ -64,7 +68,8 @@ public class MaintenanceServiceImpl implements MaintenanceService {
             maintenanceId = maintenanceDAO.insertMaintenance(maintenance);
             LOGGER.info("Get from DB maintenanceId = " + maintenanceId);
         } catch (IllegalArgumentException e) {
-            return maintenanceDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
         maintenanceDAO.commit();
         return new IUDAnswer(maintenanceId,true);
@@ -79,7 +84,8 @@ public class MaintenanceServiceImpl implements MaintenanceService {
             Maintenance oldMaintenance = maintenanceDAO.getMaintenance(id);
             maintenanceDAO.updateMaintenance(newMaintenance, oldMaintenance);
         } catch (IllegalArgumentException e) {
-            return maintenanceDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(id, false, WRONG_FIELD, e.getMessage());
         }
         maintenanceDAO.commit();
         return new IUDAnswer(id,true);
