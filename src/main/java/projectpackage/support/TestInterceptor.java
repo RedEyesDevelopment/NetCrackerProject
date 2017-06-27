@@ -33,8 +33,7 @@ public class TestInterceptor implements HandlerInterceptor {
                 System.out.println("BOOKED ORDER = " + order);
             } else System.out.println("BOOKED ORDER IS NULL");
         } else System.out.println("SESSION IS NULL");
-
-
+        System.out.println("Object: "+o);
         return true;
     }
 

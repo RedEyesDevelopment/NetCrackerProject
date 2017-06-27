@@ -47,6 +47,11 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
                 .getEntityCollection();
     }
 
+    @Override
+    public List<Category> getSimpleCategoryList() {
+        return manager.createReactEAV(Category.class).getEntityCollection();
+    }
+
     @Transactional
     @Override
     public Integer insertCategory(Category category) {
