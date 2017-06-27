@@ -62,16 +62,19 @@ public class PdfServiceImpl implements PdfService{
             return null;
         }
         stream.setFontAndSize(font, 16);
-        stream.setTextMatrix(190, 540);
+
+        stream.setTextMatrix(185, 540);
         stream.showText(String.valueOf(order.getObjectId()));
-        stream.setTextMatrix(230, 500);
+        stream.setTextMatrix(185, 490);
+        stream.showText(String.valueOf(order.getRoom().getRoomNumber()));
+        stream.setTextMatrix(220, 438);
         stream.showText(order.getRoom().getRoomType().getRoomTypeTitle());
-        stream.setTextMatrix(190, 340);
+        stream.setTextMatrix(190, 280);
         stream.showText(order.getCategory().getCategoryTitle());
-        stream.setTextMatrix(175, 300);
+        stream.setTextMatrix(175, 243);
         stream.showText(df.format(order.getLivingStartDate()) + "  -  " + df.format(order.getLivingFinishDate()));
-        stream.setTextMatrix(125, 260);
-        stream.showText(order.getSum() + "$");
+        stream.setTextMatrix(125, 205);
+        stream.showText(order.getSum()/100 + "$");
         stream.endText();
 
         try {

@@ -6,6 +6,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import projectpackage.service.fileservice.pdf.PdfService;
 
 import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
@@ -20,6 +21,9 @@ public class MailServiceImpl implements MailService{
 
     @Autowired
     private JavaMailSender javaMailSender;
+
+    @Autowired
+    private PdfService pdfService;
 
     @Autowired
     private MailConfig mailConfig;
@@ -55,7 +59,7 @@ public class MailServiceImpl implements MailService{
             } catch (MessagingException e) {
                 LOGGER.error(message, e);
             }
-            CustomMailSender sender = new CustomMailSender(LOGGER, javaMailSenderImpl,message);
+            CustomMailSender sender = new CustomMailSender(pdfService, attributeFile.getPath(), LOGGER, javaMailSenderImpl,message);
             Thread thread = new Thread(sender);
             thread.start();
         }
