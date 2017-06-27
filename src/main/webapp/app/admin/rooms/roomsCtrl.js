@@ -66,7 +66,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		$scope.room.numberOfResidents = "";
 		$scope.room.type = "";
 		resetFlags();
-		$scope.stage = "additing";
+		$scope.stage = "adding";
 		$scope.modificationMode = true;
 	}
 
@@ -109,7 +109,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	/* Вызывает нужный запрос в зависимости от типа операции */
 	$scope.query = function() {
 		switch ($scope.stage) {
-			case 'additing': addRoom();
+			case 'adding': addRoom();
 				break;
 			case 'editing': editRoom();
 				break;
