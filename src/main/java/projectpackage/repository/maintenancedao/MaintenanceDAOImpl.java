@@ -23,6 +23,7 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
     JdbcTemplate jdbcTemplate;
 
     @Override
+    @Transactional(readOnly = true)
     public Maintenance getMaintenance(Integer id) {
         if (null == id) return null;
 
@@ -31,6 +32,7 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Maintenance> getAllMaintenances() {
         return manager.createReactEAV(Maintenance.class).getEntityCollection();
     }

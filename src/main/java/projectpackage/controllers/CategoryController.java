@@ -1,11 +1,13 @@
 package projectpackage.controllers;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projectpackage.dto.JacksonMappingMarker;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Category;
 import projectpackage.dto.IUDAnswer;
@@ -44,6 +46,14 @@ public class CategoryController {
             resources.add(categoryResource);
         }
         return resources;
+    }
+
+    //Get Category List
+    @JsonView(JacksonMappingMarker.List.class)
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/simpleList", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public List<Category> getSimpleCategoryList(){
+        return categoryService.getSimpleCategoryList();
     }
 
     //Get single Category by id

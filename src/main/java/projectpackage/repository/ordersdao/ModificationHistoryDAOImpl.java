@@ -28,6 +28,7 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
     JdbcTemplate jdbcTemplate;
 
     @Override
+    @Transactional(readOnly = true)
     public ModificationHistory getModificationHistory(Integer id) {
         if (null == id) return null;
 
@@ -37,6 +38,7 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ModificationHistory> getAllModificationHistories() {
         return (List<ModificationHistory>) manager.createReactEAV(ModificationHistory.class)
                 .fetchRootReference(User.class,"UserToModificationHistory")

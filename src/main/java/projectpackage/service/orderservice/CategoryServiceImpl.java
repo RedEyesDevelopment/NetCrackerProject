@@ -36,6 +36,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<Category> getSimpleCategoryList() {
+        return categoryDAO.getSimpleCategoryList();
+    }
+
+    @Override
     public Category getSingleCategoryById(Integer id) {
         Category category = categoryDAO.getCategory(id);
         if (null == category) LOGGER.info("Returned NULL!!!");

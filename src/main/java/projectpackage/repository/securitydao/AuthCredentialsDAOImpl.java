@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.security.AuthCredentials;
 import projectpackage.repository.support.rowmappers.AuthCredentialsRowMapper;
 
@@ -37,6 +38,7 @@ public class AuthCredentialsDAOImpl implements AuthCredentialsDAO {
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
+    @Transactional(readOnly = true)
     public AuthCredentials getUserByUsername(String username) {
         AuthCredentials credentials = null;
         if (null != username && !username.equals("")) {
