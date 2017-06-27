@@ -67,10 +67,20 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public List<Room> getSimpleRoomList() {
+        return roomDAO.getSimpleRoomsList();
+    }
+
+    @Override
     public Room getSingleRoomById(Integer id) {
         Room room = roomDAO.getRoom(id);
         if (room == null) LOGGER.info("Returned NULL!!!");
         return room;
+    }
+
+    @Override
+    public Room getSimpleRoomById(Integer id) {
+        return roomDAO.getSimpleRoom(id);
     }
 
     @Override

@@ -200,7 +200,7 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
         comboPooledDataSource.setIdleConnectionTestPeriod(300);
         //имя специальной таблицы для тестирования соединения с БД
         comboPooledDataSource.setAutomaticTestTable("c3p0DatabaseTestTable");
-        comboPooledDataSource.setForceIgnoreUnresolvedTransactions(true);
+//        comboPooledDataSource.setForceIgnoreUnresolvedTransactions(true);
         comboPooledDataSource.setAutoCommitOnClose(false);
         comboPooledDataSource.setConnectionCustomizerClassName(CustomConnectionCustomizer.class.getName());
         //c3p0 helper threads - специальные треды что чистят пулы и смотрят за ними

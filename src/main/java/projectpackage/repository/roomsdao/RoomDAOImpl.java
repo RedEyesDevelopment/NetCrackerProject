@@ -42,10 +42,23 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     }
 
     @Override
+    public Room getSimpleRoom(Integer id) {
+        if (null==id) return null;
+
+        return (Room) manager.createReactEAV(Room.class)
+                .fetchRootReference(RoomType.class, "RoomTypeToRoom").closeAllFetches().getSingleEntityWithId(id);
+    }
+
+    @Override
     public List<Room> getAllRooms() {
         return manager.createReactEAV(Room.class).addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
                 .fetchRootReference(RoomType.class, "RoomTypeToRoom")
                 .fetchInnerChild(Rate.class).fetchInnerChild(Price.class).closeAllFetches().getEntityCollection();
+    }
+
+    @Override
+    public List<Room> getSimpleRoomsList() {
+        return manager.createReactEAV(Room.class).fetchRootReference(RoomType.class, "RoomTypeToRoom").closeAllFetches().getEntityCollection();
     }
 
     @Override

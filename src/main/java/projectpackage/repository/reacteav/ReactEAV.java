@@ -179,10 +179,15 @@ public class ReactEAV {
                 } catch (EmptyResultDataAccessException empty) {
                     StringBuilder errorBuilder = new StringBuilder();
                     errorBuilder.append("ReactEAV failed to get single object from database, DB returned null. This may be because there is no entity objects in database.");
+                    errorBuilder.append(config.getNewLineChar());
                     errorBuilder.append("Root entity class=").append(rootNode.getObjectClass());
+                    errorBuilder.append(config.getNewLineChar());
                     errorBuilder.append("Entity-that-returned-null-class=").append(holder.getNode().getObjectClass());
+                    errorBuilder.append(config.getNewLineChar());
                     errorBuilder.append("Target entity id=").append(holder.getNode().getTargetId());
+                    errorBuilder.append(config.getNewLineChar());
                     errorBuilder.append("Query=").append(holder.getQuery());
+                    errorBuilder.append(config.getNewLineChar());
                     errorBuilder.append("isForSibleObject? :").append(holder.getNode().isForSingleObject());
                     log.log(Level.WARN, errorBuilder.toString(), empty);
                     if (holder.getNode().equals(rootNode)) {
@@ -203,9 +208,13 @@ public class ReactEAV {
                     } catch (EmptyResultDataAccessException empty) {
                         StringBuilder errorBuilder = new StringBuilder();
                         errorBuilder.append("ReactEAV failed to get object collection from database, DB returned null. This may be because there is no entity objects in database.");
+                        errorBuilder.append(config.getNewLineChar());
                         errorBuilder.append("Root entity class=").append(rootNode.getObjectClass());
+                        errorBuilder.append(config.getNewLineChar());
                         errorBuilder.append("Entity-that-returned-null-class=").append(holder.getNode().getObjectClass());
+                        errorBuilder.append(config.getNewLineChar());
                         errorBuilder.append("Query=").append(holder.getQuery());
+                        errorBuilder.append(config.getNewLineChar());
                         errorBuilder.append("Sorting parameter=").append(holder.getNode().getOrderingParameter());
                         log.log(Level.WARN, errorBuilder.toString(), empty);
                         if (holder.getNode().equals(rootNode)) {

@@ -100,7 +100,7 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getOrdersByRoom(){
-        Order order = orderService.getSingleOrderById(2062);
+        Order order = orderService.getSingleOrderById(2080);
         System.out.println(order);
     }
 
