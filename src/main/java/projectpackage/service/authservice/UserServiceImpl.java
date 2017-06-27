@@ -13,7 +13,7 @@ import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsExc
 import projectpackage.repository.support.daoexceptions.DuplicateEmailException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.service.phoneregex.PhoneRegexService;
+import projectpackage.service.regex.RegexService;
 import projectpackage.service.securityservice.SecurityService;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
 	PhoneDAO phoneDAO;
 
 	@Autowired
-	PhoneRegexService phoneRegexService;
+	RegexService regexService;
 
 	@Autowired
 	SecurityService securityService;
@@ -75,8 +75,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public IUDAnswer insertUser(User user) {
 		if (user == null) return null;
+		if (user.getPhones() == null) return null;
         for (Phone phone : user.getPhones()) {
-            boolean isValid = phoneRegexService.match(phone.getPhoneNumber());
+            boolean isValid = regexService.isValidPhone(phone.getPhoneNumber());
             if (!isValid) return new IUDAnswer(false, WRONG_PHONE_NUMBER);
         }
         if (!securityService.cryptUserPass(user)){

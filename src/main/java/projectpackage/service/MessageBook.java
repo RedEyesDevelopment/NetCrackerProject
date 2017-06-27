@@ -5,7 +5,7 @@ package projectpackage.service;
  */
 public interface MessageBook {
     String WRONG_UPDATE_ID = "Cannot update with wrong id! Updated entity id not equals original entity id, but id cannot be changed!";
-    String WRONG_DELETED_ID = "Cannot delete entity with inadequate id! Entity id does not match entity class! Check your request!";
+    String WRONG_DELETED_ID = "Cannot delete entity with inadequate id! Entity id does not isValidPhone entity class! Check your request!";
     String DELETED_OBJECT_NOT_EXISTS = "Cannot execute delete operation because deleted entity does not exists! Check your request!";
     String WRONG_PHONE_NUMBER = "Cannot insert or update incorrect phone number!";
     String WRONG_FIELD = "The required field cannot be empty or null for insert and update operations!";
