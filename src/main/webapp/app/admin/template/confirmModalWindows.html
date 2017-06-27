@@ -1,0 +1,44 @@
+<!-- Add or Edit confirmation -->
+<div class="modal fade" id="editConfirmModal" role="dialog">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog modal-sm vertical-align-center">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header popupheader">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Save changes</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="admin-notes">Would you like to save changes?</p>
+                    <div class="text-right">
+                        <button class="btn btn-success" data-dismiss="modal" ng-click="query()">Yes</button>
+                        <button class="btn btn-primary" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Delete confirmation -->
+<div class="modal fade" id="deleteConfirmModal" role="dialog">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog modal-sm vertical-align-center">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header popupheader">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Warning</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="admin-notes">Please confirm the deletion.</p>
+                    <div class="text-right">
+                        <button class="btn btn-success" data-dismiss="modal" ng-click="query()">Сontinue</button>
+                        <button class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
