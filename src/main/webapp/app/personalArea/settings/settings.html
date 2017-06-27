@@ -6,66 +6,99 @@
 	<div class="col-sm-9">
 
 	    <h1> User settings </h1>
-	    <div class="settingsForm">
-	        <form class="user-form" id="contactFrm" name="contactFrm" novalidate ng-submit='updateUser($event)'>
-
-
-	                <!-- Edit -->
-	                <!-- NAME -->
-	                <div class="firstname">
-	                    <label>First Name</label>
-	                    <p class="changable" id="userFirstName">{{yourData.data.firstName}}</p>
+	    <div class="settingsFields">
+	        <form name="mainForm" novalidate>
+	        	<div class="groupInput">
+		        	<div class="row">
+		        		<div class="col-sm-3">
+	                    	<label for="firstNameInput">First name:</label>
+	                    </div>
+	                    <div class="col-sm-6">
+	                    	<input type="text" id="firstNameInput"
+	                    		ng-model="myself.firstName">
+	                	</div>
 	                </div>
-	                <!-- SURNAME -->
-	                <div class="lastname">
-	                    <label>Last Name: </label>
-	                    <p class="changable" id="userLastName">{{yourData.data.lastName}}</p>
+	                <div class="row">
+	                	<div class="col-sm-3">
+	                    	<label for="lastNameInput">Last name:</label>
+	                    </div>
+	                    <div class="col-sm-6">
+	                    	<input type="text" id="lastNameInput"
+	                    		ng-model="myself.lastName">
+	                	</div>
 	                </div>
-	                <!-- MAIL -->
-	                <div class="mail">
-	                    <label>Your Email: </label>
-	                    <p class="changable" id="userEmail">{{yourData.data.email}}</p>
+	                <div class="row">
+	                	<div class="col-sm-3">
+	                    	<label for="emailInput">Email:</label>
+	                    </div>
+	                    <div class="col-sm-6">
+	                    	<input type="email" id="emailInput"
+	                    		ng-model="myself.email">
+	                	</div>
 	                </div>
-	                <!-- PWD -->
-	                <div class="yourpass">
-	                    <label>Your Password: </label>
-	                    <p class="changable" id="userPassword">{{yourData.data.password}}</p>
+	            </div>
+	            <div class="groupInput">
+	                <div class="row">
+	                	<div class="col-sm-3">
+	                    	<label for="oldPasswordInput">Old password:</label>
+	                    </div>
+	                    <div class="col-sm-6">
+	                    	<input type="password" id="oldPasswordInput"
+	                    		ng-model="myself.password">
+	                	</div>
 	                </div>
-	                <!-- NUMBERS -->
-	                <div class="numbers">
-	                    <label>Your Numbers: </label>
-
-
-	                    <!-- ADD DEL NUMBER -->
-	                    <form role="form" action="/wohoo" method="POST">
-	                        <div class="multi-number-wrapper">
-
-	                            <div class="multi-numbers">
-
-	                                <div class="multi-number" ng-repeat="phones in yourData.data.phones">
-	                                    <p class="changable" type="text" name="stuff[]">{{phones.phoneNumber}}</p>
-	                                    <button type="button" class="remove-number">-</button>
-
-
-	                                </div>
-
-	                            </div>
-
-	                            <button type="button" class="add-number">+</button>
-
-	                        </div>
-	                    </form>
-
+	                <div class="row">
+	                	<div class="col-sm-3">
+	                    	<label for="newPasswordInput">New password:</label>
+	                    </div>
+	                    <div class="col-sm-6">
+	                    	<input type="password" id="newPasswordInput"
+	                    		ng-model="myself.password">
+	                	</div>
 	                </div>
-	                <!-- END DEL NUMBER -->
-	                <!-- End edit -->
-	                <button id="dat-button" type="submit" class="btn btn-default" ng-click='updateUser()'>Update</button>
-	                <div ng-show="wasUpdatedUser">
-	                    <p class="bg-primary">User was updated successful!</p>
+	                <div class="row">
+	                	<div class="col-sm-3">
+	                		<label for="passwordRepInput">Repeat:</label>
+	                    </div>
+	                    <div class="col-sm-6">
+	                    	<input type="password" id="passwordRepInput"
+	                    		ng-model="myself.passwordRep">
+	                	</div>
 	                </div>
-	                <div ng-show="notUpdatedUser">
-	                    <p class="bg-warning">{{messageUpdate}}</p>
-	                </div>
+	            </div>
+
+				<!-- <div class="groupInput"> -->
+					<!-- <div class="phoneLabel"> -->
+			            <!-- <div class="col-sm-3"> -->
+		                	<label>Phone Numbers:</label>
+		                <!-- </div> -->
+				    <!-- </div> -->
+
+		            <div ng-repeat="phone in myself.phones">
+			            <div class="offset-col-sm-3 col-sm-6">
+	                    	<input type="tel" id="phoneNumberInput"
+	                    		ng-model="phone.phoneNumber">
+	                	</div>
+			        </div>
+			    <!-- </div> -->
+
+	            <div class="butt">
+                	<button class="btn btn-default">Update</button>
+				</div>
+
+
+
+
+
+
+
+
+                <div ng-show="wasUpdatedUser">
+                    <p class="bg-primary">User was updated successful!</p>
+                </div>
+                <div ng-show="notUpdatedUser">
+                    <p class="bg-warning">{{messageUpdate}}</p>
+                </div>
 	        </form>
 	    </div>
 	</div>

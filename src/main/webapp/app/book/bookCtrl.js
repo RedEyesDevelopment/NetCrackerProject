@@ -68,6 +68,7 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
                 $scope.finishOrder = data.data;
                 $scope.doesNeedToShowBookForm = false;
                 $scope.stage = "finishOrdering";
+                $('body').animate({ scrollTop : 500 }, 300);
             }, function(response) {
                 console.log("Smth wrong!!");
                 console.log(response);

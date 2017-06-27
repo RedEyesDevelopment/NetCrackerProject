@@ -20,10 +20,10 @@
 			<b>Category:</b> {{ finishOrder.categoryName }}
 		</p>
 		<p class="order-confirm">
-			<b>Categody cost:</b> ${{ finishOrder.categoryCost}}
+			<b>Categody cost:</b> ${{ finishOrder.categoryCost / 100 }}
 		</p>
 		<p class="order-confirm">
-			<b>Living cost:</b> ${{ finishOrder.livingCost}}
+			<b>Living cost:</b> ${{ finishOrder.livingCost / 100 }}
 		</p>
 		<p class="order-confirm">
 			<b>Total cost:</b> ${{ finishOrder.categoryCost + finishOrder.livingCost}}

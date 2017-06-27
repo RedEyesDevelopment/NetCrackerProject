@@ -11,13 +11,11 @@ app.factory('util', function() {
 
 	/* Для листания страниц с объектами */
 	function nextEntities(arrLength, startPaging, objectsOnPage) {
-		console.log("IN util. arrLength = " + arrLength + "; startPaging = " + startPaging + "; objectsOnPage " + objectsOnPage);
 		if (arrLength > startPaging + objectsOnPage) {
 			return startPaging + objectsOnPage;
 		} else return startPaging;
 	}
 	function previousEntities(startPaging, objectsOnPage) {
-		console.log("IN util. startPaging = " + startPaging + "; objectsOnPage " + objectsOnPage);
 		if (startPaging - objectsOnPage >= 0) {
 			return startPaging - objectsOnPage;
 		} else return 0;

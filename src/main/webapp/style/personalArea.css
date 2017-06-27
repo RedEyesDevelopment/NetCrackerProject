@@ -15,4 +15,57 @@
 }
 /* ------------------------------- */
 
+/* --------- Настройки ------------- */
+.settings h1 {
+	text-align: center;
+	margin: 20px;
+}
 
+.settings .settingsFields {
+	font-size: 18px;
+}
+
+.settings .settingsFields form .groupInput {
+	margin-bottom: 30px;
+}
+
+.settings .settingsFields form input {
+	outline: none;
+	border: none;
+	border-bottom: 1px solid #999;
+	width: 100%;
+	text-align: center;
+}
+
+.settings .settingsFields form input:focus {
+	border-bottom: 1px solid #555;
+	background: #efefef;
+}
+
+.settings .settingsFields form .row {
+	margin-bottom: 10px;
+}
+
+.settings .settingsFields form .butt {
+	text-align: center;
+}
+
+.settings .settingsFields form button {
+	width: 200px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ------------------------------- */

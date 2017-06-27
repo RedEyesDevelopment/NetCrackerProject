@@ -5,7 +5,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	/* Функция на получения всех комнат и типов комнат, вызываются сразу */
 	(function() {
 		$http({
-			url: 'http://localhost:8080/rooms',
+			url: sharedData.getLinks().https + '/rooms',
 			method: 'GET',
 			headers: {
 				'Content-Type' : 'application/json'
@@ -21,7 +21,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 	(function() {
 		$http({
-			url: 'http://localhost:8080/roomtypes',
+			url: sharedData.getLinks().https + '/roomtypes',
 			method: 'GET',
 			headers: {
 				'Content-Type' : 'application/json'
@@ -71,9 +71,9 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}
 
 	$scope.prepareToEditRoom = function(roomId, index) {
-		console.log(sharedData.getLinks().https);
+		// console.log(sharedData.getLinks().https);
 		$http({
-			url: 'http://localhost:8080/rooms/' + roomId,
+			url: sharedData.getLinks().https + '/rooms/' + roomId,
 			method: 'GET',
 			headers: {'Content-Type': 'application/json'}
 		}).then(function(data) {
@@ -119,17 +119,17 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}
 
 	/* Функции, выполняющие запросы */
-	addRoom = function() {
-		$scope.added = false;
+	var addRoom = function() {
+		resetFlags();
 		$http({
-			url: 'http://localhost:8080/rooms',
+			url: sharedData.getLinks().https + '/rooms',
 			method: 'POST',
 			data: {
 				roomNumber : 		$scope.room.number,
 				numberOfResidents : parseInt($scope.room.numberOfResidents),
 				roomType : 			parseInt($scope.room.type)
 			},
-			headers: {'Content-Type': 'application/json'}
+			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
 			$scope.listOfRooms.push({
@@ -146,17 +146,17 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		});
 	}
 
-	editRoom = function() {
-		$scope.updated = false;
+	var editRoom = function() {
+		resetFlags();
 		$http({
-			url: 'http://localhost:8080/rooms/' + $scope.room.idForOperation,
+			url: sharedData.getLinks().https + '/rooms/' + $scope.room.idForOperation,
 			method: 'PUT',
 			data: {
 				roomNumber : 		$scope.room.number,
 				numberOfResidents : parseInt($scope.room.numberOfResidents),
 				roomType : 			parseInt($scope.room.type)
 			},
-			headers: {'Content-Type': 'application/json'}
+			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
 			$scope.listOfRooms[$scope.indexForOperation].roomNumber = $scope.room.number;
@@ -169,12 +169,12 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		});
 	}
 
-	deleteRoom = function() {
-		$scope.deleted = false;
+	var deleteRoom = function() {
+		resetFlags();
 		$http({
-			url: 'http://localhost:8080/rooms/' + $scope.room.idForOperation,
+			url: sharedData.getLinks().https + '/rooms/' + $scope.room.idForOperation,
 			method: 'DELETE',
-			headers: {'Content-Type': 'application/json'}
+			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
 			$scope.listOfRooms.splice($scope.indexForOperation, 1);
