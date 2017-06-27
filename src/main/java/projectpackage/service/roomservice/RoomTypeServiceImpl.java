@@ -12,6 +12,7 @@ import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsExc
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.service.orderservice.CategoryService;
+import projectpackage.service.support.ServiceUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,9 +34,15 @@ public class RoomTypeServiceImpl implements RoomTypeService{
     @Autowired
     CategoryService categoryService;
 
+    @Autowired
+    ServiceUtils serviceUtils;
+
     @Override
     public List<OrderDTO> getRoomTypes(Date startDate, Date finishDate, int numberOfPeople, int categoryId) {
         List<OrderDTO> list = new ArrayList<>();
+        if (startDate == null || finishDate == null) return list;
+        boolean isValidDates = serviceUtils.checkDates(startDate, finishDate);
+        if (!isValidDates) return list;
         Set<Integer> availableRoomTypes = roomTypeDAO.getAvailableRoomTypes(numberOfPeople, new java.sql.Date(startDate.getTime()), new java.sql.Date(finishDate.getTime()));
         List<RoomType> allRoomTypes = getAllRoomTypes();
         for (RoomType roomType : allRoomTypes) {

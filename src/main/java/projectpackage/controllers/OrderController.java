@@ -23,10 +23,7 @@ import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -129,11 +126,10 @@ public class OrderController {
 
     @RequestMapping(value = "/book/{id}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<BookedOrderDTO> createOrderByRoomType(@PathVariable("id") Integer id, HttpServletRequest request) {
+        OrderDTO dto = null;
+        if (id == null) return new ResponseEntity<BookedOrderDTO>(new BookedOrderDTO(dto), HttpStatus.BAD_REQUEST);
         User thisUser = (User) request.getSession().getAttribute("USER");
-        System.out.println("************************************USER IN SESSION****************************");
-        System.out.println(thisUser);
         List<OrderDTO> dtoData = (List<OrderDTO>) request.getSession().getAttribute("ORDERDATA");
-        OrderDTO dto=null;
         for (OrderDTO order:dtoData){
             if (id.equals(order.getRoomTypeId())){
                 dto = order;
@@ -141,11 +137,8 @@ public class OrderController {
             }
         }
         Category category = categoryService.getSingleCategoryById(dto.getCategoryId());
-        System.out.println("************************************************************************CATEGORY");
-        System.out.println(category);
         Order order = orderService.createOrderTemplate(thisUser,dto);
         order.setCategory(category);
-        System.out.println(order);
         request.getSession().removeAttribute("ORDERDATA");
         request.getSession().setAttribute("NEWORDER", order);
 
@@ -187,24 +180,9 @@ public class OrderController {
 
     @RequestMapping(value = "/searchavailability", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<List<OrderDTO>> searchAvailabilityForOrderCreation(@RequestBody SearchAvailabilityParamsDTO searchDto, HttpServletRequest request) throws ParseException {
-        List<OrderDTO> data = null;
-
-        SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
-        Date today = sdf.parse(sdf.format(Calendar.getInstance().getTime()));
-
-        long maxValidTime = 31536000000L;
-        long validStartDate = searchDto.getArrival().getTime() - today.getTime();
-        long validFinishDate = searchDto.getDeparture().getTime() - today.getTime();
-
-        ResponseEntity<List<OrderDTO>> answer = new ResponseEntity<List<OrderDTO>>(data, HttpStatus.BAD_REQUEST);
-
-        if (validStartDate > maxValidTime) return answer;
-        if (validFinishDate > maxValidTime) return answer;
-        if (searchDto.getArrival().getTime() < today.getTime()) return answer;
-        if (searchDto.getDeparture().getTime() < today.getTime()) return answer;
-        if (searchDto.getArrival().getTime() > searchDto.getDeparture().getTime()) return answer;
-
-        data = roomTypeService.getRoomTypes(searchDto.getArrival(),searchDto.getDeparture(),searchDto.getLivingPersons(), searchDto.getCategoryId());
+        List<OrderDTO> data = roomTypeService.getRoomTypes(searchDto.getArrival(),searchDto.getDeparture(),
+                searchDto.getLivingPersons(), searchDto.getCategoryId());
+        if (data.isEmpty()) return new ResponseEntity<List<OrderDTO>>(data, HttpStatus.BAD_REQUEST);
 
         ResponseEntity<List<OrderDTO>> responseEntity = new ResponseEntity<List<OrderDTO>>(data, HttpStatus.OK);
         List<OrderDTO> dtoData = data.stream().filter(dto -> dto.isAvailable()).collect(Collectors.toList());

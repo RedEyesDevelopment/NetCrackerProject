@@ -20,6 +20,8 @@ import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static projectpackage.service.MessageBook.DISCREPANCY_PARENT_ID;
+import static projectpackage.service.MessageBook.NULL_ENTITY;
 
 /**
  * Created by Arizel on 28.05.2017.
@@ -45,7 +47,6 @@ public class PhoneController {
         return resources;
     }
 
-    @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Resource<Phone>> getPhone(@PathVariable("id") Integer id, HttpServletRequest request) {
         User thisUser = (User) request.getSession().getAttribute("USER");
@@ -53,11 +54,8 @@ public class PhoneController {
         Resource<Phone> resource = new Resource<>(phone);
         HttpStatus status;
         if (null != phone) {
-            if (thisUser.getRole().equals("ADMIN")) {
-                resource.add(linkTo(methodOn(PhoneController.class).deletePhone(phone.getObjectId())).withRel("delete"));
-            }
             resource.add(linkTo(methodOn(PhoneController.class).updatePhone(phone.getObjectId(), phone)).withRel("update"));
-            status = HttpStatus.ACCEPTED;
+            status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
         }
@@ -68,14 +66,14 @@ public class PhoneController {
     @CacheRemoveAll(cacheName = "phoneList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> createPhone(@RequestBody Phone newPhone) {
+        if (newPhone == null) return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
         IUDAnswer result = phoneService.insertPhone(newPhone);
         HttpStatus status;
         if (result.isSuccessful()) {
-            status = HttpStatus.ACCEPTED;
+            status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
         }
-
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
     }
@@ -84,29 +82,30 @@ public class PhoneController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updatePhone(@PathVariable("id") Integer id, @RequestBody Phone changedPhone) {
         if (!id.equals(changedPhone.getObjectId())) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID), HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID), HttpStatus.BAD_REQUEST);
+        } else if (changedPhone == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
         }
-
         IUDAnswer result = phoneService.updatePhone(id, changedPhone);
-
         HttpStatus status;
         if (result.isSuccessful()) {
-            status = HttpStatus.ACCEPTED;
+            status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
         }
-
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
     }
 
     @CacheRemoveAll(cacheName = "phoneList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> deletePhone(@PathVariable("id") Integer id) {
+    public ResponseEntity<IUDAnswer> deletePhone(@PathVariable("id") Integer id, HttpServletRequest request) {
+        User sessionUser = (User) request.getSession().getAttribute("USER");
+        if (id == null || id.equals(sessionUser.getObjectId())) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, DISCREPANCY_PARENT_ID), HttpStatus.BAD_REQUEST);
+        }
         IUDAnswer result = phoneService.deletePhone(id);
-
-        HttpStatus status = result.isSuccessful() ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND;
-
+        HttpStatus status = result.isSuccessful() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
         return new ResponseEntity<IUDAnswer>(result, status);
     }
 }

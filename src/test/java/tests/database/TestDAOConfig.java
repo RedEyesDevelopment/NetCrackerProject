@@ -66,6 +66,8 @@ import projectpackage.service.roomservice.RoomTypeService;
 import projectpackage.service.roomservice.RoomTypeServiceImpl;
 import projectpackage.service.securityservice.SecurityService;
 import projectpackage.service.securityservice.SecurityServiceImpl;
+import projectpackage.service.support.ServiceUtils;
+import projectpackage.service.support.ServiceUtilsImpl;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -234,6 +236,11 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
 
     @Bean
     JdbcTemplate jdbcTemplate () { return new JdbcTemplate(dataSource()); }
+
+    @Bean
+    ServiceUtils serviceUtils() {
+        return new ServiceUtilsImpl();
+    }
 
     @Bean
     UserDAO userDAO() {

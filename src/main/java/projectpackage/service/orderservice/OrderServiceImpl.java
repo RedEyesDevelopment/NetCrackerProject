@@ -15,6 +15,7 @@ import projectpackage.repository.roomsdao.RoomDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.service.support.ServiceUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +32,9 @@ public class OrderServiceImpl implements OrderService{
 
     @Autowired
     RoomDAO roomDAO;
+
+    @Autowired
+    ServiceUtils serviceUtils;
 
     @Override
     public List<Order> getAllOrders() {
@@ -170,10 +174,11 @@ public class OrderServiceImpl implements OrderService{
         return answer;
     }
 
-
-
     @Override
     public IUDAnswer createOrder(User client, int roomTypeId, int numberOfResidents, Date start, Date finish, Category category, long summ) {
+        if (start == null || finish == null || category == null) return new IUDAnswer(false, WRONG_DATES + WRONG_FIELD);
+        boolean isValidDates = serviceUtils.checkDates(start, finish);
+        if (!isValidDates) return new IUDAnswer(false, WRONG_DATES);
         Room room = roomDAO.getFreeRoom(roomTypeId, numberOfResidents, start, finish);
         if (null != room) {
             Order order = new Order();
@@ -244,6 +249,8 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public IUDAnswer insertOrder(Order order) {
         if (order == null) return null;
+        boolean isValidDates = serviceUtils.checkDates(order.getLivingStartDate(), order.getLivingFinishDate());
+        if (!isValidDates) return new IUDAnswer(false, WRONG_DATES);
         Integer orderId = null;
         try {
             orderId = orderDAO.insertOrder(order);
@@ -259,6 +266,8 @@ public class OrderServiceImpl implements OrderService{
     public IUDAnswer updateOrder(Integer id, Order newOrder) {
         if (newOrder == null) return null;
         if (id == null) return new IUDAnswer(false, NULL_ID);
+        boolean isValidDates = serviceUtils.checkDates(newOrder.getLivingStartDate(), newOrder.getLivingFinishDate());
+        if (!isValidDates) return new IUDAnswer(false, WRONG_DATES);
         try {
             newOrder.setObjectId(id);
             Order oldOrder = orderDAO.getOrder(id);

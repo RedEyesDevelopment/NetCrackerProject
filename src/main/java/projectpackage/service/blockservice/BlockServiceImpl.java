@@ -11,6 +11,7 @@ import projectpackage.repository.blocksdao.BlockDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.service.support.ServiceUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,6 +27,9 @@ public class BlockServiceImpl implements BlockService{
 
     @Autowired
     BlockDAO blockDAO;
+
+    @Autowired
+    ServiceUtils serviceUtils;
 
     @Override
     public List<Block> getAllBlocks() {
@@ -119,6 +123,8 @@ public class BlockServiceImpl implements BlockService{
     @Override
     public IUDAnswer insertBlock(Block block) {
         if (block == null) return null;
+        boolean isValidDates = serviceUtils.checkDates(block.getBlockStartDate(), block.getBlockFinishDate());
+        if (!isValidDates) return new IUDAnswer(false, WRONG_DATES);
         Integer blockId = null;
         try {
             blockId = blockDAO.insertBlock(block);
@@ -134,6 +140,8 @@ public class BlockServiceImpl implements BlockService{
     public IUDAnswer updateBlock(Integer id, Block newBlock) {
         if (newBlock == null) return null;
         if (id == null) return new IUDAnswer(false, NULL_ID);
+        boolean isValidDates = serviceUtils.checkDates(newBlock.getBlockStartDate(), newBlock.getBlockFinishDate());
+        if (!isValidDates) return new IUDAnswer(false, WRONG_DATES);
         try {
             newBlock.setObjectId(id);
             Block oldBlock = blockDAO.getBlock(id);

@@ -7,6 +7,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.dto.UserBasicDTO;
+import projectpackage.dto.UserPasswordDTO;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.service.MessageBook;
@@ -20,6 +22,9 @@ import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static projectpackage.service.MessageBook.NULL_ID;
+import static projectpackage.service.MessageBook.SAME_PASSWORDS;
+import static projectpackage.service.MessageBook.WRONG_FIELD;
 
 @RestController
 @RequestMapping("/users")
@@ -51,8 +56,6 @@ public class UserController {
         Resource<User> resource = new Resource<>(thisUser);
         HttpStatus status;
         if (null != thisUser){
-            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(UserController.class).deleteUser(thisUser.getObjectId())).withRel("delete"));
-            resource.add(linkTo(methodOn(UserController.class).updateUser(thisUser.getObjectId(), thisUser)).withRel("update"));
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -107,15 +110,72 @@ public class UserController {
         return responseEntity;
     }
 
+    @RequestMapping(value = "/update/password/{id}", method = RequestMethod.PUT,
+            produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<IUDAnswer> updatePassword(@PathVariable("id") Integer id, @RequestBody UserPasswordDTO userPasswordDTO, HttpServletRequest request) {
+        User sessionUser = (User) request.getSession().getAttribute("USER");
+        if (id == null || id.equals(sessionUser.getObjectId())) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, MessageBook.NULL_ID), HttpStatus.BAD_REQUEST);
+        } else if (userPasswordDTO == null || userPasswordDTO.getNewPassword() == null || userPasswordDTO.getOldPassword() == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_FIELD), HttpStatus.BAD_REQUEST);
+        } else if (userPasswordDTO.getOldPassword().equals(userPasswordDTO.getNewPassword())) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, SAME_PASSWORDS), HttpStatus.BAD_REQUEST);
+        }
+        User user = new User();
+        user.setAdditionalInfo(sessionUser.getAdditionalInfo());
+        user.setEnabled(Boolean.TRUE);
+        user.setFirstName(sessionUser.getFirstName());
+        user.setLastName(sessionUser.getLastName());
+        user.setEmail(sessionUser.getEmail());
+        user.setPassword(userPasswordDTO.getNewPassword());
+        user.setPhones(sessionUser.getPhones());
+        user.setRole(sessionUser.getRole());
+        IUDAnswer answer = userService.updateUser(id, user);
+        if (answer.isSuccessful()) {
+            request.getSession().removeAttribute("USER");
+            request.getSession().setAttribute("USER", userService.getSingleUserById(id));
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+    }
+
+    @RequestMapping(value = "/update/basic/{id}", method = RequestMethod.PUT,
+            produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<IUDAnswer> updateBasicInfo(@PathVariable("id") Integer id, @RequestBody UserBasicDTO userBasicDTO, HttpServletRequest request) {
+        User sessionUser = (User) request.getSession().getAttribute("USER");
+        if (id == null || id.equals(sessionUser.getObjectId())) return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, MessageBook.NULL_ID), HttpStatus.BAD_REQUEST);
+        User user = new User();
+        user.setAdditionalInfo(userBasicDTO.getAdditionalInfo());
+        user.setEnabled(Boolean.TRUE);
+        user.setFirstName(userBasicDTO.getFirstName());
+        user.setLastName(userBasicDTO.getLastName());
+        user.setEmail(userBasicDTO.getEmail());
+        user.setPassword(sessionUser.getPassword());
+        user.setPhones(sessionUser.getPhones());
+        user.setRole(sessionUser.getRole());
+        IUDAnswer answer = userService.updateUser(id, user);
+        if (answer.isSuccessful()) {
+            request.getSession().removeAttribute("USER");
+            request.getSession().setAttribute("USER", userService.getSingleUserById(id));
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+    }
+
     //Delete user method
     @CacheRemoveAll(cacheName = "userList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> deleteUser(@PathVariable("id") Integer id){
+        if (id == null) return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ID), HttpStatus.BAD_REQUEST);
         IUDAnswer result = userService.deleteUser(id);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.OK;
-        } else status = HttpStatus.NOT_FOUND;
+        } else {
+            status = HttpStatus.NOT_FOUND;
+        }
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
     }
