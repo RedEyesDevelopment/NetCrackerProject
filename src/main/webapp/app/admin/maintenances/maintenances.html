@@ -18,20 +18,22 @@
                 <li><input type="number" min="1" max="999" ng-model="pager.objectsOnPage"></li>
                 <li><a ng-click="nextMaintenances()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
-            <div ng-repeat="maintenance in listOfMaintenances | orderBy : 'maintenanceTitle' | limitTo : pager.objectsOnPage : pager.startPaging" class="admin-grid my-border">
-                <p class="admin-notes"> Maintenance title: {{ maintenance.maintenanceTitle }} </p>
-                <p class="admin-notes"> Maintenance type: {{ maintenance.maintenanceType ]} </p>
-                <p class="admin-notes"> Maintenance price: {{ maintenance.maintenacePrice }} </p>
-                <div class="text-right">
-                    <button type="button" class="btn btn-primary btn-md"
-                            ng-click="prepareToEditMaintenance(maintenance.objectId, listOfMaintenances.indexOf(maintenance)">
-                        Edit
-                    </button>
-                    <button type="button" class="btn btn-warning btn-md"
-                            ng-click="prepareToDeleteMaintenance(maintenance.objectId, listOfMaintenances.indexOf(maintenance)"
-                            data-toggle="model" data-target="#deleteConfirmModel">
-                        Delete
-                    </button>
+            <div ng-repeat="maintenance in listOfMaintenances | orderBy : 'maintenanceTitle' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-5 col-sm-offset-1">
+                <div class="block-border">
+                    <p class="admin-notes"> Title: {{ maintenance.maintenanceTitle }} </p>
+                    <p class="admin-notes top-bottom-border"> Type: {{ maintenance.maintenanceType }} </p>
+                    <p class="admin-notes"> Price: {{ maintenance.maintenancePrice }} </p>
+                    <div class="text-right">
+                        <button type="button" class="btn btn-primary btn-md"
+                                ng-click="prepareToEditMaintenance(maintenance.objectId, listOfMaintenances.indexOf(maintenance))">
+                            Edit
+                        </button>
+                        <button type="button" class="btn btn-warning btn-md"
+                                ng-click="prepareToDeleteMaintenance(maintenance.objectId, listOfMaintenances.indexOf(maintenance))"
+                                data-toggle="model" data-target="#deleteConfirmModel">
+                            Delete
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -56,31 +58,33 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-am-offset-3 col-sm-5 createUpdateForm">
-            <form class="form-horizontal" name="createUpdateForm">
-                <div class="from-group">
-                    <label for="maintenanceTtl" class="col-sm-6 control-label">Maintenance Title</label>
-                    <div class="col-sm-6">
-                        <input type="text" id="maintenanceTtl" ng-required="true" ng-model="maintenance.title">
+            <div class="col-sm-offset-3 col-sm-5 createUpdateForm">
+                <form class="form-horizontal" name="createUpdateForm">
+                    <div class="form-group">
+                        <label for="maintenanceTtl" class="col-sm-4 control-label">Title</label>
+                        <div class="col-sm-6 wrapInput">
+                            <input type="text" id="maintenanceTtl" ng-required="true" ng-model="maintenance.title">
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="maintenanceTp" class="col-sm-6 control-label">Maintenance Type</label>
-                    <!-- <input type="text" id="maintenanceTp" ng-required="true" ng-model="maintenance.type"> -->
-                    <div class="col-sm-3">
-                        <select id="maintenanceTp" class="form-group" ng-required="true" ng-model="maintenance.type"
-                                ng-options="res for res in types">
-                        </select>
+                    <div class="form-group">
+                        <label for="maintenanceTp" class="col-sm-4 control-label">Type</label>
+                        <div class="col-sm-6 wrapInput">
+                            <input type="text" id="maintenanceTp" ng-required="true" ng-model="maintenance.type">
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="maintenancePrc" class="col-sm-6 control-label">Maintenance Price</label>
-                    <div class="col-sm-6">
-                        <input type="number" id="maintenancePrc" ng-required="true" ng-model="maintenance.price">
+                    <div class="form-group">
+                        <label for="maintenancePrc" class="col-sm-4 control-label">Price</label>
+                        <div class="col-sm-6 wrapInput">
+                            <input type="number" id="maintenancePrc" ng-required="true" ng-model="maintenance.price">
+                        </div>
                     </div>
-                </div>
-            </form>
+                    <div class="form-group">
+                        <div class="text-center">
+                            <button class="btn btn-primary" ng-disabled="createUpdateForm.$invalid" data-toggle="modal" data-target="#editConfirmModal">OK</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -101,7 +105,7 @@
                 <div class="modal-body">
                     <p class="admin-notes">Would you like to save changes?</p>
                     <div class="text-right">
-                        <button class="btn btn-success" data-dismiss="modal" bg-click="query()">Yes</button>
+                        <button class="btn btn-success" data-dismiss="modal" ng-click="query()">Yes</button>
                         <button class="btn btn-primary" data-dismiss="modal">No</button>
                     </div>
                 </div>

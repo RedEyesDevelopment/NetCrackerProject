@@ -36,7 +36,19 @@
 	                    		ng-model="myself.email">
 	                	</div>
 	                </div>
+	                <div class="row">
+	                	<div class="col-sm-3">
+	                    	<label for="infoInput">Additional info:</label>
+	                    </div>
+	                    <div class="col-sm-6">
+	                    	<textarea id="infoInput" ng-model="myself.additionalInfo"></textarea>
+	                	</div>
+	                </div>
+		            <div class="updateButton">
+	                	<button class="btn btn-default">Update basic info</button>
+					</div>
 	            </div>
+
 	            <div class="groupInput">
 	                <div class="row">
 	                	<div class="col-sm-3">
@@ -53,7 +65,7 @@
 	                    </div>
 	                    <div class="col-sm-6">
 	                    	<input type="password" id="newPasswordInput"
-	                    		ng-model="myself.password">
+	                    		ng-model="myself.newPassword">
 	                	</div>
 	                </div>
 	                <div class="row">
@@ -62,31 +74,35 @@
 	                    </div>
 	                    <div class="col-sm-6">
 	                    	<input type="password" id="passwordRepInput"
-	                    		ng-model="myself.passwordRep">
+	                    		ng-model="myself.newPasswordRep">
 	                	</div>
 	                </div>
+	                <div class="updateButton">
+	                	<button class="btn btn-default">Change password</button>
+					</div>
 	            </div>
 
-				<!-- <div class="groupInput"> -->
-					<!-- <div class="phoneLabel"> -->
-			            <!-- <div class="col-sm-3"> -->
-		                	<label>Phone Numbers:</label>
-		                <!-- </div> -->
-				    <!-- </div> -->
-
-		            <div ng-repeat="phone in myself.phones">
-			            <div class="offset-col-sm-3 col-sm-6">
+				<div class="groupInput">
+					<div class="row" ng-repeat="phone in myself.phones">
+	                	<div class="col-sm-3">
+	                    	<label>Phone Number:</label>
+	                    </div>
+	                    <div class="col-sm-6">
 	                    	<input type="tel" id="phoneNumberInput"
 	                    		ng-model="phone.phoneNumber">
 	                	</div>
-			        </div>
-			    <!-- </div> -->
-
-	            <div class="butt">
-                	<button class="btn btn-default">Update</button>
-				</div>
-
-
+						<button class="btn btn-default col-sm-2"
+								ng-click="removePhoneFromList(myself.phones.indexOf(phone))">
+							<i class="fa fa-times" aria-hidden="true"></i> Delete
+						</button>
+	                </div>
+	                <div class="row">
+						<button class="btn btn-default col-sm-2"
+								ng-click="addEmptyPhone()">
+							<i class="fa fa-plus" aria-hidden="true"></i> Add one
+						</button>
+	                </div>
+	            </div>
 
 
 

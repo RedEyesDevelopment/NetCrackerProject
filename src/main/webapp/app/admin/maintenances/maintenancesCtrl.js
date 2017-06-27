@@ -1,15 +1,12 @@
-app.controller('maintenancesCtrl', ['$scope', '$https', '$location', 'sharedData', 'util',
-    function($scope, $https, $location, sharedData, util){
-
+app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData', 'util',
+    function($scope, $http, $location, sharedData, util){
 
     /* Функция на получения всех услуг, вызываются сразу */
     (function() {
         $http({
             url: sharedData.getLinks().https + '/maintenances',
             method: 'GET',
-            headers: {
-                'Content-Type' : 'application/json'
-            }
+            headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
             $scope.listOfMaintenances = data.data;
@@ -40,8 +37,6 @@ app.controller('maintenancesCtrl', ['$scope', '$https', '$location', 'sharedData
         objectsOnPage : 6
     }
 
-
-
     /* Функции подготовки запросов */
     $scope.prepareToAddMaintenance = function() {
         $scope.indexForOperation = "";
@@ -56,7 +51,7 @@ app.controller('maintenancesCtrl', ['$scope', '$https', '$location', 'sharedData
 
     $scope.prepareToEditMaintenance = function(maintenanceId, index) {
         $http({
-            url: sharedData.getLinks().https + '/maintenance' + maintenanceId,
+            url: sharedData.getLinks().https + '/maintenances/' + maintenanceId,
             method: 'GET',
             headers: {'Content-Type': 'application/json'}
         }).then(function(data) {
@@ -83,6 +78,12 @@ app.controller('maintenancesCtrl', ['$scope', '$https', '$location', 'sharedData
         $scope.stage = "deleting"
     }
 
+    /* Возврат на просмотр */
+    $scope.back = function() {
+        $scope.stage = "looking";
+        $scope.modificationMode = false;
+    }
+
     /* Вызывает нужный запрос в зависимости от типа операции */
     $scope.query = function() {
         switch ($scope.stage) {
@@ -90,7 +91,7 @@ app.controller('maintenancesCtrl', ['$scope', '$https', '$location', 'sharedData
                 break;
             case 'editing': editMaintenance();
                 break;
-            case 'deleting': deleteMaintenance;
+            case 'deleting': deleteMaintenance();
                 break;
         }
     }
@@ -98,15 +99,15 @@ app.controller('maintenancesCtrl', ['$scope', '$https', '$location', 'sharedData
     /* Функции, выполняющие запросы */
     var addMaintenance = function() {
         resetFlags();
-        $http ({
-            url: sharedData.getLinks().https + '/maintenance',
+        $http({
+            url: sharedData.getLinks().https + '/maintenances/',
             method: 'POST',
             data: {
                 maintenanceTitle :  $scope.maintenance.title,
                 maintenanceType :   $scope.maintenance.type,
-                maintenancePrice :  $scope.maintenance.price
+                maintenancePrice :  parseInt($scope.maintenance.price) * 100
             },
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
             $scope.listOfMaintenances.push({
@@ -125,20 +126,20 @@ app.controller('maintenancesCtrl', ['$scope', '$https', '$location', 'sharedData
 
     var editMaintenance = function() {
         resetFlags();
-        $http ({
-            url: sharedData.getLinks().https + '/maintenance' + $scope.maintenance.idForOperation,
+        $http({
+            url: sharedData.getLinks().https + '/maintenances/' + $scope.maintenance.idForOperation,
             method: 'PUT',
             data: {
                 maintenanceTitle :  $scope.maintenance.title,
                 maintenanceType :   $scope.maintenance.type,
-                maintenancePrice :  $scope.maintenance.price
+                maintenancePrice :  parseInt($scope.maintenance.price) * 100
             },
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
             $scope.listOfMaintenances[$scope.indexForOperation].maintenanceTitle = $scope.maintenance.title;
             $scope.listOfMaintenances[$scope.indexForOperation].maintenanceType = $scope.maintenance.type;
-            $scope.listOfMaintenances[$scope.indexForOperation].maintenancePrice = $scope.maintenance.price;
+            $scope.listOfMaintenances[$scope.indexForOperation].maintenancePrice = $scope.maintenance.price * 100;
             $scope.updated = true;
         }, function(response) {
             console.log("Smth wrong!!");
@@ -149,7 +150,7 @@ app.controller('maintenancesCtrl', ['$scope', '$https', '$location', 'sharedData
     var deleteMaintenance = function() {
         resetFlags();
         $http({
-            url: sharedData.getLinks().https + '/maintenance' + $scope.maintenance.idForOperation,
+            url: sharedData.getLinks().https + '/maintenances/' + $scope.maintenance.idForOperation,
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' }
         }).then(function(data) {
@@ -164,10 +165,10 @@ app.controller('maintenancesCtrl', ['$scope', '$https', '$location', 'sharedData
 
 
     /* Для листания страниц с объектами */
-    $scope.nextRooms = function() {
-        $scope.pager.startPaging = util.nextEntities($scope.listOfRooms.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
+    $scope.nextMaintenances = function() {
+        $scope.pager.startPaging = util.nextEntities($scope.listOfMaintenances.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
     }
-    $scope.previousRooms = function() {
+    $scope.previousMaintenances = function() {
         $scope.pager.startPaging = util.previousEntities($scope.pager.startPaging, $scope.pager.objectsOnPage);
     }
 }]);

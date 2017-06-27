@@ -29,7 +29,7 @@
 	margin-bottom: 30px;
 }
 
-.settings .settingsFields form input {
+.settings .settingsFields form input, .settings textarea {
 	outline: none;
 	border: none;
 	border-bottom: 1px solid #999;
@@ -37,7 +37,13 @@
 	text-align: center;
 }
 
-.settings .settingsFields form input:focus {
+.settings textarea {
+	resize: none;
+	height: 80px;
+	text-align: justify;
+}
+
+.settings .settingsFields form input:focus, .settings textarea:focus {
 	border-bottom: 1px solid #555;
 	background: #efefef;
 }
@@ -46,11 +52,11 @@
 	margin-bottom: 10px;
 }
 
-.settings .settingsFields form .butt {
+.settings .settingsFields form .updateButton {
 	text-align: center;
 }
 
-.settings .settingsFields form button {
+.settings .settingsFields form .updateButton button {
 	width: 200px;
 }
 

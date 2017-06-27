@@ -1,15 +1,12 @@
 app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util',
 	function($scope, $http, $location, sharedData, util) {
 
-
 	/* Функция на получения всех комнат и типов комнат, вызываются сразу */
 	(function() {
 		$http({
-			url: sharedData.getLinks().https + '/rooms',
+			url: sharedData.getLinks().https + '/rooms/',
 			method: 'GET',
-			headers: {
-				'Content-Type' : 'application/json'
-			}
+			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
 			$scope.listOfRooms = data.data;
@@ -21,11 +18,9 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 	(function() {
 		$http({
-			url: sharedData.getLinks().https + '/roomtypes',
+			url: sharedData.getLinks().https + '/roomtypes/simpleList',
 			method: 'GET',
-			headers: {
-				'Content-Type' : 'application/json'
-			}
+			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
 			$scope.listOfRoomTypes = data.data;
@@ -54,7 +49,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 	$scope.pager = {
 		startPaging : 0,
-		objectsOnPage : 3
+		objectsOnPage : 6
 	}
 
 
@@ -71,7 +66,6 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}
 
 	$scope.prepareToEditRoom = function(roomId, index) {
-		// console.log(sharedData.getLinks().https);
 		$http({
 			url: sharedData.getLinks().https + '/rooms/' + roomId,
 			method: 'GET',
