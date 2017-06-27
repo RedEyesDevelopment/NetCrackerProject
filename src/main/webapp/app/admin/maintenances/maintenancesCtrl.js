@@ -41,6 +41,7 @@ app.controller('maintenancesCtrl', ['$scope', '$https', '$location', 'sharedData
     }
 
 
+
     /* Функции подготовки запросов */
     $scope.prepareToAddMaintenance = function() {
         $scope.indexForOperation = "";
