@@ -11,12 +11,10 @@ import java.sql.Connection;
 public class RollbackableTransactionalCustomizer implements ConnectionCustomizer{
     @Override
     public void onAcquire(Connection connection, String s) throws Exception {
-
     }
 
     @Override
     public void onDestroy(Connection connection, String s) throws Exception {
-
     }
 
     @Override
@@ -26,6 +24,5 @@ public class RollbackableTransactionalCustomizer implements ConnectionCustomizer
 
     @Override
     public void onCheckIn(Connection connection, String s) throws Exception {
-
     }
 }
