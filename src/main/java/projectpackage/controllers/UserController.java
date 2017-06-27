@@ -123,7 +123,9 @@ public class UserController {
     //returned user-client from session
     @RequestMapping(value = "/myself")
     public ResponseEntity<Resource<User>> getUser(HttpServletRequest request){
-        User user = (User) request.getSession().getAttribute("USER");
+//        User thisUser = (User) request.getSession().getAttribute("USER");
+        User user = userService.getSingleUserById(((User) request.getSession().getAttribute("USER")).getObjectId());
+        user.setPassword(null);
         Resource<User> resource;
         if (null!=user){
             resource = new Resource<User>(user);
