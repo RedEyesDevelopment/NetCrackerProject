@@ -122,16 +122,17 @@ public class UserController {
 
     //returned user-client from session
     @RequestMapping(value = "/myself")
-    public ResponseEntity<Resource<User>> getUser(HttpServletRequest request){
-//        User thisUser = (User) request.getSession().getAttribute("USER");
-        User user = userService.getSingleUserById(((User) request.getSession().getAttribute("USER")).getObjectId());
-        user.setPassword(null);
-        Resource<User> resource;
-        if (null!=user){
-            resource = new Resource<User>(user);
+    public ResponseEntity<User> getUser(HttpServletRequest request){
+        Integer userId = ((User) request.getSession().getAttribute("USER")).getObjectId();
+        HttpStatus status;
+        User user = null;
+        if (null!=userId){
+            user = userService.getSingleUserById(userId);
+            user.setPassword(null);
+            status = HttpStatus.OK;
         } else {
-            resource = new Resource<>(new User());
+            status = HttpStatus.BAD_REQUEST;
         }
-        return new ResponseEntity<Resource<User>>(resource, HttpStatus.OK);
+        return new ResponseEntity<User>(user, status);
     }
 }
