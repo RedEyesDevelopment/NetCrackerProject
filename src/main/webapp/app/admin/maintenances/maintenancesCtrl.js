@@ -50,6 +50,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
     }
 
     $scope.prepareToEditMaintenance = function(maintenanceId, index) {
+        console.log(maintenanceId);
         $http({
             url: sharedData.getLinks().https + '/maintenances/' + maintenanceId,
             method: 'GET',
@@ -125,6 +126,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
     }
 
     var editMaintenance = function() {
+        console.log($scope.maintenance.idForOperation);
         resetFlags();
         $http({
             url: sharedData.getLinks().https + '/maintenances/' + $scope.maintenance.idForOperation,

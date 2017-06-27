@@ -26,14 +26,12 @@ app.factory('sharedData', function(ROLE) {
             paMyself.firstName = auth.myself.firstName;
             paMyself.lastName = auth.myself.lastName;
             paMyself.phones = new Array();
-            console.log("RRR");
-            console.log(auth);
-            for (var i = 0; i < auth.myself.phones; i++) {
+            auth.myself.phones.forEach(function(elem) {
                 paMyself.phones.push({
-                    objectId: auth.myself.phones[i].objectId,
-                    phone: auth.myself.phones[i].phoneNumber
+                    objectId: elem.objectId,
+                    phoneNumber: elem.phoneNumber
                 });
-            }
+            });
         }
     }
 

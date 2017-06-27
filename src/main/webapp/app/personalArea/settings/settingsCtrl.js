@@ -7,16 +7,40 @@ app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 	}
 	sharedData.setPersonalAreaMyself($scope.myself);	
 
+	$scope.stage = "looking";
 	
-	$scope.addEmptyPhone = function() {
-		// $scope.myself.phones.push({});
-		console.log($scope);
+	$scope.prepareToEditBasicInfo = function() {
+		$scope.stage = "editBasicInfo";
 	}
 
-	$scope.removePhoneFromList = function(index) {
-		console.log(index);
-		$scope.myself.phones.splice(index, 1);
+	$scope.prepareToChangePassword = function() {
+		$scope.stage = "changePassword";
 	}
+
+	$scope.prepareToAddPhone = function() {
+		$scope.stage = "addPhone";
+	}
+
+	$scope.prepareToEditPhone = function() {
+		$scope.stage = "editPhone";
+	}
+
+	$scope.prepareToDeletePhone = function() {
+		$scope.stage = "deletePhone";
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+	
 
 
 }]);

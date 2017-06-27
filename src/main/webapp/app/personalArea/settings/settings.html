@@ -91,19 +91,25 @@
 	                    	<input type="tel" id="phoneNumberInput"
 	                    		ng-model="phone.phoneNumber">
 	                	</div>
-	                	<button class="btn btn-default col-sm-1">
-							<i class="fa fa-times" aria-hidden="true"></i> Edit
+	                	<button class="btn btn-default">
+							Edit
 						</button>
-						<button class="btn btn-default col-sm-1"
-								ng-click="removePhoneFromList(myself.phones.indexOf(phone))">
-							<i class="fa fa-times" aria-hidden="true"></i> Delete
+						<button class="btn btn-default"
+								ng-click="">
+							Delete
 						</button>
 	                </div>
 	                <div class="row">
-						<button class="btn btn-default col-sm-2"
-								ng-click="addEmptyPhone()">
-							<i class="fa fa-plus" aria-hidden="true"></i> Add one
-						</button>
+	                	<div class="col-sm-3">
+							<button class="btn btn-default col-sm-8"
+									ng-click="">
+								<i class="fa fa-plus" aria-hidden="true"></i> Add one
+							</button>
+						</div>
+						<div class="col-sm-6">
+	                    	<input type="tel" id="phoneNumberInput"
+	                    		ng-model="">
+	                	</div>
 	                </div>
 	            </div>
 
@@ -121,4 +127,54 @@
 	        </form>
 	    </div>
 	</div>
+</div>
+
+
+
+
+
+
+<!-- Add or Edit confirmation -->
+<div class="modal fade" id="editConfirmModal" role="dialog">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog modal-sm vertical-align-center">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header popupheader">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Save changes</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="admin-notes">Would you like to save changes?</p>
+                    <div class="text-right">
+                        <button class="btn btn-success" data-dismiss="modal" ng-click="query()">Yes</button>
+                        <button class="btn btn-primary" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Delete confirmation -->
+<div class="modal fade" id="deleteConfirmModal" role="dialog">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog modal-sm vertical-align-center">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header popupheader">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Warning</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="admin-notes">You would like to delete your phone number. <br> Are you sure?</p>
+                    <div class="text-right">
+                        <button class="btn btn-success" data-dismiss="modal" ng-click="query()">Yes</button>
+                        <button class="btn btn-danger" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

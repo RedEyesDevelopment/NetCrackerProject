@@ -73,7 +73,7 @@ public class MaintenanceController {
     @CacheRemoveAll(cacheName = "maintenanceList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateMaintenance(@PathVariable("id") Integer id, @RequestBody Maintenance changedMaintenance) {
-        if (!id.equals(changedMaintenance.getObjectId())) {
+        if (id == null) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID),
                     HttpStatus.NOT_ACCEPTABLE);
         }
