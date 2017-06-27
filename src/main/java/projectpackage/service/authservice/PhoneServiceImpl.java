@@ -12,7 +12,7 @@ import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
-import projectpackage.service.phoneregex.PhoneRegexService;
+import projectpackage.service.regex.RegexService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public class PhoneServiceImpl implements PhoneService{
     private static final Logger LOGGER = Logger.getLogger(PhoneServiceImpl.class);
 
     @Autowired
-    PhoneRegexService phoneRegexService;
+    RegexService regexService;
 
     @Autowired
     PhoneDAO phoneDAO;
@@ -73,13 +73,17 @@ public class PhoneServiceImpl implements PhoneService{
         try {
             phoneDAO.deletePhone(id);
         } catch (ReferenceBreakException e) {
-            return phoneDAO.rollback(id, ON_ENTITY_REFERENCE, e);
+            LOGGER.warn(ON_ENTITY_REFERENCE, e);
+            return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage());
         } catch (DeletedObjectNotExistsException e) {
-            return phoneDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
+            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+            return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
         } catch (WrongEntityIdException e) {
-            return phoneDAO.rollback(id, WRONG_DELETED_ID, e);
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
         } catch (IllegalArgumentException e) {
-            return phoneDAO.rollback(id, NULL_ID, e);
+            LOGGER.warn(NULL_ID, e);
+            return new IUDAnswer(id, false, NULL_ID, e.getMessage());
         }
         phoneDAO.commit();
         return new IUDAnswer(id, true);
@@ -88,13 +92,14 @@ public class PhoneServiceImpl implements PhoneService{
     @Override
     public IUDAnswer insertPhone(Phone phone) {
         if (phone == null) return null;
-        boolean isValid = phoneRegexService.match(phone.getPhoneNumber());
+        boolean isValid = regexService.isValidPhone(phone.getPhoneNumber());
         if (!isValid) return new IUDAnswer(false, WRONG_PHONE_NUMBER);
         Integer phoneId = null;
         try {
             phoneId = phoneDAO.insertPhone(phone);
         } catch (IllegalArgumentException e) {
-            return phoneDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
         phoneDAO.commit();
         return new IUDAnswer(phoneId,true);
@@ -104,14 +109,15 @@ public class PhoneServiceImpl implements PhoneService{
     public IUDAnswer updatePhone(Integer id, Phone newPhone) {
         if (newPhone == null) return null;
         if (id == null) return new IUDAnswer(false, NULL_ID);
-        boolean isValid = phoneRegexService.match(newPhone.getPhoneNumber());
+        boolean isValid = regexService.isValidPhone(newPhone.getPhoneNumber());
         if (!isValid) return new IUDAnswer(id, false, WRONG_PHONE_NUMBER);
         try {
             newPhone.setObjectId(id);
             Phone oldPhone = phoneDAO.getPhone(id);
             phoneDAO.updatePhone(newPhone, oldPhone);
         } catch (IllegalArgumentException e) {
-            return phoneDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(id,false, WRONG_FIELD, e.getMessage());
         }
         phoneDAO.commit();
         return new IUDAnswer(id,true);

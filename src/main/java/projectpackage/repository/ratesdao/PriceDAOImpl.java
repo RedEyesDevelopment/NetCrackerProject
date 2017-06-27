@@ -21,6 +21,7 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
     JdbcTemplate jdbcTemplate;
 
     @Override
+    @Transactional(readOnly = true)
     public Price getPrice(Integer id) {
         if (null == id) return null;
 
@@ -28,6 +29,7 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Price> getAllPrices() {
         return manager.createReactEAV(Price.class).getEntityCollection();
     }

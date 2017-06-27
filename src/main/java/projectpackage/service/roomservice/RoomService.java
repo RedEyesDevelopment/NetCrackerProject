@@ -17,7 +17,9 @@ public interface RoomService extends MessageBook{
     public List<Room> getRoomsByNumberOfResidents(Integer count);
     public List<Room> getRoomsByType(RoomType roomType);
     public List<Room> getAllRooms();
+    public List<Room> getSimpleRoomList();
     public Room getSingleRoomById(Integer id);
+    public Room getSimpleRoomById(Integer id);
     public List<Room> getFreeRoomsOnPeriod(Date start, Date finish);
     public List<Room> getBookedRoomsOnPeriod(Date start, Date finish);
     public RoomStatDTO getAllRoomsOnPeriod(Date start, Date finish);

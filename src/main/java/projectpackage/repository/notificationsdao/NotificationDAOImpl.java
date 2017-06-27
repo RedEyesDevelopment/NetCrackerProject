@@ -18,7 +18,6 @@ import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.reacteav.exceptions.ResultEntityNullException;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
@@ -36,18 +35,13 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     JdbcTemplate jdbcTemplate;
 
     @Override
+    @Transactional(readOnly = true)
     public List<Notification> getAllNotificationsForInMemoryService() {
-        List<Notification> notifs = null;
-        try {
-            notifs = (List<Notification>) manager.createReactEAV(Notification.class).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class,"RoleToNotificationType").closeAllFetches().getEntityCollection();
-        } catch (ResultEntityNullException e) {
-            LOGGER.warn(e);
-            return null;
-        }
-        return notifs;
+        return manager.createReactEAV(Notification.class).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches().getEntityCollection();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Notification getNotification(Integer id) {
         if (id == null) return null;
 
@@ -73,6 +67,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Notification> getAllNotifications() {
         return manager.createReactEAV(Notification.class)
                 .fetchRootReference(User.class, "UserToNotificationAsAuthor")

@@ -6,16 +6,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.model.auth.User;
 import projectpackage.model.maintenances.Maintenance;
-import projectpackage.dto.IUDAnswer;
 import projectpackage.service.MessageBook;
 import projectpackage.service.maintenanceservice.MaintenanceService;
 
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -34,18 +33,9 @@ public class MaintenanceController {
     @ResponseStatus(HttpStatus.OK)
     @CacheResult(cacheName = "maintenanceList")
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public List<Resource<Maintenance>> getMaintenanceList() {
-        List<Maintenance> Maintenances = maintenanceService.getAllMaintenances();
-        List<Resource<Maintenance>> resources = new ArrayList<>(Maintenances.size());
+    public List<Maintenance> getMaintenanceList() {
+        return maintenanceService.getAllMaintenances();
 
-        for (Maintenance Maintenance : Maintenances) {
-            Resource<Maintenance> resource = new Resource<>(Maintenance);
-            resource.add(linkTo(methodOn(MaintenanceController.class)
-                    .getMaintenance(Maintenance.getObjectId(), null)).withSelfRel());
-            resources.add(resource);
-        }
-
-        return resources;
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)

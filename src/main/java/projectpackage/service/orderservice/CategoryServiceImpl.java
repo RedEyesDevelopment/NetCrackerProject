@@ -36,6 +36,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<Category> getSimpleCategoryList() {
+        return categoryDAO.getSimpleCategoryList();
+    }
+
+    @Override
     public Category getSingleCategoryById(Integer id) {
         Category category = categoryDAO.getCategory(id);
         if (null == category) LOGGER.info("Returned NULL!!!");
@@ -48,13 +53,17 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             categoryDAO.deleteCategory(id);
         } catch (ReferenceBreakException e) {
-            return categoryDAO.rollback(id, ON_ENTITY_REFERENCE, e);
+            LOGGER.warn(ON_ENTITY_REFERENCE, e);
+            return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage());
         } catch (DeletedObjectNotExistsException e) {
-            return categoryDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
+            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+            return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
         } catch (WrongEntityIdException e) {
-            return categoryDAO.rollback(id, WRONG_DELETED_ID, e);
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
         } catch (IllegalArgumentException e) {
-            return categoryDAO.rollback(id, NULL_ID, e);
+            LOGGER.warn(NULL_ID, e);
+            return new IUDAnswer(id, false, NULL_ID, e.getMessage());
         }
         categoryDAO.commit();
         return new IUDAnswer(id, true);
@@ -66,7 +75,8 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             categoryId = categoryDAO.insertCategory(category);
         } catch (IllegalArgumentException e) {
-            return categoryDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
         categoryDAO.commit();
         return new IUDAnswer(categoryId,true);
@@ -81,7 +91,8 @@ public class CategoryServiceImpl implements CategoryService {
             Category oldCategory = categoryDAO.getCategory(id);
             categoryDAO.updateCategory(newCategory, oldCategory);
         } catch (IllegalArgumentException e) {
-            return categoryDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(id,false, WRONG_FIELD, e.getMessage());
         }
         categoryDAO.commit();
         return new IUDAnswer(id,true);

@@ -5,22 +5,12 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
-import projectpackage.dto.IUDAnswer;
-import projectpackage.model.rates.Price;
-import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
-import projectpackage.model.rooms.RoomType;
-//import projectpackage.model.support.IUDAnswer;
 import projectpackage.service.roomservice.RoomService;
 
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+//import projectpackage.model.support.IUDAnswer;
 
 /**
  * Created by Arizel on 16.05.2017.
@@ -267,4 +257,10 @@ public class RoomRepositoryTests extends AbstractDatabaseTest {
 //        LOGGER.info("Update room result = " + iudAnswer.isSuccessful());
 //        LOGGER.info(SEPARATOR);
 //    }
+
+    @Test
+    public void testSimpleList(){
+        List<Room> rooms = roomService.getSimpleRoomList();
+        System.out.println(rooms);
+    }
 }

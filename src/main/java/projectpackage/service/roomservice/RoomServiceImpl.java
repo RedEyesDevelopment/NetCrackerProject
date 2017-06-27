@@ -67,10 +67,20 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public List<Room> getSimpleRoomList() {
+        return roomDAO.getSimpleRoomsList();
+    }
+
+    @Override
     public Room getSingleRoomById(Integer id) {
         Room room = roomDAO.getRoom(id);
         if (room == null) LOGGER.info("Returned NULL!!!");
         return room;
+    }
+
+    @Override
+    public Room getSimpleRoomById(Integer id) {
+        return roomDAO.getSimpleRoom(id);
     }
 
     @Override
@@ -116,13 +126,17 @@ public class RoomServiceImpl implements RoomService {
         try {
             roomDAO.deleteRoom(id);
         } catch (ReferenceBreakException e) {
-            return roomDAO.rollback(id, ON_ENTITY_REFERENCE, e);
+            LOGGER.warn(ON_ENTITY_REFERENCE, e);
+            return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage());
         } catch (DeletedObjectNotExistsException e) {
-            return roomDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
+            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+            return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
         } catch (WrongEntityIdException e) {
-            return roomDAO.rollback(id, WRONG_DELETED_ID, e);
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
         } catch (IllegalArgumentException e) {
-            return roomDAO.rollback(id, NULL_ID, e);
+            LOGGER.warn(NULL_ID, e);
+            return new IUDAnswer(id, false, NULL_ID, e.getMessage());
         }
         roomDAO.commit();
         return new IUDAnswer(id, true);
@@ -143,7 +157,8 @@ public class RoomServiceImpl implements RoomService {
         try {
             roomId = roomDAO.insertRoom(room);
         } catch (IllegalArgumentException e) {
-            return roomDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
         roomDAO.commit();
         return new IUDAnswer(roomId, true);
@@ -166,7 +181,8 @@ public class RoomServiceImpl implements RoomService {
         try {
             roomDAO.updateRoom(newRoom, oldRoom);
         } catch (IllegalArgumentException e) {
-            return roomDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(id,false, WRONG_FIELD, e.getMessage());
         }
         roomDAO.commit();
         return new IUDAnswer(id, true);

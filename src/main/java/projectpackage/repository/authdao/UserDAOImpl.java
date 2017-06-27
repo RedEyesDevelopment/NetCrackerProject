@@ -42,6 +42,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getUser(Integer id) {
         if (id == null) return null;
 
@@ -51,6 +52,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<User> getAllUsers() {
         return manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches()
                 .fetchRootReference(Role.class, "RoleToUser").closeAllFetches()
@@ -164,6 +166,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     private void updateEmail(User newUser, User oldUser) {
         if (oldUser.getEmail() != null && newUser.getEmail() != null && !newUser.getEmail().isEmpty()) {
             if (!oldUser.getEmail().equals(newUser.getEmail())) {
+                checkEmailForDuplicate(newUser.getEmail());
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newUser.getEmail(), null, newUser.getObjectId(), 15);
             }
         } else {

@@ -46,6 +46,27 @@ public class RoomController {
         return resources;
     }
 
+    //Get Room List
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/simpleList", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public List<Room> getSimpleRoomList(){
+        return roomService.getSimpleRoomList();
+    }
+
+    //Get Room List
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/simple/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<Room> getSimpleRoom(@PathVariable("id") Integer id, HttpServletRequest request){
+        Room room = roomService.getSimpleRoomById(id);
+        HttpStatus status;
+        if (null != room){
+            status = HttpStatus.ACCEPTED;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return new ResponseEntity<Room>(room, status);
+    }
+
     //Get single Room by id
     @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
@@ -82,17 +103,12 @@ public class RoomController {
     @CacheRemoveAll(cacheName = "roomList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateRoom(@PathVariable("id") Integer id, @RequestBody RoomDTO changedRoom){
-        System.out.println("******************* IN CONTROLLER *********************");
-        System.out.println(changedRoom);
-        System.out.println(id);
         IUDAnswer result = roomService.updateRoom(id, changedRoom);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.ACCEPTED;
         } else status = HttpStatus.BAD_REQUEST;
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
-        System.out.println("result: "+result);
-        System.out.println("changedRoom: "+changedRoom);
         return responseEntity;
     }
 

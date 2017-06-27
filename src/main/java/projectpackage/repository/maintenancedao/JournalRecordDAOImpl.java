@@ -26,6 +26,7 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
 
 
     @Override
+    @Transactional(readOnly = true)
     public JournalRecord getJournalRecord(Integer id) {
         if (null == id) return null;
 
@@ -36,8 +37,8 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<JournalRecord> getAllJournalRecords() {
-
         return manager.createReactEAV(JournalRecord.class)
                 .fetchRootReference(Maintenance.class, "MaintenanceToJournalRecord")
                 .closeAllFetches()

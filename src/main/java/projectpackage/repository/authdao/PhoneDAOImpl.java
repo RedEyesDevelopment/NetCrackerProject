@@ -21,6 +21,7 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
     JdbcTemplate jdbcTemplate;
 
     @Override
+    @Transactional(readOnly = true)
     public Phone getPhone(Integer id) {
         if (id == null) return null;
 
@@ -28,6 +29,7 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Phone> getAllPhones() {
         return manager.createReactEAV(Phone.class).getEntityCollection();
     }

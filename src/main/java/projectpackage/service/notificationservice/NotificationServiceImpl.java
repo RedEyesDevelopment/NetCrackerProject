@@ -127,13 +127,17 @@ public class NotificationServiceImpl implements NotificationService{
         try {
             notificationDAO.deleteNotification(id);
         } catch (ReferenceBreakException e) {
-            return notificationDAO.rollback(id, ON_ENTITY_REFERENCE, e);
+            LOGGER.warn(ON_ENTITY_REFERENCE, e);
+            return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage());
         } catch (DeletedObjectNotExistsException e) {
-            return notificationDAO.rollback(id, DELETED_OBJECT_NOT_EXISTS, e);
+            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+            return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
         } catch (WrongEntityIdException e) {
-            return notificationDAO.rollback(id, WRONG_DELETED_ID, e);
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
         } catch (IllegalArgumentException e) {
-            return notificationDAO.rollback(id, NULL_ID, e);
+            LOGGER.warn(NULL_ID, e);
+            return new IUDAnswer(id, false, NULL_ID, e.getMessage());
         }
         notificationDAO.commit();
         return new IUDAnswer(id, true);
@@ -147,7 +151,8 @@ public class NotificationServiceImpl implements NotificationService{
             notifId = notificationDAO.insertNotification(notification);
             LOGGER.info("Get from DB notificationId = " + notifId);
         } catch (IllegalArgumentException e) {
-            return notificationDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
         notificationDAO.commit();
         return new IUDAnswer(notifId,true);
@@ -162,7 +167,8 @@ public class NotificationServiceImpl implements NotificationService{
             Notification oldNotification = notificationDAO.getNotification(id);
             notificationDAO.updateNotification(newNotification, oldNotification);
         } catch (IllegalArgumentException e) {
-            return notificationDAO.rollback(WRONG_FIELD, e);
+            LOGGER.warn(WRONG_FIELD, e);
+            return new IUDAnswer(id, false, WRONG_FIELD, e.getMessage());
         }
         notificationDAO.commit();
         return new IUDAnswer(id,true);

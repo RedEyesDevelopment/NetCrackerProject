@@ -24,6 +24,7 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     JdbcTemplate jdbcTemplate;
 
     @Override
+    @Transactional(readOnly = true)
     public Complimentary getComplimentary(Integer id) {
         if (id == null) return null;
 
@@ -33,6 +34,7 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Complimentary> getAllComplimentaries() {
         return manager.createReactEAV(Complimentary.class)
                 .fetchRootReference(Maintenance.class, "MaintenanceToComplimentary")

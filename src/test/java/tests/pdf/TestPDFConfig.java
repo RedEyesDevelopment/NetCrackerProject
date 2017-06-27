@@ -57,8 +57,8 @@ import projectpackage.service.notificationservice.NotificationServiceImpl;
 import projectpackage.service.notificationservice.NotificationTypeService;
 import projectpackage.service.notificationservice.NotificationTypeServiceImpl;
 import projectpackage.service.orderservice.*;
-import projectpackage.service.phoneregex.PhoneRegexService;
-import projectpackage.service.phoneregex.PhoneRegexServiceImpl;
+import projectpackage.service.regex.RegexService;
+import projectpackage.service.regex.RegexServiceImpl;
 import projectpackage.service.rateservice.PriceService;
 import projectpackage.service.rateservice.PriceServiceImpl;
 import projectpackage.service.rateservice.RateService;
@@ -394,7 +394,7 @@ public class TestPDFConfig implements TransactionManagementConfigurer{
     }
 
     @Bean
-    PhoneRegexService phoneRegexService() { return new PhoneRegexServiceImpl();}
+    RegexService phoneRegexService() { return new RegexServiceImpl();}
 
     @Bean
     ReactConstantConfiguration reactConstantConfiguration() { return new ReactConstantConfiguration(); }

@@ -25,6 +25,7 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
     JdbcTemplate jdbcTemplate;
 
     @Override
+    @Transactional(readOnly = true)
     public Rate getRate(Integer id) {
         if (null == id) return null;
 
@@ -34,6 +35,7 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Rate> getAllRates() {
         return manager.createReactEAV(Rate.class).fetchRootChild(Price.class).closeAllFetches().getEntityCollection();
     }

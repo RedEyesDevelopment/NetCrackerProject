@@ -32,6 +32,7 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
+    @Transactional(readOnly = true)
     public Room getRoom(Integer id) {
         if (null==id) return null;
 
@@ -42,6 +43,16 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Room getSimpleRoom(Integer id) {
+        if (null==id) return null;
+
+        return (Room) manager.createReactEAV(Room.class)
+                .fetchRootReference(RoomType.class, "RoomTypeToRoom").closeAllFetches().getSingleEntityWithId(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Room> getAllRooms() {
         return manager.createReactEAV(Room.class).addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
                 .fetchRootReference(RoomType.class, "RoomTypeToRoom")
@@ -49,6 +60,13 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<Room> getSimpleRoomsList() {
+        return manager.createReactEAV(Room.class).fetchRootReference(RoomType.class, "RoomTypeToRoom").closeAllFetches().getEntityCollection();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Room getFreeRoom(int roomTypeId, int numberOfResidents, Date start, Date finish) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("room_type_id", roomTypeId);
@@ -65,6 +83,7 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Room> getFreeRooms(int roomTypeId, int numberOfResidents, Date start, Date finish) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("room_type_id", roomTypeId);
@@ -87,6 +106,7 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Room> getBookedRooms(int roomTypeId, int numberOfResidents, Date start, Date finish) {
         List<Room> freeRooms = getFreeRooms(roomTypeId, numberOfResidents, start, finish);
         List<Room> allRooms = getAllRooms();
