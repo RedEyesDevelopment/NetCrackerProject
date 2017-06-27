@@ -26,6 +26,7 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
     JdbcTemplate jdbcTemplate;
 
     @Override
+    @Transactional(readOnly = true)
     public Category getCategory(Integer id) {
         if (null == id) return null;
 
@@ -38,8 +39,8 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Category> getAllCategories() {
-
         return manager.createReactEAV(Category.class)
                 .fetchRootChild(Complimentary.class)
                 .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
@@ -48,6 +49,7 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Category> getSimpleCategoryList() {
         return manager.createReactEAV(Category.class).getEntityCollection();
     }

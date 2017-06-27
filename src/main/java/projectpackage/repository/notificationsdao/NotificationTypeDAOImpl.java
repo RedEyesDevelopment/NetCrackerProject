@@ -24,6 +24,7 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     JdbcTemplate jdbcTemplate;
 
     @Override
+    @Transactional(readOnly = true)
     public NotificationType getNotificationType(Integer id) {
         if (id == null) return null;
 
@@ -33,6 +34,7 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<NotificationType> getAllNotificationTypes() {
         return (List<NotificationType>) manager.createReactEAV(NotificationType.class)
                 .fetchRootReference(Role.class, "RoleToNotification")

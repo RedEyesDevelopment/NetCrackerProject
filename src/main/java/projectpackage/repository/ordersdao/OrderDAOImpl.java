@@ -36,6 +36,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     JdbcTemplate jdbcTemplate;
 
     @Override
+    @Transactional(readOnly = true)
     public Order getOrder(Integer id) {
         if (null == id) return null;
 
@@ -64,6 +65,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Order> getAllOrder() {
         return (List<Order>) manager.createReactEAV(Order.class)
                 .fetchRootReference(User.class, "UserToOrderAsClient")
