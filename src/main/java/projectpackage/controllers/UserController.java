@@ -99,13 +99,15 @@ public class UserController {
     //Update user method
     @CacheRemoveAll(cacheName = "userList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> updateUser(@PathVariable("id") Integer id, @RequestBody User changedUser){
+    public ResponseEntity<IUDAnswer> updateUser(@PathVariable("id") Integer id, @RequestBody User changedUser, HttpServletRequest request){
         if (!id.equals(changedUser.getObjectId())){
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID), HttpStatus.NOT_ACCEPTABLE);
         }
         IUDAnswer result = userService.updateUser(id, changedUser);
         HttpStatus status;
         if (result.isSuccessful()) {
+            request.getSession().removeAttribute("USER");
+            request.getSession().setAttribute("USER", userService.getSingleUserById(id));
             status = HttpStatus.OK;
         } else status = HttpStatus.BAD_REQUEST;
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
@@ -114,7 +116,8 @@ public class UserController {
 
     @RequestMapping(value = "/update/password/{id}", method = RequestMethod.PUT,
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> updatePassword(@PathVariable("id") Integer id, @RequestBody UserPasswordDTO userPasswordDTO, HttpServletRequest request) {
+    public ResponseEntity<IUDAnswer> updatePassword(@PathVariable("id") Integer id,
+                                                    @RequestBody UserPasswordDTO userPasswordDTO, HttpServletRequest request) {
         User sessionUser = (User) request.getSession().getAttribute("USER");
         if (id == null || !id.equals(sessionUser.getObjectId())) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, MessageBook.NULL_ID), HttpStatus.BAD_REQUEST);
@@ -171,8 +174,14 @@ public class UserController {
     //Delete user method
     @CacheRemoveAll(cacheName = "userList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> deleteUser(@PathVariable("id") Integer id){
+    public ResponseEntity<IUDAnswer> deleteUser(@PathVariable("id") Integer id, HttpServletRequest request){
         if (id == null) return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ID), HttpStatus.BAD_REQUEST);
+        User user = (User) request.getSession().getAttribute("USER");
+        if (user == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        } else if (user.getRole().getObjectId() != 1) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_ADMIN), HttpStatus.BAD_REQUEST);
+        }
         IUDAnswer result = userService.deleteUser(id);
         HttpStatus status;
         if (result.isSuccessful()) {

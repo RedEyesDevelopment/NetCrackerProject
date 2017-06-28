@@ -11,7 +11,6 @@ import projectpackage.repository.authdao.PhoneDAO;
 import projectpackage.repository.authdao.UserDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.DuplicateEmailException;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.service.regex.RegexService;
 import projectpackage.service.securityservice.SecurityService;
@@ -55,9 +54,6 @@ public class UserServiceImpl implements UserService {
         if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             userDAO.deleteUser(id);
-		} catch (ReferenceBreakException e) {
-			LOGGER.warn(ON_ENTITY_REFERENCE, e);
-			return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage());
 		} catch (DeletedObjectNotExistsException e) {
 			LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
 			return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());

@@ -24,6 +24,10 @@ public interface MessageBook {
     String PDF_ERROR = "Error with creating pdf document!";
     String SAME_PASSWORDS = "Passwords cannot be same!";
     String NULL_ENTITY = "Entity cannot be null!";
+    String NOT_ADMIN = "This operation available only for Admin!";
+    String PHONE_NOT_BELONG_TO_USER = "This phone not belong to user!";
+    String TRY_TO_DELETE_LAST_PHONE = "User must have at least one phone!";
+    String NEED_TO_AUTH = "For this operation user must be authorized!";
     String WRONG_PASSWORD = "Wrong password!";
     String FAIL_CRYPT_PASSWORD = "Fail crypt password!";
 }
