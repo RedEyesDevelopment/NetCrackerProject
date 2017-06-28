@@ -25,3 +25,4 @@ public interface MessageBook {
     String SAME_PASSWORDS = "Passwords cannot be same!";
     String NULL_ENTITY = "Entity cannot be null!";
 }
+
