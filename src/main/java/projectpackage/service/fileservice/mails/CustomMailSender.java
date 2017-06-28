@@ -32,7 +32,7 @@ public class CustomMailSender implements Runnable {
             log.error(e);
             e.printStackTrace();
         } finally {
-            pdfService.deletePDF(filePath);
+            if (null!=pdfService) pdfService.deletePDF(filePath);
         }
     }
 

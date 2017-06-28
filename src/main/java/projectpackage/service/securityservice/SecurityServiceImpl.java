@@ -58,6 +58,8 @@ public class SecurityServiceImpl implements SecurityService {
     public Boolean autologin(String username, String password) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         String encodedPassword = bCryptPasswordEncoder.encode(password);
+        System.out.println("login="+username);
+        System.out.println("password="+password+" encoded="+encodedPassword);
         Collection<? extends GrantedAuthority> authorities;
         if(userDetails != null && null!=userDetails.getAuthorities()){
             authorities =userDetails.getAuthorities();
@@ -66,9 +68,11 @@ public class SecurityServiceImpl implements SecurityService {
                 (userDetails, password, authorities);
         authenticationManager.authenticate(authenticationToken);
         if (authenticationToken.isAuthenticated()){
+            System.out.println("auth+");
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             return Boolean.TRUE;
         } else {
+            System.out.println("auth-");
             return Boolean.FALSE;
         }
     }

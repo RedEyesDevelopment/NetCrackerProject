@@ -6,6 +6,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import projectpackage.model.auth.User;
 import projectpackage.service.fileservice.pdf.PdfService;
 
 import javax.annotation.PostConstruct;
@@ -16,7 +17,7 @@ import java.util.Date;
 import java.util.Properties;
 
 @Service
-public class MailServiceImpl implements MailService{
+public class MailServiceImpl implements MailService {
     private static final Logger LOGGER = Logger.getLogger(MailServiceImpl.class);
 
     @Autowired
@@ -36,7 +37,7 @@ public class MailServiceImpl implements MailService{
     private Properties mailProperties;
 
     @PostConstruct
-    private void init(){
+    private void init() {
         mailProperties = new Properties();
         mailProperties.put("mail.smtp.auth", mailConfig.getMailSmtpAuth());
         mailProperties.put("mail.smtp.starttls.enable", mailConfig.getMailSmtpStarttlsEnable());
@@ -55,11 +56,11 @@ public class MailServiceImpl implements MailService{
             javaMailSenderImpl.setJavaMailProperties(mailProperties);
             MimeMessage message = javaMailSender.createMimeMessage();
             try {
-                prepareMail(message,messageKey,receiver,attributeFile);
+                prepareMail(message, messageKey, receiver, attributeFile);
             } catch (MessagingException e) {
                 LOGGER.error(message, e);
             }
-            CustomMailSender sender = new CustomMailSender(pdfService, attributeFile.getPath(), LOGGER, javaMailSenderImpl,message);
+            CustomMailSender sender = new CustomMailSender(pdfService, attributeFile.getPath(), LOGGER, javaMailSenderImpl, message);
             Thread thread = new Thread(sender);
             thread.start();
         }
@@ -81,11 +82,35 @@ public class MailServiceImpl implements MailService{
 
     @Override
     public void sendEmail(String receiver, Integer messageKey) {
-        prepareAndSendMail(messageKey,receiver,null);
+        prepareAndSendMail(messageKey, receiver, null);
     }
 
     @Override
     public void sendEmailWithAttachment(String receiver, Integer messageKey, File attributeFile) {
-        prepareAndSendMail(messageKey,receiver,attributeFile);
+        prepareAndSendMail(messageKey, receiver, attributeFile);
+    }
+
+    @Override
+    public void sendEmailToMyself(User client, String about, String message) {
+        synchronized (MailServiceImpl.class) {
+            JavaMailSenderImpl javaMailSenderImpl = (JavaMailSenderImpl) javaMailSender;
+            javaMailSenderImpl.setUsername(username);
+            javaMailSenderImpl.setPassword(password);
+            javaMailSenderImpl.setJavaMailProperties(mailProperties);
+            MimeMessage messageData = javaMailSender.createMimeMessage();
+            MimeMessageHelper messageHelper = new MimeMessageHelper(messageData);
+            try {
+                messageHelper.setTo(username);
+                messageHelper.setSubject(about);
+                messageHelper.setSentDate(new Date(System.currentTimeMillis()));
+                StringBuilder messageBuilder = new StringBuilder("Message from user:").append(client.getFirstName()).append(client.getLastName()).append(" with userId=").append(client.getObjectId()).append('\n').append(message);
+                messageHelper.setText(messageBuilder.toString());
+                CustomMailSender sender = new CustomMailSender(null, null, LOGGER, javaMailSenderImpl, messageData);
+                Thread thread = new Thread(sender);
+                thread.start();
+            } catch (MessagingException e) {
+                LOGGER.warn("Message from MailSenderImpl was not send.", e);
+            }
+        }
     }
 }
