@@ -103,7 +103,7 @@ public class MailServiceImpl implements MailService {
                 messageHelper.setTo(username);
                 messageHelper.setSubject(about);
                 messageHelper.setSentDate(new Date(System.currentTimeMillis()));
-                StringBuilder messageBuilder = new StringBuilder("Message from user:").append(client.getFirstName()).append(client.getLastName()).append(" with userId=").append(client.getObjectId()).append('\n').append(message);
+                StringBuilder messageBuilder = new StringBuilder("Message from user: ").append(client.getFirstName()).append(" ").append(client.getLastName()).append(" with userId=").append(client.getObjectId()).append('\n').append(message);
                 messageHelper.setText(messageBuilder.toString());
                 CustomMailSender sender = new CustomMailSender(null, null, LOGGER, javaMailSenderImpl, messageData);
                 Thread thread = new Thread(sender);
