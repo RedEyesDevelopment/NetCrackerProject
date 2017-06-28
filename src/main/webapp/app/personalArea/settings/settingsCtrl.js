@@ -21,13 +21,15 @@ app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 		$scope.stage = "addPhone";
 	}
 
-	$scope.prepareToEditPhone = function(idForOperation) {
-		$scope.phoneIdForOperation = idForOperation;
+	$scope.prepareToEditPhone = function(objId, index) {
+		$scope.phoneObjIdForOperation = objId;
+		$scope.phoneIndexForOperation = index;
 		$scope.stage = "editPhone";
 	}
 
-	$scope.prepareToDeletePhone = function(idForOperation) {
-		$scope.phoneIdForOperation = idForOperation;
+	$scope.prepareToDeletePhone = function(objId, index) {
+		$scope.phoneObjIdForOperation = objId;
+		$scope.phoneIndexForOperation = index;
 		$scope.stage = "deletePhone";
 	}
 
@@ -91,18 +93,57 @@ app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 		}
 	}
 
+	var addPhone = function() {
+		$http({
+			url: sharedData.getLinks().https + '/phones',
+			method: 'POST',
+			data: {
+				phoneNumber: $scope.myself.newPhone
+			},
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			$scope.myself.phones.push({
+				objectId: data.data.objectId,
+				phone: $scope.myself.newPhone
+			});
+			$scope.stage = "done";
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}
 
+	var editPhone = function() {
+		$http({
+			url: sharedData.getLinks().https + '/phones/' + $scope.phoneObjIdForOperation,
+			method: 'PUT',
+			data: {
+				phoneNumber: $scope.myself.phones[$scope.phoneIndexForOperation].phoneNumber
+			},
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			$scope.stage = "done";
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}
 
-
-
-
-
-
-
-
-
-
-
-
+	var deletePhone = function() {
+		$http({
+			url: sharedData.getLinks().https + '/phones/' + $scope.phoneObjIdForOperation,
+			method: 'DELETE',
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			$scope.myself.phones.splice($scope.phoneIndexForOperation, 1);
+			$scope.stage = "done";
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}
 
 }]);

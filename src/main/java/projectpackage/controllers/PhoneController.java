@@ -138,7 +138,7 @@ public class PhoneController {
         HttpStatus status;
         if (result.isSuccessful()) {
             request.getSession().removeAttribute("USER");
-            request.getSession().setAttribute("USER", userService.getSingleUserById(id));
+            request.getSession().setAttribute("USER", userService.getSingleUserById(sessionUser.getObjectId()));
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;

@@ -103,11 +103,11 @@
 	                    	<input type="tel" id="phoneNumberInput"
 	                    		ng-model="phone.phoneNumber">
 	                	</div>
-	                	<button class="btn btn-default" ng-click="prepareToEditPhone(phone.objectId)"
+	                	<button class="btn btn-default" ng-click="prepareToEditPhone(phone.objectId, myself.phones.indexOf(phone))"
 	                			data-toggle="modal" data-target="#editConfirmModal">
 							Edit
 						</button>
-						<button class="btn btn-default" ng-click="prepareToDeletePhone(phone.objectId)"
+						<button class="btn btn-default" ng-click="prepareToDeletePhone(phone.objectId, myself.phones.indexOf(phone))"
 								data-toggle="modal" data-target="#deleteConfirmModal">
 							Delete
 						</button>
@@ -119,23 +119,17 @@
 								<i class="fa fa-plus" aria-hidden="true"></i> Add one
 							</button>
 						</div>
-						<div class="col-sm-6" ng-if="stage == 'addPhone'">
-	                    	<input type="tel" id="phoneNumberInput">
+						<div ng-if="stage == 'addPhone'">
+							<div class="col-sm-6">
+		                    	<input type="tel" id="phoneNumberInput" ng-model="myself.newPhone">
+		                	</div>
+		                	<button class="btn btn-default col-sm-2"
+									ng-click="query()">
+								Accept
+							</button>
 	                	</div>
 	                </div>
 	            </div>
-
-
-
-
-
-
-                <div ng-show="wasUpdatedUser">
-                    <p class="bg-primary">User was updated successful!</p>
-                </div>
-                <div ng-show="notUpdatedUser">
-                    <p class="bg-warning">{{messageUpdate}}</p>
-                </div>
 	        </form>
 	    </div>
 	</div>

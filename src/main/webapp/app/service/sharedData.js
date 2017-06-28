@@ -9,6 +9,7 @@ app.factory('sharedData', function(ROLE) {
 
     function setBookCtrlLimitAuth(limitAuth) {
         bookCtrlLimitAuth = limitAuth;
+        updateAuth();
     }
     function setPersonalAreaMyself(self) { paMyself = self; auth.myself = self }
 
@@ -26,12 +27,14 @@ app.factory('sharedData', function(ROLE) {
             paMyself.firstName = auth.myself.firstName;
             paMyself.lastName = auth.myself.lastName;
             paMyself.phones = new Array();
-            auth.myself.phones.forEach(function(elem) {
+            // auth.myself.phones.forEach(function(elem) {
+            for (var i = 0; i < auth.myself.phones.length; i++) {                
                 paMyself.phones.push({
-                    objectId: elem.objectId,
-                    phoneNumber: elem.phoneNumber
+                    objectId: auth.myself.phones[i].objectId,
+                    phoneNumber: auth.myself.phones[i].phoneNumber
                 });
-            });
+            }
+            // });
         }
     }
 

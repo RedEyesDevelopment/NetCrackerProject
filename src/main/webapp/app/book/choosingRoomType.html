@@ -62,11 +62,11 @@
                 <div class="col-sm-4">
                     <div class="media-body my-border text-center cost" ng-show="roomType.available">
                         <h3 class="media-heading firstPar">Accomodation price</h3>
-                        <p class="price">${{ (roomType.livingCost / 100) }}</p>
+                        <p class="price">${{ (roomType.livingCost / 100).toFixed(2) }}</p>
                         <h3 class="media-heading">Service price</h3>
-                        <p class="price">${{ (roomType.categoryCost / 100) }}</p>
+                        <p class="price">${{ (roomType.categoryCost / 100).toFixed(2) }}</p>
                         <h3 class="media-heading">Total</h3>
-                        <p class="price">${{ (roomType.livingCost + roomType.categoryCost) / 100 }}</p>
+                        <p class="price">${{ ((roomType.livingCost + roomType.categoryCost) / 100).toFixed(2) }}</p>
                         <div class="text-center">
                             <form name='book'>                                
                                 <button ng-click='issueOder(roomType.roomTypeId)' class="btn btn-success">

@@ -25,7 +25,7 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
     sharedData.setBookCtrlLimitAuth($scope.limitAuth);
 
 
-    $scope.searchRoomTypes = function () {
+    $scope.searchRoomTypes = function() {
         $http({
             url: 'http://localhost:8080/orders/searchavailability',
             method: 'POST',
@@ -56,7 +56,8 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
     }
 
     $scope.issueOder = function (roomTypeId) {
-        if ($scope.limitAuth.isAuthorized) {            
+        if ($scope.limitAuth.isAuthorized) {
+            console.log("IN");            
             $http({
                 url: 'http://localhost:8080/orders/book/' + roomTypeId,
                 method: 'GET',
@@ -74,6 +75,7 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
                 console.log(response);
             });
         } else {
+            console.log("else");
             $('#signupLink').trigger('click');
         }
     }

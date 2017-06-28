@@ -89,9 +89,8 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
     });
     
     $scope.$watch('auth.myself', function(newMyself) {
-        // console.log($scope);
         sharedData.updateMyself();
-    })
+    });
 
     $scope.login = function() {
         $scope.hideFailAuthMessage();
