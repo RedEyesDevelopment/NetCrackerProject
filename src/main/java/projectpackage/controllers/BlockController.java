@@ -6,10 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projectpackage.dto.BlockDTO;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.model.auth.User;
 import projectpackage.model.blocks.Block;
-import projectpackage.dto.IUDAnswer;
-import projectpackage.service.MessageBook;
+import projectpackage.model.rooms.Room;
 import projectpackage.service.blockservice.BlockService;
 
 import javax.cache.annotation.CacheRemoveAll;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static projectpackage.service.MessageBook.*;
 
 /**
  * Created by Arizel on 28.05.2017.
@@ -56,10 +58,6 @@ public class BlockController {
         Resource<Block> resource = new Resource<>(block);
         HttpStatus status;
         if (null != block) {
-            if (thisUser.getRole().getRoleName().equals("ADMIN")) {
-                resource.add(linkTo(methodOn(BlockController.class).deleteBlock(block.getObjectId())).withRel("delete"));
-            }
-            resource.add(linkTo(methodOn(BlockController.class).updateBlock(block.getObjectId(), block)).withRel("update"));
             status = HttpStatus.ACCEPTED;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -71,8 +69,23 @@ public class BlockController {
 
     @CacheRemoveAll(cacheName = "blockList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> createBlock(@RequestBody Block newBlock) {
-        IUDAnswer result = blockService.insertBlock(newBlock);
+    public ResponseEntity<IUDAnswer> createBlock(@RequestBody BlockDTO blockDTO, HttpServletRequest request) {
+        System.out.println(blockDTO);
+        User user = (User) request.getSession().getAttribute("USER");
+        if (user == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        } else if (user.getRole().getObjectId() != 1) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_ADMIN), HttpStatus.BAD_REQUEST);
+        }
+        Room room = new Room();
+        room.setObjectId(blockDTO.getRoomId());
+        Block block = new Block();
+        block.setBlockStartDate(blockDTO.getBlockStartDate());
+        block.setBlockFinishDate(blockDTO.getBlockFinishDate());
+        block.setReason(blockDTO.getReason());
+        block.setRoom(room);
+
+        IUDAnswer result = blockService.insertBlock(block);
 
         HttpStatus status = result.isSuccessful() ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
 
@@ -81,13 +94,24 @@ public class BlockController {
 
     @CacheRemoveAll(cacheName = "blockList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> updateBlock(@PathVariable("id") Integer id, @RequestBody Block changedBlock) {
-        if (!id.equals(changedBlock.getObjectId())) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID),
-                    HttpStatus.NOT_ACCEPTABLE);
+    public ResponseEntity<IUDAnswer> updateBlock(@PathVariable("id") Integer id, @RequestBody BlockDTO blockDTO, HttpServletRequest request) {
+        User sessionUser = (User) request.getSession().getAttribute("USER");
+        if (sessionUser == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        } else if (sessionUser.getRole().getObjectId() != 1) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_ADMIN), HttpStatus.BAD_REQUEST);
+        } else if (id == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ID), HttpStatus.BAD_REQUEST);
         }
 
-        IUDAnswer result = blockService.updateBlock(id, changedBlock);
+        Room room = new Room();
+        room.setObjectId(blockDTO.getRoomId());
+        Block block = new Block();
+        block.setReason(blockDTO.getReason());
+        block.setRoom(room);
+        block.setBlockStartDate(blockDTO.getBlockStartDate());
+        block.setBlockFinishDate(blockDTO.getBlockFinishDate());
+        IUDAnswer result = blockService.updateBlock(id, block);
 
         HttpStatus status = result.isSuccessful() ? HttpStatus.ACCEPTED : HttpStatus.BAD_REQUEST;
 
@@ -96,7 +120,16 @@ public class BlockController {
 
     @CacheRemoveAll(cacheName = "blockList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> deleteBlock(@PathVariable("id") Integer id) {
+    public ResponseEntity<IUDAnswer> deleteBlock(@PathVariable("id") Integer id, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("USER");
+        if (id == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ID), HttpStatus.BAD_REQUEST);
+        } else if (user.getRole().getObjectId() != 1) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_ADMIN), HttpStatus.BAD_REQUEST);
+        } else if (null == user) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        }
+
         IUDAnswer result = blockService.deleteBlock(id);
 
         HttpStatus status = result.isSuccessful() ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND;

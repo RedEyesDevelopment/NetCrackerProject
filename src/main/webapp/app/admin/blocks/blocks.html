@@ -6,8 +6,8 @@
 
         <!-- Top of workspace -->
         <div class="top col-sm-12">
-            <h2>Rooms</h2>
-            <button class="btn btn-primary btn-md newEntity" ng-click="prepareToAddRoom()">New block</button>
+            <h2>Blocks</h2>
+            <button class="btn btn-primary btn-md newEntity" ng-click="prepareToAddBlock()">New block</button>
         </div>
 
 
@@ -20,9 +20,9 @@
             </ul>
             <div ng-repeat="block in listOfBlocks | orderBy : 'blockStartDate' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-4">
                 <div class="block-border">
-                    <p class="admin-notes"> On room : {{ block.room.roomNumber }} </p>
-                    <p class="admin-notes"> Start date: {{ block.blockStartDate }} </p>
-                    <p class="admin-notes top-bottom-border"> Finish date: {{ block.blockFinishDate }} </p>
+                    <p class="admin-notes bottom-border"> On room : {{ block.room.roomNumber }} </p>
+                    <p class="admin-notes "> Start date: {{ block.blockStartDate | date:'dd.MM.yyyy'}} </p>
+                    <p class="admin-notes top-bottom-border"> Finish date: {{ block.blockFinishDate | date:'dd.MM.yyyy'}} </p>
                     <p class="admin-notes"> Reason : {{ block.reason }} </p>
                     <div class="text-right">
                         <button type="button" class="btn btn-primary btn-md"
@@ -77,7 +77,7 @@
                     <div class="form-group">
                         <label for="onRoom" class="col-sm-6 control-label"> Block on room number: </label>
                         <div class="col-sm-6">
-                            <select id="onRoom" class="form-control" ng-required="true" ng-model="block.roomNumber"
+                            <select id="onRoom" class="form-control" ng-required="true" ng-model="block.roomId"
                                     ng-options="room.objectId as room.roomNumber for room in listOfRooms">
                             </select>
                         </div>
@@ -85,7 +85,7 @@
                     <div class="form-group">
                         <label for="blockReason" class="col-sm-6 control-label"> Reason: </label>
                         <div class="col-sm-6">
-                            <textarea id="blockReason" ng-required="true" ng-model="block.Reason">
+                            <textarea id="blockReason" ng-required="true" ng-model="block.reason">
                             </textarea>
                         </div>
                     </div>

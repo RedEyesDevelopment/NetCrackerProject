@@ -119,8 +119,10 @@ public class UserController {
     public ResponseEntity<IUDAnswer> updatePassword(@PathVariable("id") Integer id,
                                                     @RequestBody UserPasswordDTO userPasswordDTO, HttpServletRequest request) {
         User sessionUser = (User) request.getSession().getAttribute("USER");
-        if (id == null || !id.equals(sessionUser.getObjectId())) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, MessageBook.NULL_ID), HttpStatus.BAD_REQUEST);
+        if (sessionUser == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        } else if (id == null || !id.equals(sessionUser.getObjectId())) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false,NULL_ID), HttpStatus.BAD_REQUEST);
         } else if (userPasswordDTO == null || userPasswordDTO.getNewPassword() == null || userPasswordDTO.getOldPassword() == null) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_FIELD), HttpStatus.BAD_REQUEST);
         } else if (userPasswordDTO.getOldPassword().equals(userPasswordDTO.getNewPassword())) {
@@ -146,7 +148,9 @@ public class UserController {
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateBasicInfo(@PathVariable("id") Integer id, @RequestBody UserBasicDTO userBasicDTO, HttpServletRequest request) {
         User sessionUser = (User) request.getSession().getAttribute("USER");
-        if (id == null || id.intValue() != sessionUser.getObjectId()) {
+        if (sessionUser == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        } else if (id == null || id.intValue() != sessionUser.getObjectId()) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, MessageBook.NULL_ID), HttpStatus.BAD_REQUEST);
         }
         User user = userService.getSingleUserById(id);
@@ -168,10 +172,11 @@ public class UserController {
     @CacheRemoveAll(cacheName = "userList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> deleteUser(@PathVariable("id") Integer id, HttpServletRequest request){
-        if (id == null) return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ID), HttpStatus.BAD_REQUEST);
         User user = (User) request.getSession().getAttribute("USER");
         if (user == null) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        } else if (id == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ID), HttpStatus.BAD_REQUEST);
         } else if (user.getRole().getObjectId() != 1) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_ADMIN), HttpStatus.BAD_REQUEST);
         }

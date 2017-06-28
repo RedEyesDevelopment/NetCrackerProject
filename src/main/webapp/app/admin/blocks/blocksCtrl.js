@@ -1,15 +1,15 @@
-app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util',
+app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'util',
     function($scope, $http, $location, sharedData, util) {
 
 		/* Функция на получения всех комнат и типов комнат, вызываются сразу */
         (function() {
             $http({
-                url: sharedData.getLinks().https + '/rooms/',
+                url: sharedData.getLinks().https + '/blocks/',
                 method: 'GET',
                 headers: { 'Content-Type' : 'application/json' }
             }).then(function(data) {
                 console.log(data);
-                $scope.listOfRooms = data.data;
+                $scope.listOfBlocks = data.data;
             }, function(response) {
                 console.log("Smth wrong!!");
                 console.log(response);
@@ -18,12 +18,12 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
         (function() {
             $http({
-                url: sharedData.getLinks().https + '/roomtypes/simpleList',
+                url: sharedData.getLinks().https + '/rooms/',
                 method: 'GET',
                 headers: { 'Content-Type' : 'application/json' }
             }).then(function(data) {
                 console.log(data);
-                $scope.listOfRoomTypes = data.data;
+                $scope.listOfRooms = data.data;
             }, function(response) {
                 console.log("Smth wrong!!");
                 console.log(response);
@@ -41,8 +41,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
             $scope.deleted = false;
         }
 
-        $scope.residents = [1, 2, 3];
-        $scope.room = {};
+        $scope.block = {};
         resetFlags();
 
         $scope.stage = "looking";
@@ -54,29 +53,31 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 
 		/* Функции подготовки запросов */
-        $scope.prepareToAddRoom = function() {
+        $scope.prepareToAddBlock = function() {
             $scope.indexForOperation = "";
-            $scope.room.idForOperation = "";
-            $scope.room.number = "";
-            $scope.room.numberOfResidents = "";
-            $scope.room.type = "";
+            $scope.block.idForOperation = "";
+            $scope.block.blockStartDate = "";
+            $scope.block.blockFinishDate = "";
+            $scope.block.reason = "";
+            $scope.block.roomId = "";
             resetFlags();
             $scope.stage = "adding";
             $scope.modificationMode = true;
         }
 
-        $scope.prepareToEditRoom = function(roomId, index) {
+        $scope.prepareToEditBlock = function(blockId, index) {
             $http({
-                url: sharedData.getLinks().https + '/rooms/' + roomId,
+                url: sharedData.getLinks().https + '/blocks/' + blockId,
                 method: 'GET',
                 headers: {'Content-Type': 'application/json'}
             }).then(function(data) {
                 console.log(data);
                 $scope.indexForOperation = index;
-                $scope.room.idForOperation = roomId;
-                $scope.room.number = data.data.roomNumber;
-                $scope.room.numberOfResidents = data.data.numberOfResidents;
-                $scope.room.type = data.data.roomType.objectId;
+                $scope.block.idForOperation = blockId;
+                $scope.block.blockStartDate = new Date(data.data.blockStartDate);
+                $scope.block.blockFinishDate = new Date(data.data.blockFinishDate);
+                $scope.block.reason = data.data.reason;
+                $scope.block.roomId = data.data.room.objectId;
                 resetFlags();
                 $scope.stage = "editing";
                 $scope.modificationMode = true;
@@ -87,9 +88,9 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
             });
         }
 
-        $scope.prepareToDeleteRoom = function(roomId, index) {
+        $scope.prepareToDeleteBlock = function(blockId, index) {
             $scope.indexForOperation = index;
-            $scope.room.idForOperation = roomId;
+            $scope.block.idForOperation = blockId;
             resetFlags();
             $scope.stage = "deleting";
         }
@@ -103,36 +104,42 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		/* Вызывает нужный запрос в зависимости от типа операции */
         $scope.query = function() {
             switch ($scope.stage) {
-                case 'adding': addRoom();
+                case 'adding': addBlock();
                     break;
-                case 'editing': editRoom();
+                case 'editing': editBlock();
                     break;
-                case 'deleting': deleteRoom();
+                case 'deleting': deleteBlock();
                     break;
             }
         }
 
 		/* Функции, выполняющие запросы */
-        var addRoom = function() {
+        var addBlock = function() {
             resetFlags();
+            console.log($scope.block.blockStartDate.getTime())
+            console.log($scope.block.blockFinishDate.getTime())
+            console.log($scope.block.reason)
+            console.log($scope.block.roomId)
             $http({
-                url: sharedData.getLinks().https + '/rooms',
+                url: sharedData.getLinks().https + '/blocks',
                 method: 'POST',
                 data: {
-                    roomNumber : 		$scope.room.number,
-                    numberOfResidents : parseInt($scope.room.numberOfResidents),
-                    roomType : 			parseInt($scope.room.type)
+                    blockStartDate : $scope.block.blockStartDate.getTime(),
+                    blockFinishDate : $scope.block.blockFinishDate.getTime(),
+                    reason : $scope.block.reason,
+                    roomId : $scope.block.roomId
                 },
                 headers: { 'Content-Type' : 'application/json' }
             }).then(function(data) {
                 console.log(data);
-                $scope.listOfRooms.push({
-                    objectId : data.data.objectId,
-                    roomNumber : $scope.room.number,
-                    numberOfResidents : $scope.room.numberOfResidents,
-                    roomType : util.getObjectInArrayById($scope.listOfRoomTypes, $scope.room.type)
+                $scope.listOfBlocks.push({
+                    idForOperation : data.data.objectId,
+                    blockStartDate : new Date($scope.block.blockStartDate),
+                    blockFinishDate : new Date($scope.block.blockFinishDate),
+                    reason : $scope.block.reason,
+                    room : util.getObjectInArrayById($scope.listOfRooms, $scope.block.roomId)
                 });
-                $scope.prepareToAddRoom();
+                $scope.prepareToAddBlock();
                 $scope.added = true;
             }, function(response) {
                 console.log("Smth wrong!!");
@@ -140,22 +147,28 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
             });
         }
 
-        var editRoom = function() {
+        var editBlock = function() {
             resetFlags();
+            console.log($scope.block.blockStartDate.getTime())
+            console.log($scope.block.blockFinishDate.getTime())
+            console.log($scope.block.reason)
+            console.log($scope.block.roomId)
             $http({
-                url: sharedData.getLinks().https + '/rooms/' + $scope.room.idForOperation,
+                url: sharedData.getLinks().https + '/blocks/' + $scope.block.idForOperation,
                 method: 'PUT',
                 data: {
-                    roomNumber : 		$scope.room.number,
-                    numberOfResidents : parseInt($scope.room.numberOfResidents),
-                    roomType : 			parseInt($scope.room.type)
+                    blockStartDate : $scope.block.blockStartDate.getTime(),
+                    blockFinishDate : $scope.block.blockFinishDate.getTime(),
+                    reason : $scope.block.reason,
+                    roomId : $scope.block.roomId
                 },
                 headers: { 'Content-Type' : 'application/json' }
             }).then(function(data) {
                 console.log(data);
-                $scope.listOfRooms[$scope.indexForOperation].roomNumber = $scope.room.number;
-                $scope.listOfRooms[$scope.indexForOperation].numberOfResidents = $scope.room.numberOfResidents;
-                $scope.listOfRooms[$scope.indexForOperation].roomType = util.getObjectInArrayById($scope.listOfRoomTypes, $scope.room.type);
+                $scope.listOfBlocks[$scope.indexForOperation].blockStartDate = new Date($scope.block.blockStartDate);
+                $scope.listOfBlocks[$scope.indexForOperation].blockFinishDate = new Date($scope.block.blockFinishDate);
+                $scope.listOfBlocks[$scope.indexForOperation].reason = $scope.block.reason;
+                $scope.listOfBlocks[$scope.indexForOperation].room = util.getObjectInArrayById($scope.listOfRooms, $scope.block.roomId);
                 $scope.updated = true;
             }, function(response) {
                 console.log("Smth wrong!!");
@@ -163,15 +176,15 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
             });
         }
 
-        var deleteRoom = function() {
+        var deleteBlock = function() {
             resetFlags();
             $http({
-                url: sharedData.getLinks().https + '/rooms/' + $scope.room.idForOperation,
+                url: sharedData.getLinks().https + '/blocks/' + $scope.block.idForOperation,
                 method: 'DELETE',
                 headers: { 'Content-Type' : 'application/json' }
             }).then(function(data) {
                 console.log(data);
-                $scope.listOfRooms.splice($scope.indexForOperation, 1);
+                $scope.listOfBlocks.splice($scope.indexForOperation, 1);
                 $scope.deleted = true;
             }, function(response) {
                 console.log("Smth wrong!!");
@@ -181,10 +194,10 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 
 		/* Для листания страниц с объектами */
-        $scope.nextRooms = function() {
-            $scope.pager.startPaging = util.nextEntities($scope.listOfRooms.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
+        $scope.nextBlocks = function() {
+            $scope.pager.startPaging = util.nextEntities($scope.listOfBlocks.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
         }
-        $scope.previousRooms = function() {
+        $scope.previousBlocks = function() {
             $scope.pager.startPaging = util.previousEntities($scope.pager.startPaging, $scope.pager.objectsOnPage);
         }
     }]);
