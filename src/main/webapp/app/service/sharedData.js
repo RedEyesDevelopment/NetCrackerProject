@@ -1,42 +1,10 @@
 app.factory('sharedData', function(ROLE) {
 
     var auth;
-    var bookCtrlLimitAuth;
-    var paMyself;
-
+    var searchRoomTypes;
 
     function setAuth(headerAuth) { auth = headerAuth; }
 
-    function setBookCtrlLimitAuth(limitAuth) {
-        bookCtrlLimitAuth = limitAuth;
-        updateAuth();
-    }
-    function setPersonalAreaMyself(self) { paMyself = self; auth.myself = self }
-
-    function updateAuth() {
-        if (bookCtrlLimitAuth !== undefined) {
-            bookCtrlLimitAuth.isAuthorized = auth.isAuthorized;
-            bookCtrlLimitAuth.role = auth.role;
-        }
-    }
-    function updateMyself() {
-        if (paMyself !== undefined) {
-            paMyself.objectId = auth.myself.objectId;
-            paMyself.additionalInfo = auth.myself.additionalInfo;
-            paMyself.email = auth.myself.email;
-            paMyself.firstName = auth.myself.firstName;
-            paMyself.lastName = auth.myself.lastName;
-            paMyself.phones = new Array();
-            // auth.myself.phones.forEach(function(elem) {
-            for (var i = 0; i < auth.myself.phones.length; i++) {                
-                paMyself.phones.push({
-                    objectId: auth.myself.phones[i].objectId,
-                    phoneNumber: auth.myself.phones[i].phoneNumber
-                });
-            }
-            // });
-        }
-    }
 
     function getRole() { return auth.role; }
 
@@ -54,6 +22,12 @@ app.factory('sharedData', function(ROLE) {
     function getIsClient() { return auth.isClient; }
 
 
+    function setSearchRoomTypes(func) {
+        searchRoomTypes = func;
+    }
+    function searchRoomTypes() {
+        searchRoomTypes();
+    }
     
 
 
@@ -70,10 +44,7 @@ app.factory('sharedData', function(ROLE) {
         getIsReception: getIsReception,
         getIsClient: getIsClient,
 
-        setBookCtrlLimitAuth: setBookCtrlLimitAuth,
-        setPersonalAreaMyself: setPersonalAreaMyself,
-
-        updateAuth: updateAuth,
-        updateMyself: updateMyself
+        setSearchRoomTypes: setSearchRoomTypes,
+        searchRoomTypes: searchRoomTypes
     }
 });

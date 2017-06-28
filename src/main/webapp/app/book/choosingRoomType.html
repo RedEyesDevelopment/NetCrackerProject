@@ -1,5 +1,5 @@
 <div class="row row-content choosingRoomType">
-    <p id="noteForNotAuth" ng-if="!limitAuth.isAuthorized">
+    <p id="noteForNotAuth" ng-if="!checkIsAuthorized()">
         You can book any room only if you authorized as a client. Authorize if you already have a profile or register a new user.
     </p>
     <div class="col-xs-12">

@@ -19,45 +19,49 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
     }());
 
     $scope.book = {}
-    $scope.limitAuth = {}
     $scope.stage = "booking";
     $scope.doesNeedToShowBookForm = true;
-    sharedData.setBookCtrlLimitAuth($scope.limitAuth);
 
+    $scope.checkIsAuthorized = function() {
+        return sharedData.getIsAuthorized();
+    }
 
     $scope.searchRoomTypes = function() {
-        $http({
-            url: 'http://localhost:8080/orders/searchavailability',
-            method: 'POST',
-            data: {
-                arrival :       $scope.book.from.getTime(),
-                departure :     $scope.book.till.getTime(),
-                livingPersons : parseInt($scope.book.adults),
-                categoryId :    parseInt($scope.book.category)
-            },
-            headers: {
-                'Content-Type' : 'application/json'
-            }
-        }).then(function(data) {
-            console.log(data);
-            $scope.listOfRoomTypes = data.data;
-            $scope.stage = "choosingRoomType";
-            setTimeout(function() {
-                $('body').animate({ scrollTop : 770 }, 300);
-            }, 600);
-        }, function(response) {
-            console.log("Smth wrong!!");
-            console.log(response);
-        });
+        if (Object.keys($scope.book).length !== 0) {
+            $http({
+                url: 'http://localhost:8080/orders/searchavailability',
+                method: 'POST',
+                data: {
+                    arrival :       $scope.book.from.getTime(),
+                    departure :     $scope.book.till.getTime(),
+                    livingPersons : parseInt($scope.book.adults),
+                    categoryId :    parseInt($scope.book.category)
+                },
+                headers: {
+                    'Content-Type' : 'application/json'
+                }
+            }).then(function(data) {
+                console.log(data);
+                $scope.listOfRoomTypes = data.data;
+                $scope.stage = "choosingRoomType";
+                setTimeout(function() {
+                    $('body').animate({ scrollTop : 770 }, 300);
+                }, 600);
+            }, function(response) {
+                console.log("Smth wrong!!");
+                console.log(response);
+            });
+        }
     }
+
+    sharedData.setSearchRoomTypes($scope.searchRoomTypes);
 
     $scope.bookFormChange = function() {
         $scope.stage = "booking";
     }
 
     $scope.issueOder = function (roomTypeId) {
-        if ($scope.limitAuth.isAuthorized) {
-            console.log("IN");            
+        if ($scope.checkIsAuthorized()) {         
             $http({
                 url: 'http://localhost:8080/orders/book/' + roomTypeId,
                 method: 'GET',
@@ -75,7 +79,6 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
                 console.log(response);
             });
         } else {
-            console.log("else");
             $('#signupLink').trigger('click');
         }
     }

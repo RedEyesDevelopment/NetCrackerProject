@@ -1,5 +1,5 @@
-app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROLE',
-    function ($scope, $http, $location, sharedData, ROLE) {
+app.controller('headerCtrl', ['$scope', '$http', '$location', '$rootScope', 'sharedData', 'ROLE',
+    function ($scope, $http, $location, $rootScope, sharedData, ROLE) {
 
     $scope.auth = {};
     $scope.registrationData = {}
@@ -63,7 +63,7 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
     sharedData.setAuth($scope.auth); // добавить в общую фабрику объект данных об авторизации
     setAuthDataFromServer();
 
-    /* Следит за изменениями роли, и в соответствии с ней меняет значение */
+    /* Следит за изменениями роли, и в соответствии с ней меняет значение isAuthorized */
     $scope.$watch('auth.role', function(newRole) {
         $scope.auth.isAuthorized = false;
         $scope.auth.isAdmin = false;
@@ -85,11 +85,6 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
             case ROLE.NA:
                 $location.path('/');
         }
-        sharedData.updateAuth();
-    });
-    
-    $scope.$watch('auth.myself', function(newMyself) {
-        sharedData.updateMyself();
     });
 
     $scope.login = function() {
@@ -108,6 +103,7 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
             if (data.data) {
                 // if authorized
                 $('#loginFormClose').trigger('click');
+                sharedData.searchRoomTypes();
             } else {
                 // WARNING!! DRY VIOLATION!!!
                 $scope.auth.incoming.failed = true;
@@ -136,8 +132,8 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
             console.log(data);
         }, function (response) {
             console.log(response);
-            // WARNING!! DRY VIOLATION!!!
             $scope.auth.role = ROLE.NA;
+            $location.path('/');
         });
     };
 
