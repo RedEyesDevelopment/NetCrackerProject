@@ -17,7 +17,7 @@ public interface MessageBook {
     String DUPLICATE_EMAIL = "This email is already exist!";
     String STAT_WRONG = "Unable to create statistics!";
     String FAILED_EMAIL_SENT = "Your message haven't been sent!";
-    String ON_ENTITY_REFERENCE = "Cannot delete entity with reference on self!";
+    String ON_ENTITY_REFERENCE = "Cannot delete entity because someone have reference on this entity!";
     String NULL_ID = "Id cannot be null!";
     String INCORRECT_NUMBER_OF_RESIDENTS = "Number of residents cannot be less then 1 and more then 3!";
     String WRONG_PASSWORD = "Password is null, can not encrypt null password!";

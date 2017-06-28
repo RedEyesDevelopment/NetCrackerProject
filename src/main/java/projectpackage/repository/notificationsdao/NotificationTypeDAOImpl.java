@@ -37,7 +37,7 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     @Transactional(readOnly = true)
     public List<NotificationType> getAllNotificationTypes() {
         return (List<NotificationType>) manager.createReactEAV(NotificationType.class)
-                .fetchRootReference(Role.class, "RoleToNotification")
+                .fetchRootReference(Role.class, "RoleToNotificationType")
                 .closeAllFetches().getEntityCollection();
     }
 
