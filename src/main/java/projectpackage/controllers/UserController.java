@@ -13,6 +13,7 @@ import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.service.MessageBook;
 import projectpackage.service.authservice.UserService;
+import projectpackage.service.securityservice.SecurityService;
 
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
@@ -22,9 +23,7 @@ import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-import static projectpackage.service.MessageBook.NULL_ID;
-import static projectpackage.service.MessageBook.SAME_PASSWORDS;
-import static projectpackage.service.MessageBook.WRONG_FIELD;
+import static projectpackage.service.MessageBook.*;
 
 @RestController
 @RequestMapping("/users")
@@ -32,6 +31,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    SecurityService securityService;
 
     //Get User List
     @ResponseStatus(HttpStatus.OK)
@@ -114,22 +116,26 @@ public class UserController {
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updatePassword(@PathVariable("id") Integer id, @RequestBody UserPasswordDTO userPasswordDTO, HttpServletRequest request) {
         User sessionUser = (User) request.getSession().getAttribute("USER");
-        if (id == null || id.equals(sessionUser.getObjectId())) {
+        if (id == null || !id.equals(sessionUser.getObjectId())) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, MessageBook.NULL_ID), HttpStatus.BAD_REQUEST);
         } else if (userPasswordDTO == null || userPasswordDTO.getNewPassword() == null || userPasswordDTO.getOldPassword() == null) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_FIELD), HttpStatus.BAD_REQUEST);
         } else if (userPasswordDTO.getOldPassword().equals(userPasswordDTO.getNewPassword())) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, SAME_PASSWORDS), HttpStatus.BAD_REQUEST);
         }
-        User user = new User();
-        user.setAdditionalInfo(sessionUser.getAdditionalInfo());
-        user.setEnabled(Boolean.TRUE);
-        user.setFirstName(sessionUser.getFirstName());
-        user.setLastName(sessionUser.getLastName());
-        user.setEmail(sessionUser.getEmail());
-        user.setPassword(userPasswordDTO.getNewPassword());
-        user.setPhones(sessionUser.getPhones());
-        user.setRole(sessionUser.getRole());
+        User user = userService.getSingleUserById(id);
+
+        String dbOldPassword = user.getPassword();
+        user.setPassword(userPasswordDTO.getOldPassword());
+        securityService.cryptUserPass(user);
+        System.out.println("*************" + user.getPassword() + "\n*************" + dbOldPassword);
+
+        if (user.getPassword().equals(dbOldPassword)) {
+            user.setPassword(userPasswordDTO.getNewPassword());
+        } else {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_PASSWORD), HttpStatus.BAD_REQUEST);
+        }
+
         IUDAnswer answer = userService.updateUser(id, user);
         if (answer.isSuccessful()) {
             request.getSession().removeAttribute("USER");
@@ -148,6 +154,10 @@ public class UserController {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, MessageBook.NULL_ID), HttpStatus.BAD_REQUEST);
         }
         User user = userService.getSingleUserById(id);
+        user.setFirstName(userBasicDTO.getFirstName());
+        user.setLastName(userBasicDTO.getLastName());
+        user.setEmail(userBasicDTO.getEmail());
+        user.setAdditionalInfo(userBasicDTO.getAdditionalInfo());
         IUDAnswer answer = userService.updateUser(id, user);
         if (answer.isSuccessful()) {
             request.getSession().removeAttribute("USER");

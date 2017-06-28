@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
             if (!isValid) return new IUDAnswer(false, WRONG_PHONE_NUMBER);
         }
         if (!securityService.cryptUserPass(user)){
-        	return new IUDAnswer(false, WRONG_PASSWORD);
+        	return new IUDAnswer(false, INVALID_PASSWORD);
 		}
 
 		Integer userId = null;
@@ -112,6 +112,7 @@ public class UserServiceImpl implements UserService {
 	public IUDAnswer updateUser(Integer id, User newUser) {
 	    if (newUser == null) return null;
         if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (!securityService.cryptUserPass(newUser)) return new IUDAnswer(false, FAIL_CRYPT_PASSWORD);
 		try {
 			newUser.setObjectId(id);
 			User oldUser = userDAO.getUser(id);
