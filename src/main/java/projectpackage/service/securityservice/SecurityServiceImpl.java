@@ -44,6 +44,11 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
+    public boolean isPasswordMatchEncrypted(String raw, String encoded) {
+        return bCryptPasswordEncoder.matches(raw, encoded);
+    }
+
+    @Override
     public int getAuthenticatedUserId(String s){
         AuthCredentials credentials = authCredentialsDAO.getUserByUsername(s);
         return credentials.getUserId();
