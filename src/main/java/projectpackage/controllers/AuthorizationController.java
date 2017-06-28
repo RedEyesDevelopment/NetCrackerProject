@@ -36,10 +36,8 @@ public class AuthorizationController {
     public ResponseEntity<Boolean> doLogin(@RequestBody AuthForm form, HttpServletRequest request){
         boolean result = securityService.autologin(form.getLogin(), form.getPassword());
         if (!result){
-            System.out.println("Pass is wrong");
             return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
         } else {
-            System.out.println("Pass is good!");
             User user = userService.getSingleUserById(securityService.getAuthenticatedUserId(form.getLogin()));
             user.setPassword(null);
             request.getSession().setAttribute("USER", user);
