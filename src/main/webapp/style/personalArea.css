@@ -21,6 +21,18 @@
 	margin: 20px;
 }
 
+.settings .done {
+	color: green;
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.settings .diffPasswords {
+	color: red;
+	text-align: center;
+	margin-bottom: 20px;
+}
+
 .settings .settingsFields {
 	font-size: 18px;
 }

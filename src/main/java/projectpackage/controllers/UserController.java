@@ -144,16 +144,10 @@ public class UserController {
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateBasicInfo(@PathVariable("id") Integer id, @RequestBody UserBasicDTO userBasicDTO, HttpServletRequest request) {
         User sessionUser = (User) request.getSession().getAttribute("USER");
-        if (id == null || id.equals(sessionUser.getObjectId())) return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, MessageBook.NULL_ID), HttpStatus.BAD_REQUEST);
-        User user = new User();
-        user.setAdditionalInfo(userBasicDTO.getAdditionalInfo());
-        user.setEnabled(Boolean.TRUE);
-        user.setFirstName(userBasicDTO.getFirstName());
-        user.setLastName(userBasicDTO.getLastName());
-        user.setEmail(userBasicDTO.getEmail());
-        user.setPassword(sessionUser.getPassword());
-        user.setPhones(sessionUser.getPhones());
-        user.setRole(sessionUser.getRole());
+        if (id == null || id.intValue() != sessionUser.getObjectId()) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, MessageBook.NULL_ID), HttpStatus.BAD_REQUEST);
+        }
+        User user = userService.getSingleUserById(id);
         IUDAnswer answer = userService.updateUser(id, user);
         if (answer.isSuccessful()) {
             request.getSession().removeAttribute("USER");

@@ -185,8 +185,8 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         }
     }
 
-    private void updateFirstName(User oldUser, User newUser) {
-        if (oldUser.getFirstName() != null && newUser.getLastName() != null && !newUser.getFirstName().isEmpty()) {
+    private void updateFirstName(User newUser, User oldUser) {
+        if (oldUser.getFirstName() != null && newUser.getFirstName() != null && !newUser.getFirstName().isEmpty()) {
             if (!oldUser.getFirstName().equals(newUser.getFirstName())) {
                 jdbcTemplate.update(UPDATE_ATTRIBUTE, newUser.getFirstName(), null, newUser.getObjectId(), 17);
             }

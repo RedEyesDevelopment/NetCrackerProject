@@ -45,7 +45,6 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', 'sharedData', 'ROL
             method: 'GET',
             headers: {'Content-Type': 'application/json'}
         }).then(function (data) {
-            console.log("ans");
             console.log(data);
             $scope.auth.myself = data.data;
         }, function (response) {

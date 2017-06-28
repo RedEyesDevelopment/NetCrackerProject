@@ -6,6 +6,12 @@
 	<div class="col-sm-9">
 
 	    <h1> User settings </h1>
+        <div class="done" ng-if="stage == 'done'">
+            Changes successfully accepted! <i class="fa fa-check" aria-hidden="true"></i>              
+        </div>
+        <div class="diffPasswords" ng-if="stage == 'diffPasswords'">
+            <i class="fa fa-times" aria-hidden="true"></i> Passwords do not match!          
+        </div>
 	    <div class="settingsFields">
 	        <form name="mainForm" novalidate>
 	        	<div class="groupInput">
@@ -45,7 +51,10 @@
 	                	</div>
 	                </div>
 		            <div class="updateButton">
-	                	<button class="btn btn-default">Update basic info</button>
+	                	<button class="btn btn-default" ng-click="prepareToEditBasicInfo()"
+	                			data-toggle="modal" data-target="#editConfirmModal">
+	                		Update basic info
+	                	</button>
 					</div>
 	            </div>
 
@@ -56,7 +65,7 @@
 	                    </div>
 	                    <div class="col-sm-6">
 	                    	<input type="password" id="oldPasswordInput"
-	                    		ng-model="myself.password">
+	                    		ng-model="myself.oldPassword">
 	                	</div>
 	                </div>
 	                <div class="row">
@@ -78,7 +87,10 @@
 	                	</div>
 	                </div>
 	                <div class="updateButton">
-	                	<button class="btn btn-default">Change password</button>
+	                	<button class="btn btn-default" ng-click="prepareToChangePassword()"
+	                			data-toggle="modal" data-target="#editConfirmModal">
+	                		Change password
+	                	</button>
 					</div>
 	            </div>
 
@@ -91,24 +103,24 @@
 	                    	<input type="tel" id="phoneNumberInput"
 	                    		ng-model="phone.phoneNumber">
 	                	</div>
-	                	<button class="btn btn-default">
+	                	<button class="btn btn-default" ng-click="prepareToEditPhone(phone.objectId)"
+	                			data-toggle="modal" data-target="#editConfirmModal">
 							Edit
 						</button>
-						<button class="btn btn-default"
-								ng-click="">
+						<button class="btn btn-default" ng-click="prepareToDeletePhone(phone.objectId)"
+								data-toggle="modal" data-target="#deleteConfirmModal">
 							Delete
 						</button>
 	                </div>
 	                <div class="row">
 	                	<div class="col-sm-3">
 							<button class="btn btn-default col-sm-8"
-									ng-click="">
+									ng-click="prepareToAddPhone()">
 								<i class="fa fa-plus" aria-hidden="true"></i> Add one
 							</button>
 						</div>
-						<div class="col-sm-6">
-	                    	<input type="tel" id="phoneNumberInput"
-	                    		ng-model="">
+						<div class="col-sm-6" ng-if="stage == 'addPhone'">
+	                    	<input type="tel" id="phoneNumberInput">
 	                	</div>
 	                </div>
 	            </div>

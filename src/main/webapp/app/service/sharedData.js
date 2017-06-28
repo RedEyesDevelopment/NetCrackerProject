@@ -10,7 +10,7 @@ app.factory('sharedData', function(ROLE) {
     function setBookCtrlLimitAuth(limitAuth) {
         bookCtrlLimitAuth = limitAuth;
     }
-    function setPersonalAreaMyself(self) { paMyself = self; }
+    function setPersonalAreaMyself(self) { paMyself = self; auth.myself = self }
 
     function updateAuth() {
         if (bookCtrlLimitAuth !== undefined) {
