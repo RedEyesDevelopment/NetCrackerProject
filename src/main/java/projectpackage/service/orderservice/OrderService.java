@@ -15,22 +15,24 @@ import java.util.List;
  * Created by Arizel on 16.05.2017.
  */
 public interface OrderService extends MessageBook{
-    public List<Order> getOrdersByRoom(Room room);
-    public List<Order> getOrdersByClient(User user);
-    public List<Order> getOrdersByRegistrationDate(Date date);
-    public List<Order> getCurrentOrders();//livingStartDate < SYSDATE < livingFinishDate ясно?
-    public List<Order> getPreviousOrders();//livingFinishDate < SYSDATE
-    public List<Order> getFutureOrders();//livingStartDate > SYSDATE
-    public List<Order> getOrdersForPayConfirmed();
-    public List<Order> getOrdersInRange(Date startDate, Date finishDate);
-    public List<Order> getOrdersConfirmed();
-    public List<Order> getOrdersMustToBePaid();
-    public IUDAnswer createOrder(User client, int roomTypeId, int numberOfResidents, Date start, Date finish, Category
+    List<Order> getOrdersByRoom(Room room);
+    List<Order> getOrdersByClient(User user);
+    List<Order> getOrdersByRegistrationDate(Date date);
+    List<Order> getCurrentOrders();//livingStartDate < SYSDATE < livingFinishDate ясно?
+    List<Order> getPreviousOrders();//livingFinishDate < SYSDATE
+    List<Order> getFutureOrders();//livingStartDate > SYSDATE
+    List<Order> getOrdersForPayConfirmed();
+    List<Order> getOrdersInRange(Date startDate, Date finishDate);
+    List<Order> getOrdersConfirmed();
+    List<Order> getOrdersMustToBePaid();
+    IUDAnswer createOrder(User client, int roomTypeId, int numberOfResidents, Date start, Date finish, Category
             category, long summ);
-    public Order createOrderTemplate(User client, OrderDTO dto);
-    public List<Order> getAllOrders();
-    public Order getSingleOrderById(Integer id);
-    public IUDAnswer deleteOrder(Integer id);
-    public IUDAnswer insertOrder(Order order);
-    public IUDAnswer updateOrder(Integer id, Order newOrder);
+    List<Order> getAllOrderForAdmin();
+    Order getOrderForAdmin(Integer id);
+    Order createOrderTemplate(User client, OrderDTO dto);
+    List<Order> getAllOrders();
+    Order getSingleOrderById(Integer id);
+    IUDAnswer deleteOrder(Integer id);
+    IUDAnswer insertOrder(Order order);
+    IUDAnswer updateOrder(Integer id, Order newOrder);
 }

@@ -199,6 +199,26 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
+    public List<Order> getAllOrderForAdmin() {
+        List<Order> orders = orderDAO.getAllOrderForAdmin();
+        if (orders == null) LOGGER.info("Returned NULL!!!");
+        for (Order order : orders) {
+            order.getClient().setPassword(null);
+            order.getLastModificator().setPassword(null);
+        }
+        return orders;
+    }
+
+    @Override
+    public Order getOrderForAdmin(Integer id) {
+        Order order = orderDAO.getOrderForAdmin(id);
+        if (order == null) LOGGER.info("Returned NULL!!!");
+        order.getClient().setPassword(null);
+        order.getLastModificator().setPassword(null);
+        return order;
+    }
+
+    @Override
     public Order createOrderTemplate(User client, OrderDTO dto) {
         Room room = roomDAO.getFreeRoom(dto.getRoomTypeId(), dto.getLivingPersons(), dto.getArrival(), dto.getDeparture());
         Order order = new Order();

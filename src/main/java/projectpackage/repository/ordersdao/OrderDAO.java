@@ -10,9 +10,11 @@ import java.util.List;
  * Created by Arizel on 16.05.2017.
  */
 public interface OrderDAO extends Commitable, Rollbackable{
-    public Order getOrder(Integer id);
-    public List<Order> getAllOrder();
-    public Integer insertOrder(Order order);
-    public Integer updateOrder(Order newOrder, Order oldOrder);
-    public void deleteOrder(Integer id);
+    List<Order> getAllOrderForAdmin();
+    Order getOrderForAdmin(Integer id);
+    Order getOrder(Integer id);
+    List<Order> getAllOrder();
+    Integer insertOrder(Order order);
+    Integer updateOrder(Order newOrder, Order oldOrder);
+    void deleteOrder(Integer id);
 }

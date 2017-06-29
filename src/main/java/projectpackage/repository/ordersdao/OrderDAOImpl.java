@@ -37,6 +37,43 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
 
     @Override
     @Transactional(readOnly = true)
+    public List<Order> getAllOrderForAdmin() {
+        return  manager.createReactEAV(Order.class).fetchRootReference(User.class, "UserToOrderAsClient")
+                .fetchInnerChild(Phone.class).closeAllFetches()
+                .fetchRootReference(User.class, "UserToOrderAsLastModificator")
+                .closeAllFetches()
+                .fetchRootReference(Room.class, "RoomToOrder")
+                .fetchInnerReference(RoomType.class, "RoomTypeToRoom")
+                .closeAllFetches()
+                .fetchRootChild(JournalRecord.class)
+                .fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
+                .closeAllFetches()
+                .fetchRootReference(Category.class, "OrderToCategory")
+                .closeAllFetches()
+                .getEntityCollection();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Order getOrderForAdmin(Integer id) {
+        if (id == null) return null;
+        return (Order) manager.createReactEAV(Order.class).fetchRootReference(User.class, "UserToOrderAsClient")
+                .fetchInnerChild(Phone.class).closeAllFetches()
+                .fetchRootReference(User.class, "UserToOrderAsLastModificator")
+                .closeAllFetches()
+                .fetchRootReference(Room.class, "RoomToOrder")
+                .fetchInnerReference(RoomType.class, "RoomTypeToRoom")
+                .closeAllFetches()
+                .fetchRootChild(JournalRecord.class)
+                .fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
+                .closeAllFetches()
+                .fetchRootReference(Category.class, "OrderToCategory")
+                .closeAllFetches()
+                .getSingleEntityWithId(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Order getOrder(Integer id) {
         if (null == id) return null;
 

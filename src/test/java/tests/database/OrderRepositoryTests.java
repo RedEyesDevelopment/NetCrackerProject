@@ -14,9 +14,7 @@ import projectpackage.service.orderservice.OrderService;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by Arizel on 16.05.2017.
@@ -87,6 +85,15 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
     }
 
     @Test
+    @Rollback
+    public void getAllOrdersForAdmin() {
+        List<Order> orders = orderService.getAllOrderForAdmin();
+        assertNotNull(orders);
+        LOGGER.info(orders);
+        LOGGER.info(SEPARATOR);
+    }
+
+    @Test
     @Rollback(true)
     public void getAllOrders() {
         System.out.println("IN TESTS:"+Thread.currentThread());
@@ -106,62 +113,10 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
 
     @Test
     @Rollback(true)
-    public void getOrdersByClient(){
-
-    }
-
-    @Test
-    @Rollback(true)
-    public void getOrdersByRegistrationDate(){
-
-    }
-
-    @Test
-    @Rollback(true)
-    public void getOrdersBySum(){
-
-    }
-
-    @Test
-    @Rollback(true)
-    public void getCurrentOrders(){
-
-    }
-
-    @Test
-    @Rollback(true)
-    public void getPreviousOrders(){
-
-    }
-
-    @Test
-    @Rollback(true)
-    public void getOrdersForPayConfirme(){
-
-    }
-
-    @Test
-    @Rollback(true)
-    public void getOrdersInRange(){
-
-    }
-
-    @Test
-    @Rollback(true)
-    public void getOrdersConfirmed(){
-
-    }
-
-    @Test
-    @Rollback(true)
-    public void getOrdersPaidFor(){
-
-    }
-
-    @Test
-    @Rollback(true)
-    public void getFutureOrders(){
-
+    public void getOrderForAdmin(){
+        Order order = orderService.getOrderForAdmin(300);
+        LOGGER.info(order);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test

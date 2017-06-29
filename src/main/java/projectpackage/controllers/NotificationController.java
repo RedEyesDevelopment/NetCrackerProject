@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.model.auth.User;
 import projectpackage.model.notifications.Notification;
-import projectpackage.dto.IUDAnswer;
 import projectpackage.service.MessageBook;
 import projectpackage.service.notificationservice.NotificationService;
 
@@ -25,7 +25,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * Created by Lenovo on 28.05.2017.
  */
 @RestController
-@RequestMapping("/notification")
+@RequestMapping("/notifications")
 public class NotificationController {
 
     @Autowired
