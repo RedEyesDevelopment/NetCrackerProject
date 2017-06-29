@@ -10,6 +10,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		}).then(function(data) {
 			console.log(data);
 			$scope.listOfOrders = data.data;
+			// $scope.listOfOrders.forEach
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);

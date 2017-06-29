@@ -19,21 +19,79 @@
                 <li><input type="number" min="1" max="999" ng-model="pager.objectsOnPage"></li>
                 <li><a ng-click="nextOrders()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
-            <div ng-repeat="order in listOfOrders | orderBy : 'orderId' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-4">
-                <div class="block-border">
-                    <p class="admin-notes"> Order id: {{ order.orderId }} </p>
-                    <p class="admin-notes top-bottom-border"> Category: {{ order.category }} </p>
-                    <p class="admin-notes"> Room: {{ order.room }} </p>
-                    <p class="admin-notes top-bottom-border"> Client: {{ order.client }} </p>
-                    <p class="admin-notes"> Registration date: {{ order.registrationDate }} </p>
-                    <p class="admin-notes top-bottom-border"> Paid: {{ order.isPaidFor }} </p>
-                    <p class="admin-notes"> Confirmed: {{ order.isConfirmed }} </p>
-                    <p class="admin-notes top-bottom-border"> Living start: {{ order.livingStartDate }} </p>
-                    <p class="admin-notes"> Living finish: {{ order.livingFinishDate }} </p>
-                    <p class="admin-notes top-bottom-border"> Is paid: {{ order.isPaid }} </p>
-                    <p class="admin-notes"> Sum: {{ order.sum }} </p>
-                    <p class="admin-notes top-bottom-border"> Comment: {{ order.comment }} </p>
-                    <p class="admin-notes"> Last modificator: {{ order.lastModificator }} </p>
+            <div ng-repeat="order in listOfOrders | orderBy : 'objectId' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-12">
+                <div class="block-border admin-notes">
+                    <div class="row order-bottom-border order-padding-bottom">
+                        <div class="col-sm-4">
+                            Order id: {{ order.objectId }}    
+                        </div>
+                        <div class="col-sm-4 text-center">
+                            Registration date: {{ order.registrationDate | date:'dd.MM.yyyy' }}
+                        </div>
+                        <div class="col-sm-4 text-right">
+                            {{ order.isPaidFor ? 'paid' : 'not paid' }} |
+                            {{ order.isConfirmed ? 'confirmed' : "not confirmed" }}
+                        </div>
+                    </div>
+
+                    <div class="row order-row">
+                        <div class="col-sm-6">
+                            <div class="row order-padding-top-bottom">
+                                <div class="col-sm-12 text-center">
+                                    Living period: {{ order.livingStartDate | date:'dd.MM.yyyy' }} - {{ order.livingFinishDate | date:'dd.MM.yyyy' }}
+                                </div>     
+                            </div>
+                            <div class="row order-padding-top-bottom">
+                                <div class="col-sm-6">
+                                    Room: {{ order.room.roomNumber }}                
+                                </div>
+                                <div class="col-sm-6">
+                                    Room type: {{ order.room.roomType.roomTypeTitle }}
+                                </div> 
+                            </div>
+                            <div class="row order-padding-top-bottom">               
+                                <div class="col-sm-6">
+                                    Category: {{ order.category.categoryTitle }}
+                                </div>
+                            </div>
+                            <div class="row"></div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="row order-padding-top-bottom">
+                                <div class="col-sm-12 text-center">
+                                    Client: {{ order.client.firstName }} {{ order.client.lastName }}
+                                </div>
+                            </div>
+                            <div class="row order-padding-top-bottom">
+                                <div class="col-sm-6">
+                                    {{ order.client.email }}
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class=" text-right"> {{ order.client.phones[0].phoneNumber }} </div> 
+                                </div>
+                            </div>
+                            <div class="row">
+                                Sum: {{ (order.sum / 100).toFixed(2) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            List of used maintenance (expand)
+                        </div>
+                        <div ng-repeat="record in order.journalRecords | orderBy : 'usedDate'" class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-8">{{ record.maintenance.maintenanceTitle }}</div>
+                                <div class="col-sm-2">{{ record.count }}</div>
+                                <div class="col-sm-1">{{ record.cost }}</div>
+                                <div class="col-sm-1">{{ record.usedDate | date:'dd.MM.yyyy' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                                <div> Comment: {{ order.comment }} </div>                    
+                    <div> Last modificator: {{ order.lastModificator }} </div>
                     <div class="text-right">
                         <button type="button" class="btn btn-primary btn-md"
                                 ng-click="prepareToEditOrder(order.objectId, listOfOrders.indexOf(order))">
