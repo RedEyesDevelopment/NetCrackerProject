@@ -29,7 +29,7 @@
                 <div class="block-border">
                     <p class="admin-notes"> Title: {{ maintenance.maintenanceTitle }} </p>
                     <p class="admin-notes top-bottom-border"> Type: {{ maintenance.maintenanceType }} </p>
-                    <p class="admin-notes"> Price: {{ (maintenance.maintenancePrice / 100).toFixed(2) }} </p>
+                    <p class="admin-notes"> Price: {{ (maintenance.maintenancePrice / 100).toFixed(2) }} $ </p>
                     <div class="text-right">
                         <button type="button" class="btn btn-primary btn-md"
                                 ng-click="prepareToEditMaintenance(maintenance.objectId, listOfMaintenances.indexOf(maintenance))">
@@ -88,7 +88,7 @@
                                     id="maintenancePrc" class="currencyDlr" 
                                     ng-required="true" ng-model="maintenance.dollars"> $ 
                             <input type="number" ng-min="0" min="0" ng-max="99" max="99" ng-pattern="/^-?[0-9][^\.]*$/"
-                                    id="maintenancePrc" class="currencyCent" 
+                                     class="currencyCent"
                                     ng-required="true" ng-model="maintenance.cents"> &cent; 
                         </div>
                     </div>

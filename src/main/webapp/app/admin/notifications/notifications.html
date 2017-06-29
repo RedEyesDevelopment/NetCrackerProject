@@ -21,13 +21,13 @@
             </ul>
             <div ng-repeat="notification in listOfNotifications | orderBy : 'sendDate' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-4">
                 <div class="block-border">
-                    <p class="admin-notes"> Author: {{ notification.author }} </p>
+                    <p class="admin-notes"> Author: {{ notification.author.firstName }} {{ notification.author.lastName }} </p>
                     <p class="admin-notes top-bottom-border"> Notification Type: {{ notification.notificationType.notificationTypeTitle }} </p>
-                    <p class="admin-notes"> Send Date: {{ notification.sendDate }} </p>
+                    <p class="admin-notes"> Send Date: {{ notification.sendDate | date:'dd.MM.yyyy' }} </p>
                     <p class="admin-notes top-bottom-border"> Message: {{ notification.message }} </p>
-                    <p class="admin-notes"> Executed By: {{ notification.executedBy }} </p>
-                    <p class="admin-notes top-bottom-border"> Executed date: {{ notification.executedDate }} </p>
-                    <p class="admin-notes"> Connection to order №: {{ notification.order }} </p>
+                    <p class="admin-notes"> Executed By: {{ notification.author.firstName }} {{ notification.author.lastName }} </p>
+                    <p class="admin-notes top-bottom-border"> Executed date: {{ notification.executedDate | date:'dd.MM.yyyy' }} </p>
+                    <p class="admin-notes"> Connection to order №: {{ notification.order.objectId }} </p>
                     <div class="text-right">
                         <button type="button" class="btn btn-primary btn-md"
                                 ng-click="prepareToEditNotification(notification.objectId, listOfNotifications.indexOf(notification))">
@@ -69,14 +69,17 @@
                     <div class="form-group">
                         <label for="createAuthor" class="col-sm-6 control-label">Author</label>
                         <div class="col-sm-6">
-                            <input type="text" id="createAuthor" ng-required="true" ng-model="notification.author">
+                            <!--<input type="text" id="createAuthor" ng-required="true" ng-model="notification.author.lastName">-->
+                            <select id="createAuthor" class="form-control" ng-required="true" ng-model="notification.author.objectId"
+                                    ng-options="author.objectId as (author.firstName + ' ' + author.lastName) for author in listOfUsers | orderBy : author.role.objectId">
+                            </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="notificationType" class="col-sm-6 control-label">Notification type</label>
                         <div class="col-sm-6">
                             <select id="notificationType" class="form-control" ng-required="true" ng-model="notification.type"
-                                    ng-options="type.objectId as type.notifTypeTitle for type in listOfNotificationTypes">
+                                    ng-options="type.objectId as type.notificationTypeTitle for type in listOfNotificationTypes">
                             </select>
                         </div>
                     </div>
@@ -89,9 +92,8 @@
                     <div class="form-group">
                         <label for="order" class="col-sm-6 control-label">Order</label>
                         <div class="col-sm-6">
-                            <!--<input type="text" id="order" ng-required="true" ng-model="notification.message">-->
                             <select id="order" class="form-control" ng-required="true" ng-model="notification.order"
-                                    ng-options="order.objectId for order in listOfOrders">
+                                    ng-options="order.objectId as order.objectId for order in listOfOrders">
                             </select>
                         </div>
                     </div>

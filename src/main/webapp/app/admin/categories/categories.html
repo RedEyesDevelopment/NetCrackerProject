@@ -22,7 +22,7 @@
             <div ng-repeat="category in listOfCategories | orderBy : 'categoryTitle' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-5 col-sm-offset-1">
                 <div class="block-border">
                     <p class="admin-notes"> Title: {{ category.categoryTitle }} </p>
-                    <p class="admin-notes top-border"> Price: {{ category.categoryPrice }} </p>
+                    <p class="admin-notes top-border"> Price: {{ (category.categoryPrice / 100).toFixed(2) }} $ </p>
                     <div class="text-right">
                         <button type="button" class="btn btn-primary btn-md"
                                 ng-click="prepareToEditCategory(category.objectId, listOfCategories.indexOf(category))">

@@ -56,16 +56,19 @@
                     </div>
 
                     <!-- Successfully updated -->
-                    <div ng-if="updated">
+                    <div ng-if="stage == 'updated'">
                         Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
                     </div>
                 </div>
 
             </div>
+            <div class="err" ng-if=" stage == 'invalidInputData'">
+                Password and confirm password not equals! <i class="fa fa-times" aria-hidden="true"></i>
+            </div>
             <div class="col-sm-offset-3 col-sm-5 createUpdateForm">
                 <form class="form-horizontal" name="createUpdateForm">
                     <div class="form-group">
-                        <label for="lastName" class="col-sm-6 control-label">Last Name</label>
+                        <label for="lastName" class="col-sm-6 control-label">First Name</label>
                         <div class="col-sm-6">
                             <input type="text" id="lastName" ng-required="true" ng-model="user.lastName">
                         </div>
@@ -87,7 +90,22 @@
                     <div class="form-group">
                         <label for="email" class="col-sm-6 control-label">Email</label>
                         <div class="col-sm-6">
-                            <input type="text" id="email" ng-required="true" ng-model="user.email">
+                            <input type="text" id="email" ng-required="true" ng-model="user.email"
+                                   ng-pattern = '/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i'>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="col-sm-6 control-label">Password</label>
+                        <div class="col-sm-6">
+                            <input type="password" id="password" ng-required="true" ng-model="user.password"
+                                   ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm" class="col-sm-6 control-label">Confirm password</label>
+                        <div class="col-sm-6">
+                            <input type="password" id="confirm" ng-required="true" ng-model="user.confirm"
+                                   ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/">
                         </div>
                     </div>
                     <div class="form-group">

@@ -1,5 +1,5 @@
-app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'util',
-    function($scope, $http, $location, sharedData, util) {
+app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'util','$timeout',
+    function($scope, $http, $location, sharedData, util, $timeout) {
 
 		/* Функция на получения всех комнат и типов комнат, вызываются сразу */
         (function() {
@@ -183,6 +183,9 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
                 });
             } else {
                 $scope.errMessage = "invalidInputData";
+                $timeout(function () {
+                    $scope.errMessage = "none";
+                }, 5000);
             }
         }
 

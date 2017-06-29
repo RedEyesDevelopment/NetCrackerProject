@@ -19,6 +19,20 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 
 	(function() {
 		$http({
+			url: sharedData.getLinks().https + '/users',
+			method: 'GET',
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			$scope.listOfUsers = data.data;
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}());
+
+	(function() {
+		$http({
 			url: sharedData.getLinks().https + '/notificationtypes',
 			method: 'GET',
 			headers: { 'Content-Type' : 'application/json' }

@@ -18,7 +18,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 	(function() {
 		$http({
-			url: sharedData.getLinks().https + '/roles/simpleList',
+			url: sharedData.getLinks().https + '/roles',
 			method: 'GET',
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
@@ -121,66 +121,77 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	/* Функции, выполняющие запросы */
 	var addUser = function() {
 		resetFlags();
-		$http({
-			url: sharedData.getLinks().https + '/users',
-			method: 'POST',
-			data: {
-				lastName : 		    $scope.user.lastName,
-				firstName :         $scope.user.firstName,
-				role : 			    parseInt($scope.user.role),
-				email : 		    $scope.user.email,
-                additionalInfo :    $scope.user.additionalInfo,
-                enabled : 			$scope.user.enabled
-			},
-			headers: { 'Content-Type' : 'application/json' }
-		}).then(function(data) {
-			console.log(data);
-			$scope.listOfUsers.push({
-				objectId :          data.data.objectId,
-				lastName : 		    $scope.user.lastName,
-                firstName :         $scope.user.firstName,
-                role : 			    util.getObjectInArrayById($scope.listOfRoles, $scope.user.role),
-                email : 		    $scope.user.email,
-                additionalInfo :    $scope.user.additionalInfo,
-                enabled : 			$scope.user.enabled
-			});
-			$scope.prepareToAddUser();
-			$scope.added = true;
-		}, function(response) {
-			console.log("Smth wrong!!");
-			console.log(response);
-            $scope.errMessage = "serverErr";
-		});
+		console.log($scope.user.confirm)
+        if ($scope.user.confirm == $scope.user.password) {
+            $http({
+                url: sharedData.getLinks().https + '/users',
+                method: 'POST',
+                data: {
+                    lastName: $scope.user.lastName,
+                    firstName: $scope.user.firstName,
+                    password: $scope.user.password,
+                    role: parseInt($scope.user.role),
+                    email: $scope.user.email,
+                    additionalInfo: $scope.user.additionalInfo,
+                    enabled: $scope.user.enabled
+                },
+                headers: {'Content-Type': 'application/json'}
+            }).then(function (data) {
+                console.log(data);
+                $scope.listOfUsers.push({
+                    objectId: data.data.objectId,
+                    lastName: $scope.user.lastName,
+                    firstName: $scope.user.firstName,
+                    role: util.getObjectInArrayById($scope.listOfRoles, $scope.user.role),
+                    email: $scope.user.email,
+                    additionalInfo: $scope.user.additionalInfo,
+                    enabled: $scope.user.enabled
+                });
+                $scope.prepareToAddUser();
+                $scope.added = true;
+            }, function (response) {
+                console.log("Smth wrong!!");
+                console.log(response);
+                $scope.errMessage = "serverErr";
+            });
+        } else {
+            $scope.errMessage = "'invalidInputData'";
+        }
 	}
 
 	var editUser = function() {
 		resetFlags();
-		$http({
-			url: sharedData.getLinks().https + '/users/' + $scope.user.idForOperation,
-			method: 'PUT',
-			data: {
-				lastName : 		    $scope.user.lastName,
-                firstName :         $scope.user.firstName,
-                role : 			    parseInt($scope.user.role),
-                email : 		    $scope.user.email,
-                additionalInfo :    $scope.user.additionalInfo,
-                enabled : 			$scope.user.enabled
-			},
-			headers: { 'Content-Type' : 'application/json' }
-		}).then(function(data) {
-			console.log(data);
-			$scope.listOfUsers[$scope.indexForOperation].lastName = $scope.user.lastName;
-			$scope.listOfUsers[$scope.indexForOperation].firstName = $scope.user.firstName;
-			$scope.listOfUsers[$scope.indexForOperation].role = util.getObjectInArrayById($scope.listOfRoles, $scope.user.role);
-			$scope.listOfUsers[$scope.indexForOperation].email = $scope.user.email;
-            $scope.listOfUsers[$scope.indexForOperation].additionalInfo = $scope.user.additionalInfo;
-            $scope.listOfUsers[$scope.indexForOperation].enabled = $scope.user.enabled;
-			$scope.updated = true;
-		}, function(response) {
-			console.log("Smth wrong!!");
-			console.log(response);
-            $scope.errMessage = "serverErr";
-		});
+        console.log($scope.user.confirm)
+        if ($scope.user.confirm == $scope.user.password) {
+            $http({
+                url: sharedData.getLinks().https + '/users/' + $scope.user.idForOperation,
+                method: 'PUT',
+                data: {
+                    lastName: $scope.user.lastName,
+                    firstName: $scope.user.firstName,
+                    role: parseInt($scope.user.role),
+                    email: $scope.user.email,
+                    additionalInfo: $scope.user.additionalInfo,
+                    enabled: $scope.user.enabled
+                },
+                headers: {'Content-Type': 'application/json'}
+            }).then(function (data) {
+                console.log(data);
+                $scope.listOfUsers[$scope.indexForOperation].lastName = $scope.user.lastName;
+                $scope.listOfUsers[$scope.indexForOperation].firstName = $scope.user.firstName;
+                $scope.listOfUsers[$scope.indexForOperation].role = util.getObjectInArrayById($scope.listOfRoles, $scope.user.role);
+                $scope.listOfUsers[$scope.indexForOperation].email = $scope.user.email;
+                $scope.listOfUsers[$scope.indexForOperation].additionalInfo = $scope.user.additionalInfo;
+                $scope.listOfUsers[$scope.indexForOperation].enabled = $scope.user.enabled;
+                $scope.stage = 'updated';
+            }, function (response) {
+                console.log("Smth wrong!!");
+                console.log(response);
+                $scope.errMessage = "serverErr";
+            });
+        } else {
+            $scope.stage = "invalidInputData";
+        }
 	}
 
 	var deleteUser = function() {
