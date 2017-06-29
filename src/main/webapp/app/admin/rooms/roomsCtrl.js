@@ -127,10 +127,10 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}).then(function(data) {
 			console.log(data);
 			$scope.listOfRooms.push({
-				objectId : data.data.objectId,
-				roomNumber : $scope.room.number,
+				objectId :          data.data.objectId,
+				roomNumber :        $scope.room.number,
 				numberOfResidents : $scope.room.numberOfResidents,
-				roomType : util.getObjectInArrayById($scope.listOfRoomTypes, $scope.room.type)
+				roomType :          util.getObjectInArrayById($scope.listOfRoomTypes, $scope.room.type)
 			});
 			$scope.prepareToAddRoom();
 			$scope.added = true;

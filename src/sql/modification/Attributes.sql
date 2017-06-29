@@ -22,8 +22,6 @@ INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (40,13,'Compl
 INSERT INTO OBJREFERENCE (ATTR_ID, OBJECT_ID, REFERENCE) VALUES (41,13,1); -- для админов
 INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (40,14,'Problem in the room',NULL);
 INSERT INTO OBJREFERENCE (ATTR_ID, OBJECT_ID, REFERENCE) VALUES (41,14,1); -- для админов
-INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (40,15,'External links',NULL);
-INSERT INTO OBJREFERENCE (ATTR_ID, OBJECT_ID, REFERENCE) VALUES (41,15,1); -- для админов
 INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (40,16,'Praise',NULL);
 INSERT INTO OBJREFERENCE (ATTR_ID, OBJECT_ID, REFERENCE) VALUES (41,16,1); -- для админов
 INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (40,17,'Custom',NULL);
@@ -878,20 +876,6 @@ INSERT INTO OBJREFERENCE (ATTR_ID, OBJECT_ID, REFERENCE) VALUES (27,1404,305); -
 INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (23,1404,NULL,to_date('16-01-2017','dd-mm-yyyy'));
 INSERT INTO OBJREFERENCE (ATTR_ID, OBJECT_ID, REFERENCE) VALUES (24,1404,999); -- выполнено Adminskyi
 INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (25,1404,NULL,to_date('17-01-2017','dd-mm-yyyy'));
-
-INSERT INTO OBJREFERENCE (ATTR_ID, OBJECT_ID, REFERENCE) VALUES (26,1405,15); -- уведомление типа External links
-INSERT INTO OBJREFERENCE (ATTR_ID, OBJECT_ID, REFERENCE) VALUES (21,1405,981); -- отправитель Merluan
-INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (22,1405,'Пришло уведомление из клининговой службы, что контракт подоходит к концу. Просили связаться в случае продления',NULL);
--- Так как оно не имеет ссылки на заказ, то нет смысла в поле "К какому заказу принадлежит"
-INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (23,1405,NULL,to_date('18-06-2017','dd-mm-yyyy'));
--- Так как оно не имеет состояние выполнено, то нет смысла в полях "Кем выполнено" и "Дата выполнения"
-
-INSERT INTO OBJREFERENCE (ATTR_ID, OBJECT_ID, REFERENCE) VALUES (26,1406,15); -- уведомление типа External links
-INSERT INTO OBJREFERENCE (ATTR_ID, OBJECT_ID, REFERENCE) VALUES (21,1406,981); -- отправитель Merluan
-INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (22,1406,'Пришло уведомлений от Горзеленстроя, что нам необходимо перед отелем посадить деревья',NULL);
--- Так как оно не имеет ссылки на заказ, то нет смысла в поле "К какому заказу принадлежит"
-INSERT INTO ATTRIBUTES (ATTR_ID,OBJECT_ID,VALUE,DATE_VALUE) VALUES (23,1406,NULL,to_date('02-04-2017','dd-mm-yyyy'));
--- Так как оно не имеет состояние выполнено, то нет смысла в полях "Кем выполнено" и "Дата выполнения"
 
 INSERT INTO OBJREFERENCE (ATTR_ID, OBJECT_ID, REFERENCE) VALUES (26,1407,16); -- уведомление типа Praise
 INSERT INTO OBJREFERENCE (ATTR_ID, OBJECT_ID, REFERENCE) VALUES (21,1407,981); -- отправитель Merluan
