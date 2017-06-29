@@ -1,0 +1,36 @@
+<div class="container personalArea messageToAdmin">
+
+	<ng-include src="'app/personalArea/template/aside.html'"></ng-include>
+
+
+	<div class="col-sm-9">
+
+	    <h1> Send message to administrator </h1>
+        <div class="done" ng-if="stage == 'sended'">
+            Successfully sended! <i class="fa fa-check" aria-hidden="true"></i>             
+        </div>
+
+		<div>
+			<form name="sendForm" novalidate>
+				<div class="form-group">
+					<label for="theme">Theme</label>						
+					<input type="text" id="theme" class="form-control" ng-required="true" ng-model="mail.theme">
+				</div>
+				<div class="form-group">
+					<label for="body">Message</label>
+					<textarea id="body" class="form-control" ng-required="true" ng-model="mail.message"></textarea>
+				</div>
+				<div class="send">
+					<button class="btn btn-default" ng-click="prepareToSend()" ng-disabled="sendForm.$invalid"
+							data-toggle="modal" data-target="#editConfirmModal">
+						Send
+					</button>
+				</div>
+			</form>
+		</div>
+
+	</div>
+</div>
+
+
+<ng-include src="'app/admin/template/confirmModalWindows.html'"></ng-include>
