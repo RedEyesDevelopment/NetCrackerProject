@@ -126,9 +126,10 @@ public class OrderController {
 
     @RequestMapping(value = "/book/{id}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<BookedOrderDTO> createOrderByRoomType(@PathVariable("id") Integer id, HttpServletRequest request) {
-        OrderDTO dto = null;
-        if (id == null) return new ResponseEntity<BookedOrderDTO>(new BookedOrderDTO(dto), HttpStatus.BAD_REQUEST);
         User thisUser = (User) request.getSession().getAttribute("USER");
+        OrderDTO dto = null;
+        if (thisUser == null) return new ResponseEntity<BookedOrderDTO>(new BookedOrderDTO(dto), HttpStatus.BAD_REQUEST);
+        if (id == null) return new ResponseEntity<BookedOrderDTO>(new BookedOrderDTO(dto), HttpStatus.BAD_REQUEST);
         List<OrderDTO> dtoData = (List<OrderDTO>) request.getSession().getAttribute("ORDERDATA");
         for (OrderDTO order:dtoData){
             if (id.equals(order.getRoomTypeId())){
@@ -182,7 +183,7 @@ public class OrderController {
     public ResponseEntity<List<OrderDTO>> searchAvailabilityForOrderCreation(@RequestBody SearchAvailabilityParamsDTO searchDto, HttpServletRequest request) throws ParseException {
         List<OrderDTO> data = roomTypeService.getRoomTypes(searchDto.getArrival(),searchDto.getDeparture(),
                 searchDto.getLivingPersons(), searchDto.getCategoryId());
-        if (data.isEmpty()) return new ResponseEntity<List<OrderDTO>>(data, HttpStatus.BAD_REQUEST);
+        if (data == null || data.isEmpty()) return new ResponseEntity<List<OrderDTO>>(data, HttpStatus.BAD_REQUEST);
 
         ResponseEntity<List<OrderDTO>> responseEntity = new ResponseEntity<List<OrderDTO>>(data, HttpStatus.OK);
         List<OrderDTO> dtoData = data.stream().filter(dto -> dto.isAvailable()).collect(Collectors.toList());

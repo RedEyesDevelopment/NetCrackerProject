@@ -10,6 +10,12 @@
             <button class="btn btn-primary btn-md newEntity" ng-click="prepareToAddMaintenance()">New Maintenance</button>
         </div>
 
+        <div class="answer">
+            <div ng-if="stage == 'deleted'">
+                Successfully deleted! <i class="fa fa-check" aria-hidden="true"></i>
+            </div>
+        </div>
+
 
         <!-- List of objects in workspace -->
         <div class="listOfObjects" ng-if="!modificationMode">
@@ -22,7 +28,7 @@
                 <div class="block-border">
                     <p class="admin-notes"> Title: {{ maintenance.maintenanceTitle }} </p>
                     <p class="admin-notes top-bottom-border"> Type: {{ maintenance.maintenanceType }} </p>
-                    <p class="admin-notes"> Price: {{ maintenance.maintenancePrice }} </p>
+                    <p class="admin-notes"> Price: {{ (maintenance.maintenancePrice / 100).toFixed(2) }} </p>
                     <div class="text-right">
                         <button type="button" class="btn btn-primary btn-md"
                                 ng-click="prepareToEditMaintenance(maintenance.objectId, listOfMaintenances.indexOf(maintenance))">
@@ -47,14 +53,14 @@
                 </button>
 
                 <div class="answer">
-                    <!-- Successfully added -->
-                    <div ng-if="added">
+                    <div ng-if="stage == 'added'">
                         Successfully added! <i class="fa fa-check" aria-hidden="true"></i>
                     </div>
-
-                    <!-- Successfully updated -->
-                    <div ng-if="updated">
+                    <div ng-if="stage == 'updated'">
                         Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
+                    </div>
+                    <div ng-if="stage == 'invalidPrice'">
+                        Price is invalid! <i class="fa fa-check" aria-hidden="true"></i>
                     </div>
                 </div>
             </div>
@@ -63,19 +69,26 @@
                     <div class="form-group">
                         <label for="maintenanceTtl" class="col-sm-4 control-label">Title</label>
                         <div class="col-sm-6 wrapInput">
-                            <input type="text" id="maintenanceTtl" ng-required="true" ng-model="maintenance.title">
+                            <input type="text" id="maintenanceTtl" class="field" 
+                                    ng-required="true" ng-model="maintenance.title">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="maintenanceTp" class="col-sm-4 control-label">Type</label>
                         <div class="col-sm-6 wrapInput">
-                            <input type="text" id="maintenanceTp" ng-required="true" ng-model="maintenance.type">
+                            <input type="text" id="maintenanceTp" class="field" 
+                                   ng-required="true" ng-model="maintenance.type">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="maintenancePrc" class="col-sm-4 control-label">Price</label>
                         <div class="col-sm-6 wrapInput">
-                            <input type="number" id="maintenancePrc" ng-required="true" ng-model="maintenance.price">
+                            <input type="number" ng-min="0" min="0" ng-pattern="/^-?[0-9][^\.]*$/"
+                                    id="maintenancePrc" class="currencyDlr" 
+                                    ng-required="true" ng-model="maintenance.dollars"> $ 
+                            <input type="number" ng-min="0" min="0" ng-max="99" max="99" ng-pattern="/^-?[0-9][^\.]*$/"
+                                    id="maintenancePrc" class="currencyCent" 
+                                    ng-required="true" ng-model="maintenance.cents"> &cent; 
                         </div>
                     </div>
                     <div class="form-group">

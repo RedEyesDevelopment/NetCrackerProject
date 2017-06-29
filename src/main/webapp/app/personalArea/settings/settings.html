@@ -1,4 +1,4 @@
-<div class="settings container">
+<div class="container personalArea settings">
 
 	<ng-include src="'app/personalArea/template/aside.html'"></ng-include>
 
@@ -21,7 +21,7 @@
 	                    </div>
 	                    <div class="col-sm-6">
 	                    	<input type="text" id="firstNameInput"
-	                    		ng-model="myself.firstName">
+	                    		ng-model="getMyself().firstName">
 	                	</div>
 	                </div>
 	                <div class="row">
@@ -30,7 +30,7 @@
 	                    </div>
 	                    <div class="col-sm-6">
 	                    	<input type="text" id="lastNameInput"
-	                    		ng-model="myself.lastName">
+	                    		ng-model="getMyself().lastName">
 	                	</div>
 	                </div>
 	                <div class="row">
@@ -38,8 +38,8 @@
 	                    	<label for="emailInput">Email:</label>
 	                    </div>
 	                    <div class="col-sm-6">
-	                    	<input type="email" id="emailInput"
-	                    		ng-model="myself.email">
+	                    	<input type="text" id="emailInput"
+	                    		ng-model="getMyself().email">
 	                	</div>
 	                </div>
 	                <div class="row">
@@ -47,7 +47,7 @@
 	                    	<label for="infoInput">Additional info:</label>
 	                    </div>
 	                    <div class="col-sm-6">
-	                    	<textarea id="infoInput" ng-model="myself.additionalInfo"></textarea>
+	                    	<textarea id="infoInput" ng-model="getMyself().additionalInfo"></textarea>
 	                	</div>
 	                </div>
 		            <div class="updateButton">
@@ -65,7 +65,7 @@
 	                    </div>
 	                    <div class="col-sm-6">
 	                    	<input type="password" id="oldPasswordInput"
-	                    		ng-model="myself.oldPassword">
+	                    		ng-model="getMyself().oldPassword">
 	                	</div>
 	                </div>
 	                <div class="row">
@@ -74,7 +74,7 @@
 	                    </div>
 	                    <div class="col-sm-6">
 	                    	<input type="password" id="newPasswordInput"
-	                    		ng-model="myself.newPassword">
+	                    		ng-model="getMyself().newPassword">
 	                	</div>
 	                </div>
 	                <div class="row">
@@ -83,7 +83,7 @@
 	                    </div>
 	                    <div class="col-sm-6">
 	                    	<input type="password" id="passwordRepInput"
-	                    		ng-model="myself.newPasswordRep">
+	                    		ng-model="getMyself().newPasswordRep">
 	                	</div>
 	                </div>
 	                <div class="updateButton">
@@ -95,7 +95,7 @@
 	            </div>
 
 				<div class="groupInput">
-					<div class="row" ng-repeat="phone in myself.phones">
+					<div class="row" ng-repeat="phone in getMyself().phones">
 	                	<div class="col-sm-3">
 	                    	<label>Phone Number:</label>
 	                    </div>
@@ -103,11 +103,12 @@
 	                    	<input type="tel" id="phoneNumberInput"
 	                    		ng-model="phone.phoneNumber">
 	                	</div>
-	                	<button class="btn btn-default" ng-click="prepareToEditPhone(phone.objectId)"
+	                	<button class="btn btn-default" ng-click="prepareToEditPhone(phone.objectId, getMyself().phones.indexOf(phone))"
 	                			data-toggle="modal" data-target="#editConfirmModal">
 							Edit
 						</button>
-						<button class="btn btn-default" ng-click="prepareToDeletePhone(phone.objectId)"
+						<button class="btn btn-default"
+								ng-click="prepareToDeletePhone(phone.objectId, getMyself().phones.indexOf(phone))"
 								data-toggle="modal" data-target="#deleteConfirmModal">
 							Delete
 						</button>
@@ -119,23 +120,21 @@
 								<i class="fa fa-plus" aria-hidden="true"></i> Add one
 							</button>
 						</div>
-						<div class="col-sm-6" ng-if="stage == 'addPhone'">
-	                    	<input type="tel" id="phoneNumberInput">
+						<div ng-if="stage == 'addPhone'" class="newPhone">
+							<div class="col-sm-6">
+		                    	<input type="tel" id="phoneNumberInput" ng-model="getMyself().newPhone">
+		                	</div>
+		                	<button class="btn btn-default"
+									ng-click="query()">
+								<i class="fa fa-check" aria-hidden="true"></i>
+							</button>
+							<button class="btn btn-default"
+									ng-click="cancelPhone()">
+								<i class="fa fa-times" aria-hidden="true"></i>
+							</button>
 	                	</div>
 	                </div>
 	            </div>
-
-
-
-
-
-
-                <div ng-show="wasUpdatedUser">
-                    <p class="bg-primary">User was updated successful!</p>
-                </div>
-                <div ng-show="notUpdatedUser">
-                    <p class="bg-warning">{{messageUpdate}}</p>
-                </div>
 	        </form>
 	    </div>
 	</div>

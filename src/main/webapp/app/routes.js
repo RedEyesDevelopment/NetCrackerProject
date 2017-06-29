@@ -13,10 +13,10 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
             templateUrl: 'app/personalArea/settings/settings.html',
             controller: 'settingsCtrl'
         })
-        // .when('/personal/sendmessage', {
-        //     templateUrl: 'send_message.html',
-        //     controller: 'sendMessageController'
-        // })
+        .when('/personal/messageToAdmin', {
+            templateUrl: 'app/personalArea/messageToAdmin/messageToAdmin.html',
+            controller: 'messageToAdminCtrl'
+        })
         // .when('/personal/orderlist', {
         //     templateUrl: 'checklist.html',
         //     controller: 'orderListController'

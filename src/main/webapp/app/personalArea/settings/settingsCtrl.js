@@ -1,13 +1,13 @@
 app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 	function($scope, $http, $location, sharedData) {
 
-	$scope.myself = {}
-	if (sharedData.getMyself() !== undefined) {
-		$scope.myself = sharedData.getMyself();
-	}
-	sharedData.setPersonalAreaMyself($scope.myself);	
 
 	$scope.stage = "looking";
+
+
+	$scope.getMyself = function() {
+		return sharedData.getMyself();
+	}
 	
 	$scope.prepareToEditBasicInfo = function() {
 		$scope.stage = "editBasicInfo";
@@ -21,13 +21,15 @@ app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 		$scope.stage = "addPhone";
 	}
 
-	$scope.prepareToEditPhone = function(idForOperation) {
-		$scope.phoneIdForOperation = idForOperation;
+	$scope.prepareToEditPhone = function(objId, index) {
+		$scope.phoneObjIdForOperation = objId;
+		$scope.phoneIndexForOperation = index;
 		$scope.stage = "editPhone";
 	}
 
-	$scope.prepareToDeletePhone = function(idForOperation) {
-		$scope.phoneIdForOperation = idForOperation;
+	$scope.prepareToDeletePhone = function(objId, index) {
+		$scope.phoneObjIdForOperation = objId;
+		$scope.phoneIndexForOperation = index;
 		$scope.stage = "deletePhone";
 	}
 
@@ -48,20 +50,23 @@ app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 	}
 
 
+	$scope.cancelPhone = function() {
+		$scope.stage = "looking";
+	}
+
 	var editBasicInfo = function() {
 		$http({
-			url: sharedData.getLinks().https + '/users/update/basic/' + $scope.myself.objectId,
+			url: sharedData.getLinks().https + '/users/update/basic/' + $scope.getMyself().objectId,
 			method: 'PUT',
 			data: {
-				firstName : $scope.myself.firstName,
-				lastName : $scope.myself.lastName,
-				email : $scope.myself.email,
-				additionalInfo : $scope.myself.additionalInfo
+				firstName : $scope.getMyself().firstName,
+				lastName : $scope.getMyself().lastName,
+				email : $scope.getMyself().email,
+				additionalInfo : $scope.getMyself().additionalInfo
 			},
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			sharedData.setPersonalAreaMyself($scope.myself);
 			$scope.stage = "done";
 		}, function(response) {
 			console.log("Smth wrong!!");
@@ -70,13 +75,13 @@ app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 	}
 
 	var changePassword = function() {
-		if ($scope.myself.newPassword === $scope.myself.newPasswordRep) {			
+		if ($scope.getMyself().newPassword === $scope.getMyself().newPasswordRep) {			
 			$http({
-				url: sharedData.getLinks().https + '/users/update/password/' + $scope.myself.objectId,
+				url: sharedData.getLinks().https + '/users/update/password/' + $scope.getMyself().objectId,
 				method: 'PUT',
 				data: {
-					oldPassword : $scope.myself.oldPassword,
-					newPassword : $scope.myself.newPassword
+					oldPassword : $scope.getMyself().oldPassword,
+					newPassword : $scope.getMyself().newPassword
 				},
 				headers: { 'Content-Type' : 'application/json' }
 			}).then(function(data) {
@@ -91,18 +96,56 @@ app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 		}
 	}
 
+	var addPhone = function() {
+		$http({
+			url: sharedData.getLinks().https + '/phones',
+			method: 'POST',
+			data: {
+				phoneNumber: $scope.getMyself().newPhone
+			},
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			$scope.getMyself().phones.push({
+				objectId: data.data.objectId,
+				phoneNumber: $scope.getMyself().newPhone
+			});
+			$scope.stage = "done";
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}
 
+	var editPhone = function() {
+		$http({
+			url: sharedData.getLinks().https + '/phones/' + $scope.phoneObjIdForOperation,
+			method: 'PUT',
+			data: {
+				phoneNumber: $scope.getMyself().phones[$scope.phoneIndexForOperation].phoneNumber
+			},
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			$scope.stage = "done";
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}
 
-
-
-
-
-
-
-
-
-
-
-
+	var deletePhone = function() {
+		$http({
+			url: sharedData.getLinks().https + '/phones/' + $scope.phoneObjIdForOperation,
+			method: 'DELETE',
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			$scope.getMyself().phones.splice($scope.phoneIndexForOperation, 1);
+			$scope.stage = "done";
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}
 
 }]);

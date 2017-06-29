@@ -20,13 +20,13 @@
 			<b>Category:</b> {{ finishOrder.categoryName }}
 		</p>
 		<p class="order-confirm">
-			<b>Categody cost:</b> ${{ finishOrder.categoryCost / 100 }}
+			<b>Category cost:</b> ${{ (finishOrder.categoryCost / 100).toFixed(2) }}
 		</p>
 		<p class="order-confirm">
-			<b>Living cost:</b> ${{ finishOrder.livingCost / 100 }}
+			<b>Living cost:</b> ${{ (finishOrder.livingCost / 100).toFixed(2) }}
 		</p>
 		<p class="order-confirm">
-			<b>Total cost:</b> ${{ finishOrder.categoryCost + finishOrder.livingCost}}
+			<b>Total cost:</b> ${{ ((finishOrder.categoryCost + finishOrder.livingCost) / 100).toFixed(2) }}
 		</p>
 	    <div class="text-center">
 	            <button type="submit" id="acceptButton" class="btn btn-success" ng-click="acceptOrder()">Accept</button>

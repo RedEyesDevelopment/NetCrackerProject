@@ -104,7 +104,7 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         }
         if (null == user) throw new DeletedObjectNotExistsException(this);
 
-        deleteSingleEntityById(id);
+        jdbcTemplate.update(UPDATE_ATTRIBUTE, "false", null, id, 3);
     }
 
     private void insertEmail(Integer objectId, User user) {

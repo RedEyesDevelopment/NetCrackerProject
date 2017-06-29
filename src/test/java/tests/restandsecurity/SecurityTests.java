@@ -15,9 +15,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import projectpackage.Application;
+import projectpackage.dto.UserPasswordDTO;
 import tests.AbstractTest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -48,5 +50,15 @@ public class SecurityTests extends AbstractTest{
     public void getUser() throws Exception {
         int userId=900;
         mockMvc.perform(get("/users/900")).andExpect(status().is(202)).andExpect(MockMvcResultMatchers.jsonPath("$.email", Matchers.is("stephenking@mail.ru")));
+    }
+
+    @Test
+    @WithMockUser(username = "alekseenko365@gmail.com", authorities = {"ADMIN"})
+    public void changeUserPassword() throws Exception {
+        int userId=2060;
+        UserPasswordDTO dto = new UserPasswordDTO();
+        dto.setOldPassword("qwerty");
+        dto.setNewPassword("asdfgh");
+        mockMvc.perform(put("/users/update/password/900",dto)).andExpect(status().is(200)).andExpect(MockMvcResultMatchers.jsonPath("$.email", Matchers.is("stephenking@mail.ru")));
     }
 }

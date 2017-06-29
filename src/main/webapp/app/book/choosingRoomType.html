@@ -1,5 +1,5 @@
 <div class="row row-content choosingRoomType">
-    <p id="noteForNotAuth" ng-if="!limitAuth.isAuthorized">
+    <p id="noteForNotAuth" ng-if="!checkIsAuthorized()">
         You can book any room only if you authorized as a client. Authorize if you already have a profile or register a new user.
     </p>
     <div class="col-xs-12">
@@ -8,42 +8,42 @@
                 <div class="col-sm-4">
                     <div class="media">
                         <div class="thumbnail big-thumbnail">
-                            <a href="res/img/roomTypes/{{ roomType.roomTypeId }}/1.png" data-toggle="lightbox"
-                               data-gallery="{{ roomType.roomTypeId }}">
-                                <img src="res/img/roomTypes/{{ roomType.roomTypeId }}/1.png" class="img-fluid">
+                            <a href="res/img/roomTypes/{{roomType.roomTypeId}}/1.png" data-toggle="lightbox"
+                               data-gallery="{{roomType.roomTypeId}}">
+                                <img src="res/img/roomTypes/{{roomType.roomTypeId}}/1.png" class="img-fluid">
                             </a>
                         </div>
                     </div>
                     <div class="media row">
                         <div class="col-xs-3"> 
                             <div class="thumbnail">
-                                <a href="res/img/roomTypes/{{ roomType.roomTypeId }}/2.png" data-toggle="lightbox"
-                                   data-gallery="{{ roomType.roomTypeId }}">
-                                    <img src="res/img/roomTypes/{{ roomType.roomTypeId }}/2.png" class="img-fluid">
+                                <a href="res/img/roomTypes/{{roomType.roomTypeId}}/2.png" data-toggle="lightbox"
+                                   data-gallery="{{roomType.roomTypeId}}">
+                                    <img src="res/img/roomTypes/{{roomType.roomTypeId}}/2.png" class="img-fluid">
                                 </a>
                             </div>
                         </div>
                         <div class="col-xs-3"> 
                             <div class="thumbnail">
-                                <a href="res/img/roomTypes/{{ roomType.roomTypeId }}/3.png" data-toggle="lightbox"
-                                   data-gallery="{{ roomType.roomTypeId}}">
+                                <a href="res/img/roomTypes/{{roomType.roomTypeId}}/3.png" data-toggle="lightbox"
+                                   data-gallery="{{roomType.roomTypeId}}">
                                     <img src="res/img/roomTypes/{{roomType.roomTypeId}}/3.png" class="img-fluid">
                                 </a>
                             </div>
                         </div>
                         <div class="col-xs-3"> 
                             <div class="thumbnail">
-                                <a href="res/img/roomTypes/{{ roomType.roomTypeId }}/4.png" data-toggle="lightbox"
-                                   data-gallery="{{ roomType.roomTypeId }}">
-                                    <img src="res/img/roomTypes/{{ roomType.roomTypeId }}/4.png" class="img-fluid">
+                                <a href="res/img/roomTypes/{{roomType.roomTypeId}}/4.png" data-toggle="lightbox"
+                                   data-gallery="{{roomType.roomTypeId}}">
+                                    <img src="res/img/roomTypes/{{roomType.roomTypeId}}/4.png" class="img-fluid">
                                 </a>
                             </div>
                         </div>
                         <div class="col-xs-3"> 
                             <div class="thumbnail">
-                                <a href="res/img/roomTypes/{{ roomType.roomTypeId }}/5.png" data-toggle="lightbox"
-                                   data-gallery="{{ roomType.roomTypeId }}">
-                                    <img src="res/img/roomTypes/{{ roomType.roomTypeId }}/5.png" class="img-fluid">
+                                <a href="res/img/roomTypes/{{roomType.roomTypeId}}/5.png" data-toggle="lightbox"
+                                   data-gallery="{{roomType.roomTypeId}}">
+                                    <img src="res/img/roomTypes/{{roomType.roomTypeId}}/5.png" class="img-fluid">
                                 </a>
                             </div>
                         </div>
@@ -62,11 +62,11 @@
                 <div class="col-sm-4">
                     <div class="media-body my-border text-center cost" ng-show="roomType.available">
                         <h3 class="media-heading firstPar">Accomodation price</h3>
-                        <p class="price">${{ (roomType.livingCost / 100) }}</p>
+                        <p class="price">${{ (roomType.livingCost / 100).toFixed(2) }}</p>
                         <h3 class="media-heading">Service price</h3>
-                        <p class="price">${{ (roomType.categoryCost / 100) }}</p>
+                        <p class="price">${{ (roomType.categoryCost / 100).toFixed(2) }}</p>
                         <h3 class="media-heading">Total</h3>
-                        <p class="price">${{ (roomType.livingCost + roomType.categoryCost) / 100 }}</p>
+                        <p class="price">${{ ((roomType.livingCost + roomType.categoryCost) / 100).toFixed(2) }}</p>
                         <div class="text-center">
                             <form name='book'>                                
                                 <button ng-click='issueOder(roomType.roomTypeId)' class="btn btn-success">

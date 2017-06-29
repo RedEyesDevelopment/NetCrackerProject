@@ -37,6 +37,16 @@
     padding: 10px 0px;
 }
 
+.workspace .listOfObjects .top-border {
+    border-top: 1px solid #d1d1d1;
+    padding: 10px 0px;
+}
+
+.workspace .listOfObjects .bottom-border {
+    border-bottom: 1px solid #d1d1d1;
+    padding: 10px 0px;
+}
+
 .workspace .listOfObjects .admin-notes {
     font-size: 18px;
 }
@@ -58,15 +68,25 @@
     margin-top: 4px;
 }
 
-.editWindow .createUpdateForm .wrapInput input {
+.editWindow .createUpdateForm .wrapInput .field {
     width: 100%;
+}
+
+.editWindow .createUpdateForm .currencyDlr {
+    width: 50%;
+    text-align: right;
+}
+
+.editWindow .createUpdateForm .currencyCent {
+    text-align: right;
+    width: 30%;
 }
 
 .editWindow .createUpdateForm #roomNmbr {
     width: 70px;
 }
 
-.editWindow .answer {
+.answer {
 	display: inline-block;
 	margin-left: 15px;
 	color: green;

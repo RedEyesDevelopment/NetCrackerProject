@@ -6,11 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.User;
-import projectpackage.dto.IUDAnswer;
-import projectpackage.service.MessageBook;
 import projectpackage.service.authservice.PhoneService;
+import projectpackage.service.authservice.UserService;
 
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
@@ -20,8 +20,7 @@ import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-import static projectpackage.service.MessageBook.DISCREPANCY_PARENT_ID;
-import static projectpackage.service.MessageBook.NULL_ENTITY;
+import static projectpackage.service.MessageBook.*;
 
 /**
  * Created by Arizel on 28.05.2017.
@@ -32,6 +31,9 @@ public class PhoneController {
 
     @Autowired
     PhoneService phoneService;
+
+    @Autowired
+    UserService userService;
 
     @ResponseStatus(HttpStatus.OK)
     @CacheResult(cacheName = "phoneList")
@@ -54,7 +56,7 @@ public class PhoneController {
         Resource<Phone> resource = new Resource<>(phone);
         HttpStatus status;
         if (null != phone) {
-            resource.add(linkTo(methodOn(PhoneController.class).updatePhone(phone.getObjectId(), phone)).withRel("update"));
+            //resource.add(linkTo(methodOn(PhoneController.class).updatePhone(phone.getObjectId(), phone)).withRel("update"));
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -65,11 +67,20 @@ public class PhoneController {
 
     @CacheRemoveAll(cacheName = "phoneList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> createPhone(@RequestBody Phone newPhone) {
-        if (newPhone == null) return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<IUDAnswer> createPhone(@RequestBody Phone newPhone, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("USER");
+        if (user == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        } else if (newPhone == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
+        }
+
+        newPhone.setUserId(user.getObjectId());
         IUDAnswer result = phoneService.insertPhone(newPhone);
         HttpStatus status;
         if (result.isSuccessful()) {
+            request.getSession().removeAttribute("USER");
+            request.getSession().setAttribute("USER", userService.getSingleUserById(user.getObjectId()));
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -80,15 +91,20 @@ public class PhoneController {
 
     @CacheRemoveAll(cacheName = "phoneList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> updatePhone(@PathVariable("id") Integer id, @RequestBody Phone changedPhone) {
-        if (!id.equals(changedPhone.getObjectId())) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<IUDAnswer> updatePhone(@PathVariable("id") Integer id, @RequestBody Phone changedPhone, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("USER");
+        if (user == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        } else if (id == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, NULL_ID), HttpStatus.BAD_REQUEST);
         } else if (changedPhone == null) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
         }
         IUDAnswer result = phoneService.updatePhone(id, changedPhone);
         HttpStatus status;
         if (result.isSuccessful()) {
+            request.getSession().removeAttribute("USER");
+            request.getSession().setAttribute("USER", userService.getSingleUserById(id));
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -101,11 +117,32 @@ public class PhoneController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> deletePhone(@PathVariable("id") Integer id, HttpServletRequest request) {
         User sessionUser = (User) request.getSession().getAttribute("USER");
-        if (id == null || id.equals(sessionUser.getObjectId())) {
+        if (sessionUser == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        } else if (sessionUser.getPhones().size() <= 1) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, TRY_TO_DELETE_LAST_PHONE), HttpStatus.BAD_REQUEST);
+        } else if (id == null) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, DISCREPANCY_PARENT_ID), HttpStatus.BAD_REQUEST);
         }
+        boolean isBelongToUser = false;
+        for (Phone phone : sessionUser.getPhones()) {
+            if (phone.getUserId() == sessionUser.getObjectId()) {
+                isBelongToUser = true;
+                break;
+            }
+        }
+        if (!isBelongToUser) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, PHONE_NOT_BELONG_TO_USER), HttpStatus.BAD_REQUEST);
+        }
         IUDAnswer result = phoneService.deletePhone(id);
-        HttpStatus status = result.isSuccessful() ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        HttpStatus status;
+        if (result.isSuccessful()) {
+            request.getSession().removeAttribute("USER");
+            request.getSession().setAttribute("USER", userService.getSingleUserById(sessionUser.getObjectId()));
+            status = HttpStatus.OK;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+        }
         return new ResponseEntity<IUDAnswer>(result, status);
     }
 }
