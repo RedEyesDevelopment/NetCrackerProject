@@ -1,3 +1,8 @@
+.err {
+  text-align: center;
+  color: red;
+}
+
 .book .bg-image {
   background: url('../res/img/background.jpg') no-repeat center center;
   background-size: cover;

@@ -27,7 +27,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * Created by Lenovo on 28.05.2017.
  */
 @RestController
-@RequestMapping("/roomtypes")
+@RequestMapping("/roomTypes")
 public class RoomTypeController {
     @Autowired
     RoomTypeService roomTypeService;

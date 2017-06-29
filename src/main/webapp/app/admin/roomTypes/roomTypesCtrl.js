@@ -4,7 +4,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     /* Функция на получения всех типов комнат, вызывается сразу */
     (function() {
         $http({
-            url: sharedData.getLinks().https + '/roomTypes',
+            url: sharedData.getLinks().https + '/roomtypes',
             method: 'GET',
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
@@ -50,7 +50,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
 
     $scope.prepareToEditRoomType = function(roomTypeId, index) {
         $http({
-            url: sharedData.getLinks().https + '/roomTypes/' + roomTypeId,
+            url: sharedData.getLinks().https + '/roomtypes/' + roomTypeId,
             method: 'GET',
             headers: {'Content-Type': 'application/json'}
         }).then(function(data) {
@@ -58,7 +58,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
             $scope.indexForOperation = index;
             $scope.roomType.idForOperation = roomTypeId;
             $scope.roomType.title = data.data.roomTypeTitle;
-            $scope.roomType.content = data.data.roomTypeContent;
+            $scope.roomType.content = data.data.content;
             resetFlags();
             $scope.stage = "editing";
             $scope.modificationMode = true;
@@ -98,11 +98,11 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     var addRoomType = function() {
         resetFlags();
         $http({
-            url: sharedData.getLinks().https + '/roomTypes/',
+            url: sharedData.getLinks().https + '/roomtypes/',
             method: 'POST',
             data: {
                 roomTypeTitle :     $scope.roomType.title,
-                roomTypeContent :   $scope.roomType.content
+                content :   $scope.roomType.content
             },
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
@@ -110,7 +110,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
             $scope.listOfRoomTypes.push({
                 objectId :          data.data.objectId,
                 roomTypeTitle :     $scope.roomType.title,
-                roomTypeContent :   $scope.roomType.content
+                content :   $scope.roomType.content
             });
             $scope.prepareToAddRoomType();
             $scope.added = true;
@@ -123,17 +123,17 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     var editRoomType = function() {
         resetFlags();
         $http({
-            url: sharedData.getLinks().https + '/roomTypes/' + $scope.roomType.idForOperation,
+            url: sharedData.getLinks().https + '/roomtypes/' + $scope.roomType.idForOperation,
             method: 'PUT',
             data: {
                 roomTypeTitle :     $scope.roomType.title,
-                roomTypeContent :   $scope.roomType.content
+                content :   $scope.roomType.content
             },
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
             $scope.listOfRoomTypes[$scope.indexForOperation].roomTypeTitle = $scope.roomType.title;
-            $scope.listOfRoomTypes[$scope.indexForOperation].roomTypeContent = $scope.roomType.content;
+            $scope.listOfRoomTypes[$scope.indexForOperation].content = $scope.roomType.content;
             $scope.updated = true;
         }, function(response) {
             console.log("Smth wrong!!");
@@ -144,7 +144,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     var deleteRoomType = function() {
         resetFlags();
         $http({
-            url: sharedData.getLinks().https + '/roomTypes/' + $scope.roomType.idForOperation,
+            url: sharedData.getLinks().https + '/roomtypes/' + $scope.roomType.idForOperation,
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' }
         }).then(function(data) {

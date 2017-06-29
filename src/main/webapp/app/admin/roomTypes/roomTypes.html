@@ -21,7 +21,7 @@
             <div ng-repeat="roomType in listOfRoomTypes | orderBy : 'roomTypeTitle' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-5 col-sm-offset-1">
                 <div class="block-border">
                     <p class="admin-notes"> Title: {{ roomType.roomTypeTitle }} </p>
-                    <p class="admin-notes top-border"> Content: {{ roomType.roomTypeContent }} </p>
+                    <p class="admin-notes top-border"> Content: {{ roomType.content }} </p>
                     <div class="text-right">
                         <button type="button" class="btn btn-primary btn-md"
                                 ng-click="prepareToEditRoomType(roomType.objectId, listOfRoomTypes.indexOf(roomType))">

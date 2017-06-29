@@ -1,6 +1,12 @@
 <div class="row row-content booking">
     <div class="col-sm-push-1 col-sm-pull-1 col-sm-10">
         <h2>BOOK NOW</h2>
+        <div class="err" ng-if="errMessage == 'invalidInputData'">
+            Invalid! <i class="fa fa-times" aria-hidden="true"></i>              
+        </div>
+
+        <ng-include src="'app/admin/template/serverError.html'"></ng-include>
+
         <div>
             <form class="form" name='available' novalidate>
                 <div class="col-sm-7">

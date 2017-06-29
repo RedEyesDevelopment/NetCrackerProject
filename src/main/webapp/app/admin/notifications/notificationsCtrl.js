@@ -10,7 +10,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfNotification = data.data;
+			$scope.listOfNotifications = data.data;
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
