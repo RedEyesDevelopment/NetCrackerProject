@@ -4,7 +4,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	/* Функция на получения всех комнат и типов комнат, вызываются сразу */
 	(function() {
 		$http({
-			url: sharedData.getLinks().https + '/orders/',
+			url: sharedData.getLinks().https + '/orders',
 			method: 'GET',
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
@@ -18,7 +18,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 
 	(function() {
 		$http({
-			url: sharedData.getLinks().https + '/categories/simpleList',
+			url: sharedData.getLinks().https + '/categories',
 			method: 'GET',
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
@@ -30,7 +30,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		});
 	}());
 
-    function() {
+    (function() {
 		$http({
 			url: sharedData.getLinks().https + '/rooms/simpleList',
 			method: 'GET',
@@ -96,7 +96,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			$scope.indexForOperation = index;
 			$scope.order.idForOperation = orderId;
 			$scope.order.category = data.data.category.objectId;
-			$scope.order.room = data.data..room.objectId;
+			$scope.order.room = data.data.room.objectId;
 			$scope.order.client = data.data.client;
 			$scope.order.isPaidFor = data.data.isPaidFor;
             $scope.order.isConfirmed = data.data.isConfirmed;
@@ -164,7 +164,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
                 client : 		        $scope.order.client,
                 livingStartDate :       $scope.order.livingStartDate,
                 livingFinishDate : 		$scope.order.livingFinishDate,
-                sum :                   $scope.order.additionalInfo),
+                sum :                   $scope.order.additionalInfo,
                 comment : 			    $scope.order.comment
 			});
 			$scope.prepareToAddOrder();
