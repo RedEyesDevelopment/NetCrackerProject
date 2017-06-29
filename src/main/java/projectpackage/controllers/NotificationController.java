@@ -7,8 +7,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.dto.NotificationDTO;
 import projectpackage.model.auth.User;
 import projectpackage.model.notifications.Notification;
+import projectpackage.model.notifications.NotificationType;
+import projectpackage.model.orders.Order;
 import projectpackage.service.MessageBook;
 import projectpackage.service.notificationservice.NotificationService;
 
@@ -20,6 +23,8 @@ import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static projectpackage.service.MessageBook.NEED_TO_AUTH;
+import static projectpackage.service.MessageBook.NULL_ENTITY;
 
 /**
  * Created by Lenovo on 28.05.2017.
@@ -69,11 +74,29 @@ public class NotificationController {
     //Create notification, fetch into database
     @CacheRemoveAll(cacheName = "notificationList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> createNotification(@RequestBody Notification newNotification) {
+    public ResponseEntity<IUDAnswer> createNotification(@RequestBody NotificationDTO notificationDTO, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("USER");
+        if (user == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        } else if (notificationDTO == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
+        }
+
+        NotificationType notificationType = new NotificationType();
+        notificationType.setObjectId(notificationDTO.getNotificationTypeId());
+        User author = new User();
+        author.setObjectId(notificationDTO.getAuthorId());
+        Order order = new Order();
+        order.setObjectId(notificationDTO.getOrderId());
+        Notification newNotification = new Notification();
+        newNotification.setMessage(notificationDTO.getMessage());
+        newNotification.setNotificationType(notificationType);
+        newNotification.setOrder(order);
+        newNotification.setAuthor(author);
         IUDAnswer result = notificationService.insertNotification(newNotification);
         HttpStatus status;
         if (result.isSuccessful()) {
-            status = HttpStatus.CREATED;
+            status = HttpStatus.OK;
         } else status = HttpStatus.BAD_REQUEST;
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;

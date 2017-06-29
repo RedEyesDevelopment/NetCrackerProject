@@ -56,11 +56,11 @@ public class InMemoryNotifServiceImpl implements InMemoryNotifService{
 
     @Override
     public void insertNewNotification(Notification notif) {
-        if (notif.getNotificationType().getOrientedRole().getRoleName().equals(ADMINROLETYPE)){
-            adminNotifications.add(notif);
-        } else if (notif.getNotificationType().getOrientedRole().getRoleName().equals(RECEPTIONROLETYPE)){
-            receptionNotifications.add(notif);
-        }
+//        if (notif.getNotificationType().getOrientedRole().getRoleName().equals(ADMINROLETYPE)){
+//            adminNotifications.add(notif);
+//        } else if (notif.getNotificationType().getOrientedRole().getRoleName().equals(RECEPTIONROLETYPE)){
+//            receptionNotifications.add(notif);
+//        }
     }
 
     @Override

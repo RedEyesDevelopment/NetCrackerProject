@@ -94,15 +94,15 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     public Integer insertNotification(Notification notification) {
         if (notification == null) return null;
         Integer objectId = nextObjectId();
-
+        LOGGER.info("*******************************************************FROM DAO**********************" + objectId);
         jdbcTemplate.update(INSERT_OBJECT, objectId, null, 4, null, null);
-        insertSendDate(notification, objectId);
+        insertSendDate(objectId, notification);
         insertMessage(objectId, notification);
         insertAuthor(objectId, notification);
         insertNotificationType(objectId, notification);
         insertOrder(objectId, notification);
         insertExecutedByAndDate(objectId, notification);
-
+        LOGGER.info("*******************************************************FROM DAO**********************" + objectId);
         return objectId;
     }
 
@@ -136,7 +136,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         deleteSingleEntityById(id);
     }
 
-    private void insertSendDate(Notification notification, Integer objectId) {
+    private void insertSendDate(Integer objectId, Notification notification) {
         if (notification.getSendDate() != null) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 23, objectId, null, notification.getSendDate());
         } else {
@@ -148,7 +148,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         if (notification.getMessage() != null && !notification.getMessage().isEmpty()) {
             jdbcTemplate.update(INSERT_ATTRIBUTE, 22, objectId, notification.getMessage(), null);
         } else {
-            jdbcTemplate.update(INSERT_ATTRIBUTE, 22, objectId, null, null);
+            throw new IllegalArgumentException();
         }
     }
 

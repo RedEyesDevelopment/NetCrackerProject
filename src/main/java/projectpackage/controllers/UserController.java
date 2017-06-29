@@ -82,6 +82,7 @@ public class UserController {
 	@RequestMapping(value = "/registration", method = RequestMethod.POST, produces = {MediaType
 			.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<IUDAnswer> registrationUser(@RequestBody User newUser) {
+	    if (newUser == null) return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
 		Role role = new Role();
 		role.setObjectId(3);
 		role.setRoleName("CLIENT");

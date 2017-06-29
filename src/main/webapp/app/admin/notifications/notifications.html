@@ -70,7 +70,7 @@
                         <label for="createAuthor" class="col-sm-6 control-label">Author</label>
                         <div class="col-sm-6">
                             <!--<input type="text" id="createAuthor" ng-required="true" ng-model="notification.author.lastName">-->
-                            <select id="createAuthor" class="form-control" ng-required="true" ng-model="notification.author.objectId"
+                            <select id="createAuthor" class="form-control" ng-required="true" ng-model="notification.author"
                                     ng-options="author.objectId as (author.firstName + ' ' + author.lastName) for author in listOfUsers | orderBy : author.role.objectId">
                             </select>
                         </div>

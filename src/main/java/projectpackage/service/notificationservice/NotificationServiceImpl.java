@@ -155,6 +155,7 @@ public class NotificationServiceImpl implements NotificationService{
             return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
         notificationDAO.commit();
+        LOGGER.info("*******************************************************FROM Service**********************" + notifId);
         return new IUDAnswer(notifId,true);
     }
 

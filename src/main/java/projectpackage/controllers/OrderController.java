@@ -6,10 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import projectpackage.dto.BookedOrderDTO;
-import projectpackage.dto.IUDAnswer;
-import projectpackage.dto.OrderDTO;
-import projectpackage.dto.SearchAvailabilityParamsDTO;
+import projectpackage.dto.*;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Category;
 import projectpackage.model.orders.Order;
@@ -124,21 +121,28 @@ public class OrderController {
         return responseEntity;
     }
 
-    @RequestMapping(value = "/book/{id}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<BookedOrderDTO> createOrderByRoomType(@PathVariable("id") Integer id, HttpServletRequest request) {
+    @RequestMapping(value = "/book", method = RequestMethod.POST)
+    public @ResponseBody ResponseEntity<BookedOrderDTO> createOrderByRoomType(@RequestBody BookDTO bookDTO, HttpServletRequest request) {
         User thisUser = (User) request.getSession().getAttribute("USER");
         OrderDTO dto = null;
+        User client = null;
         if (thisUser == null) return new ResponseEntity<BookedOrderDTO>(new BookedOrderDTO(dto), HttpStatus.BAD_REQUEST);
-        if (id == null) return new ResponseEntity<BookedOrderDTO>(new BookedOrderDTO(dto), HttpStatus.BAD_REQUEST);
+        if (bookDTO.getRoomTypeId() == null) return new ResponseEntity<BookedOrderDTO>(new BookedOrderDTO(dto), HttpStatus.BAD_REQUEST);
+        if (thisUser.getRole().getObjectId() == 3) {
+            client = thisUser;
+        } else {
+            client = new User();
+            client.setObjectId(bookDTO.getUserId());
+        }
         List<OrderDTO> dtoData = (List<OrderDTO>) request.getSession().getAttribute("ORDERDATA");
-        for (OrderDTO order:dtoData){
-            if (id.equals(order.getRoomTypeId())){
+        for (OrderDTO order : dtoData) {
+            if (bookDTO.getRoomTypeId().equals(order.getRoomTypeId())) {
                 dto = order;
                 break;
             }
         }
         Category category = categoryService.getSingleCategoryById(dto.getCategoryId());
-        Order order = orderService.createOrderTemplate(thisUser,dto);
+        Order order = orderService.createOrderTemplate(client, dto);
         order.setCategory(category);
         request.getSession().removeAttribute("ORDERDATA");
         request.getSession().setAttribute("NEWORDER", order);
@@ -146,7 +150,8 @@ public class OrderController {
         BookedOrderDTO responseDto = new BookedOrderDTO(dto);
         responseDto.setCategoryName(category.getCategoryTitle());
         responseDto.setClient(new StringBuilder(thisUser.getFirstName()).append(thisUser.getLastName()).toString());
-        return new ResponseEntity<BookedOrderDTO>(responseDto, HttpStatus.ACCEPTED);
+        return new ResponseEntity<BookedOrderDTO>(responseDto, HttpStatus.OK);
+
     }
 
     @RequestMapping(value = "/accept", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})

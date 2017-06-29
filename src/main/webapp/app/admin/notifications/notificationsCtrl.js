@@ -147,21 +147,24 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	/* Функции, выполняющие запросы */
 	var addNotification = function() {
 		resetFlags();
+		console.log($scope.notification.author);
+		console.log($scope.notification.type);
+		console.log($scope.notification.message);
+		console.log($scope.notification.order);
 		$http({
 			url: sharedData.getLinks().https + '/notifications',
 			method: 'POST',
 			data: {
-                author : 		    $scope.notification.author,
-				notificationType :  parseInt($scope.notification.type),
-				sendDate :          $scope.notification.sendDate,
+                authorId : 		    $scope.notification.author,
+				notificationTypeId :  $scope.notification.type,
 				message :           $scope.notification.message,
-				order : 			parseInt($scope.notification.order)
+				orderId : 			$scope.notification.order
 			},
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
 			$scope.listOfNotifications.push({
-				objectId :          data.data.objectId,
+				idForOperation :          data.data.objectId,
 				author :            $scope.notification.author,
 				notificationType :  util.getObjectInArrayById($scope.listOfNotificationTypes, $scope.notification.type),
 				sendDate :          $scope.notification.sendDate,
@@ -179,6 +182,10 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 
 	var editNotification = function() {
 		resetFlags();
+        console.log($scope.notification.author.objectId);
+        console.log($scope.notification.type.objectId);
+        console.log($scope.notification.message);
+        console.log($scope.notification.order.objectId);
 		$http({
 			url: sharedData.getLinks().https + '/rooms/' + $scope.room.idForOperation,
 			method: 'PUT',
@@ -222,10 +229,10 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 
 
 	/* Для листания страниц с объектами */
-	$scope.nextRooms = function() {
-		$scope.pager.startPaging = util.nextEntities($scope.listOfRooms.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
+	$scope.nextNotifications = function() {
+		$scope.pager.startPaging = util.nextEntities($scope.listOfNotifications.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
 	}
-	$scope.previousRooms = function() {
+	$scope.previousNotifications = function() {
 		$scope.pager.startPaging = util.previousEntities($scope.pager.startPaging, $scope.pager.objectsOnPage);
 	}
 }]);
