@@ -1,4 +1,8 @@
-
+.answer {
+    display: inline-block;
+    margin-left: 15px;
+    color: green;
+}
 
 /* ------- top of workspace ------- */
 .workspace .top h2 {
@@ -53,6 +57,14 @@
     border-bottom: 1px solid #d1d1d1;
 }
 
+.workspace .listOfObjects .order-left-border {
+    border-left: 1px solid #d1d1d1;
+}
+
+.workspace .listOfObjects .order-right-border {
+    border-right: 1px solid #d1d1d1;
+}
+
 .workspace .listOfObjects .order-padding-top-bottom {
     padding-top: 5px;
     padding-bottom: 5px;
@@ -68,6 +80,12 @@
 
 .workspace .listOfObjects .admin-notes {
     font-size: 18px;
+}
+
+.workspace .listButton {
+    text-align: center;
+    text-decoration: underline;
+    cursor: pointer;
 }
 /* ---------------------------------- */
 
@@ -105,10 +123,8 @@
     width: 70px;
 }
 
-.answer {
-	display: inline-block;
-	margin-left: 15px;
-	color: green;
+table tbody tr th {
+    font-weight: normal;
 }
 /* ---------------------------------- */
 

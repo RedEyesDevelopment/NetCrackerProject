@@ -10,7 +10,16 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		}).then(function(data) {
 			console.log(data);
 			$scope.listOfOrders = data.data;
-			// $scope.listOfOrders.forEach
+			$scope.listOfOrders.forEach(function(order) {
+				order.maintenanceSum = 0;
+				if (order.journalRecords != null) {
+					order.journalRecords.forEach(function(record) {
+						order.maintenanceSum += record.cost;
+					});
+				}
+				order.total = order.sum + order.maintenanceSum;
+
+			});
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
@@ -48,6 +57,10 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	(function() {
 		if (!sharedData.getIsAdmin()) { $location.path('/') };
 	}());
+
+	// это для кнопок журнала использованных услуг (не удалять!)
+	$scope.expand = {id : 0};
+
 
 	/* Инициализация служебных переменных */
 	function resetFlags() {
