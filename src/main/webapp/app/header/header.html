@@ -67,7 +67,8 @@
                 <p>  
                     <label for="loginform">Email:</label>
                     <input type="text" id="loginform" ng-model="auth.incoming.login"
-                            ng-change="hideFailAuthMessage()" placeholder="Enter login">
+                           ng-change="hideFailAuthMessage()" placeholder="Enter login"
+                           ng-pattern = '/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i'>
                 </p>
                 <p>
                     <label for="passform">Password:</label>
@@ -98,21 +99,23 @@
                 <p>
                     <label for="logincform" class="emailLabel">Email:</label>
                     <input type="text" id="logincform" placeholder="Enter email"
-                           ng-model="registrationData.userEmail" ng-required="true">
-                           <!-- ng-pattern="regExp.emailRegex"> -->
+                           ng-model="registrationData.userEmail"
+                           ng-pattern = '/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i'
+                           ng-required="true">
                 </p>
                 <p>
                     <label for="passcform" class="passwordLabel">Password:</label>
                     <input type="password" id="passcform" placeholder="Enter password"
                            ng-model="registrationData.userPassword" ng-required="true"
-                           ng-change="hideNotTheSamePasswordsMessage()">
-                           <!-- ng-pattern="regExp.passwordRegex"> -->
+                           ng-change="hideNotTheSamePasswordsMessage()"
+                           ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/">
                 </p>
                 <p>
                     <label for="passcrform" class="passwordLabel">Repeat:</label>
                     <input type="password" id="passcrform" placeholder="Password confirmation"
                            ng-model="registrationData.userPasswordRepeat" ng-required="true"
-                           ng-change="hideNotTheSamePasswordsMessage()">
+                           ng-change="hideNotTheSamePasswordsMessage()"
+                           ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/">
                 </p>
                 <p>
                     <label for="nameform">Name:</label>
@@ -127,15 +130,15 @@
                 <p>
                     <label for="teleform">Phone:</label>
                     <input type="text" id="teleform" placeholder="Enter your phone"
-                           ng-model="registrationData.userPhone" ng-required="true">
-                           <!-- ng-pattern="regExp.phoneRegex" name="phone"> -->
+                           ng-model="registrationData.userPhone" ng-required="true"
+                           ng-pattern="/^\+\d{1,2}\(\d{3}\)\d{2}\-\d{2}\-\d{3}$|^\+\d{12}$|^\d{7}$|^[0]\d{9}$/">
                 </p>
                 <div class="description">
                     <p class="phoneExample">
                         e.g. +123456789012 or&nbsp;0501234567 or&nbsp;1234567 or&nbsp;+1(000)12-34-567
                     </p>
                     <p class="passwordDesc">
-                        Password should be at least 8 characters. And should consist with letters and digits.
+                        Password should be at least 8 characters. And should consist with minimum 1 upper case letter, letters and digits.
                     </p>
                     <p class="passwordsNotTheSame" ng-if="registrationData.passwordsNotTheSame">
                         Passwords do not match!

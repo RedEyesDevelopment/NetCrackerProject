@@ -172,6 +172,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+            $scope.errMessage = "serverErr";
 		});
 	}
 
@@ -207,6 +208,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+            $scope.errMessage = "serverErr";
 		});
 	}
 
@@ -223,6 +225,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+            $scope.errMessage = "serverErr";
 		});
 	}
 

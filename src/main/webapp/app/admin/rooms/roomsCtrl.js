@@ -137,6 +137,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+            $scope.errMessage = "serverErr";
 		});
 	}
 
@@ -160,6 +161,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+            $scope.errMessage = "serverErr";
 		});
 	}
 
@@ -176,6 +178,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+            $scope.errMessage = "serverErr";
 		});
 	}
 

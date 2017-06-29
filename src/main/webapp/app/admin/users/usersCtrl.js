@@ -149,6 +149,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+            $scope.errMessage = "serverErr";
 		});
 	}
 
@@ -178,6 +179,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+            $scope.errMessage = "serverErr";
 		});
 	}
 
@@ -194,6 +196,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+            $scope.errMessage = "serverErr";
 		});
 	}
 

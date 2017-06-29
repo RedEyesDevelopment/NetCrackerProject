@@ -123,7 +123,10 @@ public class UserController {
 			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
 		} else if (id == null || !id.equals(sessionUser.getObjectId())) {
 			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ID), HttpStatus.BAD_REQUEST);
-		} else if (userPasswordDTO == null || userPasswordDTO.getNewPassword() == null || userPasswordDTO.getOldPassword() == null) {
+		} else if (userPasswordDTO == null
+				|| userPasswordDTO.getNewPassword() == null
+				|| userPasswordDTO.getOldPassword() == null || userPasswordDTO.getNewPassword().isEmpty()
+				|| userPasswordDTO.getOldPassword().isEmpty()) {
 			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_FIELD), HttpStatus.BAD_REQUEST);
 		} else if (userPasswordDTO.getOldPassword().equals(userPasswordDTO.getNewPassword())) {
 			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, SAME_PASSWORDS), HttpStatus.BAD_REQUEST);

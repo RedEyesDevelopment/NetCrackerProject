@@ -41,6 +41,8 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
             $scope.deleted = false;
         }
 
+        $scope.maxDate = new Date();
+        $scope.maxDate.setFullYear(new Date().getFullYear() + 1);
         $scope.block = {};
         resetFlags();
 
@@ -116,64 +118,72 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		/* Функции, выполняющие запросы */
         var addBlock = function() {
             resetFlags();
-            console.log($scope.block.blockStartDate.getTime())
-            console.log($scope.block.blockFinishDate.getTime())
-            console.log($scope.block.reason)
-            console.log($scope.block.roomId)
-            $http({
-                url: sharedData.getLinks().https + '/blocks',
-                method: 'POST',
-                data: {
-                    blockStartDate : $scope.block.blockStartDate.getTime(),
-                    blockFinishDate : $scope.block.blockFinishDate.getTime(),
-                    reason : $scope.block.reason,
-                    roomId : $scope.block.roomId
-                },
-                headers: { 'Content-Type' : 'application/json' }
-            }).then(function(data) {
-                console.log(data);
-                $scope.listOfBlocks.push({
-                    idForOperation : data.data.objectId,
-                    blockStartDate : new Date($scope.block.blockStartDate),
-                    blockFinishDate : new Date($scope.block.blockFinishDate),
-                    reason : $scope.block.reason,
-                    room : util.getObjectInArrayById($scope.listOfRooms, $scope.block.roomId)
+            if ($scope.block.blockStartDate.getTime() < $scope.block.blockFinishDate.getTime()
+                && $scope.block.blockStartDate.getTime() >= new Date().getTime()
+                && $scope.block.blockFinishDate.getTime() <= $scope.maxDate.getTime()) {
+                $http({
+                    url: sharedData.getLinks().https + '/blocks',
+                    method: 'POST',
+                    data: {
+                        blockStartDate: $scope.block.blockStartDate.getTime(),
+                        blockFinishDate: $scope.block.blockFinishDate.getTime(),
+                        reason: $scope.block.reason,
+                        roomId: $scope.block.roomId
+                    },
+                    headers: {'Content-Type': 'application/json'}
+                }).then(function (data) {
+                    console.log(data);
+                    $scope.listOfBlocks.push({
+                        idForOperation: data.data.objectId,
+                        blockStartDate: new Date($scope.block.blockStartDate),
+                        blockFinishDate: new Date($scope.block.blockFinishDate),
+                        reason: $scope.block.reason,
+                        room: util.getObjectInArrayById($scope.listOfRooms, $scope.block.roomId)
+                    });
+                    $scope.prepareToAddBlock();
+                    $scope.added = true;
+                }, function (response) {
+                    console.log("Smth wrong!!");
+                    console.log(response);
+                    $scope.errMessage = "serverErr";
                 });
-                $scope.prepareToAddBlock();
-                $scope.added = true;
-            }, function(response) {
-                console.log("Smth wrong!!");
-                console.log(response);
-            });
+            } else {
+                $scope.errMessage = "invalidInputData";
+            }
         }
 
         var editBlock = function() {
             resetFlags();
-            console.log($scope.block.blockStartDate.getTime())
-            console.log($scope.block.blockFinishDate.getTime())
-            console.log($scope.block.reason)
-            console.log($scope.block.roomId)
-            $http({
-                url: sharedData.getLinks().https + '/blocks/' + $scope.block.idForOperation,
-                method: 'PUT',
-                data: {
-                    blockStartDate : $scope.block.blockStartDate.getTime(),
-                    blockFinishDate : $scope.block.blockFinishDate.getTime(),
-                    reason : $scope.block.reason,
-                    roomId : $scope.block.roomId
-                },
-                headers: { 'Content-Type' : 'application/json' }
-            }).then(function(data) {
-                console.log(data);
-                $scope.listOfBlocks[$scope.indexForOperation].blockStartDate = new Date($scope.block.blockStartDate);
-                $scope.listOfBlocks[$scope.indexForOperation].blockFinishDate = new Date($scope.block.blockFinishDate);
-                $scope.listOfBlocks[$scope.indexForOperation].reason = $scope.block.reason;
-                $scope.listOfBlocks[$scope.indexForOperation].room = util.getObjectInArrayById($scope.listOfRooms, $scope.block.roomId);
-                $scope.updated = true;
-            }, function(response) {
-                console.log("Smth wrong!!");
-                console.log(response);
-            });
+            console.log($scope.maxDate);
+
+            if ($scope.block.blockStartDate.getTime() < $scope.block.blockFinishDate.getTime()
+                && $scope.block.blockStartDate.getTime() >= new Date().getTime()
+                && $scope.block.blockFinishDate.getTime() <= $scope.maxDate.getTime()) {
+                $http({
+                    url: sharedData.getLinks().https + '/blocks/' + $scope.block.idForOperation,
+                    method: 'PUT',
+                    data: {
+                        blockStartDate: $scope.block.blockStartDate.getTime(),
+                        blockFinishDate: $scope.block.blockFinishDate.getTime(),
+                        reason: $scope.block.reason,
+                        roomId: $scope.block.roomId
+                    },
+                    headers: {'Content-Type': 'application/json'}
+                }).then(function (data) {
+                    console.log(data);
+                    $scope.listOfBlocks[$scope.indexForOperation].blockStartDate = new Date($scope.block.blockStartDate);
+                    $scope.listOfBlocks[$scope.indexForOperation].blockFinishDate = new Date($scope.block.blockFinishDate);
+                    $scope.listOfBlocks[$scope.indexForOperation].reason = $scope.block.reason;
+                    $scope.listOfBlocks[$scope.indexForOperation].room = util.getObjectInArrayById($scope.listOfRooms, $scope.block.roomId);
+                    $scope.updated = true;
+                }, function (response) {
+                    console.log("Smth wrong!!");
+                    console.log(response);
+                    $scope.errMessage = "serverErr";
+                });
+            } else {
+                $scope.errMessage = "invalidInputData";
+            }
         }
 
         var deleteBlock = function() {
@@ -189,6 +199,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
             }, function(response) {
                 console.log("Smth wrong!!");
                 console.log(response);
+                $scope.errMessage = "serverErr";
             });
         }
 

@@ -113,6 +113,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
             }, function(response) {
                 console.log("Smth wrong!!");
                 console.log(response);
+                $scope.errMessage = "serverErr";
             });
         }
     }
@@ -136,6 +137,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = "serverErr";
         });
     }
 
@@ -151,6 +153,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = "serverErr";
         });
     }
 

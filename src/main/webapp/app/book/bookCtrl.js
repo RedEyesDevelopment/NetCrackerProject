@@ -30,7 +30,12 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
     $scope.searchRoomTypes = function() {
         $scope.errMessage = "none";
         if (Object.keys($scope.book).length !== 0) {
-            if (true) {                
+            var maxDate = new Date();
+            maxDate.setFullYear(new Date().getFullYear() + 1);
+            console.log(maxDate);
+
+            if ($scope.book.from.getTime() < $scope.book.till.getTime()
+                && $scope.book.from.getTime() >= new Date().getTime() && $scope.book.till.getTime() <= maxDate.getTime()) {
                 $http({
                     url: 'http://localhost:8080/orders/searchavailability',
                     method: 'POST',

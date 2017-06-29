@@ -131,6 +131,7 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
             }, function(response) {
                 console.log("Smth wrong!!");
                 console.log(response);
+                $scope.errMessage = "serverErr";
             });
         }
 
@@ -160,6 +161,7 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
             }, function(response) {
                 console.log("Smth wrong!!");
                 console.log(response);
+                $scope.errMessage = "serverErr";
             });
         }
 
@@ -176,6 +178,7 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
             }, function(response) {
                 console.log("Smth wrong!!");
                 console.log(response);
+                $scope.errMessage = "serverErr";
             });
         }
 

@@ -9,7 +9,7 @@
             <h2>Users</h2>
             <button class="btn btn-primary btn-md newEntity" ng-click="prepareToAddUser()">New user</button>
         </div>
-
+        <ng-include src="'app/admin/template/serverError.html'"></ng-include>
 
         <!-- List of objects in workspace -->
         <div class="listOfObjects" ng-if="!modificationMode">
@@ -22,7 +22,7 @@
                 <div class="block-border">
                     <p class="admin-notes"> Last Name: {{ user.lastName }} </p>
                     <p class="admin-notes top-bottom-border"> First Name: {{ user.firstName }} </p>
-                    <p class="admin-notes"> Role: {{ user.role }} </p>
+                    <p class="admin-notes"> Role: {{ user.role.roleName }} </p>
                     <p class="admin-notes top-bottom-border"> Email: {{ user.email }} </p>
                     <p class="admin-notes"> Additional info: {{ user.additionalInfo }} </p>
                     <p class="admin-notes top-border"> Enabled: {{ user.enabled }} </p>

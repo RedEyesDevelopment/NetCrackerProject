@@ -5,7 +5,7 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', '$rootScope', 'sha
     $scope.registrationData = {}
 
     $scope.regExp = {
-        // emailRegex : '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}',
+         emailRegex : '(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})'
         // passwordRegex : '(?=.{8,})(?=.*[a-zA-Z]{1,})(?=.*\d{1,})'
         // phoneRegex : '+'//\d{1,2}\(\d{3}\)\d{2}\-\d{2}\-\d{3}|\+\d{12}|\d{7}|[0]\d{9}'
         // phoneRegex : '\+\d{1,2}\(\d{3}\)\d{2}\-\d{2}\-\d{3}|\+\d{12}|\d{7}|[0]\d{9}'

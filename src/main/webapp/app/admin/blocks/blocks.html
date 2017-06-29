@@ -9,6 +9,8 @@
             <h2>Blocks</h2>
             <button class="btn btn-primary btn-md newEntity" ng-click="prepareToAddBlock()">New block</button>
         </div>
+        <ng-include src="'app/admin/template/serverError.html'"></ng-include>
+
 
 
         <!-- List of objects in workspace -->
@@ -58,7 +60,9 @@
                         Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
                     </div>
                 </div>
-
+                <div class="err" ng-if="errMessage == 'invalidInputData'">
+                    Invalid dates! Pls check input and choose correct dates! <i class="fa fa-times" aria-hidden="true"></i>
+                </div>
             </div>
             <div class="col-sm-offset-3 col-sm-5 createUpdateForm">
                 <form class="form-horizontal" name="createUpdateForm">

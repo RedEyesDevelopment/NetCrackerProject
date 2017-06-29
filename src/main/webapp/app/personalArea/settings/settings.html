@@ -38,8 +38,8 @@
 	                    	<label for="emailInput">Email:</label>
 	                    </div>
 	                    <div class="col-sm-6">
-	                    	<input type="text" id="emailInput"
-	                    		ng-model="getMyself().email">
+	                    	<input type="text" id="emailInput" ng-model="getMyself().email"
+								   ng-pattern = '/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i'>
 	                	</div>
 	                </div>
 	                <div class="row">
@@ -73,8 +73,8 @@
 	                    	<label for="newPasswordInput">New password:</label>
 	                    </div>
 	                    <div class="col-sm-6">
-	                    	<input type="password" id="newPasswordInput"
-	                    		ng-model="getMyself().newPassword">
+	                    	<input type="password" id="newPasswordInput" ng-model="getMyself().newPassword"
+								   ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/">
 	                	</div>
 	                </div>
 	                <div class="row">
@@ -122,7 +122,7 @@
 						</div>
 						<div ng-if="stage == 'addPhone'" class="newPhone">
 							<div class="col-sm-6">
-		                    	<input type="tel" id="phoneNumberInput" ng-model="getMyself().newPhone">
+		                    	<input type="tel" ng-model="getMyself().newPhone">
 		                	</div>
 		                	<button class="btn btn-default"
 									ng-click="query()">

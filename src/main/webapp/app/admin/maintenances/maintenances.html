@@ -9,6 +9,7 @@
             <h2>Maintenances</h2>
             <button class="btn btn-primary btn-md newEntity" ng-click="prepareToAddMaintenance()">New Maintenance</button>
         </div>
+        <ng-include src="'app/admin/template/serverError.html'"></ng-include>
 
         <div class="answer">
             <div ng-if="stage == 'deleted'">
