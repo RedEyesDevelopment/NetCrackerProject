@@ -4,7 +4,7 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
     /* Сразу получить все категории */
     (function() {
         $http({
-            url: 'http://localhost:8080/categories',
+            url: 'http://localhost:8080/categories/simpleList',
             method: 'GET',
             headers: {
                 'Content-Type' : 'application/json'

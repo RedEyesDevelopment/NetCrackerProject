@@ -4,7 +4,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	/* Функция на получения всех комнат и типов комнат, вызываются сразу */
 	(function() {
 		$http({
-			url: sharedData.getLinks().https + '/rooms/',
+			url: sharedData.getLinks().https + '/rooms/simpleList',
 			method: 'GET',
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
@@ -67,7 +67,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 	$scope.prepareToEditRoom = function(roomId, index) {
 		$http({
-			url: sharedData.getLinks().https + '/rooms/' + roomId,
+			url: sharedData.getLinks().https + '/rooms/simple/' + roomId,
 			method: 'GET',
 			headers: {'Content-Type': 'application/json'}
 		}).then(function(data) {

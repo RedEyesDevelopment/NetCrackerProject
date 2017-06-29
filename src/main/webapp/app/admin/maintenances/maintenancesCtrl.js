@@ -20,16 +20,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
         if(!sharedData.getIsAdmin()) { $location.path('/') };
     }());
 
-    /* Инициализация служебных переменных */
-    function resetFlags() {
-        $scope.added = false;
-        $scope.updated = false;
-        $scope.deleted = false;
-    }
-
     $scope.maintenance = {};
-    resetFlags();
-
     $scope.stage = "looking";
 
     $scope.pager = {
@@ -44,7 +35,8 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
         $scope.maintenance.title = "";
         $scope.maintenance.type = "";
         $scope.maintenance.price = "";
-        resetFlags();
+        $scope.maintenance.dollars = 0;
+        $scope.maintenance.cents = 0;
         $scope.stage = "adding";
         $scope.modificationMode = true;
     }
@@ -55,16 +47,15 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
             method: 'GET',
             headers: {'Content-Type': 'application/json'}
         }).then(function(data) {
-            console.log(data);
             $scope.indexForOperation = index;
             $scope.maintenance.idForOperation = maintenanceId;
             $scope.maintenance.title = data.data.maintenanceTitle;
             $scope.maintenance.type = data.data.maintenanceType;
             $scope.maintenance.price = data.data.maintenancePrice;
-            resetFlags();
+            $scope.maintenance.dollars = Math.floor(data.data.maintenancePrice / 100);
+            $scope.maintenance.cents = data.data.maintenancePrice % 100;
             $scope.stage = "editing";
             $scope.modificationMode = true;
-
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
@@ -74,8 +65,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
     $scope.prepareToDeleteMaintenance = function(maintenanceId, index) {
         $scope.indexForOperation = index;
         $scope.maintenance.idForOperation = maintenanceId;
-        resetFlags();
-        $scope.stage = "deleting"
+        $scope.stage = "deleting";
     }
 
     /* Возврат на просмотр */
@@ -98,49 +88,51 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
 
     /* Функции, выполняющие запросы */
     var addMaintenance = function() {
-        resetFlags();
-        $http({
-            url: sharedData.getLinks().https + '/maintenances/',
-            method: 'POST',
-            data: {
-                maintenanceTitle :  $scope.maintenance.title,
-                maintenanceType :   $scope.maintenance.type,
-                maintenancePrice :  parseInt($scope.maintenance.price) * 100
-            },
-            headers: { 'Content-Type' : 'application/json' }
-        }).then(function(data) {
-            console.log(data);
-            $scope.listOfMaintenances.push({
-                objectId : data.data.objectId,
-                maintenanceTitle :  $scope.maintenance.title,
-                maintenanceType :   $scope.maintenance.type,
-                maintenancePrice :  $scope.maintenance.price
+        if (        $scope.maintenance.dollars >= 0
+                &&  $scope.maintenance.cents >= 0
+                &&  $scope.maintenance.cents <= 99) {
+            $http({
+                url: sharedData.getLinks().https + '/maintenances/',
+                method: 'POST',
+                data: {
+                    maintenanceTitle :  $scope.maintenance.title,
+                    maintenanceType :   $scope.maintenance.type,
+                    maintenancePrice :  ($scope.maintenance.dollars * 100) + $scope.maintenance.cents
+                },
+                headers: { 'Content-Type' : 'application/json' }
+            }).then(function(data) {
+                console.log(data);
+                $scope.listOfMaintenances.push({
+                    objectId : data.data.objectId,
+                    maintenanceTitle :  $scope.maintenance.title,
+                    maintenanceType :   $scope.maintenance.type,
+                    maintenancePrice :  ($scope.maintenance.dollars * 100) + $scope.maintenance.cents
+                });
+                $scope.prepareToAddMaintenance();
+                $scope.stage = 'added';
+            }, function(response) {
+                console.log("Smth wrong!!");
+                console.log(response);
             });
-            $scope.prepareToAddMaintenance();
-            $scope.added = true;
-        }, function(response) {
-            console.log("Smth wrong!!");
-            console.log(response);
-        });
+        }
     }
 
     var editMaintenance = function() {
-        resetFlags();
         $http({
             url: sharedData.getLinks().https + '/maintenances/' + $scope.maintenance.idForOperation,
             method: 'PUT',
             data: {
                 maintenanceTitle :  $scope.maintenance.title,
                 maintenanceType :   $scope.maintenance.type,
-                maintenancePrice :  parseInt($scope.maintenance.price) * 100
+                maintenancePrice :  ($scope.maintenance.dollars * 100) + $scope.maintenance.cents
             },
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
             $scope.listOfMaintenances[$scope.indexForOperation].maintenanceTitle = $scope.maintenance.title;
             $scope.listOfMaintenances[$scope.indexForOperation].maintenanceType = $scope.maintenance.type;
-            $scope.listOfMaintenances[$scope.indexForOperation].maintenancePrice = $scope.maintenance.price * 100;
-            $scope.updated = true;
+            $scope.listOfMaintenances[$scope.indexForOperation].maintenancePrice = ($scope.maintenance.dollars * 100) + $scope.maintenance.cents;
+            $scope.stage = 'updated';
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
@@ -148,7 +140,6 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
     }
 
     var deleteMaintenance = function() {
-        resetFlags();
         $http({
             url: sharedData.getLinks().https + '/maintenances/' + $scope.maintenance.idForOperation,
             method: 'DELETE',
@@ -156,7 +147,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
         }).then(function(data) {
             console.log(data);
             $scope.listOfMaintenances.splice($scope.indexForOperation, 1);
-            $scope.deleted = true;
+            $scope.stage = 'deleted';
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);

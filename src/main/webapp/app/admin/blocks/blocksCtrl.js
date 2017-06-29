@@ -18,7 +18,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 
         (function() {
             $http({
-                url: sharedData.getLinks().https + '/rooms/',
+                url: sharedData.getLinks().https + '/rooms/simpleList',
                 method: 'GET',
                 headers: { 'Content-Type' : 'application/json' }
             }).then(function(data) {

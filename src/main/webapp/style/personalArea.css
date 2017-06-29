@@ -1,5 +1,5 @@
 /* ------------ aside ------------- */
-.settings aside .profilePhoto {
+.personalArea aside .profilePhoto {
 	background-image: url("../res/img/user_photo.jpg");
 	background-size: contain;
 	background-repeat: no-repeat;
@@ -7,7 +7,7 @@
 	height: 255px;
 }
 
-.settings aside .name {
+.personalArea aside .name {
 	text-align: center;
 	font-size: 24px;
 	font-family: 'Times New Roman';
@@ -16,12 +16,12 @@
 /* ------------------------------- */
 
 /* --------- Настройки ------------- */
-.settings h1 {
+.personalArea h1 {
 	text-align: center;
 	margin: 20px;
 }
 
-.settings .done {
+.personalArea .done {
 	color: green;
 	text-align: center;
 	margin-bottom: 20px;
@@ -76,6 +76,14 @@
 	width: 58px;
 }
 
+.messageToAdmin textarea {
+	resize: none;
+	height: 150px;
+}
+
+.messageToAdmin .send {
+	text-align: center;
+}
 
 
 
