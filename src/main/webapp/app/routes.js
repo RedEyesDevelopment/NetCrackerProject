@@ -17,10 +17,10 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
             templateUrl: 'app/personalArea/messageToAdmin/messageToAdmin.html',
             controller: 'messageToAdminCtrl'
         })
-        // .when('/personal/orderlist', {
-        //     templateUrl: 'checklist.html',
-        //     controller: 'orderListController'
-        // })
+        .when('/personal/checklist', {
+            templateUrl: 'app/personalArea/checklist/checklist.html',
+            controller: 'checklistCtrl'
+        })
 
         // // Admin routes
         .when('/admin/notifications', {

@@ -4,7 +4,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     /* Функция на получения всех типов комнат, вызывается сразу */
     (function() {
         $http({
-            url: sharedData.getLinks().https + '/roomtypes',
+            url: sharedData.getLinks().https + '/roomTypes',
             method: 'GET',
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
@@ -50,7 +50,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
 
     $scope.prepareToEditRoomType = function(roomTypeId, index) {
         $http({
-            url: sharedData.getLinks().https + '/roomtypes/' + roomTypeId,
+            url: sharedData.getLinks().https + '/roomTypes/' + roomTypeId,
             method: 'GET',
             headers: {'Content-Type': 'application/json'}
         }).then(function(data) {
@@ -98,7 +98,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     var addRoomType = function() {
         resetFlags();
         $http({
-            url: sharedData.getLinks().https + '/roomtypes/',
+            url: sharedData.getLinks().https + '/roomTypes/',
             method: 'POST',
             data: {
                 roomTypeTitle :     $scope.roomType.title,
@@ -123,7 +123,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     var editRoomType = function() {
         resetFlags();
         $http({
-            url: sharedData.getLinks().https + '/roomtypes/' + $scope.roomType.idForOperation,
+            url: sharedData.getLinks().https + '/roomTypes/' + $scope.roomType.idForOperation,
             method: 'PUT',
             data: {
                 roomTypeTitle :     $scope.roomType.title,
@@ -144,7 +144,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     var deleteRoomType = function() {
         resetFlags();
         $http({
-            url: sharedData.getLinks().https + '/roomtypes/' + $scope.roomType.idForOperation,
+            url: sharedData.getLinks().https + '/roomTypes/' + $scope.roomType.idForOperation,
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' }
         }).then(function(data) {

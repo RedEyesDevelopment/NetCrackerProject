@@ -5,7 +5,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	/* Функция на получения всех уведомлений, типов уведомлений и заказов, вызываются сразу */
 	(function() {
 		$http({
-			url: sharedData.getLinks().https + '/notification',
+			url: sharedData.getLinks().https + '/notifications',
 			method: 'GET',
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {

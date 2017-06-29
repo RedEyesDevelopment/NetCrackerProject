@@ -18,7 +18,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 	(function() {
 		$http({
-			url: sharedData.getLinks().https + '/roomtypes/simpleList',
+			url: sharedData.getLinks().https + '/roomTypes/simpleList',
 			method: 'GET',
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
