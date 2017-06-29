@@ -129,7 +129,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 				firstName :         $scope.user.firstName,
 				role : 			    parseInt($scope.user.role),
 				email : 		    $scope.user.email,
-                additionalInfo :    $scope.user.additionalInfo),
+                additionalInfo :    $scope.user.additionalInfo,
                 enabled : 			$scope.user.enabled
 			},
 			headers: { 'Content-Type' : 'application/json' }
@@ -141,7 +141,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
                 firstName :         $scope.user.firstName,
                 role : 			    util.getObjectInArrayById($scope.listOfRoles, $scope.user.role),
                 email : 		    $scope.user.email,
-                additionalInfo :    $scope.user.additionalInfo),
+                additionalInfo :    $scope.user.additionalInfo,
                 enabled : 			$scope.user.enabled
 			});
 			$scope.prepareToAddUser();
@@ -162,7 +162,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
                 firstName :         $scope.user.firstName,
                 role : 			    parseInt($scope.user.role),
                 email : 		    $scope.user.email,
-                additionalInfo :    $scope.user.additionalInfo),
+                additionalInfo :    $scope.user.additionalInfo,
                 enabled : 			$scope.user.enabled
 			},
 			headers: { 'Content-Type' : 'application/json' }
