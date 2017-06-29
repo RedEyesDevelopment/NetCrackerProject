@@ -1,6 +1,4 @@
-.workspace {
-	
-}
+
 
 /* ------- top of workspace ------- */
 .workspace .top h2 {
@@ -45,6 +43,27 @@
 .workspace .listOfObjects .bottom-border {
     border-bottom: 1px solid #d1d1d1;
     padding: 10px 0px;
+}
+
+.workspace .listOfObjects .order-top-border {
+    border-top: 1px solid #d1d1d1;
+}
+
+.workspace .listOfObjects .order-bottom-border {
+    border-bottom: 1px solid #d1d1d1;
+}
+
+.workspace .listOfObjects .order-padding-top-bottom {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.workspace .listOfObjects .order-padding-top {
+    padding-top: 5px;
+}
+
+.workspace .listOfObjects .order-padding-bottom {
+    padding-bottom: 5px;
 }
 
 .workspace .listOfObjects .admin-notes {
