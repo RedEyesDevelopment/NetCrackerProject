@@ -87,13 +87,20 @@ public class UserController {
         Phone phone = new Phone();
         phone.setPhoneNumber(userDTO.getPhoneNumber());
         phones.add(phone);
+        Role role = new Role();
+        role.setObjectId(userDTO.getRoleId());
+        newUser.setRole(role);
         newUser.setPhones(phones);
-
+        newUser.setPassword(userDTO.getPassword());
+        newUser.setAdditionalInfo(userDTO.getAdditionalInfo());
+        newUser.setEmail(userDTO.getEmail());
+        newUser.setFirstName(userDTO.getFirstName());
+        newUser.setLastName(userDTO.getLastName());
+        newUser.setEnabled(Boolean.TRUE);
 		IUDAnswer result = userService.insertUser(newUser);
 		HttpStatus status;
-		if (result.isSuccessful()) {
-			status = HttpStatus.OK;
-		} else status = HttpStatus.BAD_REQUEST;
+		if (result.isSuccessful()) status = HttpStatus.OK;
+        else status = HttpStatus.BAD_REQUEST;
 		ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
 		return responseEntity;
 	}
@@ -116,21 +123,41 @@ public class UserController {
         } else status = HttpStatus.BAD_REQUEST;
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
-
 	}
 
 	//Update user method
 	@CacheRemoveAll(cacheName = "userList")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-	public ResponseEntity<IUDAnswer> updateUser(@PathVariable("id") Integer id, @RequestBody User changedUser, HttpServletRequest request) {
-
+	public ResponseEntity<IUDAnswer> updateUser(@PathVariable("id") Integer id, @RequestBody UserDTO userDTO, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("USER");
+        if (user == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        } else if (user.getRole().getObjectId() != 1) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_ADMIN), HttpStatus.BAD_REQUEST);
+        } else if (id == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, NULL_ID), HttpStatus.BAD_REQUEST);
+        } else if (userDTO == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
+        }
+        User changedUser = new User();
+        Set<Phone> phones = new HashSet<>();
+        Phone phone = new Phone();
+        phone.setPhoneNumber(userDTO.getPhoneNumber());
+        phones.add(phone);
+        Role role = new Role();
+        role.setObjectId(userDTO.getRoleId());
+        changedUser.setEnabled(userDTO.getEnabled());
+        changedUser.setFirstName(userDTO.getFirstName());
+        changedUser.setLastName(userDTO.getLastName());
+        changedUser.setEmail(userDTO.getEmail());
+        changedUser.setAdditionalInfo(userDTO.getAdditionalInfo());
+        changedUser.setPassword(userDTO.getPassword());
+        changedUser.setRole(role);
+        changedUser.setPhones(phones);
 		IUDAnswer result = userService.updateUser(id, changedUser);
 		HttpStatus status;
-		if (result.isSuccessful()) {
-			request.getSession().removeAttribute("USER");
-			request.getSession().setAttribute("USER", userService.getSingleUserById(id));
-			status = HttpStatus.OK;
-		} else status = HttpStatus.BAD_REQUEST;
+		if (result.isSuccessful()) status = HttpStatus.OK;
+        else status = HttpStatus.BAD_REQUEST;
 		ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
 		return responseEntity;
 	}
@@ -142,7 +169,7 @@ public class UserController {
 		User sessionUser = (User) request.getSession().getAttribute("USER");
 		if (sessionUser == null) {
 			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-		} else if (id == null || !id.equals(sessionUser.getObjectId())) {
+		} else if (id == null) {
 			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ID), HttpStatus.BAD_REQUEST);
 		} else if (userPasswordDTO == null) {
 
@@ -175,7 +202,9 @@ public class UserController {
 		User sessionUser = (User) request.getSession().getAttribute("USER");
 		if (sessionUser == null) {
 			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-		} else if (id == null || id.intValue() != sessionUser.getObjectId()) {
+		} else if (sessionUser.getRole().getObjectId() != 1) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_ADMIN), HttpStatus.BAD_REQUEST);
+        } else if (id == null || id.intValue() != sessionUser.getObjectId()) {
 			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, MessageBook.NULL_ID), HttpStatus.BAD_REQUEST);
 		}
 		User user = userService.getSingleUserById(id);
@@ -199,8 +228,8 @@ public class UserController {
 	public ResponseEntity<IUDAnswer> deleteUser(@PathVariable("id") Integer id, HttpServletRequest request) {
 		User user = (User) request.getSession().getAttribute("USER");
 		if (user == null) {
-			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-		} else if (id == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        } else if (id == null) {
 			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ID), HttpStatus.BAD_REQUEST);
 		} else if (user.getRole().getObjectId() != 1) {
 			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_ADMIN), HttpStatus.BAD_REQUEST);

@@ -80,7 +80,7 @@ public class JournalRecordController {
         User sessionUser = (User) request.getSession().getAttribute("USER");
         if (sessionUser == null) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-        } else if (sessionUser.getObjectId() == 3) {
+        } else if (sessionUser.getRole().getObjectId() == 3) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_RECEPTION_OR_ADMIN), HttpStatus.BAD_REQUEST);
         } else if (journalRecordDTO == null) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);

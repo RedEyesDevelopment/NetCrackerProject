@@ -11,4 +11,5 @@ public class UserDTO {
     private String additionalInfo;
     private String phoneNumber;
     private Integer roleId;
+    private Boolean enabled;
 }
