@@ -63,6 +63,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		$scope.user.email = "";
         $scope.user.additionalInfo = "";
         $scope.user.enabled = "";
+        $scope.user.phone = "";
 		resetFlags();
 		$scope.stage = "adding";
 		$scope.modificationMode = true;
@@ -127,13 +128,13 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
                 url: sharedData.getLinks().https + '/users',
                 method: 'POST',
                 data: {
-                    lastName: $scope.user.lastName,
-                    firstName: $scope.user.firstName,
-                    password: $scope.user.password,
-                    role: parseInt($scope.user.role),
                     email: $scope.user.email,
+                    password: $scope.user.password,
+                    firstName: $scope.user.firstName,
+                    lastName: $scope.user.lastName,
                     additionalInfo: $scope.user.additionalInfo,
-                    enabled: $scope.user.enabled
+                    phoneNumber : $scope.user.phone,
+                    roleId: $scope.user.role.objectId
                 },
                 headers: {'Content-Type': 'application/json'}
             }).then(function (data) {

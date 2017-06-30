@@ -18,14 +18,17 @@
                 <li><input type="number" min="1" max="999" ng-model="pager.objectsOnPage"></li>
                 <li><a ng-click="nextUsers()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
-            <div ng-repeat="user in listOfUsers | orderBy : 'role' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-4">
+            <div ng-repeat="user in listOfUsers | orderBy : 'role' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-4 admin-notes">
                 <div class="block-border">
-                    <p class="admin-notes"> Last Name: {{ user.lastName }} </p>
-                    <p class="admin-notes top-bottom-border"> First Name: {{ user.firstName }} </p>
-                    <p class="admin-notes"> Role: {{ user.role.roleName }} </p>
-                    <p class="admin-notes top-bottom-border"> Email: {{ user.email }} </p>
-                    <p class="admin-notes"> Additional info: {{ user.additionalInfo }} </p>
-                    <p class="admin-notes top-border"> Enabled: {{ user.enabled }} </p>
+                    <p> Last Name: {{ user.lastName }} </p>
+                    <p class="top-bottom-border"> First Name: {{ user.firstName }} </p>
+                    <p> Role: {{ user.role.roleName }} </p>
+                    <p class="top-bottom-border"> Email: {{ user.email }} </p>
+                    <p> Additional info: {{ user.additionalInfo }} </p>
+                    <p class="top-border"> Enabled: {{ user.enabled }} </p>
+                    <div ng-repeat="phone in user.phones" class="top-border">
+                        <p> Phone: {{ phone.phoneNumber }} </p>
+                    </div>
                     <div class="text-right">
                         <button type="button" class="btn btn-primary btn-md"
                                 ng-click="prepareToEditUser(user.objectId, listOfUsers.indexOf(user))">
@@ -106,6 +109,13 @@
                         <div class="col-sm-6">
                             <input type="password" id="confirm" ng-required="true" ng-model="user.confirm"
                                    ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone" class="col-sm-6 control-label">Phones </label>
+                        <div class="col-sm-6">
+                            <input type="number" id="phone" ng-required="true" ng-model="user.phone"
+                                   ng-pattern="/^\+\d{1,2}\(\d{3}\)\d{2}\-\d{2}\-\d{3}$|^\+\d{12}$|^\d{7}$|^[0]\d{9}$/">
                         </div>
                     </div>
                     <div class="form-group">
