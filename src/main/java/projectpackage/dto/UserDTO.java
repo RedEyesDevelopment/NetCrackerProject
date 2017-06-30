@@ -9,4 +9,6 @@ public class UserDTO {
     private String firstName;
     private String lastName;
     private String additionalInfo;
+    private String phoneNumber;
+    private Integer roleId;
 }

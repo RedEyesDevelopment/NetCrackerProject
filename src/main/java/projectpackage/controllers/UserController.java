@@ -8,7 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.dto.UserBasicDTO;
+import projectpackage.dto.UserDTO;
 import projectpackage.dto.UserPasswordDTO;
+import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.service.MessageBook;
@@ -19,7 +21,9 @@ import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -54,8 +58,8 @@ public class UserController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<Resource<User>> getUser(@PathVariable("id") Integer id, HttpServletRequest request) {
 		User thisUser = (User) request.getSession().getAttribute("USER");
-//        User user = userService.getSingleUserById(id);
-		Resource<User> resource = new Resource<>(thisUser);
+        User user = userService.getSingleUserById(id);
+		Resource<User> resource = new Resource<>(user);
 		HttpStatus status;
 		if (null != thisUser) {
 			status = HttpStatus.OK;
@@ -69,7 +73,22 @@ public class UserController {
 	//Create user, fetch into database
 	@CacheRemoveAll(cacheName = "userList")
 	@RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-	public ResponseEntity<IUDAnswer> createUser(@RequestBody User newUser) {
+	public ResponseEntity<IUDAnswer> createUser(@RequestBody UserDTO userDTO, HttpServletRequest request) {
+	    User sessionUser = (User) request.getSession().getAttribute("USER");
+        if (sessionUser == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        } else if (userDTO == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
+        } else if (sessionUser.getRole().getObjectId() != 1) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_ADMIN), HttpStatus.BAD_REQUEST);
+        }
+        User newUser = new User();
+        Set<Phone> phones = new HashSet<>();
+        Phone phone = new Phone();
+        phone.setPhoneNumber(userDTO.getPhoneNumber());
+        phones.add(phone);
+        newUser.setPhones(phones);
+
 		IUDAnswer result = userService.insertUser(newUser);
 		HttpStatus status;
 		if (result.isSuccessful()) {
@@ -81,29 +100,30 @@ public class UserController {
 
 	@RequestMapping(value = "/registration", method = RequestMethod.POST, produces = {MediaType
 			.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-	public ResponseEntity<IUDAnswer> registrationUser(@RequestBody User newUser) {
-	    if (newUser == null) return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
-		Role role = new Role();
-		role.setObjectId(3);
-		role.setRoleName("CLIENT");
-		newUser.setRole(role);
-		newUser.setEnabled(Boolean.TRUE);
-		IUDAnswer result = userService.insertUser(newUser);
-		HttpStatus status;
-		if (result.isSuccessful()) {
-			status = HttpStatus.OK;
-		} else status = HttpStatus.BAD_REQUEST;
-		ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
-		return responseEntity;
+	public ResponseEntity<IUDAnswer> registrationUser(@RequestBody User newUser,HttpServletRequest request) {
+        if (newUser == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
+        }
+        Role role = new Role();
+        role.setObjectId(3);
+        role.setRoleName("CLIENT");
+        newUser.setRole(role);
+        newUser.setEnabled(Boolean.TRUE);
+        IUDAnswer result = userService.insertUser(newUser);
+        HttpStatus status;
+        if (result.isSuccessful()) {
+            status = HttpStatus.OK;
+        } else status = HttpStatus.BAD_REQUEST;
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
+        return responseEntity;
+
 	}
 
 	//Update user method
 	@CacheRemoveAll(cacheName = "userList")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<IUDAnswer> updateUser(@PathVariable("id") Integer id, @RequestBody User changedUser, HttpServletRequest request) {
-		if (!id.equals(changedUser.getObjectId())) {
-			return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID), HttpStatus.NOT_ACCEPTABLE);
-		}
+
 		IUDAnswer result = userService.updateUser(id, changedUser);
 		HttpStatus status;
 		if (result.isSuccessful()) {
@@ -124,8 +144,9 @@ public class UserController {
 			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
 		} else if (id == null || !id.equals(sessionUser.getObjectId())) {
 			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ID), HttpStatus.BAD_REQUEST);
-		} else if (userPasswordDTO == null
-				|| userPasswordDTO.getNewPassword() == null
+		} else if (userPasswordDTO == null) {
+
+        } else if (userPasswordDTO.getNewPassword() == null
 				|| userPasswordDTO.getOldPassword() == null || userPasswordDTO.getNewPassword().isEmpty()
 				|| userPasswordDTO.getOldPassword().isEmpty()) {
 			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_FIELD), HttpStatus.BAD_REQUEST);

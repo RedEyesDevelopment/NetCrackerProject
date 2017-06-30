@@ -161,7 +161,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 	var editUser = function() {
 		resetFlags();
-        console.log($scope.user.confirm)
+        console.log($scope.user.confirm);
         if ($scope.user.confirm == $scope.user.password) {
             $http({
                 url: sharedData.getLinks().https + '/users/' + $scope.user.idForOperation,
