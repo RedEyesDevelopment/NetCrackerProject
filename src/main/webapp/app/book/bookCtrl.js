@@ -72,11 +72,25 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
         $scope.stage = "booking";
     }
 
-    $scope.issueOder = function (roomTypeId) {
+    $scope.issueOrder = function (roomTypeId) {
+        var userId;
+        /* Проверяем на кого оформлять заказ,
+            пробуем на того, чей id лежит в общих данных,
+            но если там пусто, то на текущнго юзера */
+        if (sharedData.getUserIdForOrderFromAdmin() == undefined) {
+            userId = sharedData.getMyObjectId();
+        } else {
+            userId = sharedData.getUserIdForOrderFromAdmin();
+        }
+
         if ($scope.checkIsAuthorized()) {         
             $http({
-                url: 'http://localhost:8080/orders/book/' + roomTypeId,
-                method: 'GET',
+                url: 'http://localhost:8080/orders/book/',
+                method: 'POST',
+                data: {
+                    userId: userId,
+                    roomTypeId: roomTypeId
+                },
                 headers: {
                     'Content-Type' : 'application/json'
                 }

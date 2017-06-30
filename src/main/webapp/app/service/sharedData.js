@@ -2,6 +2,7 @@ app.factory('sharedData', function(ROLE) {
 
     var auth;
     var searchRoomTypes;
+    var userIdForOrderFromAdmin
 
     function setAuth(headerAuth) { auth = headerAuth; }
 
@@ -14,6 +15,8 @@ app.factory('sharedData', function(ROLE) {
 
     function getMyself() { return auth.myself; }
 
+    function getMyObjectId() { return auth.myself.objectId; }
+
 
     function getIsAdmin() { return auth.isAdmin; }
 
@@ -22,12 +25,12 @@ app.factory('sharedData', function(ROLE) {
     function getIsClient() { return auth.isClient; }
 
 
-    function setSearchRoomTypes(func) {
-        searchRoomTypes = func;
-    }
-    function searchRoomTypes() {
-        searchRoomTypes();
-    }
+    function setSearchRoomTypes(func) { searchRoomTypes = func; }
+    function searchRoomTypes() { searchRoomTypes(); }
+
+
+    function setUserIdForOrderFromAdmin(userId) { userIdForOrderFromAdmin = userId; }
+    function getUserIdForOrderFromAdmin() { return userIdForOrderFromAdmin; }
     
 
 
@@ -45,6 +48,10 @@ app.factory('sharedData', function(ROLE) {
         getIsClient: getIsClient,
 
         setSearchRoomTypes: setSearchRoomTypes,
-        searchRoomTypes: searchRoomTypes
+        searchRoomTypes: searchRoomTypes,
+        getMyObjectId: getMyObjectId,
+
+        setUserIdForOrderFromAdmin: setUserIdForOrderFromAdmin,
+        getUserIdForOrderFromAdmin: getUserIdForOrderFromAdmin
     }
 });
