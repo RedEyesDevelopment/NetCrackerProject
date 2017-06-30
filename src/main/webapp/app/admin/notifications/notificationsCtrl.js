@@ -104,7 +104,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 			console.log(data);
 			$scope.indexForOperation = index;
 			$scope.notification.idForOperation = notificationId;
-			$scope.notification.author = data.data.author;
+			$scope.notification.author = data.data.author.objectId;
             $scope.notification.type = data.data.notificationType.objectId;
             $scope.notification.sendDate = data.data.sendDate;
             $scope.notification.message = data.data.message;
@@ -182,26 +182,26 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 
 	var editNotification = function() {
 		resetFlags();
-        console.log($scope.notification.author.objectId);
-        console.log($scope.notification.type.objectId);
+        console.log($scope.notification.author);
+        console.log($scope.notification.type);
         console.log($scope.notification.message);
-        console.log($scope.notification.order.objectId);
+        console.log($scope.notification.order);
 		$http({
-			url: sharedData.getLinks().https + '/rooms/' + $scope.room.idForOperation,
+			url: sharedData.getLinks().https + '/notifications/' + $scope.notification.idForOperation,
 			method: 'PUT',
 			data: {
-				author : 		    $scope.notification.author,
-                notificationType :  parseInt($scope.notification.type),
-                sendDate :          $scope.notification.sendDate,
+                authorId : 		    $scope.notification.author,
+                notificationTypeId :  $scope.notification.type,
                 message :           $scope.notification.message,
-                order : 			parseInt($scope.notification.order)
+                orderId : 			$scope.notification.order
 			},
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfRooms[$scope.indexForOperation].roomNumber = $scope.room.number;
-			$scope.listOfRooms[$scope.indexForOperation].numberOfResidents = $scope.room.numberOfResidents;
-			$scope.listOfRooms[$scope.indexForOperation].roomType = util.getObjectInArrayById($scope.listOfRoomTypes, $scope.room.type);
+			$scope.listOfNotifications[$scope.indexForOperation].author = util.getObjectInArrayById($scope.listOfUsers, $scope.notification.author);
+			$scope.listOfNotifications[$scope.indexForOperation].type = util.getObjectInArrayById($scope.listOfNotificationTypes, $scope.notification.type);
+			$scope.listOfNotifications[$scope.indexForOperation].message = $scope.notification.message;
+			$scope.listOfNotifications[$scope.indexForOperation].order = util.getObjectInArrayById($scope.listOfOrders, $scope.notification.order);
 			$scope.updated = true;
 		}, function(response) {
 			console.log("Smth wrong!!");
@@ -213,12 +213,12 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	var deleteNotification = function() {
 		resetFlags();
 		$http({
-			url: sharedData.getLinks().https + '/rooms/' + $scope.room.idForOperation,
+			url: sharedData.getLinks().https + '/notifications/' + $scope.notification.idForOperation,
 			method: 'DELETE',
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfRooms.splice($scope.indexForOperation, 1);
+			$scope.listOfNotifications.splice($scope.indexForOperation, 1);
 			$scope.deleted = true;
 		}, function(response) {
 			console.log("Smth wrong!!");

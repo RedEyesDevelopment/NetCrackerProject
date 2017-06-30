@@ -149,13 +149,11 @@ public class NotificationServiceImpl implements NotificationService{
         Integer notifId = null;
         try {
             notifId = notificationDAO.insertNotification(notification);
-            LOGGER.info("Get from DB notificationId = " + notifId);
         } catch (IllegalArgumentException e) {
             LOGGER.warn(WRONG_FIELD, e);
             return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
         notificationDAO.commit();
-        LOGGER.info("*******************************************************FROM Service**********************" + notifId);
         return new IUDAnswer(notifId,true);
     }
 

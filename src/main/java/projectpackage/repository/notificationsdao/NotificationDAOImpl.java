@@ -94,7 +94,6 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     public Integer insertNotification(Notification notification) {
         if (notification == null) return null;
         Integer objectId = nextObjectId();
-        LOGGER.info("*******************************************************FROM DAO**********************" + objectId);
         jdbcTemplate.update(INSERT_OBJECT, objectId, null, 4, null, null);
         insertSendDate(objectId, notification);
         insertMessage(objectId, notification);
@@ -102,7 +101,6 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         insertNotificationType(objectId, notification);
         insertOrder(objectId, notification);
         insertExecutedByAndDate(objectId, notification);
-        LOGGER.info("*******************************************************FROM DAO**********************" + objectId);
         return objectId;
     }
 
