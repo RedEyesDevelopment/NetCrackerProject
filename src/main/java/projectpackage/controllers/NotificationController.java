@@ -12,7 +12,6 @@ import projectpackage.model.auth.User;
 import projectpackage.model.notifications.Notification;
 import projectpackage.model.notifications.NotificationType;
 import projectpackage.model.orders.Order;
-import projectpackage.service.MessageBook;
 import projectpackage.service.notificationservice.NotificationService;
 
 import javax.cache.annotation.CacheRemoveAll;
@@ -23,8 +22,7 @@ import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-import static projectpackage.service.MessageBook.NEED_TO_AUTH;
-import static projectpackage.service.MessageBook.NULL_ENTITY;
+import static projectpackage.service.MessageBook.*;
 
 /**
  * Created by Lenovo on 28.05.2017.
@@ -56,13 +54,13 @@ public class NotificationController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Resource<Notification>> getNotification(@PathVariable("id") Integer id, HttpServletRequest request) {
         User thisUser = (User) request.getSession().getAttribute("USER");
+        if (thisUser.getRole().getObjectId() == 3) {
+            return new ResponseEntity<Resource<Notification>>(new Resource<Notification>(new Notification()), HttpStatus.BAD_REQUEST);
+        }
         Notification notification = notificationService.getSingleNotificationById(id);
         Resource<Notification> resource = new Resource<>(notification);
         HttpStatus status;
         if (null!= notification){
-            if (thisUser.getRole().getRoleName().equals("ADMIN"))
-                resource.add(linkTo(methodOn(NotificationController.class).deleteNotification(notification.getObjectId())).withRel("delete"));
-            resource.add(linkTo(methodOn(NotificationController.class).updateNotification(notification.getObjectId(), notification)).withRel("update"));
             status = HttpStatus.ACCEPTED;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -71,13 +69,14 @@ public class NotificationController {
         return response;
     }
 
-    //Create notification, fetch into database
     @CacheRemoveAll(cacheName = "notificationList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> createNotification(@RequestBody NotificationDTO notificationDTO, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("USER");
         if (user == null) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        } else if (user.getRole().getObjectId() == 3) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_RECEPTION_OR_ADMIN), HttpStatus.BAD_REQUEST);
         } else if (notificationDTO == null) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
         }
@@ -102,13 +101,24 @@ public class NotificationController {
         return responseEntity;
     }
 
-    //Update notification method
     @CacheRemoveAll(cacheName = "notificationList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> updateNotification(@PathVariable("id") Integer id, @RequestBody Notification changedNotification) {
-        if (!id.equals(changedNotification.getObjectId())) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<IUDAnswer> updateNotification(@PathVariable("id") Integer id, @RequestBody NotificationDTO notificationDTO, HttpServletRequest request) {
+        User sessionUser = (User) request.getSession().getAttribute("USER");
+        if (sessionUser == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        } else if (sessionUser.getRole().getObjectId() == 3) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_RECEPTION_OR_ADMIN), HttpStatus.BAD_REQUEST);
+        } else if (id == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, NULL_ID), HttpStatus.BAD_REQUEST);
+        } else if (notificationDTO == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
         }
+        Notification changedNotification = notificationService.getSingleNotificationById(id);
+        changedNotification.getAuthor().setObjectId(notificationDTO.getAuthorId());
+        changedNotification.setMessage(notificationDTO.getMessage());
+        changedNotification.getNotificationType().setObjectId(notificationDTO.getNotificationTypeId());
+        changedNotification.getOrder().setObjectId(notificationDTO.getOrderId());
         IUDAnswer result = notificationService.updateNotification(id, changedNotification);
         HttpStatus status;
         if (result.isSuccessful()) {
@@ -118,11 +128,17 @@ public class NotificationController {
         return responseEntity;
     }
 
-    //Delete notification method
-    //	@Secured("ROLE_ADMIN")
     @CacheRemoveAll(cacheName = "notificationList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> deleteNotification(@PathVariable("id") Integer id) {
+    public ResponseEntity<IUDAnswer> deleteNotification(@PathVariable("id") Integer id, HttpServletRequest request) {
+        User sessionUser = (User) request.getSession().getAttribute("USER");
+        if (sessionUser == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        } else if (sessionUser.getRole().getObjectId() == 3) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_RECEPTION_OR_ADMIN), HttpStatus.BAD_REQUEST);
+        } else if (id == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, DISCREPANCY_PARENT_ID), HttpStatus.BAD_REQUEST);
+        }
         IUDAnswer result = notificationService.deleteNotification(id);
         HttpStatus status;
         if (result.isSuccessful()) {

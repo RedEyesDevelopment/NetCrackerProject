@@ -30,5 +30,6 @@ public interface MessageBook {
     String NEED_TO_AUTH = "For this operation user must be authorized!";
     String WRONG_PASSWORD = "Wrong password!";
     String FAIL_CRYPT_PASSWORD = "Fail crypt password!";
+    String NOT_RECEPTION_OR_ADMIN = "This operation available for reception or admin!";
 }
 
