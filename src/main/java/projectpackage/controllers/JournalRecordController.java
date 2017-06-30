@@ -13,6 +13,7 @@ import projectpackage.dto.IUDAnswer;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.service.MessageBook;
 import projectpackage.service.maintenanceservice.JournalRecordService;
+import projectpackage.service.maintenanceservice.MaintenanceService;
 
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
@@ -35,6 +36,9 @@ import static projectpackage.service.MessageBook.NULL_ENTITY;
 public class JournalRecordController {
     @Autowired
     JournalRecordService journalRecordService;
+
+    @Autowired
+    MaintenanceService maintenanceService;
 
     @ResponseStatus(HttpStatus.OK)
     @CacheResult(cacheName = "journalRecordList")
@@ -89,8 +93,7 @@ public class JournalRecordController {
         newJournalRecord.setOrderId(journalRecordDTO.getOrderId());
         newJournalRecord.setUsedDate(new Date());
         newJournalRecord.setCount(journalRecordDTO.getCount());
-        Maintenance maintenance = new Maintenance();
-        maintenance.setObjectId(journalRecordDTO.getMaintenanceId());
+        Maintenance maintenance = maintenanceService.getSingleMaintenanceById(journalRecordDTO.getMaintenanceId());
         newJournalRecord.setMaintenance(maintenance);
         IUDAnswer result = journalRecordService.insertJournalRecord(newJournalRecord);
 
