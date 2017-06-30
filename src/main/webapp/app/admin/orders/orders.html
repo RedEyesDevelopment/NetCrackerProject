@@ -12,15 +12,15 @@
         <ng-include src="'app/admin/template/serverError.html'"></ng-include>
 
 
-        <!-- List of objects in workspace -->
-        <div class="listOfObjects" ng-if="!modificationMode">
+        <!-- Looking -->
+        <div class="listOfObjects" ng-if="stage == 'looking'">
             <ul class="pager">
                 <li><a ng-click="previousOrders()"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li>
                 <li><input type="number" min="1" max="999" ng-model="pager.objectsOnPage"></li>
                 <li><a ng-click="nextOrders()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
-            <div ng-repeat="order in listOfOrders | orderBy : 'objectId' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-12">
-                <div class="block-border admin-notes">
+            <div ng-repeat="order in listOfOrders | orderBy : 'objectId' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-12 block-border">
+                <div class="admin-notes">
                     <div class="col-sm-12 order-bottom-border order-padding-bottom">
                         <div class="col-sm-4">
                             Order id: {{ order.objectId }}    
@@ -121,9 +121,9 @@
                     </div>                    
                     
                     <div class="col-sm-12 order-padding-top-bottom order-top-border order-bottom-border"> Comment: {{ order.comment }} </div>                    
-                    <div class="col-sm-12 order-padding-top-bottom"> Last modificator: {{ order.lastModificator.firstName }} {{ order.lastModificator.lastName }} </div>
+                    <div class="col-sm-8 order-padding-top-bottom"> Last modificator: {{ order.lastModificator.firstName }} {{ order.lastModificator.lastName }} </div>
 
-                    <div class="text-right">
+                    <div class="col-sm-4 text-right order-padding-top-bottom">
                         <button type="button" class="btn btn-primary btn-md"
                                 ng-click="prepareToEditOrder(order.objectId, listOfOrders.indexOf(order))">
                             Edit
@@ -139,7 +139,7 @@
         </div>
 
 
-        <!-- Form for add or edit -->
+        <!-- New order -->
         <div class="editWindow" ng-if="modificationMode">
             <div>
                 <button ng-click="back()" class="btn btn-info btn-sm back">
@@ -147,19 +147,16 @@
                 </button>
 
                 <div class="answer">
-                    <!-- Successfully added -->
                     <div ng-if="added">
                         Successfully added! <i class="fa fa-check" aria-hidden="true"></i>
                     </div>
-
-                    <!-- Successfully updated -->
                     <div ng-if="updated">
                         Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
                     </div>
                 </div>
 
             </div>
-            <div class="col-sm-offset-3 col-sm-5 createUpdateForm">
+            <div class="col-sm-offset-1 col-sm-10 createUpdateForm">
                 <form class="form-horizontal" name="createUpdateForm">
                     <!--<div class="form-group">-->
                         <!--<label for="lastName" class="col-sm-6 control-label">Last Name</label>-->
@@ -167,6 +164,18 @@
                             <!--<input type="text" id="lastName" ng-required="true" ng-model="order.lastName">-->
                         <!--</div>-->
                     <!--</div>-->
+                    <div class="form-group">
+                        <label for="livingStartDate" class="col-sm-6 control-label">Living start</label>
+                        <div class="col-sm-6">
+                            <input type="text" id="livingStartDate" ng-required="true" ng-model="order.livingStartDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="livingFinishDate" class="col-sm-6 control-label">Living finish</label>
+                        <div class="col-sm-6">
+                            <input type="text" id="livingFinishDate" ng-required="true" ng-model="order.livingFinishDate">
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label for="category" class="col-sm-6 control-label">Category</label>
                         <div class="col-sm-6">
@@ -203,18 +212,6 @@
                             <select id="isConfirmed" class="form-control" ng-required="true" ng-model="order.isConfirmed"
                                     ng-options="iscfm for iscfm in confirmed">
                             </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="livingStartDate" class="col-sm-6 control-label">Living start</label>
-                        <div class="col-sm-6">
-                            <input type="text" id="livingStartDate" ng-required="true" ng-model="order.livingStartDate">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="livingFinishDate" class="col-sm-6 control-label">Living finish</label>
-                        <div class="col-sm-6">
-                            <input type="text" id="livingFinishDate" ng-required="true" ng-model="order.livingFinishDate">
                         </div>
                     </div>
                     <div class="form-group">
