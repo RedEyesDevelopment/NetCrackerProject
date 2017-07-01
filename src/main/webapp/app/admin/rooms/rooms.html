@@ -65,7 +65,7 @@
                     <div class="form-group">
                         <label for="roomNmbr" class="col-sm-6 control-label">Room number</label>
                         <div class="col-sm-6">
-                            <input type="number" max="9999" min="1" ng-pattern="/^-?[0-9][^\.]*$/" id="roomNmbr"
+                            <input type="number" class="form-control" max="9999" min="1" ng-pattern="/^[0-9][^\.]*$/" id="roomNmbr"
                                    ng-required="true" ng-model="room.number">
                         </div>
                     </div>

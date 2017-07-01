@@ -87,6 +87,18 @@
     text-decoration: underline;
     cursor: pointer;
 }
+
+.workspace table tbody tr th {
+    font-weight: normal;
+}
+
+.workspace .deleteMaintenance {
+    font-size: 14px;
+}
+
+.workspace .toggle {
+    border-radius: 20%;
+}
 /* ---------------------------------- */
 
 /* ----- Form for add or update ----- */
@@ -121,10 +133,6 @@
 
 .editWindow .createUpdateForm #roomNmbr {
     width: 70px;
-}
-
-table tbody tr th {
-    font-weight: normal;
 }
 /* ---------------------------------- */
 

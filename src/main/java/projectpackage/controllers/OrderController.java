@@ -112,7 +112,8 @@ public class OrderController {
         return new ResponseEntity<List<Order>>(orders, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "updateinfo/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
+    @RequestMapping(value = "updateinfo/{id}", method = RequestMethod.PUT, produces = {MediaType
+            .APPLICATION_JSON_UTF8_VALUE},
             consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<FreeRoomsUpdateOrderDTO> getInfoForUpdateOrder(@PathVariable("id") Integer id, @RequestBody ChangeOrderDTO changeOrderDTO, HttpServletRequest request) {
         User thisUser = (User) request.getSession().getAttribute("USER");
