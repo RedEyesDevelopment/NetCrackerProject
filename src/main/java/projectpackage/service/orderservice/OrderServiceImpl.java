@@ -331,7 +331,7 @@ public class OrderServiceImpl implements OrderService{
     public IUDAnswer updateOrder(Integer id, Order newOrder) {
         if (newOrder == null) return null;
         if (id == null) return new IUDAnswer(false, NULL_ID);
-        boolean isValidDates = serviceUtils.checkDates(newOrder.getLivingStartDate(), newOrder.getLivingFinishDate());
+        boolean isValidDates = serviceUtils.checkDatesForUpdate(newOrder.getLivingStartDate(), newOrder.getLivingFinishDate());
         if (!isValidDates) return new IUDAnswer(false, WRONG_DATES);
         try {
             newOrder.setObjectId(id);

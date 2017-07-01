@@ -111,6 +111,19 @@ public class OrderController {
         return new ResponseEntity<List<Order>>(orders, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "updateinfo/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
+            consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<FreeRoomsUpdateOrderDTO> updateOrder(@PathVariable("id") Integer id, @RequestBody ChangeOrderDTO changeOrderDTO, HttpServletRequest request) {
+        User thisUser = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(thisUser, changeOrderDTO, id);
+        FreeRoomsUpdateOrderDTO dto = null;
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<FreeRoomsUpdateOrderDTO>(dto, HttpStatus.BAD_REQUEST);
+        }
+        dto = orderService.getFreeRoomsToUpdateOrder(id, changeOrderDTO);
+        return new ResponseEntity<FreeRoomsUpdateOrderDTO>(dto, HttpStatus.OK);
+    }
+
     //Create order, fetch into database
     @CacheRemoveAll(cacheName = "orderList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
@@ -187,19 +200,6 @@ public class OrderController {
         } else {
             return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
         }
-    }
-
-    @RequestMapping(value = "updateinfo/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
-            consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<FreeRoomsUpdateOrderDTO> updateOrder(@PathVariable("id") Integer id, @RequestBody ChangeOrderDTO changeOrderDTO, HttpServletRequest request) {
-        User thisUser = (User) request.getSession().getAttribute("USER");
-        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(thisUser, changeOrderDTO, id);
-        FreeRoomsUpdateOrderDTO dto = null;
-        if (!iudAnswer.isSuccessful()) {
-            return new ResponseEntity<FreeRoomsUpdateOrderDTO>(dto, HttpStatus.BAD_REQUEST);
-        }
-        dto = orderService.getFreeRoomsToUpdateOrder(id, changeOrderDTO);
-        return new ResponseEntity<FreeRoomsUpdateOrderDTO>(dto, HttpStatus.OK);
     }
 
     //Delete order method

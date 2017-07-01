@@ -43,6 +43,32 @@ public class ServiceUtilsImpl implements ServiceUtils{
     }
 
     @Override
+    public boolean checkDatesForUpdate(Date startDate, Date finishDate) {
+        if (startDate == null || finishDate == null) return false;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+        Date today = null;
+        try {
+            today = sdf.parse(sdf.format(new Date().getTime()));
+        } catch (ParseException e) {
+            LOGGER.error("Exception with parsing date to SimpleDateFormat!", e);
+        }
+
+        long maxValidTime = 31536000000L;
+        long validStartDate = startDate.getTime() - today.getTime();
+        long validFinishDate = finishDate.getTime() - today.getTime();
+        long secondValidStartDate = today.getTime() - maxValidTime;
+
+        if (validStartDate > maxValidTime) return false;
+        if (validFinishDate > maxValidTime) return false;
+        if (startDate.getTime() < secondValidStartDate) return false;
+        if (finishDate.before(today)) return false;
+        if (startDate.after(finishDate)) return false;
+
+        return true;
+    }
+
+    @Override
     public IUDAnswer checkSessionAndData(User user, Object data) {
         if (user == null) {
             return new IUDAnswer(false, NEED_TO_AUTH);

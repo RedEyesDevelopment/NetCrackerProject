@@ -11,6 +11,7 @@ import java.util.Date;
  */
 public interface ServiceUtils extends MessageBook{
     boolean checkDates(Date startDate, Date finishDate);
+    boolean checkDatesForUpdate(Date startDate, Date finishDate);
     IUDAnswer checkSessionAndData(User user, Object data, Integer id);
     IUDAnswer checkSessionAndData(User user, Object data);
     IUDAnswer checkSessionAdminAndData(User user, Object data);
