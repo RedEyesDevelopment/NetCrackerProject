@@ -17,4 +17,5 @@ public class OrderDTO {
     private int livingPersons;
     private int categoryId;
     private Integer clientId;
+    private Integer roomId;
 }

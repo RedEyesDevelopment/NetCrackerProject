@@ -225,7 +225,12 @@ public class OrderController {
     //Delete order method
     @CacheRemoveAll(cacheName = "orderList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> deleteOrder(@PathVariable("id") Integer id){
+    public ResponseEntity<IUDAnswer> deleteOrder(@PathVariable("id") Integer id, HttpServletRequest request){
+        User thisUser = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkDeleteForAdmin(thisUser, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
         IUDAnswer result = orderService.deleteOrder(id);
         HttpStatus status;
         if (result.isSuccessful()) {

@@ -1,6 +1,7 @@
 package projectpackage.service.support;
 
 import projectpackage.dto.IUDAnswer;
+import projectpackage.dto.UserPasswordDTO;
 import projectpackage.model.auth.User;
 import projectpackage.service.MessageBook;
 
@@ -16,5 +17,7 @@ public interface ServiceUtils extends MessageBook{
     IUDAnswer checkSessionAndData(User user, Object data);
     IUDAnswer checkSessionAdminAndData(User user, Object data);
     IUDAnswer checkSessionAdminAndData(User user, Object data, Integer id);
-    IUDAnswer checkNoClientSessionData(User user, Object data);
+    IUDAnswer checkForChangePassword(User user, UserPasswordDTO data, Integer id);
+    IUDAnswer checkDeleteForAdmin(User user, Integer id);
+    IUDAnswer checkDelete(User user, Integer id);
 }

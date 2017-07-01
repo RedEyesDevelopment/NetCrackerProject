@@ -298,10 +298,9 @@ public class OrderServiceImpl implements OrderService{
 
         Order order = orderDAO.getOrder(orderId);
         order.getCategory().setObjectId(orderId);
-        order.setComment(order.getComment());
         order.getClient().setObjectId(orderDTO.getClientId());
         order.getRoom().setObjectId(changeOrderDTO.getRoomId());
-        order.setSum(orderDTO.getLivingCost());
+        order.setSum(orderDTO.getLivingCost() + orderDTO.getCategoryCost());
         order.getLastModificator().setObjectId(lastModificatorId);
         order.setLivingStartDate(orderDTO.getArrival());
         order.setLivingFinishDate(orderDTO.getDeparture());

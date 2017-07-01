@@ -3,10 +3,9 @@ package projectpackage.service.support;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.dto.UserPasswordDTO;
 import projectpackage.model.auth.User;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
@@ -16,25 +15,19 @@ import java.util.Date;
 @Service
 public class ServiceUtilsImpl implements ServiceUtils{
     private static final Logger LOGGER = Logger.getLogger(ServiceUtilsImpl.class);
+    private static final long MAX_VALID_TIME = 31536000000L;
 
     @Override
     public boolean checkDates(Date startDate, Date finishDate) {
         if (startDate == null || finishDate == null) return false;
 
-        SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
-        Date today = null;
-        try {
-            today = sdf.parse(sdf.format(new Date().getTime()));
-        } catch (ParseException e) {
-            LOGGER.error("Exception with parsing date to SimpleDateFormat!", e);
-        }
+        Date today = new Date();
 
-        long maxValidTime = 31536000000L;
         long validStartDate = startDate.getTime() - today.getTime();
         long validFinishDate = finishDate.getTime() - today.getTime();
 
-        if (validStartDate > maxValidTime) return false;
-        if (validFinishDate > maxValidTime) return false;
+        if (validStartDate > MAX_VALID_TIME) return false;
+        if (validFinishDate > MAX_VALID_TIME) return false;
         if (startDate.getTime() < today.getTime()) return false;
         if (finishDate.getTime() < today.getTime()) return false;
         if (startDate.getTime() > finishDate.getTime()) return false;
@@ -46,26 +39,37 @@ public class ServiceUtilsImpl implements ServiceUtils{
     public boolean checkDatesForUpdate(Date startDate, Date finishDate) {
         if (startDate == null || finishDate == null) return false;
 
-        SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
-        Date today = null;
-        try {
-            today = sdf.parse(sdf.format(new Date().getTime()));
-        } catch (ParseException e) {
-            LOGGER.error("Exception with parsing date to SimpleDateFormat!", e);
-        }
+        Date today = new Date();
 
-        long maxValidTime = 31536000000L;
         long validStartDate = startDate.getTime() - today.getTime();
         long validFinishDate = finishDate.getTime() - today.getTime();
-        long secondValidStartDate = today.getTime() - maxValidTime;
+        long secondValidStartDate = today.getTime() - MAX_VALID_TIME;
 
-        if (validStartDate > maxValidTime) return false;
-        if (validFinishDate > maxValidTime) return false;
+        if (validStartDate > MAX_VALID_TIME) return false;
+        if (validFinishDate > MAX_VALID_TIME) return false;
         if (startDate.getTime() < secondValidStartDate) return false;
         if (finishDate.before(today)) return false;
         if (startDate.after(finishDate)) return false;
 
         return true;
+    }
+
+    @Override
+    public IUDAnswer checkSessionAdminAndData(User user, Object data) {
+        IUDAnswer iudAnswer = checkSessionAndData(user, data);
+        return checkForAdmin(iudAnswer, user);
+    }
+
+    @Override
+    public IUDAnswer checkSessionAdminAndData(User user, Object data, Integer id) {
+        IUDAnswer iudAnswer = checkSessionAndData(user, data, id);
+        return checkForAdmin(iudAnswer, user);
+    }
+
+    @Override
+    public IUDAnswer checkDeleteForAdmin(User user, Integer id) {
+        IUDAnswer iudAnswer = checkDelete(user, id);
+        return checkForAdmin(iudAnswer, user);
     }
 
     @Override
@@ -92,20 +96,29 @@ public class ServiceUtilsImpl implements ServiceUtils{
     }
 
     @Override
-    public IUDAnswer checkSessionAdminAndData(User user, Object data) {
-        IUDAnswer iudAnswer = checkSessionAndData(user, data);
-        return checkForAdmin(iudAnswer, user);
+    public IUDAnswer checkDelete(User user, Integer id) {
+        if (user == null) {
+            return new IUDAnswer(false, NEED_TO_AUTH);
+        } else if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        } else {
+            return new IUDAnswer(true);
+        }
     }
 
     @Override
-    public IUDAnswer checkSessionAdminAndData(User user, Object data, Integer id) {
+    public IUDAnswer checkForChangePassword(User user, UserPasswordDTO data, Integer id) {
         IUDAnswer iudAnswer = checkSessionAndData(user, data, id);
-        return checkForAdmin(iudAnswer, user);
-    }
-
-    @Override
-    public IUDAnswer checkNoClientSessionData(User user, Object data) {
-        return null;
+        if (!iudAnswer.isSuccessful()) {
+            return iudAnswer;
+        } else if ((data.getNewPassword() == null) || (data.getOldPassword() == null) || data.getNewPassword().isEmpty()
+                || data.getOldPassword().isEmpty()) {
+            return new IUDAnswer(false, WRONG_FIELD);
+        } else if (data.getOldPassword().equals(data.getNewPassword())) {
+            return new IUDAnswer(false, SAME_PASSWORDS);
+        } else {
+            return new IUDAnswer(true);
+        }
     }
 
     private IUDAnswer checkForAdmin(IUDAnswer iudAnswer, User user) {
@@ -117,4 +130,5 @@ public class ServiceUtilsImpl implements ServiceUtils{
             return new IUDAnswer(true);
         }
     }
+
 }
