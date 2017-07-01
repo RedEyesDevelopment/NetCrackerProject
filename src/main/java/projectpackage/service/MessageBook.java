@@ -33,3 +33,4 @@ public interface MessageBook {
     String NOT_RECEPTION_OR_ADMIN = "This operation available for reception or admin!";
 }
 
+
