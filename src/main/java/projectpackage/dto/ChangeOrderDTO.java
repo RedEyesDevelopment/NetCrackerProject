@@ -14,4 +14,5 @@ public class ChangeOrderDTO {
     private Integer categoryId;
     private Date livingStartDate;
     private Date livingFinishDate;
+    private Integer roomId;
 }

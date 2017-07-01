@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static projectpackage.service.MessageBook.EMPTY_DTO_IN_SESSION;
 
 /**
  * Created by Lenovo on 28.05.2017.
@@ -113,7 +114,7 @@ public class OrderController {
 
     @RequestMapping(value = "updateinfo/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
             consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<FreeRoomsUpdateOrderDTO> updateOrder(@PathVariable("id") Integer id, @RequestBody ChangeOrderDTO changeOrderDTO, HttpServletRequest request) {
+    public ResponseEntity<FreeRoomsUpdateOrderDTO> getInfoForUpdateOrder(@PathVariable("id") Integer id, @RequestBody ChangeOrderDTO changeOrderDTO, HttpServletRequest request) {
         User thisUser = (User) request.getSession().getAttribute("USER");
         IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(thisUser, changeOrderDTO, id);
         FreeRoomsUpdateOrderDTO dto = null;
@@ -121,6 +122,7 @@ public class OrderController {
             return new ResponseEntity<FreeRoomsUpdateOrderDTO>(dto, HttpStatus.BAD_REQUEST);
         }
         dto = orderService.getFreeRoomsToUpdateOrder(id, changeOrderDTO);
+        request.getSession().setAttribute("CHANGE_DTO", changeOrderDTO);
         return new ResponseEntity<FreeRoomsUpdateOrderDTO>(dto, HttpStatus.OK);
     }
 
@@ -200,6 +202,24 @@ public class OrderController {
         } else {
             return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
         }
+    }
+
+    @RequestMapping(value = "update/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
+            consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<IUDAnswer> updateOrder(@PathVariable("id") Integer id,
+                                                               @RequestBody OrderDTO orderDTO,
+                                                               HttpServletRequest request) {
+        User thisUser = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(thisUser, orderDTO, id);
+        ChangeOrderDTO changeOrderDTO = (ChangeOrderDTO) request.getSession().getAttribute("CHANGE_DTO");
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        } else if (changeOrderDTO == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, EMPTY_DTO_IN_SESSION), HttpStatus.BAD_REQUEST);
+        }
+
+        IUDAnswer answer = orderService.setNewDataIntoOrder(id, thisUser.getObjectId(), changeOrderDTO, orderDTO);
+        return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
     }
 
     //Delete order method

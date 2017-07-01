@@ -33,6 +33,7 @@ public interface OrderService extends MessageBook{
     Order getOrderForAdmin(Integer id);
     Order createOrderTemplate(User client, OrderDTO dto);
     List<Order> getAllOrders();
+    IUDAnswer setNewDataIntoOrder(Integer orderId, Integer lastModificatorId, ChangeOrderDTO changeOrderDTO, OrderDTO orderDTO);
     FreeRoomsUpdateOrderDTO getFreeRoomsToUpdateOrder(Integer orderId, ChangeOrderDTO changeOrderDTO);
     Order getSingleOrderById(Integer id);
     IUDAnswer deleteOrder(Integer id);

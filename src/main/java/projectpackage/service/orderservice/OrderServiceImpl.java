@@ -283,6 +283,32 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
+    public IUDAnswer setNewDataIntoOrder(Integer orderId, Integer lastModificatorId, ChangeOrderDTO changeOrderDTO, OrderDTO orderDTO) {
+        FreeRoomsUpdateOrderDTO dto = getFreeRoomsToUpdateOrder(orderId, changeOrderDTO);
+        boolean isExistsInRooms = false;
+        for (Room room : dto.getRooms()) {
+            if (room.getObjectId() == changeOrderDTO.getRoomId()) {
+                isExistsInRooms = true;
+                break;
+            }
+        }
+        if (!isExistsInRooms) {
+            return new IUDAnswer(false, ROOM_NOT_AVAILABLE);
+        }
+
+        Order order = orderDAO.getOrder(orderId);
+        order.getCategory().setObjectId(orderId);
+        order.setComment(order.getComment());
+        order.getClient().setObjectId(orderDTO.getClientId());
+        order.getRoom().setObjectId(changeOrderDTO.getRoomId());
+        order.setSum(orderDTO.getLivingCost());
+        order.getLastModificator().setObjectId(lastModificatorId);
+        order.setLivingStartDate(orderDTO.getArrival());
+        order.setLivingFinishDate(orderDTO.getDeparture());
+        return updateOrder(orderId, order);
+    }
+
+    @Override
     public Order getSingleOrderById(Integer id) {
         Order order = orderDAO.getOrder(id);
         if (order == null) LOGGER.info("Returned NULL!!!");
