@@ -134,6 +134,17 @@
 .editWindow .createUpdateForm #roomNmbr {
     width: 70px;
 }
+
+.editWindow .createUpdateForm .title {
+    text-align: center;
+    padding: 10px;
+    font-size: 18px;
+}
+
+.editWindow .createUpdateForm .myLabel {
+    font-size: 18px;
+    padding: 5px;
+}
 /* ---------------------------------- */
 
 

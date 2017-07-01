@@ -111,6 +111,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	$scope.order = {};
 	$scope.confirmed = {};
 	$scope.newMaintenance = { count: 1};
+	$scope.anotherVariant = {};
 
 	$scope.stage = "looking";
 	$scope.mode = "look";
@@ -132,9 +133,11 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		switch ($scope.stage) {
 			case 'switch': switchPaidConfirmed();
 				break;
+			case 'deleteJournalRecord': deleteJournalRecord();
+				break;
 			case 'adding': addOrder();
 				break;
-			case 'searchForEdit': searchForEdit();
+			case 'choosingAnotherVariant': editOrder();
 				break;
 			case 'deleting': deleteOrder();
 				break;
@@ -152,8 +155,6 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	}
 
 	var switchPaidConfirmed = function() {
-		console.log("confirmed: ");
-		console.log($scope.confirmed);
 		$http({
 			url: sharedData.getLinks().https + '/orders/admin/confirm/' + $scope.idForOperation,
 			method: 'PUT',
@@ -184,7 +185,6 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	}	
 
 	$scope.addMaintenance = function() {
-		console.log($scope.newMaintenance);
 		$http({
 			url: sharedData.getLinks().https + '/journalRecords',
 			method: 'POST',
@@ -214,10 +214,31 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		});
 	}
 
+	$scope.prepareToDeleteJournalRecord = function(journalRecordId, orderIndex, journalRecordIndex) {
+		$scope.idForOperation = journalRecordId;
+		$scope.indexForOperation = orderIndex;
+		$scope.indexJournalForOperation = journalRecordIndex;
+		$scope.stage = "deleteJournalRecord";
+	}
+
+	var deleteJournalRecord = function() {
+		$http({
+			url: sharedData.getLinks().https + '/journalRecords/' + $scope.idForOperation,
+			method: 'DELETE',
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			$scope.listOfOrders[$scope.indexForOperation].journalRecords.splice($scope.indexJournalForOperation, 1);
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}
+
 
 	/* Добавление заказа */
 	$scope.prepareToAddOrder = function() {
-		$scope.orderId = undefined;
+		$scope.idForOperation = undefined;
 		$scope.indexForOperation = undefined;
 		$scope.order = {}
 		$scope.stage = "adding";
@@ -244,6 +265,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			$scope.order.room = data.data.room;
 			$scope.order.category = data.data.category;
             $scope.order.comment = data.data.comment;
+            $scope.order.client = data.data.client;
 			$scope.stage = "searchForEdit";
 			$scope.mode = "edit";
 		}, function(response) {
@@ -252,23 +274,14 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		});
 	}
 
-	var searchForEdit = function() {
-		data = {
-			numberOfResidents: 	$scope.order.room.numberOfResidents,
-			roomTypeId: 		$scope.order.room.roomType.objectId,
-			categoryId: 		$scope.order.category.objectId,
-			livingStartDate: 	$scope.order.livingStartDate.getTime(),
-			livingFinishDate: 	$scope.order.livingFinishDate.getTime(),
-			roomId: 			$scope.order.room.objectId
-		};
-		console.log(data);
+	$scope.searchForEdit = function() {
 		$http({
 			url: sharedData.getLinks().https + '/orders/updateinfo/' + $scope.idForOperation,
 			method: 'PUT',
 			data: {
 				numberOfResidents: 	$scope.order.room.numberOfResidents,
 				roomTypeId: 		$scope.order.room.roomType.objectId,
-                categoryId: 		$scope.order.category.objectId,
+				categoryId: 		$scope.order.category.objectId,
 				livingStartDate: 	$scope.order.livingStartDate.getTime(),
 				livingFinishDate: 	$scope.order.livingFinishDate.getTime(),
 				roomId: 			$scope.order.room.objectId
@@ -276,11 +289,44 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			headers: {'Content-Type' : 'application/json'}
 		}).then(function(data) {
 			console.log(data);
+			$scope.anotherVariant = data.data;
+			$scope.stage = "choosingAnotherVariant";
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
 		});
 	}
+
+	var editOrder = function() {
+		$http({
+			url: sharedData.getLinks().https + '/orders/update/' + $scope.idForOperation,
+			method: 'PUT',
+			data: {
+				roomTypeId:				null,
+				roomTypeName:			null,
+				roomTypeDescription: 	null,
+				isAvailable:			null,
+				categoryCost:			$scope.anotherVariant.categoryCost,
+				livingCost:				$scope.anotherVariant.livingCost,
+				arrival:				$scope.order.livingStartDate.getTime(),
+				departure:				$scope.order.livingFinishDate.getTime(),
+				livingPersons:			null,
+				categoryId:				null,
+				clientId:				$scope.order.client.objectId,
+				roomId:					$scope.order.room.objectId
+			},
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+            $scope.errMessage = "serverErr";
+		});
+	}
+
+
+
 
 	// private int roomTypeId;			~
  //    private String roomTypeName;
@@ -293,7 +339,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
  //    private int livingPersons;
  //    private int categoryId;
  //    private Integer clientId;   	+
- //    private Integer roomId;
+ //    private Integer roomId;		+
 
 
 
@@ -311,41 +357,6 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	/* Функции, выполняющие запросы */
 
 
-	var editOrder = function() {
-		resetFlags();
-		$http({
-			url: sharedData.getLinks().https + '/orders/' + $scope.order.idForOperation,
-			method: 'PUT',
-			data: {
-				category : 			    parseInt($scope.order.category),
-                room : 			        parseInt($scope.order.room),
-                client : 		        $scope.order.client,
-                isPaidFor :             $scope.order.isPaidFor,
-                isConfirmed :           $scope.order.isConfirmed,
-                livingStartDate :       $scope.order.livingStartDate,
-                livingFinishDate : 		$scope.order.livingFinishDate,
-                sum :                   parseInt($scope.order.sum),
-                comment : 			    $scope.order.comment
-			},
-			headers: { 'Content-Type' : 'application/json' }
-		}).then(function(data) {
-			console.log(data);
-			$scope.listOfOrders[$scope.indexForOperation].category = util.getObjectInArrayById($scope.listOfCategories, $scope.order.category);
-			$scope.listOfOrders[$scope.indexForOperation].room = util.getObjectInArrayById($scope.listOfRooms, $scope.order.room);
-			$scope.listOfOrders[$scope.indexForOperation].client = $scope.order.client;
-            $scope.listOfOrders[$scope.indexForOperation].isPaidFor = $scope.order.isPaidFor;
-            $scope.listOfOrders[$scope.indexForOperation].isConfirmed = $scope.order.isConfirmed;
-            $scope.listOfOrders[$scope.indexForOperation].livingStartDate = $scope.order.livingStartDate;
-            $scope.listOfOrders[$scope.indexForOperation].livingFinishDate = $scope.order.livingFinishDate;
-            $scope.listOfOrders[$scope.indexForOperation].sum = $scope.order.sum;
-            $scope.listOfOrders[$scope.indexForOperation].comment = $scope.order.comment;
-			$scope.updated = true;
-		}, function(response) {
-			console.log("Smth wrong!!");
-			console.log(response);
-            $scope.errMessage = "serverErr";
-		});
-	}
 
 	var deleteOrder = function() {
 		resetFlags();

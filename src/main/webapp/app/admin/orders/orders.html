@@ -139,7 +139,9 @@
                                     <th>{{ record.count }}</th>
                                     <th>{{ (record.cost / 100).toFixed(2) }} $</th>
                                     <th>{{ record.usedDate | date:'dd.MM.yyyy' }}</th>
-                                    <th><button class="deleteMaintenance">delete</button></th>
+                                    <th><button class="deleteMaintenance" data-toggle="modal" data-target="#deleteConfirmModal"
+                                        ng-click="prepareToDeleteJournalRecord(record.objectId, listOfOrders.indexOf(order), order.journalRecords.indexOf(record))">
+                                    delete</button></th>
                                 </tr>
                             </tbody>
                         </table>
@@ -213,10 +215,11 @@
 
             </div>
             <div class="col-sm-offset-3 col-sm-6 createUpdateForm">
-                <div>
-                    Current room {{ order.room.roomNumber }}
+                <div class="col-sm-12 title">
+                    Current room: {{ order.room.roomNumber }}
                 </div>
-                <form class="form-horizontal" name="updateForm">
+                <!-- Тут вписывают желаемые данные -->
+                <form class="form-horizontal" name="searchForUpdateForm" ng-if="stage != 'choosingAnotherVariant'">
                     <div class="form-group">
                         <label for="livingStartDate" class="col-sm-6 control-label">Living start</label>
                         <div class="col-sm-6">
@@ -255,7 +258,43 @@
                     </div>
                     <div class="form-group">
                         <div class="text-center">
-                            <button class="btn btn-primary" ng-disabled="updateForm.$invalid" data-toggle="modal" data-target="#editConfirmModal">OK</button>
+                            <button class="btn btn-primary" ng-disabled="searchForUpdateForm.$invalid" ng-click="searchForEdit()">OK</button>
+                        </div>
+                    </div>
+                </form>
+                <!-- Тут выбирают комнату -->
+                <form class="form-horizontal" name="choiceAnotherVariant" ng-if="stage == 'choosingAnotherVariant'">
+                    <div class="form-group">
+                        <div class="col-sm-6 text-right myLabel">
+                            Living cost:
+                        </div>
+                        <div class="col-sm-6 myLabel">
+                            {{ (anotherVariant.livingCost / 100).toFixed(2) }}
+                        </div>
+                        <div class="col-sm-6 text-right myLabel">
+                            Category cost:
+                        </div>
+                        <div class="col-sm-6 myLabel">
+                            {{ (anotherVariant.categoryCost / 100).toFixed(2) }}
+                        </div>
+                        <div class="col-sm-6 text-right myLabel">
+                            Total:
+                        </div>
+                        <div class="col-sm-6 myLabel">
+                            {{ (anotherVariant.total / 100).toFixed(2) }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="category" class="col-sm-6 control-label">Select room:</label>
+                        <div class="col-sm-3">
+                            <select id="category" class="form-control" ng-required="true" ng-model="order.room.objectId"
+                                    ng-options="room.objectId as room.roomNumber for room in anotherVariant.rooms">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="text-center">
+                            <button class="btn btn-primary" ng-disabled="searchForUpdateForm.$invalid" data-toggle="modal" data-target="#editConfirmModal">OK</button>
                         </div>
                     </div>
                 </form>
