@@ -40,17 +40,21 @@ public class RoomTypeServiceImpl implements RoomTypeService{
     @Override
     public List<OrderDTO> getRoomTypes(Date startDate, Date finishDate, int numberOfPeople, int categoryId) {
         List<OrderDTO> list = new ArrayList<>();
-        if (startDate == null || finishDate == null) return list;
+        if (startDate == null || finishDate == null) {
+            return list;
+        }
         boolean isValidDates = serviceUtils.checkDates(startDate, finishDate);
-        if (!isValidDates) return list;
+        if (!isValidDates) {
+            return list;
+        }
         Set<Integer> availableRoomTypes = roomTypeDAO.getAvailableRoomTypes(numberOfPeople, new java.sql.Date(startDate.getTime()), new java.sql.Date(finishDate.getTime()));
         List<RoomType> allRoomTypes = getAllRoomTypes();
         for (RoomType roomType : allRoomTypes) {
             OrderDTO orderDTO = new OrderDTO();
             orderDTO.setRoomTypeName(roomType.getRoomTypeTitle());
             orderDTO.setRoomTypeDescription(roomType.getContent());
-            long categoryPrice = categoryService.getSingleCategoryById(categoryId).getCategoryPrice();
-            long days = (finishDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000);
+            Long categoryPrice = categoryService.getSingleCategoryById(categoryId).getCategoryPrice();
+            Long days = (finishDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000);
             Long categoryCost = categoryPrice * days;
             orderDTO.setCategoryCost(categoryCost);
             orderDTO.setLivingPersons(numberOfPeople);
@@ -68,6 +72,11 @@ public class RoomTypeServiceImpl implements RoomTypeService{
         }
         LOGGER.info(list);
         return list;
+    }
+
+    @Override
+    public Long getLivingCost(Date startDate, Date finishDate, int numberOfPeople, RoomType roomType) {
+        return roomTypeDAO.getCostForLiving(roomType, numberOfPeople, startDate, finishDate);
     }
 
     @Override

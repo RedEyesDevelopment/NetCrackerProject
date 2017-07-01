@@ -4,17 +4,21 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import projectpackage.dto.ChangeOrderDTO;
+import projectpackage.dto.FreeRoomsUpdateOrderDTO;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.dto.OrderDTO;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Category;
 import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
+import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.ordersdao.OrderDAO;
-import projectpackage.repository.roomsdao.RoomDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
+import projectpackage.service.roomservice.RoomService;
+import projectpackage.service.roomservice.RoomTypeService;
 import projectpackage.service.support.ServiceUtils;
 
 import java.util.ArrayList;
@@ -31,10 +35,16 @@ public class OrderServiceImpl implements OrderService{
     OrderDAO orderDAO;
 
     @Autowired
-    RoomDAO roomDAO;
+    RoomService roomService;
+
+    @Autowired
+    RoomTypeService roomTypeService;
 
     @Autowired
     ServiceUtils serviceUtils;
+
+    @Autowired
+    CategoryService categoryService;
 
     @Override
     public List<Order> getAllOrders() {
@@ -179,7 +189,7 @@ public class OrderServiceImpl implements OrderService{
         if (start == null || finish == null || category == null) return new IUDAnswer(false, WRONG_DATES + WRONG_FIELD);
         boolean isValidDates = serviceUtils.checkDates(start, finish);
         if (!isValidDates) return new IUDAnswer(false, WRONG_DATES);
-        Room room = roomDAO.getFreeRoom(roomTypeId, numberOfResidents, start, finish);
+        Room room = roomService.getFreeRoom(roomTypeId, numberOfResidents, start, finish);
         if (null != room) {
             Order order = new Order();
             order.setRegistrationDate(new Date());
@@ -220,7 +230,7 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public Order createOrderTemplate(User client, OrderDTO dto) {
-        Room room = roomDAO.getFreeRoom(dto.getRoomTypeId(), dto.getLivingPersons(), dto.getArrival(), dto.getDeparture());
+        Room room = roomService.getFreeRoom(dto.getRoomTypeId(), dto.getLivingPersons(), dto.getArrival(), dto.getDeparture());
         Order order = new Order();
         if (null != room) {
             order.setRegistrationDate(new Date());
@@ -235,6 +245,41 @@ public class OrderServiceImpl implements OrderService{
             order.setClient(client);
         }
         return order;
+    }
+
+    @Override
+    public FreeRoomsUpdateOrderDTO getFreeRoomsToUpdateOrder(Integer orderId, ChangeOrderDTO changeOrderDTO) {
+        List<Room> freeRooms = roomService.getFreeRooms(changeOrderDTO.getRoomTypeId(), changeOrderDTO.getNumberOfResidents(),
+                changeOrderDTO.getLivingStartDate(), changeOrderDTO.getLivingFinishDate());
+        Order currentOrder = getSingleOrderById(orderId);
+        if (currentOrder.getLivingFinishDate().getTime() < changeOrderDTO.getLivingFinishDate().getTime()
+                && currentOrder.getRoom().getRoomType().getObjectId() == changeOrderDTO.getRoomTypeId()) {
+            List<Room> freeRoomsOnNextDays = roomService.getFreeRooms(changeOrderDTO.getRoomTypeId(), changeOrderDTO.getNumberOfResidents(),
+                    currentOrder.getLivingFinishDate(), changeOrderDTO.getLivingFinishDate());
+            int currentRoomId = currentOrder.getRoom().getObjectId();
+            boolean isFree = false;
+            for (Room room : freeRoomsOnNextDays) {
+                if (room.getObjectId() == currentRoomId) {
+                    isFree = true;
+                    break;
+                }
+            }
+            if (isFree) {
+                freeRooms.add(currentOrder.getRoom());
+            }
+        }
+        RoomType roomType = freeRooms.get(0).getRoomType();
+        Long livingCost = roomTypeService.getLivingCost(changeOrderDTO.getLivingStartDate(), changeOrderDTO.getLivingFinishDate(),
+                changeOrderDTO.getNumberOfResidents(), roomType);
+        Long categoryPrice = categoryService.getSingleCategoryById(changeOrderDTO.getCategoryId()).getCategoryPrice();
+        Long days = (changeOrderDTO.getLivingFinishDate().getTime() - changeOrderDTO.getLivingStartDate().getTime()) / (24 * 60 * 60 * 1000);
+        Long categoryCost = categoryPrice * days;
+        FreeRoomsUpdateOrderDTO dto = new FreeRoomsUpdateOrderDTO();
+        dto.setCategoryCost(categoryCost);
+        dto.setLivingCost(livingCost);
+        dto.setTotal(categoryCost + livingCost);
+        dto.setRooms(freeRooms);
+        return dto;
     }
 
     @Override
