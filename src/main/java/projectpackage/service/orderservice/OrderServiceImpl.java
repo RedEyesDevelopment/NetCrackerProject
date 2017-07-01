@@ -229,7 +229,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public Order createOrderTemplate(User client, OrderDTO dto) {
+    public Order createOrderTemplate(User client, User lastModificator, OrderDTO dto) {
         Room room = roomService.getFreeRoom(dto.getRoomTypeId(), dto.getLivingPersons(), dto.getArrival(), dto.getDeparture());
         Order order = new Order();
         if (null != room) {
@@ -238,9 +238,9 @@ public class OrderServiceImpl implements OrderService{
             order.setIsConfirmed(false);
             order.setLivingStartDate(dto.getArrival());
             order.setLivingFinishDate(dto.getDeparture());
+            order.setLastModificator(lastModificator);
             order.setSum(dto.getLivingCost()+dto.getCategoryCost());
             order.setComment("");
-            order.setLastModificator(client);
             order.setRoom(room);
             order.setClient(client);
         }
@@ -249,6 +249,10 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public FreeRoomsUpdateOrderDTO getFreeRoomsToUpdateOrder(Integer orderId, ChangeOrderDTO changeOrderDTO) {
+        boolean isValidDates = serviceUtils.checkDatesForUpdate(changeOrderDTO.getLivingStartDate(), changeOrderDTO.getLivingFinishDate());
+        if (!isValidDates) {
+            return new FreeRoomsUpdateOrderDTO();
+        }
         List<Room> freeRooms = roomService.getFreeRooms(changeOrderDTO.getRoomTypeId(), changeOrderDTO.getNumberOfResidents(),
                 changeOrderDTO.getLivingStartDate(), changeOrderDTO.getLivingFinishDate());
         Order currentOrder = getSingleOrderById(orderId);
@@ -299,12 +303,14 @@ public class OrderServiceImpl implements OrderService{
             return new IUDAnswer(false, ROOM_NOT_AVAILABLE);
         }
 
+        User lastModificator = new User();
+        lastModificator.setObjectId(lastModificatorId);
         Order order = orderDAO.getOrder(orderId);
         order.getCategory().setObjectId(changeOrderDTO.getCategoryId());
         order.getClient().setObjectId(orderDTO.getClientId());
         order.getRoom().setObjectId(orderDTO.getRoomId());
         order.setSum(orderDTO.getLivingCost() + orderDTO.getCategoryCost());
-        order.getLastModificator().setObjectId(lastModificatorId);
+        order.setLastModificator(lastModificator);
         order.setLivingStartDate(orderDTO.getArrival());
         order.setLivingFinishDate(orderDTO.getDeparture());
         order.getRoom().getRoomType().setObjectId(changeOrderDTO.getRoomTypeId());

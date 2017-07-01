@@ -153,6 +153,7 @@ public class OrderController {
             client = new User();
             client.setObjectId(bookDTO.getUserId());
         }
+        User lastModificator = thisUser;
         List<OrderDTO> dtoData = (List<OrderDTO>) request.getSession().getAttribute("ORDERDATA");
         for (OrderDTO order : dtoData) {
             if (bookDTO.getRoomTypeId().equals(order.getRoomTypeId())) {
@@ -161,7 +162,7 @@ public class OrderController {
             }
         }
         Category category = categoryService.getSingleCategoryById(dto.getCategoryId());
-        Order order = orderService.createOrderTemplate(client, dto);
+        Order order = orderService.createOrderTemplate(client, lastModificator, dto);
         order.setCategory(category);
         request.getSession().removeAttribute("ORDERDATA");
         request.getSession().setAttribute("NEWORDER", order);
@@ -220,6 +221,7 @@ public class OrderController {
         }
 
         IUDAnswer answer = orderService.setNewDataIntoOrder(id, thisUser.getObjectId(), changeOrderDTO, orderDTO);
+        request.getSession().removeAttribute("CHANGE_DTO");
         return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
     }
 
