@@ -1,5 +1,7 @@
 package projectpackage.service.orderservice;
 
+import projectpackage.dto.ChangeOrderDTO;
+import projectpackage.dto.FreeRoomsUpdateOrderDTO;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.dto.OrderDTO;
 import projectpackage.model.auth.User;
@@ -31,6 +33,7 @@ public interface OrderService extends MessageBook{
     Order getOrderForAdmin(Integer id);
     Order createOrderTemplate(User client, OrderDTO dto);
     List<Order> getAllOrders();
+    FreeRoomsUpdateOrderDTO getFreeRoomsToUpdateOrder(Integer orderId, ChangeOrderDTO changeOrderDTO);
     Order getSingleOrderById(Integer id);
     IUDAnswer deleteOrder(Integer id);
     IUDAnswer insertOrder(Order order);

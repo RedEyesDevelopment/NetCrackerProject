@@ -46,12 +46,15 @@ public class FileController {
         User user = (User) request.getSession().getAttribute("USER");
         if (user == null) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-        } else if (id == null || !id.equals(user.getObjectId())) {
+        } else if (id == null) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ID), HttpStatus.BAD_REQUEST);
         }
         String path = request.getServletContext().getRealPath("/").toString();
         Order order = orderService.getSingleOrderById(id);
         File file = pdfService.createOrderPDF(order, path);
+        System.out.println("***************************************************************FROM ORDER PDF");
+        System.out.println(order);
+        System.out.println(order.getClient().getEmail());
         mailService.sendEmailWithAttachment(order.getClient().getEmail(), 1, file);
         return new ResponseEntity<IUDAnswer>(new IUDAnswer(true), HttpStatus.OK);
     }

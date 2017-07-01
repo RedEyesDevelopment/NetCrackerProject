@@ -10,11 +10,11 @@ import projectpackage.dto.*;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Category;
 import projectpackage.model.orders.Order;
-import projectpackage.service.MessageBook;
 import projectpackage.service.authservice.UserService;
 import projectpackage.service.orderservice.CategoryService;
 import projectpackage.service.orderservice.OrderService;
 import projectpackage.service.roomservice.RoomTypeService;
+import projectpackage.service.support.ServiceUtils;
 
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
@@ -46,6 +46,9 @@ public class OrderController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    ServiceUtils serviceUtils;
+
     //Get Order List
     @ResponseStatus(HttpStatus.OK)
     @CacheResult(cacheName = "orderList")
@@ -69,14 +72,43 @@ public class OrderController {
         Resource<Order> resource = new Resource<>(order);
         HttpStatus status = null;
         if (null!= order){
-            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(OrderController.class).deleteOrder(order.getObjectId())).withRel("delete"));
-            resource.add(linkTo(methodOn(OrderController.class).updateOrder(order.getObjectId(), order)).withRel("update"));
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
         }
         ResponseEntity<Resource<Order>> response = new ResponseEntity<Resource<Order>>(resource, status);
         return response;
+    }
+
+
+    @RequestMapping(value = "/accept", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<IUDAnswer> acceptOrder(HttpServletRequest request) {
+        Order order = (Order) request.getSession().getAttribute("NEWORDER");
+        request.getSession().removeAttribute("NEWORDER");
+        IUDAnswer answer = orderService.insertOrder(order);
+        HttpStatus status = HttpStatus.OK;
+        if (!answer.isSuccessful()){
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return new ResponseEntity<IUDAnswer>(answer, status);
+    }
+
+    @RequestMapping(value = "/cancel", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<IUDAnswer> cancelOrder(HttpServletRequest request) {
+        User thisUser = (User) request.getSession().getAttribute("USER");
+        request.getSession().removeAttribute("NEWORDER");
+        IUDAnswer answer = new IUDAnswer(true, "orderCanceled");
+
+        return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/byUser",method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<List<Order>> getAllOrdersByUser(HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("USER");
+        List<Order> orders = orderService.getOrdersByClient(user);
+        if (null == orders) return new ResponseEntity<List<Order>>((List<Order>) null,HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<List<Order>>(orders, HttpStatus.OK);
     }
 
     //Create order, fetch into database
@@ -88,35 +120,6 @@ public class OrderController {
         if (result.isSuccessful()) {
             status = HttpStatus.OK;
         } else status = HttpStatus.BAD_REQUEST;
-        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
-        return responseEntity;
-    }
-
-    //Update order method
-    @CacheRemoveAll(cacheName = "orderList")
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> updateOrder(@PathVariable("id") Integer id, @RequestBody Order changedOrder){
-        if (!id.equals(changedOrder.getObjectId())){
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID), HttpStatus.NOT_ACCEPTABLE);
-        }
-        IUDAnswer result = orderService.updateOrder(id, changedOrder);
-        HttpStatus status;
-        if (result.isSuccessful()) {
-            status = HttpStatus.OK;
-        } else status = HttpStatus.BAD_REQUEST;
-        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
-        return responseEntity;
-    }
-
-    //Delete order method
-    @CacheRemoveAll(cacheName = "orderList")
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> deleteOrder(@PathVariable("id") Integer id){
-        IUDAnswer result = orderService.deleteOrder(id);
-        HttpStatus status;
-        if (result.isSuccessful()) {
-            status = HttpStatus.OK;
-        } else status = HttpStatus.NOT_FOUND;
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
     }
@@ -154,36 +157,6 @@ public class OrderController {
 
     }
 
-    @RequestMapping(value = "/accept", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> acceptOrder(HttpServletRequest request) {
-        Order order = (Order) request.getSession().getAttribute("NEWORDER");
-        request.getSession().removeAttribute("NEWORDER");
-        IUDAnswer answer = orderService.insertOrder(order);
-        HttpStatus status = HttpStatus.OK;
-        if (!answer.isSuccessful()){
-            status = HttpStatus.BAD_REQUEST;
-        }
-        return new ResponseEntity<IUDAnswer>(answer, status);
-    }
-
-    @RequestMapping(value = "/cancel", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> cancelOrder(HttpServletRequest request) {
-        User thisUser = (User) request.getSession().getAttribute("USER");
-        request.getSession().removeAttribute("NEWORDER");
-        IUDAnswer answer = new IUDAnswer(true, "orderCanceled");
-
-        return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/byUser",method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<List<Order>> getAllOrdersByUser(HttpServletRequest request) {
-        User user = (User) request.getSession().getAttribute("USER");
-        List<Order> orders = orderService.getOrdersByClient(user);
-        if (null == orders) return new ResponseEntity<List<Order>>((List<Order>) null,HttpStatus.NOT_FOUND);
-
-        return new ResponseEntity<List<Order>>(orders, HttpStatus.OK);
-    }
-
     @RequestMapping(value = "/searchavailability", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<List<OrderDTO>> searchAvailabilityForOrderCreation(@RequestBody SearchAvailabilityParamsDTO searchDto, HttpServletRequest request) throws ParseException {
         List<OrderDTO> data = roomTypeService.getRoomTypes(searchDto.getArrival(),searchDto.getDeparture(),
@@ -193,6 +166,52 @@ public class OrderController {
         ResponseEntity<List<OrderDTO>> responseEntity = new ResponseEntity<List<OrderDTO>>(data, HttpStatus.OK);
         List<OrderDTO> dtoData = data.stream().filter(dto -> dto.isAvailable()).collect(Collectors.toList());
         request.getSession().setAttribute("ORDERDATA", dtoData);
+        return responseEntity;
+    }
+
+
+    @RequestMapping(value = "admin/confirm/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
+            consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<IUDAnswer> changePaidAndConfirm(@PathVariable("id") Integer id, @RequestBody ConfirmPaidOrderDTO confirmPaidOrderDTO, HttpServletRequest request) {
+        User thisUser = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(thisUser, confirmPaidOrderDTO, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
+        Order order = orderService.getSingleOrderById(id);
+        order.setIsConfirmed(confirmPaidOrderDTO.getIsConfirmed());
+        order.setIsPaidFor(confirmPaidOrderDTO.getIsPaidFor());
+        IUDAnswer answer = orderService.updateOrder(id, order);
+        if (!answer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
+        }
+    }
+
+    @RequestMapping(value = "updateinfo/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
+            consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<FreeRoomsUpdateOrderDTO> updateOrder(@PathVariable("id") Integer id, @RequestBody ChangeOrderDTO changeOrderDTO, HttpServletRequest request) {
+        User thisUser = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(thisUser, changeOrderDTO, id);
+        FreeRoomsUpdateOrderDTO dto = null;
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<FreeRoomsUpdateOrderDTO>(dto, HttpStatus.BAD_REQUEST);
+        }
+        dto = orderService.getFreeRoomsToUpdateOrder(id, changeOrderDTO);
+        return new ResponseEntity<FreeRoomsUpdateOrderDTO>(dto, HttpStatus.OK);
+    }
+
+    //Delete order method
+    @CacheRemoveAll(cacheName = "orderList")
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<IUDAnswer> deleteOrder(@PathVariable("id") Integer id){
+        IUDAnswer result = orderService.deleteOrder(id);
+        HttpStatus status;
+        if (result.isSuccessful()) {
+            status = HttpStatus.OK;
+        } else status = HttpStatus.NOT_FOUND;
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
     }
 }

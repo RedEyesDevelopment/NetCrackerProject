@@ -12,11 +12,12 @@ import java.util.List;
  * Created by Arizel on 16.05.2017.
  */
 public interface RoomTypeService extends MessageBook{
-    public List<OrderDTO> getRoomTypes(Date startDate, Date finishDate, int numberOfPeople, int categoryId);
-    public List<RoomType> getAllRoomTypes();
-    public List<RoomType> getSimpleRoomTypeList();
-    public RoomType getSingleRoomTypeById(Integer id);
-    public IUDAnswer deleteRoomType(Integer id);
-    public IUDAnswer insertRoomType(RoomType roomType);
-    public IUDAnswer updateRoomType(Integer id, RoomType newRoomType);
+    List<OrderDTO> getRoomTypes(Date startDate, Date finishDate, int numberOfPeople, int categoryId);
+    List<RoomType> getAllRoomTypes();
+    List<RoomType> getSimpleRoomTypeList();
+    Long getLivingCost(Date startDate, Date finishDate, int numberOfPeople, RoomType roomType);
+    RoomType getSingleRoomTypeById(Integer id);
+    IUDAnswer deleteRoomType(Integer id);
+    IUDAnswer insertRoomType(RoomType roomType);
+    IUDAnswer updateRoomType(Integer id, RoomType newRoomType);
 }

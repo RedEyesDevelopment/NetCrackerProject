@@ -14,16 +14,18 @@ import java.util.List;
  * Created by Arizel on 16.05.2017.
  */
 public interface RoomService extends MessageBook{
-    public List<Room> getRoomsByNumberOfResidents(Integer count);
-    public List<Room> getRoomsByType(RoomType roomType);
-    public List<Room> getAllRooms();
-    public List<Room> getSimpleRoomList();
-    public Room getSingleRoomById(Integer id);
-    public Room getSimpleRoomById(Integer id);
-    public List<Room> getFreeRoomsOnPeriod(Date start, Date finish);
-    public List<Room> getBookedRoomsOnPeriod(Date start, Date finish);
-    public RoomStatDTO getAllRoomsOnPeriod(Date start, Date finish);
-    public IUDAnswer deleteRoom(Integer id);
-    public IUDAnswer insertRoom(RoomDTO roomDTO);
-    public IUDAnswer updateRoom(Integer id, RoomDTO roomDTO);
+    List<Room> getRoomsByNumberOfResidents(Integer count);
+    List<Room> getRoomsByType(RoomType roomType);
+    List<Room> getAllRooms();
+    List<Room> getSimpleRoomList();
+    Room getSingleRoomById(Integer id);
+    Room getSimpleRoomById(Integer id);
+    Room getFreeRoom(int roomTypeId, int numberOfResidents, Date start, Date finish);
+    List<Room> getFreeRooms(int roomTypeId, int numberOfResidents, Date start, Date finish);
+    List<Room> getFreeRoomsOnPeriod(Date start, Date finish);
+    List<Room> getBookedRoomsOnPeriod(Date start, Date finish);
+    RoomStatDTO getAllRoomsOnPeriod(Date start, Date finish);
+    IUDAnswer deleteRoom(Integer id);
+    IUDAnswer insertRoom(RoomDTO roomDTO);
+    IUDAnswer updateRoom(Integer id, RoomDTO roomDTO);
 }
