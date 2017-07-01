@@ -67,9 +67,21 @@ public class ServiceUtilsImpl implements ServiceUtils{
     }
 
     @Override
+    public IUDAnswer checkSessionAdminReceptionAndData(User user, Object data) {
+        IUDAnswer iudAnswer = checkSessionAndData(user, data);
+        return checkForAdminAndReception(iudAnswer, user);
+    }
+
+    @Override
     public IUDAnswer checkDeleteForAdmin(User user, Integer id) {
         IUDAnswer iudAnswer = checkDelete(user, id);
         return checkForAdmin(iudAnswer, user);
+    }
+
+    @Override
+    public IUDAnswer checkDeleteForAdminAndReception(User user, Integer id) {
+        IUDAnswer iudAnswer = checkDelete(user, id);
+        return checkForAdminAndReception(iudAnswer, user);
     }
 
     @Override
@@ -126,6 +138,16 @@ public class ServiceUtilsImpl implements ServiceUtils{
             return iudAnswer;
         } else if (user.getRole().getObjectId() != 1) {
             return new IUDAnswer(false, NOT_ADMIN);
+        } else {
+            return new IUDAnswer(true);
+        }
+    }
+
+    private IUDAnswer checkForAdminAndReception(IUDAnswer iudAnswer, User user) {
+        if (!iudAnswer.isSuccessful()) {
+            return iudAnswer;
+        } else if (user.getRole().getObjectId() == 3) {
+            return new IUDAnswer(false, NOT_RECEPTION_OR_ADMIN);
         } else {
             return new IUDAnswer(true);
         }

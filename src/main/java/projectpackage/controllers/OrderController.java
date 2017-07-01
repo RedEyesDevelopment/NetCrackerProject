@@ -116,6 +116,8 @@ public class OrderController {
             .APPLICATION_JSON_UTF8_VALUE},
             consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<FreeRoomsUpdateOrderDTO> getInfoForUpdateOrder(@PathVariable("id") Integer id, @RequestBody ChangeOrderDTO changeOrderDTO, HttpServletRequest request) {
+        System.out.println("*****************************************");
+        System.out.println(changeOrderDTO);
         User thisUser = (User) request.getSession().getAttribute("USER");
         IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(thisUser, changeOrderDTO, id);
         FreeRoomsUpdateOrderDTO dto = null;

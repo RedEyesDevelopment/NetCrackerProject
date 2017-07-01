@@ -252,10 +252,10 @@ public class OrderServiceImpl implements OrderService{
         List<Room> freeRooms = roomService.getFreeRooms(changeOrderDTO.getRoomTypeId(), changeOrderDTO.getNumberOfResidents(),
                 changeOrderDTO.getLivingStartDate(), changeOrderDTO.getLivingFinishDate());
         Order currentOrder = getSingleOrderById(orderId);
-        if (currentOrder.getLivingFinishDate().getTime() < changeOrderDTO.getLivingFinishDate().getTime()
-                && currentOrder.getRoom().getRoomType().getObjectId() == changeOrderDTO.getRoomTypeId()) {
+        if ((currentOrder.getLivingFinishDate().getTime() <= (changeOrderDTO.getLivingFinishDate().getTime()))
+                && (currentOrder.getRoom().getRoomType().getObjectId() == changeOrderDTO.getRoomTypeId())) {
             List<Room> freeRoomsOnNextDays = roomService.getFreeRooms(changeOrderDTO.getRoomTypeId(), changeOrderDTO.getNumberOfResidents(),
-                    currentOrder.getLivingFinishDate(), changeOrderDTO.getLivingFinishDate());
+                    new Date(currentOrder.getLivingFinishDate().getTime() + 10000L), changeOrderDTO.getLivingFinishDate());
             int currentRoomId = currentOrder.getRoom().getObjectId();
             boolean isFree = false;
             for (Room room : freeRoomsOnNextDays) {
@@ -268,9 +268,15 @@ public class OrderServiceImpl implements OrderService{
                 freeRooms.add(currentOrder.getRoom());
             }
         }
-        RoomType roomType = freeRooms.get(0).getRoomType();
+        RoomType roomType = new RoomType();
+        roomType.setObjectId(changeOrderDTO.getRoomTypeId());
         Long livingCost = roomTypeService.getLivingCost(changeOrderDTO.getLivingStartDate(), changeOrderDTO.getLivingFinishDate(),
                 changeOrderDTO.getNumberOfResidents(), roomType);
+        System.out.println("*********************************************");
+        System.out.println(changeOrderDTO.getCategoryId());
+        System.out.println(categoryService.getSingleCategoryById(changeOrderDTO.getCategoryId()));
+        Category category = new Category();
+        category.getCategoryPrice();
         Long categoryPrice = categoryService.getSingleCategoryById(changeOrderDTO.getCategoryId()).getCategoryPrice();
         Long days = (changeOrderDTO.getLivingFinishDate().getTime() - changeOrderDTO.getLivingStartDate().getTime()) / (24 * 60 * 60 * 1000);
         Long categoryCost = categoryPrice * days;

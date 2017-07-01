@@ -269,7 +269,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			data: {
 				numberOfResidents: 	$scope.order.room.numberOfResidents,
 				roomTypeId: 		$scope.order.room.roomType.objectId,
-				categoryId: 		$scope.order.category.orderId,
+                categoryId: 		$scope.order.category.objectId,
 				livingStartDate: 	$scope.order.livingStartDate.getTime(),
 				livingFinishDate: 	$scope.order.livingFinishDate.getTime(),
 				roomId: 			$scope.order.room.objectId
