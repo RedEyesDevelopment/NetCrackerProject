@@ -289,15 +289,24 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			headers: {'Content-Type' : 'application/json'}
 		}).then(function(data) {
 			console.log(data);
-			$scope.anotherVariant = data.data;
-			$scope.stage = "choosingAnotherVariant";
+			if (data.data.rooms.length > 0) {
+				$scope.anotherVariant = data.data;
+				$scope.stage = "choosingAnotherVariant";
+			} else {
+				$scope.stage = "noAvailable";
+			}
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
 		});
 	}
 
+	$scope.backTochoosingAnotherVariants = function() {
+		$scope.stage = "searchForEdit";
+	}
+
 	var editOrder = function() {
+		console.log("***********************" + $scope.order.client.objectId);
 		$http({
 			url: sharedData.getLinks().https + '/orders/update/' + $scope.idForOperation,
 			method: 'PUT',
@@ -318,6 +327,13 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
+			$scope.listOfOrders[$scope.indexForOperation].livingStartDate = $scope.order.livingStartDate;
+			$scope.listOfOrders[$scope.indexForOperation].livingFinishDate = $scope.order.livingFinishDate;
+			$scope.listOfOrders[$scope.indexForOperation].sum = $scope.anotherVariant.total;
+			$scope.listOfOrders[$scope.indexForOperation].category = util.getObjectInArrayById($scope.listOfCategories, $scope.order.category.objectId);
+			$scope.listOfOrders[$scope.indexForOperation].room = util.getObjectInArrayById($scope.listOfRooms, $scope.order.room.objectId);
+			$scope.stage = "updated";
+			$scope.mode = "look";
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);

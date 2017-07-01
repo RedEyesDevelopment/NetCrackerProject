@@ -307,11 +307,10 @@ public class OrderServiceImpl implements OrderService{
         lastModificator.setObjectId(lastModificatorId);
         Order order = orderDAO.getOrder(orderId);
         order.getCategory().setObjectId(changeOrderDTO.getCategoryId());
-        order.getClient().setObjectId(orderDTO.getClientId());
         order.getRoom().setObjectId(orderDTO.getRoomId());
         order.setSum(orderDTO.getLivingCost() + orderDTO.getCategoryCost());
         order.setLastModificator(lastModificator);
-        order.setLivingStartDate(orderDTO.getArrival());
+		order.setLivingStartDate(orderDTO.getArrival());
         order.setLivingFinishDate(orderDTO.getDeparture());
         order.getRoom().getRoomType().setObjectId(changeOrderDTO.getRoomTypeId());
         return updateOrder(orderId, order);

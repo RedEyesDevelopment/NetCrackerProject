@@ -19,6 +19,13 @@
                 <li><input type="number" min="1" max="999" ng-model="pager.objectsOnPage"></li>
                 <li><a ng-click="nextOrders()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
+
+            <div class="answer">
+                <div ng-if="stage == 'updated'">
+                    Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
+                </div>
+            </div>
+
             <div ng-repeat="order in listOfOrders | orderBy : 'objectId' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-12 block-border">
                 <div class="admin-notes">
                     <div class="col-sm-12 order-bottom-border order-padding-bottom">
@@ -206,35 +213,42 @@
                 <button ng-click="back()" class="btn btn-info btn-sm back">
                     <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back to orders
                 </button>
-
                 <div class="answer">
                     <div ng-if="updated">
                         Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
                     </div>
                 </div>
-
             </div>
             <div class="col-sm-offset-3 col-sm-6 createUpdateForm">
-                <div class="col-sm-12 title">
+                <button ng-click="backTochoosingAnotherVariants()" ng-if="stage == 'choosingAnotherVariant'" class="btn btn-info btn-sm col-sm-1">
+                    <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
+                </button>
+                <div class="col-sm-1" ng-if="stage != 'choosingAnotherVariant'"></div>
+                <div class="col-sm-10 title">
                     Current room: {{ order.room.roomNumber }}
                 </div>
+
+                <div ng-if="stage == 'noAvailable'" class="text-center myLabel">
+                    There is no available rooms for your request! <i class="fa fa-times" aria-hidden="true"></i>
+                </div>
+                
                 <!-- Тут вписывают желаемые данные -->
                 <form class="form-horizontal" name="searchForUpdateForm" ng-if="stage != 'choosingAnotherVariant'">
                     <div class="form-group">
                         <label for="livingStartDate" class="col-sm-6 control-label">Living start</label>
-                        <div class="col-sm-6">
+                        <div class="col-sm-5">
                             <input type="date" class="form-control" id="livingStartDate" ng-required="true" ng-model="order.livingStartDate">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="livingFinishDate" class="col-sm-6 control-label">Living finish</label>
-                        <div class="col-sm-6">
+                        <div class="col-sm-5">
                             <input type="date" class="form-control" id="livingFinishDate" ng-required="true" ng-model="order.livingFinishDate">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="room" class="col-sm-6 control-label">Number of residents</label>
-                        <div class="col-sm-6">
+                        <div class="col-sm-5">
                             <select id="room" class="form-control" ng-required="true" ng-model="order.room.numberOfResidents"
                                     ng-options="res for res in listOfResidents">
                             </select>
@@ -242,7 +256,7 @@
                     </div>
                     <div class="form-group">
                         <label for="room" class="col-sm-6 control-label">Room type</label>
-                        <div class="col-sm-6">
+                        <div class="col-sm-5">
                             <select id="room" class="form-control" ng-required="true" ng-model="order.room.roomType.objectId"
                                     ng-options="roomType.objectId as roomType.roomTypeTitle for roomType in listOfRoomTypes">
                             </select>
@@ -250,7 +264,7 @@
                     </div>
                     <div class="form-group">
                         <label for="category" class="col-sm-6 control-label">Category</label>
-                        <div class="col-sm-6">
+                        <div class="col-sm-5">
                             <select id="category" class="form-control" ng-required="true" ng-model="order.category.objectId"
                                     ng-options="category.objectId as category.categoryTitle for category in listOfCategories">
                             </select>
