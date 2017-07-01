@@ -290,7 +290,7 @@ public class OrderServiceImpl implements OrderService{
         FreeRoomsUpdateOrderDTO dto = getFreeRoomsToUpdateOrder(orderId, changeOrderDTO);
         boolean isExistsInRooms = false;
         for (Room room : dto.getRooms()) {
-            if (room.getObjectId() == changeOrderDTO.getRoomId()) {
+            if (room.getObjectId() == orderDTO.getRoomId()) {
                 isExistsInRooms = true;
                 break;
             }
