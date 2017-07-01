@@ -98,6 +98,7 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
                 console.log(data);
                 $scope.finishOrder = data.data;
                 $scope.doesNeedToShowBookForm = false;
+                sharedData.setUserIdForOrderFromAdmin(undefined);
                 $scope.stage = "finishOrdering";
                 $('body').animate({ scrollTop : 500 }, 300);
             }, function(response) {

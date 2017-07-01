@@ -1,7 +1,7 @@
 app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util',
 	function($scope, $http, $location, sharedData, util) {
 
-	/* Функция на получения всех комнат и типов комнат, вызываются сразу */
+	/* All orders */
 	(function() {
 		$http({
 			url: sharedData.getLinks().https + '/orders',
@@ -25,7 +25,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			console.log(response);
 		});
 	}());
-
+	/* All catefories */
 	(function() {
 		$http({
 			url: sharedData.getLinks().https + '/categories',
@@ -39,7 +39,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			console.log(response);
 		});
 	}());
-
+	/* All rooms */
     (function() {
 		$http({
 			url: sharedData.getLinks().https + '/rooms/simpleList',
@@ -48,6 +48,34 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		}).then(function(data) {
 			console.log(data);
 			$scope.listOfRooms = data.data;
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}());
+    /* All users */
+	(function() {
+		$http({
+			url: sharedData.getLinks().https + '/users',
+			method: 'GET',
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			$scope.listOfUsers = data.data;
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}());
+	/* All maintenances */
+	(function() {
+		$http({
+			url: sharedData.getLinks().https + '/maintenances',
+			method: 'GET',
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			$scope.listOfMaintenances = data.data;
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
@@ -72,6 +100,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	$scope.paided = [true, false];
 	$scope.confirmed = [true, false];
 	$scope.order = {};
+	$scope.newMaintenance = { count: 1};
 	resetFlags();
 
 	$scope.stage = "looking";
@@ -82,13 +111,51 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	}
 
 
+	/* Для навешивания услуг на заказ */
+	$scope.prepareToAddMaintenance = function(orderId, index) {
+		$scope.newMaintenance.orderId = orderId;
+		$scope.indexForOperation = index;
+	}	
+
+	$scope.addMaintenance = function() {
+		console.log($scope.newMaintenance);
+		$http({
+			url: sharedData.getLinks().https + '/journalRecords',
+			method: 'POST',
+			data: {
+				orderId: $scope.newMaintenance.orderId,
+			    maintenanceId: $scope.newMaintenance.maintenanceId,
+			    count: $scope.newMaintenance.count
+			},
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			$http({
+				url: sharedData.getLinks().https + '/journalRecords/' + data.data.objectId,
+				method: 'GET',
+				headers: { 'Content-Type' : 'application/json' }
+			}).then(function(data) {
+				$scope.listOfOrders[$scope.indexForOperation].journalRecords.push(data.data);
+			}, function(response) {
+				console.log("Smth wrong!!");
+				console.log(response);
+			});
+			$scope.newMaintenance = { count: 1 };
+			$scope.stage = "looking";
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}
+
+
 	/* Функции подготовки запросов */
 	$scope.prepareToAddOrder = function() {
 		$scope.indexForOperation = "";
 		$scope.order.idForOperation = "";
 		$scope.order.category = "";
 		$scope.order.room = "";
-		$scope.order.client = "";
+		$scope.order.clientId = "";
 		$scope.order.isPaidFor = "";
         $scope.order.isConfirmed = "";
         $scope.order.livingStartDate = "";
@@ -97,7 +164,6 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
         $scope.order.comment = "";
 		resetFlags();
 		$scope.stage = "adding";
-		$scope.modificationMode = true;
 	}
 
 	$scope.prepareToEditOrder = function(orderId, index) {
@@ -156,38 +222,8 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	/* Функции, выполняющие запросы */
 	var addOrder = function() {
 		resetFlags();
-		$http({
-			url: sharedData.getLinks().https + '/orders',
-			method: 'POST',
-			data: {
-			    category : 			    parseInt($scope.order.category),
-			    room : 			        parseInt($scope.order.room),
-				client : 		        $scope.order.client,
-                livingStartDate :       $scope.order.livingStartDate,
-				livingFinishDate : 		$scope.order.livingFinishDate,
-                sum :                   parseInt($scope.order.sum),
-                comment : 			    $scope.order.comment
-			},
-			headers: { 'Content-Type' : 'application/json' }
-		}).then(function(data) {
-			console.log(data);
-			$scope.listOfOrders.push({
-				objectId :              data.data.objectId,
-				category : 			    util.getObjectInArrayById($scope.listOfCategories, $scope.order.category),
-                room : 			        util.getObjectInArrayById($scope.listOfRooms, $scope.order.room),
-                client : 		        $scope.order.client,
-                livingStartDate :       $scope.order.livingStartDate,
-                livingFinishDate : 		$scope.order.livingFinishDate,
-                sum :                   $scope.order.additionalInfo,
-                comment : 			    $scope.order.comment
-			});
-			$scope.prepareToAddOrder();
-			$scope.added = true;
-		}, function(response) {
-			console.log("Smth wrong!!");
-			console.log(response);
-            $scope.errMessage = "serverErr";
-		});
+		sharedData.setUserIdForOrderFromAdmin($scope.order.clientId);
+		$location.path('/book');
 	}
 
 	var editOrder = function() {
