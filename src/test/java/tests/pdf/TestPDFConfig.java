@@ -17,7 +17,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 import projectpackage.aspects.ModificationHistoryAspect;
-import projectpackage.aspects.NotificationInsertOrChangeAspect;
 import projectpackage.repository.authdao.*;
 import projectpackage.repository.blocksdao.BlockDAO;
 import projectpackage.repository.blocksdao.BlockDAOImpl;
@@ -391,11 +390,6 @@ public class TestPDFConfig implements TransactionManagementConfigurer{
     @Bean
     ModificationHistoryAspect modificationHistoryAspect(){
         return new ModificationHistoryAspect();
-    }
-
-    @Bean
-    NotificationInsertOrChangeAspect notificationInsertOrChangeAspect() {
-        return new NotificationInsertOrChangeAspect();
     }
 
     @Bean

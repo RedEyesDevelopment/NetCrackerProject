@@ -13,7 +13,6 @@ import projectpackage.dto.UserPasswordDTO;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
-import projectpackage.service.MessageBook;
 import projectpackage.service.authservice.UserService;
 import projectpackage.service.securityservice.SecurityService;
 import projectpackage.service.support.ServiceUtils;
@@ -28,7 +27,8 @@ import java.util.Set;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-import static projectpackage.service.MessageBook.*;
+import static projectpackage.service.MessageBook.NULL_ENTITY;
+import static projectpackage.service.MessageBook.WRONG_PASSWORD;
 
 @RestController
 @RequestMapping("/users")
@@ -187,13 +187,10 @@ public class UserController {
 			produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<IUDAnswer> updateBasicInfo(@PathVariable("id") Integer id, @RequestBody UserBasicDTO userBasicDTO, HttpServletRequest request) {
 		User sessionUser = (User) request.getSession().getAttribute("USER");
-		if (sessionUser == null) {
-			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-		} else if (sessionUser.getRole().getObjectId() != 1) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_ADMIN), HttpStatus.BAD_REQUEST);
-        } else if (id == null || id.intValue() != sessionUser.getObjectId()) {
-			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, MessageBook.NULL_ID), HttpStatus.BAD_REQUEST);
-		}
+		IUDAnswer iudAnswer = serviceUtils.checkSessionAndData(sessionUser, userBasicDTO, id);
+		if (!iudAnswer.isSuccessful()) {
+		    return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
 		User user = userService.getSingleUserById(id);
 		user.setFirstName(userBasicDTO.getFirstName());
 		user.setLastName(userBasicDTO.getLastName());

@@ -225,7 +225,6 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	}
 
 	var addOrder = function() {
-		resetFlags();
 		sharedData.setUserIdForOrderFromAdmin($scope.order.clientId);
 		$location.path('/book');
 	}

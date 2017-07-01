@@ -272,9 +272,6 @@ public class OrderServiceImpl implements OrderService{
         roomType.setObjectId(changeOrderDTO.getRoomTypeId());
         Long livingCost = roomTypeService.getLivingCost(changeOrderDTO.getLivingStartDate(), changeOrderDTO.getLivingFinishDate(),
                 changeOrderDTO.getNumberOfResidents(), roomType);
-        System.out.println("*********************************************");
-        System.out.println(changeOrderDTO.getCategoryId());
-        System.out.println(categoryService.getSingleCategoryById(changeOrderDTO.getCategoryId()));
         Category category = new Category();
         category.getCategoryPrice();
         Long categoryPrice = categoryService.getSingleCategoryById(changeOrderDTO.getCategoryId()).getCategoryPrice();
@@ -303,13 +300,14 @@ public class OrderServiceImpl implements OrderService{
         }
 
         Order order = orderDAO.getOrder(orderId);
-        order.getCategory().setObjectId(orderId);
+        order.getCategory().setObjectId(changeOrderDTO.getCategoryId());
         order.getClient().setObjectId(orderDTO.getClientId());
-        order.getRoom().setObjectId(changeOrderDTO.getRoomId());
+        order.getRoom().setObjectId(orderDTO.getRoomId());
         order.setSum(orderDTO.getLivingCost() + orderDTO.getCategoryCost());
         order.getLastModificator().setObjectId(lastModificatorId);
         order.setLivingStartDate(orderDTO.getArrival());
         order.setLivingFinishDate(orderDTO.getDeparture());
+        order.getRoom().getRoomType().setObjectId(changeOrderDTO.getRoomTypeId());
         return updateOrder(orderId, order);
     }
 
