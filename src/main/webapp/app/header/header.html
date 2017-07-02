@@ -56,6 +56,7 @@
 </nav>
 
 
+<!-- Login -->
 <div class="modal fade" id="loginModal" role="dialog">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
@@ -75,11 +76,14 @@
                     <input type="password" id="passform" ng-model="auth.incoming.password"
                             ng-change="hideFailAuthMessage()" placeholder="Enter password">
                 </p>
+                <p class="resetPassword" data-dismiss="modal" data-toggle="modal" data-target="#resetPasswordModal">
+                    Reset the password
+                </p>
                 <div ng-if="auth.incoming.failed" class="failedAuth">
                     Email or password is incorrect.
                 </div>
                 <div class="formFooter">
-                    <button type="submit" class="btn btn-success" ng-click='login()'>Login</button>
+                    <button type="submit" class="btn btn-success" ng-disabled="authorizeform.$invalid" ng-click='login()'>Login</button>
                     <button type="button" id="loginFormClose" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </form>
@@ -88,6 +92,30 @@
 </div>
 
 
+<!-- Reset password -->
+<div class="modal fade" id="resetPasswordModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header popupheader">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Reset the password</h4>
+            </div>
+            <form id="authorizeform" novalidate>
+                <p>  
+                    <label for="resetEmail">Email:</label>
+                    <input type="email" id="resetEmail" ng-model="auth.resetEmail" ng-required="true" placeholder="Enter your email">
+                </p>
+                <div class="formFooter">
+                    <button class="btn btn-success" ng-disabled="authorizeform.$invalid" ng-click='resetPassword()'>Reset</button>
+                    <button type="button" id="loginFormClose" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Registration -->
 <div class="modal fade" id="creationModal" role="dialog">
     <div class="modal-dialog modal-sm">
         <div class="modal-content windowRegistration">

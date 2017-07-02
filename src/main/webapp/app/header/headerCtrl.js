@@ -4,13 +4,6 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', '$rootScope', 'sha
     $scope.auth = {};
     $scope.registrationData = {}
 
-    $scope.regExp = {
-         emailRegex : '(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})'
-        // passwordRegex : '(?=.{8,})(?=.*[a-zA-Z]{1,})(?=.*\d{1,})'
-        // phoneRegex : '+'//\d{1,2}\(\d{3}\)\d{2}\-\d{2}\-\d{3}|\+\d{12}|\d{7}|[0]\d{9}'
-        // phoneRegex : '\+\d{1,2}\(\d{3}\)\d{2}\-\d{2}\-\d{3}|\+\d{12}|\d{7}|[0]\d{9}'
-    }
-
     var setRoleFromSever = function() {
         $http({
             url: 'http://localhost:8080/auth/isauthorized',
@@ -114,6 +107,28 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', '$rootScope', 'sha
             $scope.auth.incoming.failed = true;
         });
     };
+
+    $scope.resetPassword = function() {
+        console.log({
+            url: 'http://localhost:8080/cpass/for/' + $scope.auth.resetEmail,
+            method: 'GET',
+            headers: {'Content-Type' : 'application/json'}
+        });
+
+
+
+        
+        $http({
+            url: 'http://localhost:8080/cpass/for/' + $scope.auth.resetEmail,
+            method: 'GET',
+            headers: {'Content-Type' : 'application/json'}
+        }).then(function (data) {
+            console.log(data.data);
+        }, function (response) {
+            console.log("Smth wrong!!");
+            console.log(response);
+        });
+    }
 
     $scope.hideFailAuthMessage = function() {
         $scope.auth.incoming.failed = false;
