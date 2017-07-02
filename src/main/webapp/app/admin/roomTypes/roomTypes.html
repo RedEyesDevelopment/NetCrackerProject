@@ -47,14 +47,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="rate in roomType.rates | orderBy : 'rate.rateFromDate'">
+                                <tr ng-repeat="rate in roomType.rates | orderBy : 'rateFromDate'">
                                     <th>{{ rate.rateFromDate | date:'dd.MM.yyyy' }}</th>
                                     <th>{{ rate.rateToDate | date:'dd.MM.yyyy' }}</th>
-                                    <th ng-repeat="price in rate.prices | orderBy : 'price.numberOfPeople'">
+                                    <th ng-repeat="price in rate.prices | orderBy : 'numberOfPeople'">
                                         {{ (price.rate / 100).toFixed(2) }} $
                                     </th>
                                     <th>
-                                        <button ng-click="prepareToEditRate(roomType.objectId, listOfRoomTypes.indexOf(roomType), rate.objectId)">
+                                        <button ng-click="prepareToEditRate(roomType.objectId, rate.objectId)">
                                             <i class="fa fa-pencil" aria-hidden="true"></i>
                                         </button>
                                     </th>
@@ -64,7 +64,7 @@
                     </div>
                     <div class="text-right">
                         <button type="button" class="btn btn-success btn-md"
-                                ng-click="prepareToAddRate(roomType.objectId, listOfRoomTypes.indexOf(roomType))">
+                                ng-click="prepareToAddRate(roomType.objectId)">
                             Add rate
                         </button>
                         <button type="button" class="btn btn-primary btn-md"
@@ -134,24 +134,24 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-offset-2 col-sm-8 createUpdateForm">
+            <div class="col-sm-offset-3 col-sm-6 createUpdateForm">
                 <form class="form-horizontal" name="createUpdateForm">
                     <div class="form-group">
-                        <label for="rateFromDate" class="col-sm-6 control-label">Start date</label>
+                        <label for="rateFromDate" class="col-sm-5 control-label">Start date</label>
                         <div class="col-sm-6 wrapInput">
                             <input type="date" class="form-control" id="rateFromDate"
                                     ng-required="true" ng-model="rate.rateFromDate">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="rateToDate" class="col-sm-6 control-label">Finish date</label>
+                        <label for="rateToDate" class="col-sm-5 control-label">Finish date</label>
                         <div class="col-sm-6 wrapInput">
                             <input type="date" class="form-control" id="rateToDate"
                                     ng-required="true" ng-model="rate.rateToDate">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="maintenancePrc" class="col-sm-6 control-label">Price for 1 person</label>
+                        <label for="maintenancePrc" class="col-sm-5 control-label">Price for 1 person</label>
                         <div class="col-sm-6 wrapInput">
                             <input type="number" min="0" ng-pattern="/^-?[0-9][^\.]*$/"
                                     id="maintenancePrc" class="currencyDlr" 
@@ -162,7 +162,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="maintenancePrc" class="col-sm-6 control-label">Price for 2 people</label>
+                        <label for="maintenancePrc" class="col-sm-5 control-label">Price for 2 people</label>
                         <div class="col-sm-6 wrapInput">
                             <input type="number" min="0" ng-pattern="/^-?[0-9][^\.]*$/"
                                     id="maintenancePrc" class="currencyDlr" 
@@ -173,7 +173,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="maintenancePrc" class="col-sm-6 control-label">Price for 3 peolple</label>
+                        <label for="maintenancePrc" class="col-sm-5 control-label">Price for 3 peolple</label>
                         <div class="col-sm-6 wrapInput">
                             <input type="number" min="0" ng-pattern="/^-?[0-9][^\.]*$/"
                                     id="maintenancePrc" class="currencyDlr" 
