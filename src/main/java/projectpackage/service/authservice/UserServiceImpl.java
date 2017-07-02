@@ -50,6 +50,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public User getSingleUserByUsername(String username) {
+		if (null == username){
+			return null;
+		}
+		return userDAO.getUserByUsername(username);
+	}
+
+	@Override
 	public IUDAnswer deleteUser(Integer id) {
         if (id == null) return new IUDAnswer(false, NULL_ID);
         try {

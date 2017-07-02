@@ -12,6 +12,8 @@ import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
 import projectpackage.repository.AbstractDAO;
+import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
+import projectpackage.repository.reacteav.conditions.VariableWhereCondition;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.DuplicateEmailException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
@@ -105,6 +107,16 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         if (null == user) throw new DeletedObjectNotExistsException(this);
 
         jdbcTemplate.update(UPDATE_ATTRIBUTE, "false", null, id, 3);
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        List<User> users = manager.createReactEAV(User.class).addCondition(new VariableWhereCondition("email", username), ConditionExecutionMoment.AFTER_APPENDING_WHERE).getEntityCollection();
+        if (users.isEmpty()){
+            return null;
+        } else {
+            return users.get(0);
+        }
     }
 
     private void insertEmail(Integer objectId, User user) {
