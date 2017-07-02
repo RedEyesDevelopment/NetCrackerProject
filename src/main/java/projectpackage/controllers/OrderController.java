@@ -21,12 +21,14 @@ import javax.cache.annotation.CacheResult;
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import static projectpackage.service.MessageBook.EMPTY_DTO_IN_SESSION;
+import static projectpackage.service.MessageBook.ORDER_STARTED;
 
 /**
  * Created by Lenovo on 28.05.2017.
@@ -198,6 +200,9 @@ public class OrderController {
         Order order = orderService.getSingleOrderById(id);
         order.setIsConfirmed(confirmPaidOrderDTO.getIsConfirmed());
         order.setIsPaidFor(confirmPaidOrderDTO.getIsPaidFor());
+        User user = new User();
+        user.setObjectId(thisUser.getObjectId());
+        order.setLastModificator(user);
         IUDAnswer answer = orderService.updateOrder(id, order);
         if (!answer.isSuccessful()) {
             return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
@@ -234,11 +239,18 @@ public class OrderController {
         if (!iudAnswer.isSuccessful()) {
             return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
+        Order order = orderService.getSingleOrderById(id);
+        Date validDate = new Date(new Date().getTime() + 86400000L);
+        if (order.getLivingStartDate().after(validDate)) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, ORDER_STARTED), HttpStatus.FORBIDDEN);
+        }
         IUDAnswer result = orderService.deleteOrder(id);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.OK;
-        } else status = HttpStatus.NOT_FOUND;
+        } else {
+            status = HttpStatus.NOT_ACCEPTABLE;
+        }
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
     }
