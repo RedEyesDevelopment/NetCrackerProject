@@ -16,6 +16,8 @@ public class MailMessagesMap {
         messages.put(1, new MailDataHolder("Booked room", "Order creation"));
         messages.put(2, new MailDataHolder("Payment confirmation", "Order has been payed"));
         messages.put(3, new MailDataHolder("Statistic", "Fuck you bitch!"));
+        messages.put(4, new MailDataHolder("PasswordChange", "This letter was created automatically, do not reply to this. You have left a request for password change on NetCracker Hotel. We generated dynamic link for you to change your password, it will be active only for 5 minutes. If that's not what you wanted, then do nothing and delete this letter. If that's what you wanted to do, then just click the link below:\n"));
+        messages.put(5, new MailDataHolder("PasswordChange", "This letter was created automatically, do not reply to this. You have requested a password change and it was changed. Now you can login using your email and new password. Your new password is: "));
     }
 
     public MailDataHolder getMessage(int messageCode){

@@ -6,6 +6,7 @@ import org.springframework.boot.web.support.ErrorPageFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
+import projectpackage.service.support.RandomStringGenerator;
 import projectpackage.support.TestInterceptor;
 
 /**
@@ -40,6 +41,11 @@ public class WebMVCConfigurer extends WebMvcConfigurerAdapter {
         filterRegistrationBean.setFilter(errorPageFilter());
         filterRegistrationBean.setEnabled(false);
         return filterRegistrationBean;
+    }
+
+    @Bean
+    RandomStringGenerator randomStringGenerator(){
+        return new RandomStringGenerator();
     }
 
     @Override
