@@ -74,7 +74,7 @@ public class PdfServiceImpl implements PdfService{
         stream.setTextMatrix(175, 243);
         stream.showText(df.format(order.getLivingStartDate()) + "  -  " + df.format(order.getLivingFinishDate()));
         stream.setTextMatrix(125, 205);
-        stream.showText(order.getSum()/100 + "$");
+        stream.showText(order.getSum()/100   + " $  " + order.getSum()%100 + " \u00A2");
         stream.endText();
 
         try {

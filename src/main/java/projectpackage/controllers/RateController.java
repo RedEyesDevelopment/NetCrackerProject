@@ -6,16 +6,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import projectpackage.model.auth.User;
-import projectpackage.model.rates.Rate;
 import projectpackage.dto.IUDAnswer;
+import projectpackage.dto.RateDTO;
+import projectpackage.model.auth.User;
+import projectpackage.model.rates.Price;
+import projectpackage.model.rates.Rate;
 import projectpackage.service.rateservice.RateService;
+import projectpackage.service.support.ServiceUtils;
 
-import javax.cache.annotation.CacheRemoveAll;
-import javax.cache.annotation.CacheResult;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -30,9 +33,11 @@ public class RateController {
     @Autowired
     RateService rateService;
 
+    @Autowired
+    ServiceUtils serviceUtils;
+
     //Get Rate List
     @ResponseStatus(HttpStatus.OK)
-    @CacheResult(cacheName = "rateList")
     @GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public List<Resource<Rate>> getRateList(){
         List<Rate> rates = rateService.getAllRates();
@@ -45,8 +50,6 @@ public class RateController {
         return resources;
     }
 
-    //Get single Rate by id
-    @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Resource<Rate>> getRate(@PathVariable("id") Integer id, HttpServletRequest request){
         User thisUser = (User) request.getSession().getAttribute("USER");
@@ -54,9 +57,7 @@ public class RateController {
         Resource<Rate> resource = new Resource<>(rate);
         HttpStatus status;
         if (null != rate){
-//            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(RateController.class).deleteRate(rate.getObjectId())).withRel("delete"));
-//            resource.add(linkTo(methodOn(RateController.class).updateRate(rate.getObjectId(), rate)).withRel("update"));
-            status = HttpStatus.ACCEPTED;
+            status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
         }
@@ -64,11 +65,33 @@ public class RateController {
         return result;
     }
 
-    //Create rate, fetch into database
-    @CacheRemoveAll(cacheName = "rateList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> createRate(@RequestBody Rate newRate){
-        IUDAnswer result = rateService.insertRate(newRate);
+    public ResponseEntity<IUDAnswer> createRate(@RequestBody RateDTO rateDTO, HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(user, rateDTO);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
+        Set prices = new HashSet();
+        Price price1 = new Price();
+        price1.setNumberOfPeople(1);
+        price1.setRate(rateDTO.getPriceForOne());
+        Price price2 = new Price();
+        price2.setNumberOfPeople(2);
+        price2.setRate(rateDTO.getPriceForTwo());
+        Price price3 = new Price();
+        price3.setNumberOfPeople(3);
+        price3.setRate(rateDTO.getPriceForThree());
+        prices.add(price1);
+        prices.add(price2);
+        prices.add(price3);
+        Rate rate = new Rate();
+        rate.setRoomTypeId(rateDTO.getRoomTypeId());
+        rate.setRateFromDate(rateDTO.getRateFromDate());
+        rate.setRateToDate(rateDTO.getRateToDate());
+        rate.setPrices(prices);
+
+        IUDAnswer result = rateService.insertRate(rate);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.CREATED;
@@ -77,32 +100,4 @@ public class RateController {
         return responseEntity;
     }
 
-   // //Update rate method
-//    @CacheRemoveAll(cacheName = "rateList")
-//    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-//    public ResponseEntity<IUDAnswer> updateRate(@PathVariable("id") Integer id, @RequestBody Rate changedRate){
-//        if (!id.equals(changedRate.getObjectId())){
-//            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, "wrongId"), HttpStatus.NOT_ACCEPTABLE);
-//        }
-//        IUDAnswer result = rateService.updateRate(id, changedRate);
-//        HttpStatus status;
-//        if (result.isSuccessful()) {
-//            status = HttpStatus.ACCEPTED;
-//        } else status = HttpStatus.BAD_REQUEST;
-//        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
-//        return responseEntity;
-//    }
-
-//    //Delete rate method
-//    @CacheRemoveAll(cacheName = "rateList")
-//    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-//    public ResponseEntity<IUDAnswer> deleteRate(@PathVariable("id") Integer id){
-//        IUDAnswer result = rateService.deleteRate(id);
-//        HttpStatus status;
-//        if (result.isSuccessful()) {
-//            status = HttpStatus.ACCEPTED;
-//        } else status = HttpStatus.NOT_FOUND;
-//        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
-//        return responseEntity;
-//    }
 }

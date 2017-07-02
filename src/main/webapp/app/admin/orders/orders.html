@@ -13,24 +13,57 @@
 
 
         <!-- Looking -->
-        <div class="listOfObjects" ng-if="stage == 'looking'">
+        <div class="listOfObjects" ng-if="mode == 'look'">
             <ul class="pager">
                 <li><a ng-click="previousOrders()"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li>
                 <li><input type="number" min="1" max="999" ng-model="pager.objectsOnPage"></li>
                 <li><a ng-click="nextOrders()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
+
+            <div class="answer">
+                <div ng-if="stage == 'updated'">
+                    Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
+                </div>
+                <div ng-if="stage == 'deleted'">
+                    Successfully deleted! <i class="fa fa-check" aria-hidden="true"></i>
+                </div>
+            </div>
+
             <div ng-repeat="order in listOfOrders | orderBy : 'objectId' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-12 block-border">
                 <div class="admin-notes">
                     <div class="col-sm-12 order-bottom-border order-padding-bottom">
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             Order id: {{ order.objectId }}    
                         </div>
                         <div class="col-sm-4 text-center">
                             registration date: {{ order.registrationDate | date:'dd.MM.yyyy' }}
                         </div>
-                        <div class="col-sm-4 text-right">
-                            {{ order.isPaidFor ? 'paid' : 'not paid' }} |
-                            {{ order.isConfirmed ? 'confirmed' : "not confirmed" }}
+                        <div class="col-sm-5 text-right">
+                            <span ng-if="order.isPaidFor">paid
+                                <button class="toggle" ng-click="prepareToSwitch(order.objectId, listOfOrders.indexOf(order), false, order.isConfirmed)"
+                                        data-toggle="modal" data-target="#editConfirmModal">
+                                    <i class="fa fa-toggle-on" aria-hidden="true"></i>
+                                </button>
+                            </span>
+                            <span ng-if="!order.isPaidFor">not paid
+                                <button class="toggle" ng-click="prepareToSwitch(order.objectId, listOfOrders.indexOf(order), true, order.isConfirmed)"
+                                        data-toggle="modal" data-target="#editConfirmModal">
+                                    <i class="fa fa-toggle-off" aria-hidden="true"></i
+                                ></button>
+                            </span>
+                             | 
+                            <span ng-if="order.isConfirmed">confirmed
+                                <button class="toggle" ng-click="prepareToSwitch(order.objectId, listOfOrders.indexOf(order), order.isPaidFor, false)"
+                                        data-toggle="modal" data-target="#editConfirmModal">
+                                    <i class="fa fa-toggle-on" aria-hidden="true"></i>
+                                </button>
+                            </span>
+                            <span ng-if="!order.isConfirmed">not confirmed
+                                <button class="toggle" ng-click="prepareToSwitch(order.objectId, listOfOrders.indexOf(order), order.isPaidFor, true)"
+                                        data-toggle="modal" data-target="#editConfirmModal">
+                                    <i class="fa fa-toggle-off" aria-hidden="true"></i
+                                ></button>
+                            </span>
                         </div>
                     </div>
 
@@ -107,6 +140,7 @@
                                     <th>Count</th>
                                     <th>Cost</th>
                                     <th>Used date</th>
+                                    <th>Delete</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -115,15 +149,23 @@
                                     <th>{{ record.count }}</th>
                                     <th>{{ (record.cost / 100).toFixed(2) }} $</th>
                                     <th>{{ record.usedDate | date:'dd.MM.yyyy' }}</th>
+                                    <th><button class="deleteMaintenance" data-toggle="modal" data-target="#deleteConfirmModal"
+                                        ng-click="prepareToDeleteJournalRecord(record.objectId, listOfOrders.indexOf(order), order.journalRecords.indexOf(record))">
+                                    delete</button></th>
                                 </tr>
                             </tbody>
                         </table>
                     </div>                    
                     
                     <div class="col-sm-12 order-padding-top-bottom order-top-border order-bottom-border"> Comment: {{ order.comment }} </div>                    
-                    <div class="col-sm-8 order-padding-top-bottom"> Last modificator: {{ order.lastModificator.firstName }} {{ order.lastModificator.lastName }} </div>
+                    <div class="col-sm-8 order-padding-top-bottom"> Last modifier: {{ order.lastModificator.firstName }} {{ order.lastModificator.lastName }} </div>
 
                     <div class="col-sm-4 text-right order-padding-top-bottom">
+                        <button type="button" class="btn btn-success btn-md"
+                                data-toggle="modal" data-target="#addMaintenance"
+                                ng-click="prepareToAddMaintenance(order.objectId, listOfOrders.indexOf(order))">
+                            Add maintenance
+                        </button>
                         <button type="button" class="btn btn-primary btn-md"
                                 ng-click="prepareToEditOrder(order.objectId, listOfOrders.indexOf(order))">
                             Edit
@@ -140,98 +182,201 @@
 
 
         <!-- New order -->
-        <div class="editWindow" ng-if="modificationMode">
+        <div class="editWindow" ng-if="mode == 'add'">
             <div>
                 <button ng-click="back()" class="btn btn-info btn-sm back">
                     <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back to orders
                 </button>
+            </div>
 
-                <div class="answer">
-                    <div ng-if="added">
-                        Successfully added! <i class="fa fa-check" aria-hidden="true"></i>
+            <div class="col-sm-offset-1 col-sm-10 createUpdateForm">
+                <form class="form-horizontal" name="createUpdateForm">
+                    <div class="form-group">
+                        <label for="client" class="col-sm-2 control-label">For client: </label>
+                        <div class="col-sm-10">
+                            <select id="client" class="form-control" ng-required="true" ng-model="order.clientId"
+                                ng-options="user.objectId as (user.firstName + ' ' + user.lastName + ' - ' + user.email) for user in listOfUsers | orderBy : user.lastName"
+                            ></select>
+                        </div>
                     </div>
+                    <div class="form-group">
+                        <div class="text-center">
+                            <button class="btn btn-primary" ng-disabled="createUpdateForm.$invalid" ng-click="query()">OK</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+        <!-- Edit order -->
+        <div class="editWindow" ng-if="mode == 'edit'">
+            <div>
+                <button ng-click="back()" class="btn btn-info btn-sm back">
+                    <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back to orders
+                </button>
+                <div class="answer">
                     <div ng-if="updated">
                         Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
                     </div>
                 </div>
-
             </div>
-            <div class="col-sm-offset-1 col-sm-10 createUpdateForm">
-                <form class="form-horizontal" name="createUpdateForm">
-                    <!--<div class="form-group">-->
-                        <!--<label for="lastName" class="col-sm-6 control-label">Last Name</label>-->
-                        <!--<div class="col-sm-6">-->
-                            <!--<input type="text" id="lastName" ng-required="true" ng-model="order.lastName">-->
-                        <!--</div>-->
-                    <!--</div>-->
+            <div class="col-sm-offset-3 col-sm-6 createUpdateForm">
+                <button ng-click="backTochoosingAnotherVariants()" ng-if="stage == 'choosingAnotherVariant'" class="btn btn-info btn-sm col-sm-1">
+                    <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
+                </button>
+                <div class="col-sm-1" ng-if="stage != 'choosingAnotherVariant'"></div>
+                <div class="col-sm-10 title">
+                    Current room: {{ order.room.roomNumber }}
+                </div>
+
+                <div ng-if="stage == 'noAvailable'" class="text-center myLabel">
+                    There is no available rooms for your request! <i class="fa fa-times" aria-hidden="true"></i>
+                </div>
+                
+                <!-- Тут вписывают желаемые данные -->
+                <form class="form-horizontal" name="searchForUpdateForm" ng-if="stage != 'choosingAnotherVariant'">
                     <div class="form-group">
                         <label for="livingStartDate" class="col-sm-6 control-label">Living start</label>
-                        <div class="col-sm-6">
-                            <input type="text" id="livingStartDate" ng-required="true" ng-model="order.livingStartDate">
+                        <div class="col-sm-5">
+                            <input type="date" class="form-control" id="livingStartDate" ng-required="true" ng-model="order.livingStartDate">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="livingFinishDate" class="col-sm-6 control-label">Living finish</label>
-                        <div class="col-sm-6">
-                            <input type="text" id="livingFinishDate" ng-required="true" ng-model="order.livingFinishDate">
+                        <div class="col-sm-5">
+                            <input type="date" class="form-control" id="livingFinishDate" ng-required="true" ng-model="order.livingFinishDate">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="room" class="col-sm-6 control-label">Number of residents</label>
+                        <div class="col-sm-5">
+                            <select id="room" class="form-control" ng-required="true" ng-model="order.room.numberOfResidents"
+                                    ng-options="res for res in listOfResidents">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="room" class="col-sm-6 control-label">Room type</label>
+                        <div class="col-sm-5">
+                            <select id="room" class="form-control" ng-required="true" ng-model="order.room.roomType.objectId"
+                                    ng-options="roomType.objectId as roomType.roomTypeTitle for roomType in listOfRoomTypes">
+                            </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="category" class="col-sm-6 control-label">Category</label>
-                        <div class="col-sm-6">
-                            <select id="category" class="form-control" ng-required="true" ng-model="order.category"
+                        <div class="col-sm-5">
+                            <select id="category" class="form-control" ng-required="true" ng-model="order.category.objectId"
                                     ng-options="category.objectId as category.categoryTitle for category in listOfCategories">
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="room" class="col-sm-6 control-label">Room</label>
-                        <div class="col-sm-6">
-                            <select id="room" class="form-control" ng-required="true" ng-model="order.room"
-                                    ng-options="room.objectId as room.roomNumber for room in listOfRooms">
-                            </select>
+                        <div class="text-center">
+                            <button class="btn btn-primary" ng-disabled="searchForUpdateForm.$invalid" ng-click="searchForEdit()">OK</button>
+                        </div>
+                    </div>
+                </form>
+                <!-- Тут выбирают комнату -->
+                <form class="form-horizontal" name="choiceAnotherVariant" ng-if="stage == 'choosingAnotherVariant'">
+                    <div class="form-group">
+                        <div>
+                            <div class="col-sm-6 text-right myLabel">
+                                Living cost:
+                            </div>
+                            <div class="col-sm-6 myLabel">
+                                {{ (anotherVariant.livingCost / 100).toFixed(2) }}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="col-sm-6 text-right myLabel">
+                                Category cost:
+                            </div>
+                            <div class="col-sm-6 myLabel">
+                                {{ (anotherVariant.categoryCost / 100).toFixed(2) }}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="col-sm-6 text-right myLabel">
+                                Total:
+                            </div>
+                            <div class="col-sm-6 myLabel">
+                                {{ (anotherVariant.total / 100).toFixed(2) }}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="col-sm-4 col-sm-offset-2 text-right myLabel form-field-top-border">
+                                Old sum:
+                            </div>
+                            <div class="col-sm-4 myLabel form-field-top-border">
+                                {{ (order.sum / 100).toFixed(2) }}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="col-sm-4 col-sm-offset-2 text-right myLabel form-field-bottom-border">
+                                Difference:
+                            </div>
+                            <div class="col-sm-4 myLabel form-field-bottom-border">
+                                {{ ((anotherVariant.total - order.sum) / 100).toFixed(2) }}
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="client" class="col-sm-6 control-label">Client</label>
-                        <div class="col-sm-6">
-                            <input type="text" id="client" ng-required="true" ng-model="order.client">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="isPaidFor" class="col-sm-6 control-label">Paid</label>
+                        <label for="category" class="col-sm-6 control-label">Select room:</label>
                         <div class="col-sm-3">
-                            <select id="isPaidFor" class="form-control" ng-required="true" ng-model="order.isPaidFor"
-                                    ng-options="ispf for ispf in paided">
+                            <select id="category" class="form-control" ng-required="true" ng-model="order.room.objectId"
+                                    ng-options="room.objectId as room.roomNumber for room in anotherVariant.rooms">
                             </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="isConfirmed" class="col-sm-6 control-label">Confirmed</label>
-                        <div class="col-sm-3">
-                            <select id="isConfirmed" class="form-control" ng-required="true" ng-model="order.isConfirmed"
-                                    ng-options="iscfm for iscfm in confirmed">
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="sum" class="col-sm-6 control-label">Sum</label>
-                        <div class="col-sm-6">
-                            <input type="text" id="sum" ng-required="true" ng-model="order.sum">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="comment" class="col-sm-6 control-label">Comment</label>
-                        <div class="col-sm-6">
-                            <input type="text" id="comment" ng-required="true" ng-model="order.comment">
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="text-center">
-                            <button class="btn btn-primary" ng-disabled="createUpdateForm.$invalid" data-toggle="modal" data-target="#editConfirmModal">OK</button>
+                            <button class="btn btn-primary" ng-disabled="searchForUpdateForm.$invalid" data-toggle="modal" data-target="#editConfirmModal">OK</button>
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Window for add maintenance on order -->
+<div class="modal fade" id="addMaintenance" role="dialog">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog modal-sm vertical-align-center">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header popupheader">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add maintenance on order</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" name="formAddMaintenance">
+                        <div class="form-group">
+                            <label for="client" class="col-sm-4 control-label">Maintenance: </label>
+                            <div class="col-sm-12">
+                                <select id="client" class="form-control" ng-required="true" ng-model="newMaintenance.maintenanceId"
+                                    ng-options="maintenance.objectId as maintenance.maintenanceTitle for maintenance in listOfMaintenances | orderBy : maintenance.maintenanceTitle"
+                                ></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="nmbrOfMaintenances" class="col-sm-4 col-sm-offset-2 control-label">Count: </label>
+                            <div class="col-sm-4">
+                                <input type="number" min="1" max="99" ng-pattern="/^[0-9][^\.]*$/" id="nmbrOfMaintenances"
+                                    class="form-control" ng-required="true" ng-model="newMaintenance.count">
+                            </div>
+                        </div>
+                    </form>
+                    <div class="text-right">
+                        <button class="btn btn-success" data-dismiss="modal" ng-disabled="formAddMaintenance.$invalid" ng-click="addMaintenance()">Add</button>
+                        <button class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

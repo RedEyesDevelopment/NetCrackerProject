@@ -115,8 +115,7 @@
                     <label for="passcrform" class="passwordLabel">Repeat:</label>
                     <input type="password" id="passcrform" placeholder="Password confirmation"
                            ng-model="registrationData.userPasswordRepeat" ng-required="true"
-                           ng-change="hideNotTheSamePasswordsMessage()"
-                           ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/">
+                           ng-change="hideNotTheSamePasswordsMessage()">
                 </p>
                 <p>
                     <label for="nameform">Name:</label>

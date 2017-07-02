@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.model.rates.Rate;
 import projectpackage.repository.ratesdao.RateDAO;
+import projectpackage.service.support.ServiceUtils;
 
 import java.util.List;
 
@@ -20,6 +21,9 @@ public class RateServiceImpl implements RateService{
 
     @Autowired
     RateDAO rateDAO;
+
+    @Autowired
+    ServiceUtils serviceUtils;
 
     @Override
     public List<Rate> getAllRates() {
@@ -37,6 +41,11 @@ public class RateServiceImpl implements RateService{
 
     @Override
     public IUDAnswer insertRate(Rate rate) {
+        if (rate == null) {
+            return null;
+        } else if (!serviceUtils.checkDatesForRate(rate.getRateFromDate(), rate.getRateToDate())) {
+            return new IUDAnswer(false, WRONG_RATE_DATES);
+        }
         Integer rateId = null;
         try {
             rateId = rateDAO.insertRate(rate);

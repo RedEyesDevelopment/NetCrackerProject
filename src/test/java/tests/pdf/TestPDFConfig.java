@@ -17,7 +17,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 import projectpackage.aspects.ModificationHistoryAspect;
-import projectpackage.aspects.NotificationInsertOrChangeAspect;
 import projectpackage.repository.authdao.*;
 import projectpackage.repository.blocksdao.BlockDAO;
 import projectpackage.repository.blocksdao.BlockDAOImpl;
@@ -42,8 +41,6 @@ import projectpackage.repository.securitydao.AuthCredentialsDAO;
 import projectpackage.repository.securitydao.AuthCredentialsDAOImpl;
 import projectpackage.service.adminservice.AdminService;
 import projectpackage.service.adminservice.AdminServiceImpl;
-import projectpackage.service.adminservice.InMemoryNotifService;
-import projectpackage.service.adminservice.InMemoryNotifServiceImpl;
 import projectpackage.service.authservice.*;
 import projectpackage.service.blockservice.BlockService;
 import projectpackage.service.blockservice.BlockServiceImpl;
@@ -57,12 +54,12 @@ import projectpackage.service.notificationservice.NotificationServiceImpl;
 import projectpackage.service.notificationservice.NotificationTypeService;
 import projectpackage.service.notificationservice.NotificationTypeServiceImpl;
 import projectpackage.service.orderservice.*;
-import projectpackage.service.regex.RegexService;
-import projectpackage.service.regex.RegexServiceImpl;
 import projectpackage.service.rateservice.PriceService;
 import projectpackage.service.rateservice.PriceServiceImpl;
 import projectpackage.service.rateservice.RateService;
 import projectpackage.service.rateservice.RateServiceImpl;
+import projectpackage.service.regex.RegexService;
+import projectpackage.service.regex.RegexServiceImpl;
 import projectpackage.service.roomservice.RoomService;
 import projectpackage.service.roomservice.RoomServiceImpl;
 import projectpackage.service.roomservice.RoomTypeService;
@@ -226,11 +223,6 @@ public class TestPDFConfig implements TransactionManagementConfigurer{
     }
 
     @Bean
-    InMemoryNotifService inMemoryNotifService() {
-        return new InMemoryNotifServiceImpl();
-    }
-
-    @Bean
     NamedParameterJdbcTemplate namedParameteJdbcTemplate() {
         return new NamedParameterJdbcTemplate(dataSource());
     }
@@ -391,11 +383,6 @@ public class TestPDFConfig implements TransactionManagementConfigurer{
     @Bean
     ModificationHistoryAspect modificationHistoryAspect(){
         return new ModificationHistoryAspect();
-    }
-
-    @Bean
-    NotificationInsertOrChangeAspect notificationInsertOrChangeAspect() {
-        return new NotificationInsertOrChangeAspect();
     }
 
     @Bean

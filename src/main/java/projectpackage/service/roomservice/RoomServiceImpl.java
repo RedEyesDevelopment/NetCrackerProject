@@ -84,6 +84,16 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public Room getFreeRoom(int roomTypeId, int numberOfResidents, Date start, Date finish) {
+        return roomDAO.getFreeRoom(roomTypeId, numberOfResidents, start, finish);
+    }
+
+    @Override
+    public List<Room> getFreeRooms(int roomTypeId, int numberOfResidents, Date start, Date finish) {
+        return roomDAO.getFreeRooms(roomTypeId, numberOfResidents, start, finish);
+    }
+
+    @Override
     public List<Room> getFreeRoomsOnPeriod(Date start, Date finish) {
         List<Room> list = new ArrayList<>();
         List<Room> allRooms = getAllRooms();

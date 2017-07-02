@@ -19,11 +19,48 @@
                 <li><input type="number" min="1" max="999" ng-model="pager.objectsOnPage"></li>
                 <li><a ng-click="nextCategories()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
-            <div ng-repeat="category in listOfCategories | orderBy : 'categoryTitle' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-5 col-sm-offset-1">
+            <div ng-repeat="category in listOfCategories | orderBy : 'categoryTitle' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-6">
                 <div class="block-border">
-                    <p class="admin-notes"> Title: {{ category.categoryTitle }} </p>
-                    <p class="admin-notes top-border"> Price: {{ (category.categoryPrice / 100).toFixed(2) }} $ </p>
+                    <div class="admin-notes">
+                        <p> Title: {{ category.categoryTitle }} </p>
+                        <p class="top-bottom-border"> Price: {{ (category.categoryPrice / 100).toFixed(2) }} $ </p>
+                        <p class="col-sm-12 order-padding-top-bottom listButton"
+                                ng-if="expand.id != category.objectId" ng-click="expand.id = category.objectId">
+                            List of complimentaries
+                        </p>
+                        <p class="col-sm-12 order-padding-top-bottom listButton"
+                                ng-if="expand.id == category.objectId" ng-click="expand.id = 0">
+                            Hide list
+                        </p>
+                    </div>
+
+                    <div class="col-sm-12 table-responsive order-top-border" ng-if="expand.id == category.objectId">
+                        <table class="table table-striped table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Maintenance</th>
+                                    <th>Type</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="complimentary in category.complimentaries | orderBy : 'complimentary.maintenance.maintenanceTitle'">
+                                    <th>{{ complimentary.maintenance.maintenanceTitle }}</th>
+                                    <th>{{ complimentary.maintenance.maintenanceType }}</th>
+                                    <th><button class="deleteMaintenance" data-toggle="modal" data-target="#deleteConfirmModal"
+                                        ng-click="prepareToDeleteComplimentary(complimentary.objectId, listOfCategories.indexOf(category), category.complimentaries.indexOf(complimentary))">
+                                    delete</button></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
                     <div class="text-right">
+                        <button type="button" class="btn btn-success btn-md"
+                                data-toggle="modal" data-target="#addComplimentary"
+                                ng-click="prepareToAddComplimentary(category.objectId, listOfCategories.indexOf(category))">
+                            Add complimentary
+                        </button>
                         <button type="button" class="btn btn-primary btn-md"
                                 ng-click="prepareToEditCategory(category.objectId, listOfCategories.indexOf(category))">
                             Edit
@@ -47,13 +84,10 @@
                 </button>
 
                 <div class="answer">
-                    <!-- Successfully added -->
-                    <div ng-if="added">
+                    <div ng-if="stage == 'added'">
                         Successfully added! <i class="fa fa-check" aria-hidden="true"></i>
                     </div>
-
-                    <!-- Successfully updated -->
-                    <div ng-if="updated">
+                    <div ng-if="stage == 'updated'">
                         Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
                     </div>
                 </div>
@@ -63,13 +97,18 @@
                     <div class="form-group">
                         <label for="categoryTitle" class="col-sm-4 control-label">Title</label>
                         <div class="col-sm-6 wrapInput">
-                            <input type="text" id="categoryTitle" ng-required="true" ng-model="category.title">
+                            <input type="text" class="form-control" id="categoryTitle" ng-required="true" ng-model="category.title">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="categoryPrice" class="col-sm-4 control-label">Price</label>
+                        <label for="maintenancePrc" class="col-sm-4 control-label">Price</label>
                         <div class="col-sm-6 wrapInput">
-                            <input type="number" id="categoryPrice" ng-required="true" ng-model="category.price">
+                            <input type="number" ng-min="0" min="0" ng-pattern="/^-?[0-9][^\.]*$/"
+                                    id="maintenancePrc" class="currencyDlr" 
+                                    ng-required="true" ng-model="category.dollars"> $ 
+                            <input type="number" ng-min="0" min="0" ng-max="99" max="99" ng-pattern="/^-?[0-9][^\.]*$/"
+                                    class="currencyCent"
+                                    ng-required="true" ng-model="category.cents"> &cent; 
                         </div>
                     </div>
                     <div class="form-group">
@@ -78,6 +117,39 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Window for add complimentary on category -->
+<div class="modal fade" id="addComplimentary" role="dialog">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog modal-sm vertical-align-center">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header popupheader">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add complimentary</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" name="formAddComplimentary">
+                        <div class="form-group">
+                            <label for="client" class="col-sm-4 control-label">Maintenance: </label>
+                            <div class="col-sm-12">
+                                <select id="client" class="form-control" ng-required="true" ng-model="newComplimentary.maintenanceId"
+                                    ng-options="maintenance.objectId as maintenance.maintenanceTitle for maintenance in listOfMaintenances | orderBy : maintenance.maintenanceTitle"
+                                ></select>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="text-right">
+                        <button class="btn btn-success" data-dismiss="modal" ng-disabled="formAddComplimentary.$invalid" ng-click="addComplimentary()">Add</button>
+                        <button class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

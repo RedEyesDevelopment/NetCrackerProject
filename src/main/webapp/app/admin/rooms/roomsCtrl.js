@@ -80,7 +80,6 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			resetFlags();
 			$scope.stage = "editing";
 			$scope.modificationMode = true;
-
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);

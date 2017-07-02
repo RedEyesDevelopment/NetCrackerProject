@@ -6,14 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.dto.JournalRecordDTO;
 import projectpackage.model.auth.User;
 import projectpackage.model.maintenances.JournalRecord;
-import projectpackage.dto.IUDAnswer;
 import projectpackage.model.maintenances.Maintenance;
-import projectpackage.service.MessageBook;
 import projectpackage.service.maintenanceservice.JournalRecordService;
 import projectpackage.service.maintenanceservice.MaintenanceService;
+import projectpackage.service.support.ServiceUtils;
 
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
@@ -24,9 +24,6 @@ import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-import static projectpackage.service.MessageBook.NEED_TO_AUTH;
-import static projectpackage.service.MessageBook.NOT_RECEPTION_OR_ADMIN;
-import static projectpackage.service.MessageBook.NULL_ENTITY;
 
 /**
  * Created by Arizel on 28.05.2017.
@@ -39,6 +36,9 @@ public class JournalRecordController {
 
     @Autowired
     MaintenanceService maintenanceService;
+
+    @Autowired
+    ServiceUtils serviceUtils;
 
     @ResponseStatus(HttpStatus.OK)
     @CacheResult(cacheName = "journalRecordList")
@@ -65,10 +65,6 @@ public class JournalRecordController {
         Resource<JournalRecord> resource = new Resource<>(JournalRecord);
         HttpStatus status;
         if (null != JournalRecord) {
-            if (thisUser.getRole().getRoleName().equals("ADMIN")) {
-                resource.add(linkTo(methodOn(JournalRecordController.class).deleteJournalRecord(JournalRecord.getObjectId())).withRel("delete"));
-            }
-            resource.add(linkTo(methodOn(JournalRecordController.class).updateJournalRecord(JournalRecord.getObjectId(), JournalRecord)).withRel("update"));
             status = HttpStatus.ACCEPTED;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -82,12 +78,9 @@ public class JournalRecordController {
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> createJournalRecord(@RequestBody JournalRecordDTO journalRecordDTO, HttpServletRequest request) {
         User sessionUser = (User) request.getSession().getAttribute("USER");
-        if (sessionUser == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-        } else if (sessionUser.getRole().getObjectId() == 3) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_RECEPTION_OR_ADMIN), HttpStatus.BAD_REQUEST);
-        } else if (journalRecordDTO == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminReceptionAndData(sessionUser, journalRecordDTO);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
         JournalRecord newJournalRecord = new JournalRecord();
         newJournalRecord.setOrderId(journalRecordDTO.getOrderId());
@@ -103,23 +96,13 @@ public class JournalRecordController {
     }
 
     @CacheRemoveAll(cacheName = "journalRecordList")
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> updateJournalRecord(@PathVariable("id") Integer id, @RequestBody JournalRecord changedJournalRecord) {
-        if (!id.equals(changedJournalRecord.getObjectId())) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID),
-                    HttpStatus.NOT_ACCEPTABLE);
-        }
-
-        IUDAnswer result = journalRecordService.updateJournalRecord(id, changedJournalRecord);
-
-        HttpStatus status = result.isSuccessful() ? HttpStatus.ACCEPTED : HttpStatus.BAD_REQUEST;
-
-        return new ResponseEntity<IUDAnswer>(result, status);
-    }
-
-    @CacheRemoveAll(cacheName = "journalRecordList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> deleteJournalRecord(@PathVariable("id") Integer id) {
+    public ResponseEntity<IUDAnswer> deleteJournalRecord(@PathVariable("id") Integer id, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkDeleteForAdminAndReception(user, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
         IUDAnswer result = journalRecordService.deleteJournalRecord(id);
 
         HttpStatus status = result.isSuccessful() ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND;

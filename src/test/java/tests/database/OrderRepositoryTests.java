@@ -160,6 +160,7 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
         order.setClient(user);
         order.setLastModificator(user);
         IUDAnswer iudAnswer = orderService.insertOrder(order);
+        System.out.println(iudAnswer);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info(iudAnswer.getObjectId());
         LOGGER.info("Create order result = " + iudAnswer.isSuccessful());
@@ -191,5 +192,16 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info("Create order result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
+    }
+
+    @Test
+    public void getOrder(){
+        Order orderToUpdate = orderService.getSingleOrderById(2100);
+        Order newOrder = (Order) orderToUpdate.clone();
+        newOrder.setIsPaidFor(true);
+        System.out.println("old="+orderToUpdate);
+        System.out.println("new="+newOrder);
+        IUDAnswer answer = orderService.updateOrder(newOrder.getObjectId(), newOrder);
+        System.out.println("result="+answer);
     }
 }

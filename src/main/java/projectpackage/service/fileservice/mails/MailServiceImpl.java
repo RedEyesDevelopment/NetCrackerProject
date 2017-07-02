@@ -113,4 +113,27 @@ public class MailServiceImpl implements MailService {
             }
         }
     }
+
+    @Override
+    public void sendEmailToChangePassword(String receiver, Integer messageKey, String link) {
+        synchronized (MailServiceImpl.class) {
+            JavaMailSenderImpl javaMailSenderImpl = (JavaMailSenderImpl) javaMailSender;
+            javaMailSenderImpl.setUsername(username);
+            javaMailSenderImpl.setPassword(password);
+            javaMailSenderImpl.setJavaMailProperties(mailProperties);
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper messageHelper = new MimeMessageHelper(message);
+            try {
+                messageHelper.setTo(receiver);
+                messageHelper.setSubject(mailMessagesMap.getMessage(messageKey).getSubject());
+                messageHelper.setSentDate(new Date(System.currentTimeMillis()));
+                messageHelper.setText(mailMessagesMap.getMessage(messageKey).getMessage() + link);
+            } catch (MessagingException e) {
+                LOGGER.warn("Message from MailSenderImpl was not send.", e);
+            }
+            CustomMailSender sender = new CustomMailSender(null, null, LOGGER, javaMailSenderImpl, message);
+            Thread thread = new Thread(sender);
+            thread.start();
+        }
+    }
 }

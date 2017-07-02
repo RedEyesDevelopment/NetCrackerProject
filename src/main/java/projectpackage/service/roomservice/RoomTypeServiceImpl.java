@@ -2,22 +2,24 @@ package projectpackage.service.roomservice;
 
 import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.dto.OrderDTO;
+import projectpackage.model.rates.Price;
+import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.roomsdao.RoomTypeDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.service.orderservice.CategoryService;
+import projectpackage.service.rateservice.PriceService;
+import projectpackage.service.rateservice.RateService;
 import projectpackage.service.support.ServiceUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -37,20 +39,30 @@ public class RoomTypeServiceImpl implements RoomTypeService{
     @Autowired
     ServiceUtils serviceUtils;
 
+    @Autowired
+    RateService rateService;
+
+    @Autowired
+    PriceService priceService;
+
     @Override
     public List<OrderDTO> getRoomTypes(Date startDate, Date finishDate, int numberOfPeople, int categoryId) {
         List<OrderDTO> list = new ArrayList<>();
-        if (startDate == null || finishDate == null) return list;
+        if (startDate == null || finishDate == null) {
+            return list;
+        }
         boolean isValidDates = serviceUtils.checkDates(startDate, finishDate);
-        if (!isValidDates) return list;
+        if (!isValidDates) {
+            return list;
+        }
         Set<Integer> availableRoomTypes = roomTypeDAO.getAvailableRoomTypes(numberOfPeople, new java.sql.Date(startDate.getTime()), new java.sql.Date(finishDate.getTime()));
         List<RoomType> allRoomTypes = getAllRoomTypes();
         for (RoomType roomType : allRoomTypes) {
             OrderDTO orderDTO = new OrderDTO();
             orderDTO.setRoomTypeName(roomType.getRoomTypeTitle());
             orderDTO.setRoomTypeDescription(roomType.getContent());
-            long categoryPrice = categoryService.getSingleCategoryById(categoryId).getCategoryPrice();
-            long days = (finishDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000);
+            Long categoryPrice = categoryService.getSingleCategoryById(categoryId).getCategoryPrice();
+            Long days = (finishDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000);
             Long categoryCost = categoryPrice * days;
             orderDTO.setCategoryCost(categoryCost);
             orderDTO.setLivingPersons(numberOfPeople);
@@ -68,6 +80,11 @@ public class RoomTypeServiceImpl implements RoomTypeService{
         }
         LOGGER.info(list);
         return list;
+    }
+
+    @Override
+    public Long getLivingCost(Date startDate, Date finishDate, int numberOfPeople, RoomType roomType) {
+        return roomTypeDAO.getCostForLiving(roomType, numberOfPeople, startDate, finishDate);
     }
 
     @Override
@@ -113,7 +130,10 @@ public class RoomTypeServiceImpl implements RoomTypeService{
 
     @Override
     public IUDAnswer insertRoomType(RoomType roomType) {
-        if (roomType == null) return null;
+        if (roomType == null) {
+            return null;
+        }
+
         Integer roomTypeId = null;
         try {
             roomTypeId = roomTypeDAO.insertRoomType(roomType);
@@ -121,8 +141,49 @@ public class RoomTypeServiceImpl implements RoomTypeService{
             LOGGER.warn(WRONG_FIELD, e);
             return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
+
+        if (roomTypeId == null) {
+            roomTypeDAO.rollback();
+            return new IUDAnswer(false, NULL_ID);
+        }
+
+        Rate rate = getNewRate(roomTypeId);
+
+        IUDAnswer iudAnswer = rateService.insertRate(rate);
+        if (!iudAnswer.isSuccessful()) {
+            roomTypeDAO.rollback();
+            return iudAnswer;
+        }
+
         roomTypeDAO.commit();
         return new IUDAnswer(roomTypeId,true);
+    }
+
+    private Rate getNewRate(int roomTypeId) {
+        Price price1 = new Price();
+        price1.setRate(10000L);
+        price1.setNumberOfPeople(1);
+
+        Price price2 = new Price();
+        price2.setRate(10000L);
+        price2.setNumberOfPeople(2);
+
+        Price price3 = new Price();
+        price3.setRate(10000L);
+        price3.setNumberOfPeople(3);
+
+        Set<Price> prices = new HashSet<>();
+        prices.add(price1);
+        prices.add(price2);
+        prices.add(price3);
+
+        Rate rate = new Rate();
+        rate.setRateFromDate(new DateTime().minusYears(1).toDate());
+        rate.setRateToDate(new DateTime().plusYears(2).toDate());
+        rate.setRoomTypeId(roomTypeId);
+        rate.setPrices(prices);
+
+        return rate;
     }
 
     @Override
@@ -140,4 +201,5 @@ public class RoomTypeServiceImpl implements RoomTypeService{
         roomTypeDAO.commit();
         return new IUDAnswer(id,true);
     }
+
 }

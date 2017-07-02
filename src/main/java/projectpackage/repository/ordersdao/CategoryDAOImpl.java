@@ -35,7 +35,6 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
                 .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
                 .closeAllFetches()
                 .getSingleEntityWithId(id);
-
     }
 
     @Override

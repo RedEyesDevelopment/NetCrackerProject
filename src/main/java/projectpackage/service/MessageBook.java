@@ -31,5 +31,10 @@ public interface MessageBook {
     String WRONG_PASSWORD = "Wrong password!";
     String FAIL_CRYPT_PASSWORD = "Fail crypt password!";
     String NOT_RECEPTION_OR_ADMIN = "This operation available for reception or admin!";
+    String ROOM_NOT_AVAILABLE = "Current room not available for reservation!";
+    String EMPTY_DTO_IN_SESSION = "Current room not available for reservation!";
+    String ORDER_STARTED = "Cannot delete order which was started!";
+    String WRONG_RATE_DATES = "Rate dates cannot be set more then 1 year forward or before! Start date cannot be later then finish date!";
 }
+
 

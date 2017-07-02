@@ -95,7 +95,6 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
         jdbcTemplate.update(INSERT_OBJECT, objectId, null, 5, null, null);
         insertTitle(roomType, objectId);
         insertContent(roomType, objectId);
-        createRateForNewRoomType(objectId);
 
         return objectId;
     }
@@ -124,36 +123,6 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
         if (null == roomType) throw new DeletedObjectNotExistsException(this);
 
         deleteSingleEntityById(id);
-    }
-
-    private void createRateForNewRoomType(Integer objectId) {
-        Rate rate = new Rate();
-        rate.setRoomTypeId(objectId);
-        Calendar calendar = Calendar.getInstance();
-        int currYear = calendar.get(Calendar.YEAR);
-        rate.setRateFromDate(new GregorianCalendar(currYear,0,1).getTime());
-        rate.setRateToDate(new GregorianCalendar(currYear + 2, 11, 31).getTime());
-
-        Set<Price> prices = new HashSet<>(3);
-
-        Price price1 = new Price();
-        price1.setNumberOfPeople(1);
-        price1.setRate(Long.parseLong(defaultPrice));
-        prices.add(price1);
-
-        Price price2 = new Price();
-        price2.setNumberOfPeople(2);
-        price2.setRate(200000L);
-        prices.add(price2);
-
-        Price price3 = new Price();
-        price3.setNumberOfPeople(3);
-        price3.setRate(300000L);
-        prices.add(price3);
-
-        rate.setPrices(prices);
-
-        rateDAO.insertRate(rate);
     }
 
     private void insertContent(RoomType roomType, Integer objectId) {

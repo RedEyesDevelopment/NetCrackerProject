@@ -7,15 +7,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projectpackage.dto.CategoryDTO;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.dto.JacksonMappingMarker;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Category;
-import projectpackage.dto.IUDAnswer;
-import projectpackage.service.MessageBook;
 import projectpackage.service.orderservice.CategoryService;
+import projectpackage.service.support.ServiceUtils;
 
 import javax.cache.annotation.CacheRemoveAll;
-import javax.cache.annotation.CacheResult;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +33,11 @@ public class CategoryController {
     @Autowired
     CategoryService categoryService;
 
+    @Autowired
+    ServiceUtils serviceUtils;
+
     //Get Category List
     @ResponseStatus(HttpStatus.OK)
-    @CacheResult(cacheName = "categoryList")
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public List<Resource<Category>> getCategoryList(){
         List<Category> categorys = categoryService.getAllCategories();
@@ -64,8 +66,6 @@ public class CategoryController {
         Resource<Category> resource = new Resource<>(category);
         HttpStatus status;
         if (null!=category){
-            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(CategoryController.class).deleteCategory(category.getObjectId())).withRel("delete"));
-            resource.add(linkTo(methodOn(CategoryController.class).updateCategory(category.getObjectId(), category)).withRel("update"));
             status = HttpStatus.ACCEPTED;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -75,10 +75,17 @@ public class CategoryController {
     }
 
     //Create category, fetch into database
-    @CacheRemoveAll(cacheName = "categoryList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> createCategory(@RequestBody Category newCategory){
-        IUDAnswer result = categoryService.insertCategory(newCategory);
+    public ResponseEntity<IUDAnswer> createCategory(@RequestBody CategoryDTO categoryDTO, HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(user, categoryDTO);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
+        Category category = new Category();
+        category.setCategoryTitle(categoryDTO.getCategoryTitle());
+        category.setCategoryPrice(categoryDTO.getCategoryPrice());
+        IUDAnswer result = categoryService.insertCategory(category);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.CREATED;
@@ -88,13 +95,17 @@ public class CategoryController {
     }
 
     //Update category method
-    @CacheRemoveAll(cacheName = "categoryList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> updateCategory(@PathVariable("id") Integer id, @RequestBody Category changedCategory){
-        if (!id.equals(changedCategory.getObjectId())){
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID), HttpStatus.NOT_ACCEPTABLE);
+    public ResponseEntity<IUDAnswer> updateCategory(@PathVariable("id") Integer id, @RequestBody CategoryDTO categoryDTO, HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(user, categoryDTO, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
-        IUDAnswer result = categoryService.updateCategory(id, changedCategory);
+        Category category = new Category();
+        category.setCategoryTitle(categoryDTO.getCategoryTitle());
+        category.setCategoryPrice(categoryDTO.getCategoryPrice());
+        IUDAnswer result = categoryService.updateCategory(id, category);
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.ACCEPTED;
@@ -104,9 +115,13 @@ public class CategoryController {
     }
 
     //Delete category method
-    @CacheRemoveAll(cacheName = "categoryList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> deleteCategory(@PathVariable("id") Integer id){
+    public ResponseEntity<IUDAnswer> deleteCategory(@PathVariable("id") Integer id, HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkDeleteForAdmin(user, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
         IUDAnswer result = categoryService.deleteCategory(id);
         HttpStatus status;
         if (result.isSuccessful()) {

@@ -74,7 +74,7 @@ public class CategoryRepositoryTests extends AbstractDatabaseTest {
     @Test
     @Rollback(true)
     public void getSingleCategoryById(){
-        Category category = categoryService.getSingleCategoryById(2007);
+        Category category = categoryService.getSingleCategoryById(450);
         LOGGER.info(category);
         LOGGER.info(SEPARATOR);
     }

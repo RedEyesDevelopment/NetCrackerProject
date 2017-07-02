@@ -63,6 +63,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		$scope.user.email = "";
         $scope.user.additionalInfo = "";
         $scope.user.enabled = "";
+        $scope.user.phone = "";
 		resetFlags();
 		$scope.stage = "adding";
 		$scope.modificationMode = true;
@@ -121,32 +122,41 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	/* Функции, выполняющие запросы */
 	var addUser = function() {
 		resetFlags();
-		console.log($scope.user.confirm)
+		console.log($scope.user.email)
+		console.log($scope.user.password)
+		console.log($scope.user.firstName)
+		console.log($scope.user.lastName)
+		console.log($scope.user.additionalInfo)
+		console.log($scope.user.phone)
+		console.log($scope.user.role)
         if ($scope.user.confirm == $scope.user.password) {
             $http({
                 url: sharedData.getLinks().https + '/users',
                 method: 'POST',
                 data: {
-                    lastName: $scope.user.lastName,
-                    firstName: $scope.user.firstName,
-                    password: $scope.user.password,
-                    role: parseInt($scope.user.role),
                     email: $scope.user.email,
+                    password: $scope.user.password,
+                    firstName: $scope.user.firstName,
+                    lastName: $scope.user.lastName,
                     additionalInfo: $scope.user.additionalInfo,
-                    enabled: $scope.user.enabled
+                    phoneNumber : $scope.user.phone,
+                    roleId: $scope.user.role
                 },
                 headers: {'Content-Type': 'application/json'}
             }).then(function (data) {
                 console.log(data);
-                $scope.listOfUsers.push({
-                    objectId: data.data.objectId,
-                    lastName: $scope.user.lastName,
-                    firstName: $scope.user.firstName,
-                    role: util.getObjectInArrayById($scope.listOfRoles, $scope.user.role),
-                    email: $scope.user.email,
-                    additionalInfo: $scope.user.additionalInfo,
-                    enabled: $scope.user.enabled
+                $http({
+                    url: sharedData.getLinks().https + '/users/' + data.data.objectId,
+                    method: 'GET',
+                    headers: {'Content-Type': 'application/json'}
+                }).then(function(data) {
+                    console.log(data);
+                    $scope.listOfUsers.push(data.data);
+                }, function(response) {
+                    console.log("Smth wrong!!");
+                    console.log(response);
                 });
+
                 $scope.prepareToAddUser();
                 $scope.added = true;
             }, function (response) {

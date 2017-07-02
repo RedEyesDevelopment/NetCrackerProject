@@ -6,11 +6,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projectpackage.dto.ComplimentaryDTO;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.model.auth.User;
 import projectpackage.model.maintenances.Complimentary;
-import projectpackage.dto.IUDAnswer;
-import projectpackage.service.MessageBook;
+import projectpackage.model.maintenances.Maintenance;
 import projectpackage.service.maintenanceservice.ComplimentaryService;
+import projectpackage.service.support.ServiceUtils;
 
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
@@ -27,8 +29,12 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/complimentaries")
 public class ComplimentaryController {
+
     @Autowired
     ComplimentaryService complimentaryService;
+
+    @Autowired
+    ServiceUtils serviceUtils;
 
     @ResponseStatus(HttpStatus.OK)
     @CacheResult(cacheName = "complimentaryList")
@@ -55,10 +61,6 @@ public class ComplimentaryController {
         Resource<Complimentary> resource = new Resource<>(Complimentary);
         HttpStatus status;
         if (null != Complimentary) {
-            if (thisUser.getRole().getRoleName().equals("ADMIN")) {
-                resource.add(linkTo(methodOn(ComplimentaryController.class).deleteComplimentary(Complimentary.getObjectId())).withRel("delete"));
-            }
-            resource.add(linkTo(methodOn(ComplimentaryController.class).updateComplimentary(Complimentary.getObjectId(), Complimentary)).withRel("update"));
             status = HttpStatus.ACCEPTED;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -70,8 +72,18 @@ public class ComplimentaryController {
 
     @CacheRemoveAll(cacheName = "complimentaryList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> createComplimentary(@RequestBody Complimentary newComplimentary) {
-        IUDAnswer result = complimentaryService.insertComplimentary(newComplimentary);
+    public ResponseEntity<IUDAnswer> createComplimentary(@RequestBody ComplimentaryDTO complimentaryDTO, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(user, complimentaryDTO);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
+        Complimentary complimentary = new Complimentary();
+        Maintenance maintenance = new Maintenance();
+        maintenance.setObjectId(complimentaryDTO.getMaintenanceId());
+        complimentary.setCategoryId(complimentaryDTO.getCategoryId());
+        complimentary.setMaintenance(maintenance);
+        IUDAnswer result = complimentaryService.insertComplimentary(complimentary);
 
         HttpStatus status = result.isSuccessful() ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
 
@@ -80,13 +92,18 @@ public class ComplimentaryController {
 
     @CacheRemoveAll(cacheName = "complimentaryList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> updateComplimentary(@PathVariable("id") Integer id, @RequestBody Complimentary changedComplimentary) {
-        if (!id.equals(changedComplimentary.getObjectId())) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID),
-                    HttpStatus.NOT_ACCEPTABLE);
+    public ResponseEntity<IUDAnswer> updateComplimentary(@PathVariable("id") Integer id, @RequestBody ComplimentaryDTO complimentaryDTO, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(user, complimentaryDTO, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
-
-        IUDAnswer result = complimentaryService.updateComplimentary(id, changedComplimentary);
+        Complimentary complimentary = new Complimentary();
+        Maintenance maintenance = new Maintenance();
+        maintenance.setObjectId(complimentaryDTO.getMaintenanceId());
+        complimentary.setCategoryId(complimentaryDTO.getCategoryId());
+        complimentary.setMaintenance(maintenance);
+        IUDAnswer result = complimentaryService.updateComplimentary(id, complimentary);
 
         HttpStatus status = result.isSuccessful() ? HttpStatus.ACCEPTED : HttpStatus.BAD_REQUEST;
 
@@ -95,7 +112,12 @@ public class ComplimentaryController {
 
     @CacheRemoveAll(cacheName = "complimentaryList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> deleteComplimentary(@PathVariable("id") Integer id) {
+    public ResponseEntity<IUDAnswer> deleteComplimentary(@PathVariable("id") Integer id, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkDeleteForAdmin(user, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
         IUDAnswer result = complimentaryService.deleteComplimentary(id);
 
         HttpStatus status = result.isSuccessful() ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND;

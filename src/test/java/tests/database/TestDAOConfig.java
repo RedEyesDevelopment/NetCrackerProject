@@ -17,7 +17,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 import projectpackage.aspects.ModificationHistoryAspect;
-import projectpackage.aspects.NotificationInsertOrChangeAspect;
+import projectpackage.aspects.OrderIsPaidForAspect;
 import projectpackage.repository.authdao.*;
 import projectpackage.repository.blocksdao.BlockDAO;
 import projectpackage.repository.blocksdao.BlockDAOImpl;
@@ -40,11 +40,9 @@ import projectpackage.repository.roomsdao.RoomTypeDAO;
 import projectpackage.repository.roomsdao.RoomTypeDAOImpl;
 import projectpackage.repository.securitydao.AuthCredentialsDAO;
 import projectpackage.repository.securitydao.AuthCredentialsDAOImpl;
-import projectpackage.repository.support.RollbackableTransactionalCustomizer;
 import projectpackage.repository.support.ParentDAOImpl;
 import projectpackage.repository.support.ParentsDAO;
-import projectpackage.service.adminservice.InMemoryNotifService;
-import projectpackage.service.adminservice.InMemoryNotifServiceImpl;
+import projectpackage.repository.support.RollbackableTransactionalCustomizer;
 import projectpackage.service.authservice.*;
 import projectpackage.service.blockservice.BlockService;
 import projectpackage.service.blockservice.BlockServiceImpl;
@@ -54,12 +52,12 @@ import projectpackage.service.notificationservice.NotificationServiceImpl;
 import projectpackage.service.notificationservice.NotificationTypeService;
 import projectpackage.service.notificationservice.NotificationTypeServiceImpl;
 import projectpackage.service.orderservice.*;
-import projectpackage.service.regex.RegexService;
-import projectpackage.service.regex.RegexServiceImpl;
 import projectpackage.service.rateservice.PriceService;
 import projectpackage.service.rateservice.PriceServiceImpl;
 import projectpackage.service.rateservice.RateService;
 import projectpackage.service.rateservice.RateServiceImpl;
+import projectpackage.service.regex.RegexService;
+import projectpackage.service.regex.RegexServiceImpl;
 import projectpackage.service.roomservice.RoomService;
 import projectpackage.service.roomservice.RoomServiceImpl;
 import projectpackage.service.roomservice.RoomTypeService;
@@ -388,8 +386,8 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
     }
 
     @Bean
-    NotificationInsertOrChangeAspect notificationInsertOrChangeAspect() {
-        return new NotificationInsertOrChangeAspect();
+    OrderIsPaidForAspect orderIsPaidForAspect(){
+        return new OrderIsPaidForAspect();
     }
 
     @Bean
@@ -419,11 +417,6 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
 
     @Bean
     SecurityService securityService() {return new SecurityServiceImpl(); }
-
-    @Bean
-    InMemoryNotifService inMemoryNotifService(){
-        return new InMemoryNotifServiceImpl();
-    }
 
     @Bean
     ParentsDAO parentsDAO(){ return new ParentDAOImpl();}

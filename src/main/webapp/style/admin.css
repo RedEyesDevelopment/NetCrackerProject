@@ -87,6 +87,18 @@
     text-decoration: underline;
     cursor: pointer;
 }
+
+.workspace table tbody tr th {
+    font-weight: normal;
+}
+
+.workspace .deleteMaintenance {
+    font-size: 14px;
+}
+
+.workspace .toggle {
+    border-radius: 20%;
+}
 /* ---------------------------------- */
 
 /* ----- Form for add or update ----- */
@@ -123,8 +135,23 @@
     width: 70px;
 }
 
-table tbody tr th {
-    font-weight: normal;
+.editWindow .createUpdateForm .title {
+    text-align: center;
+    padding: 10px;
+    font-size: 18px;
+}
+
+.editWindow .createUpdateForm .myLabel {
+    font-size: 18px;
+    padding: 5px;
+}
+
+.editWindow .createUpdateForm .form-field-top-border {
+    border-top: 1px solid #d1d1d1;
+}
+
+.editWindow .createUpdateForm .form-field-bottom-border {
+    border-bottom: 1px solid #d1d1d1;
 }
 /* ---------------------------------- */
 

@@ -13,9 +13,9 @@ import projectpackage.dto.UserPasswordDTO;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
-import projectpackage.service.MessageBook;
 import projectpackage.service.authservice.UserService;
 import projectpackage.service.securityservice.SecurityService;
+import projectpackage.service.support.ServiceUtils;
 
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
@@ -27,7 +27,8 @@ import java.util.Set;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-import static projectpackage.service.MessageBook.*;
+import static projectpackage.service.MessageBook.NULL_ENTITY;
+import static projectpackage.service.MessageBook.WRONG_PASSWORD;
 
 @RestController
 @RequestMapping("/users")
@@ -38,6 +39,9 @@ public class UserController {
 
 	@Autowired
 	SecurityService securityService;
+
+	@Autowired
+    ServiceUtils serviceUtils;
 
 	//Get User List
 	@ResponseStatus(HttpStatus.OK)
@@ -75,12 +79,9 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<IUDAnswer> createUser(@RequestBody UserDTO userDTO, HttpServletRequest request) {
 	    User sessionUser = (User) request.getSession().getAttribute("USER");
-        if (sessionUser == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-        } else if (userDTO == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
-        } else if (sessionUser.getRole().getObjectId() != 1) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_ADMIN), HttpStatus.BAD_REQUEST);
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(sessionUser, userDTO);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
         User newUser = new User();
         Set<Phone> phones = new HashSet<>();
@@ -130,14 +131,9 @@ public class UserController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<IUDAnswer> updateUser(@PathVariable("id") Integer id, @RequestBody UserDTO userDTO, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("USER");
-        if (user == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-        } else if (user.getRole().getObjectId() != 1) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_ADMIN), HttpStatus.BAD_REQUEST);
-        } else if (id == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, NULL_ID), HttpStatus.BAD_REQUEST);
-        } else if (userDTO == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(user, userDTO, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
         User changedUser = new User();
         Set<Phone> phones = new HashSet<>();
@@ -167,19 +163,10 @@ public class UserController {
 	public ResponseEntity<IUDAnswer> updatePassword(@PathVariable("id") Integer id,
 													@RequestBody UserPasswordDTO userPasswordDTO, HttpServletRequest request) {
 		User sessionUser = (User) request.getSession().getAttribute("USER");
-		if (sessionUser == null) {
-			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-		} else if (id == null) {
-			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ID), HttpStatus.BAD_REQUEST);
-		} else if (userPasswordDTO == null) {
-
-        } else if (userPasswordDTO.getNewPassword() == null
-				|| userPasswordDTO.getOldPassword() == null || userPasswordDTO.getNewPassword().isEmpty()
-				|| userPasswordDTO.getOldPassword().isEmpty()) {
-			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_FIELD), HttpStatus.BAD_REQUEST);
-		} else if (userPasswordDTO.getOldPassword().equals(userPasswordDTO.getNewPassword())) {
-			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, SAME_PASSWORDS), HttpStatus.BAD_REQUEST);
-		}
+		IUDAnswer iudAnswer = serviceUtils.checkForChangePassword(sessionUser, userPasswordDTO, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
 		User user = userService.getSingleUserById(id);
 
 		if (securityService.isPasswordMatchEncrypted(userPasswordDTO.getOldPassword(), user.getPassword())) {
@@ -200,13 +187,10 @@ public class UserController {
 			produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<IUDAnswer> updateBasicInfo(@PathVariable("id") Integer id, @RequestBody UserBasicDTO userBasicDTO, HttpServletRequest request) {
 		User sessionUser = (User) request.getSession().getAttribute("USER");
-		if (sessionUser == null) {
-			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-		} else if (sessionUser.getRole().getObjectId() != 1) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_ADMIN), HttpStatus.BAD_REQUEST);
-        } else if (id == null || id.intValue() != sessionUser.getObjectId()) {
-			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, MessageBook.NULL_ID), HttpStatus.BAD_REQUEST);
-		}
+		IUDAnswer iudAnswer = serviceUtils.checkSessionAndData(sessionUser, userBasicDTO, id);
+		if (!iudAnswer.isSuccessful()) {
+		    return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
 		User user = userService.getSingleUserById(id);
 		user.setFirstName(userBasicDTO.getFirstName());
 		user.setLastName(userBasicDTO.getLastName());
@@ -227,13 +211,10 @@ public class UserController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<IUDAnswer> deleteUser(@PathVariable("id") Integer id, HttpServletRequest request) {
 		User user = (User) request.getSession().getAttribute("USER");
-		if (user == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-        } else if (id == null) {
-			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ID), HttpStatus.BAD_REQUEST);
-		} else if (user.getRole().getObjectId() != 1) {
-			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_ADMIN), HttpStatus.BAD_REQUEST);
-		}
+		IUDAnswer iudAnswer = serviceUtils.checkDeleteForAdmin(user, id);
+		if (!iudAnswer.isSuccessful()) {
+		    return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
 		IUDAnswer result = userService.deleteUser(id);
 		HttpStatus status;
 		if (result.isSuccessful()) {
