@@ -169,6 +169,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			console.log($scope.confirmed);
 			$scope.listOfOrders[$scope.indexForOperation].isPaidFor = $scope.confirmed.isPaidFor;
 			$scope.listOfOrders[$scope.indexForOperation].isConfirmed = $scope.confirmed.isConfirmed;
+			$scope.listOfOrders[$scope.indexForOperation].lastModificator = util.getObjectInArrayById($scope.listOfUsers, sharedData.getMyself().objectId);
 			$scope.stage = "looking";
 			$scope.mode = "look";
 		}, function(response) {
@@ -266,6 +267,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			$scope.order.category = data.data.category;
             $scope.order.comment = data.data.comment;
             $scope.order.client = data.data.client;
+            $scope.order.sum = data.data.sum;
 			$scope.stage = "searchForEdit";
 			$scope.mode = "edit";
 		}, function(response) {
@@ -306,7 +308,6 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	}
 
 	var editOrder = function() {
-		console.log("***********************" + $scope.order.client.objectId);
 		$http({
 			url: sharedData.getLinks().https + '/orders/update/' + $scope.idForOperation,
 			method: 'PUT',
@@ -332,6 +333,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			$scope.listOfOrders[$scope.indexForOperation].sum = $scope.anotherVariant.total;
 			$scope.listOfOrders[$scope.indexForOperation].category = util.getObjectInArrayById($scope.listOfCategories, $scope.order.category.objectId);
 			$scope.listOfOrders[$scope.indexForOperation].room = util.getObjectInArrayById($scope.listOfRooms, $scope.order.room.objectId);
+			$scope.listOfOrders[$scope.indexForOperation].lastModificator = util.getObjectInArrayById($scope.listOfUsers, sharedData.getMyself().objectId);
 			$scope.stage = "updated";
 			$scope.mode = "look";
 		}, function(response) {

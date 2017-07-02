@@ -145,6 +145,14 @@
     font-size: 18px;
     padding: 5px;
 }
+
+.editWindow .createUpdateForm .form-field-top-border {
+    border-top: 1px solid #d1d1d1;
+}
+
+.editWindow .createUpdateForm .form-field-bottom-border {
+    border-bottom: 1px solid #d1d1d1;
+}
 /* ---------------------------------- */
 
 

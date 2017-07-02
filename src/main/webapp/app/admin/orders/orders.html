@@ -282,23 +282,45 @@
                 <!-- Тут выбирают комнату -->
                 <form class="form-horizontal" name="choiceAnotherVariant" ng-if="stage == 'choosingAnotherVariant'">
                     <div class="form-group">
-                        <div class="col-sm-6 text-right myLabel">
-                            Living cost:
+                        <div>
+                            <div class="col-sm-6 text-right myLabel">
+                                Living cost:
+                            </div>
+                            <div class="col-sm-6 myLabel">
+                                {{ (anotherVariant.livingCost / 100).toFixed(2) }}
+                            </div>
                         </div>
-                        <div class="col-sm-6 myLabel">
-                            {{ (anotherVariant.livingCost / 100).toFixed(2) }}
+                        <div>
+                            <div class="col-sm-6 text-right myLabel">
+                                Category cost:
+                            </div>
+                            <div class="col-sm-6 myLabel">
+                                {{ (anotherVariant.categoryCost / 100).toFixed(2) }}
+                            </div>
                         </div>
-                        <div class="col-sm-6 text-right myLabel">
-                            Category cost:
+                        <div>
+                            <div class="col-sm-6 text-right myLabel">
+                                Total:
+                            </div>
+                            <div class="col-sm-6 myLabel">
+                                {{ (anotherVariant.total / 100).toFixed(2) }}
+                            </div>
                         </div>
-                        <div class="col-sm-6 myLabel">
-                            {{ (anotherVariant.categoryCost / 100).toFixed(2) }}
+                        <div>
+                            <div class="col-sm-4 col-sm-offset-2 text-right myLabel form-field-top-border">
+                                Old sum:
+                            </div>
+                            <div class="col-sm-4 myLabel form-field-top-border">
+                                {{ (order.sum / 100).toFixed(2) }}
+                            </div>
                         </div>
-                        <div class="col-sm-6 text-right myLabel">
-                            Total:
-                        </div>
-                        <div class="col-sm-6 myLabel">
-                            {{ (anotherVariant.total / 100).toFixed(2) }}
+                        <div>
+                            <div class="col-sm-4 col-sm-offset-2 text-right myLabel form-field-bottom-border">
+                                Difference:
+                            </div>
+                            <div class="col-sm-4 myLabel form-field-bottom-border">
+                                {{ ((anotherVariant.total - order.sum) / 100).toFixed(2) }}
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
