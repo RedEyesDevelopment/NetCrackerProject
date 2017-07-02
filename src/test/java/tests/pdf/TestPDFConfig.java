@@ -41,8 +41,6 @@ import projectpackage.repository.securitydao.AuthCredentialsDAO;
 import projectpackage.repository.securitydao.AuthCredentialsDAOImpl;
 import projectpackage.service.adminservice.AdminService;
 import projectpackage.service.adminservice.AdminServiceImpl;
-import projectpackage.service.adminservice.InMemoryNotifService;
-import projectpackage.service.adminservice.InMemoryNotifServiceImpl;
 import projectpackage.service.authservice.*;
 import projectpackage.service.blockservice.BlockService;
 import projectpackage.service.blockservice.BlockServiceImpl;
@@ -56,12 +54,12 @@ import projectpackage.service.notificationservice.NotificationServiceImpl;
 import projectpackage.service.notificationservice.NotificationTypeService;
 import projectpackage.service.notificationservice.NotificationTypeServiceImpl;
 import projectpackage.service.orderservice.*;
-import projectpackage.service.regex.RegexService;
-import projectpackage.service.regex.RegexServiceImpl;
 import projectpackage.service.rateservice.PriceService;
 import projectpackage.service.rateservice.PriceServiceImpl;
 import projectpackage.service.rateservice.RateService;
 import projectpackage.service.rateservice.RateServiceImpl;
+import projectpackage.service.regex.RegexService;
+import projectpackage.service.regex.RegexServiceImpl;
 import projectpackage.service.roomservice.RoomService;
 import projectpackage.service.roomservice.RoomServiceImpl;
 import projectpackage.service.roomservice.RoomTypeService;
@@ -222,11 +220,6 @@ public class TestPDFConfig implements TransactionManagementConfigurer{
     @Bean
     DateFileNameGenerator dateFileNameGenerator() {
         return new DateFileNameGenerator();
-    }
-
-    @Bean
-    InMemoryNotifService inMemoryNotifService() {
-        return new InMemoryNotifServiceImpl();
     }
 
     @Bean
