@@ -357,6 +357,7 @@ public class OrderServiceImpl implements OrderService{
             LOGGER.warn(WRONG_FIELD, e);
             return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
+
         orderDAO.commit();
         return new IUDAnswer(orderId,true, ORDER_CREATED);
     }
