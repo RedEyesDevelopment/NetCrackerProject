@@ -75,10 +75,6 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
     }   
 
     $scope.addComplimentary = function() {
-        // console.log({
-        //         categoryId: $scope.newComplimentary.categoryId,
-        //         maintenanceId: $scope.newComplimentary.maintenanceId,
-        //     })
         $http({
             url: sharedData.getLinks().https + '/complimentaries',
             method: 'POST',
@@ -159,7 +155,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
                 $scope.listOfCategories.push({
                     objectId :          data.data.objectId,
                     categoryTitle :     $scope.category.title,
-                    categoryPrice :     $scope.category.price,
+                    categoryPrice :     ($scope.category.dollars * 100) + $scope.category.cents,
                     complimentaries: new Array()
                 });
                 $scope.prepareToAddCategory();
