@@ -123,7 +123,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
             url: sharedData.getLinks().https + '/roomTypes/' + $scope.idForOperation,
             method: 'PUT',
             data: {
-                roomTypeTitle :     $scope.roomType.title,
+                roomTypeTitle :     $scope.roomType.roomTypeTitle,
                 roomTypeContent :   $scope.roomType.content
             },
             headers: { 'Content-Type' : 'application/json' }

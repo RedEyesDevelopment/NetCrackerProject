@@ -57,17 +57,14 @@ public class ServiceUtilsImpl implements ServiceUtils{
 
     @Override
     public boolean checkDatesForRate(Date startDate, Date finishDate) {
+        if (startDate == null || finishDate == null) return false;
         DateTime dateTime = new DateTime();
-
         if (startDate.getTime() == finishDate.getTime()) return false;
         if (finishDate.before(startDate)) return false;
-
         if (finishDate.before(dateTime.minusYears(1).toDate())) return false;
-        if (finishDate.after(dateTime.plusYears(1).toDate())) return false;
-
-        if (startDate.before(dateTime.minusYears(1).toDate())) return false;
-        if (startDate.after(dateTime.plusYears(1).toDate())) return false;
-
+        //if (finishDate.after(dateTime.plusYears(2).toDate())) return false;
+        //if (startDate.before(dateTime.minusYears(1).toDate())) return false;
+        if (startDate.after(dateTime.plusYears(2).toDate())) return false;
         return true;
     }
 

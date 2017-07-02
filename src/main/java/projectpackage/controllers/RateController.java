@@ -14,8 +14,6 @@ import projectpackage.model.rates.Rate;
 import projectpackage.service.rateservice.RateService;
 import projectpackage.service.support.ServiceUtils;
 
-import javax.cache.annotation.CacheRemoveAll;
-import javax.cache.annotation.CacheResult;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -179,7 +179,7 @@ public class RoomTypeServiceImpl implements RoomTypeService{
 
         Rate rate = new Rate();
         rate.setRateFromDate(new DateTime().minusYears(1).toDate());
-        rate.setRateToDate(new DateTime().plusYears(1).toDate());
+        rate.setRateToDate(new DateTime().plusYears(2).toDate());
         rate.setRoomTypeId(roomTypeId);
         rate.setPrices(prices);
 

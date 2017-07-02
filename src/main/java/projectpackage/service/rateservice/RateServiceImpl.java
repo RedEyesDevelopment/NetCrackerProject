@@ -43,7 +43,7 @@ public class RateServiceImpl implements RateService{
     public IUDAnswer insertRate(Rate rate) {
         if (rate == null) {
             return null;
-        } else if (serviceUtils.checkDatesForRate(rate.getRateFromDate(), rate.getRateToDate())) {
+        } else if (!serviceUtils.checkDatesForRate(rate.getRateFromDate(), rate.getRateToDate())) {
             return new IUDAnswer(false, WRONG_RATE_DATES);
         }
         Integer rateId = null;
