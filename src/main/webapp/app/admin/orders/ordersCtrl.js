@@ -341,49 +341,21 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		});
 	}
 
-
-
-
-	// private int roomTypeId;			~
- //    private String roomTypeName;
- //    private String roomTypeDescription;
- //    private boolean isAvailable;
- //    private long categoryCost;	~
- //    private long livingCost;		+
- //    private Date arrival;		+
- //    private Date departure;		+
- //    private int livingPersons;
- //    private int categoryId;
- //    private Integer clientId;   	+
- //    private Integer roomId;		+
-
-
-
-
 	$scope.prepareToDeleteOrder = function(orderId, index) {
+		$scope.idForOperation = orderId;
 		$scope.indexForOperation = index;
-		$scope.order.idForOperation = orderId;
-		resetFlags();
 		$scope.stage = "deleting";
 	}
 
-
-
-
-	/* Функции, выполняющие запросы */
-
-
-
 	var deleteOrder = function() {
-		resetFlags();
 		$http({
-			url: sharedData.getLinks().https + '/orders/' + $scope.order.idForOperation,
+			url: sharedData.getLinks().https + '/orders/' + $scope.idForOperation,
 			method: 'DELETE',
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
 			$scope.listOfOrders.splice($scope.indexForOperation, 1);
-			$scope.deleted = true;
+			$scope.stage = "deleted";
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);

@@ -24,6 +24,9 @@
                 <div ng-if="stage == 'updated'">
                     Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
                 </div>
+                <div ng-if="stage == 'deleted'">
+                    Successfully deleted! <i class="fa fa-check" aria-hidden="true"></i>
+                </div>
             </div>
 
             <div ng-repeat="order in listOfOrders | orderBy : 'objectId' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-12 block-border">
