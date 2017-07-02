@@ -16,7 +16,6 @@ import projectpackage.service.orderservice.CategoryService;
 import projectpackage.service.support.ServiceUtils;
 
 import javax.cache.annotation.CacheRemoveAll;
-import javax.cache.annotation.CacheResult;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +38,6 @@ public class CategoryController {
 
     //Get Category List
     @ResponseStatus(HttpStatus.OK)
-    @CacheResult(cacheName = "categoryList")
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public List<Resource<Category>> getCategoryList(){
         List<Category> categorys = categoryService.getAllCategories();
@@ -77,7 +75,6 @@ public class CategoryController {
     }
 
     //Create category, fetch into database
-    @CacheRemoveAll(cacheName = "categoryList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> createCategory(@RequestBody CategoryDTO categoryDTO, HttpServletRequest request){
         User user = (User) request.getSession().getAttribute("USER");
@@ -98,7 +95,6 @@ public class CategoryController {
     }
 
     //Update category method
-    @CacheRemoveAll(cacheName = "categoryList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateCategory(@PathVariable("id") Integer id, @RequestBody CategoryDTO categoryDTO, HttpServletRequest request){
         User user = (User) request.getSession().getAttribute("USER");
@@ -119,7 +115,6 @@ public class CategoryController {
     }
 
     //Delete category method
-    @CacheRemoveAll(cacheName = "categoryList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> deleteCategory(@PathVariable("id") Integer id, HttpServletRequest request){
         User user = (User) request.getSession().getAttribute("USER");

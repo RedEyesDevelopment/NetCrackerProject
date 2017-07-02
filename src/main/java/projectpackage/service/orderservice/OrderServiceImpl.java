@@ -193,8 +193,8 @@ public class OrderServiceImpl implements OrderService{
         if (null != room) {
             Order order = new Order();
             order.setRegistrationDate(new Date());
-            order.setIsPaidFor(false);
-            order.setIsConfirmed(false);
+            order.setIsPaidFor(Boolean.FALSE);
+            order.setIsConfirmed(Boolean.FALSE);
             order.setLivingStartDate(start);
             order.setLivingFinishDate(finish);
             order.setSum(summ);
@@ -234,8 +234,8 @@ public class OrderServiceImpl implements OrderService{
         Order order = new Order();
         if (null != room) {
             order.setRegistrationDate(new Date());
-            order.setIsPaidFor(false);
-            order.setIsConfirmed(false);
+            order.setIsPaidFor(Boolean.FALSE);
+            order.setIsConfirmed(Boolean.FALSE);
             order.setLivingStartDate(dto.getArrival());
             order.setLivingFinishDate(dto.getDeparture());
             order.setLastModificator(lastModificator);
