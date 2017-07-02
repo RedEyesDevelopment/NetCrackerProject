@@ -86,7 +86,6 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
         return bigDecimal.longValue();
     }
 
-    @Transactional
     @Override
     public Integer insertRoomType(RoomType roomType) {
         if (roomType == null) return null;
