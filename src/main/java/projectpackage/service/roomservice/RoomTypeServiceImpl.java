@@ -2,22 +2,24 @@ package projectpackage.service.roomservice;
 
 import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.dto.OrderDTO;
+import projectpackage.model.rates.Price;
+import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.roomsdao.RoomTypeDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.service.orderservice.CategoryService;
+import projectpackage.service.rateservice.PriceService;
+import projectpackage.service.rateservice.RateService;
 import projectpackage.service.support.ServiceUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -36,6 +38,12 @@ public class RoomTypeServiceImpl implements RoomTypeService{
 
     @Autowired
     ServiceUtils serviceUtils;
+
+    @Autowired
+    RateService rateService;
+
+    @Autowired
+    PriceService priceService;
 
     @Override
     public List<OrderDTO> getRoomTypes(Date startDate, Date finishDate, int numberOfPeople, int categoryId) {
@@ -122,7 +130,10 @@ public class RoomTypeServiceImpl implements RoomTypeService{
 
     @Override
     public IUDAnswer insertRoomType(RoomType roomType) {
-        if (roomType == null) return null;
+        if (roomType == null) {
+            return null;
+        }
+
         Integer roomTypeId = null;
         try {
             roomTypeId = roomTypeDAO.insertRoomType(roomType);
@@ -130,8 +141,49 @@ public class RoomTypeServiceImpl implements RoomTypeService{
             LOGGER.warn(WRONG_FIELD, e);
             return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
+
+        if (roomTypeId == null) {
+            roomTypeDAO.rollback();
+            return new IUDAnswer(false, NULL_ID);
+        }
+
+        Rate rate = getNewRate(roomTypeId);
+
+        IUDAnswer iudAnswer = rateService.insertRate(rate);
+        if (!iudAnswer.isSuccessful()) {
+            roomTypeDAO.rollback();
+            return iudAnswer;
+        }
+
         roomTypeDAO.commit();
         return new IUDAnswer(roomTypeId,true);
+    }
+
+    private Rate getNewRate(int roomTypeId) {
+        Price price1 = new Price();
+        price1.setRate(10000L);
+        price1.setNumberOfPeople(1);
+
+        Price price2 = new Price();
+        price2.setRate(10000L);
+        price2.setNumberOfPeople(2);
+
+        Price price3 = new Price();
+        price3.setRate(10000L);
+        price3.setNumberOfPeople(3);
+
+        Set<Price> prices = new HashSet<>();
+        prices.add(price1);
+        prices.add(price2);
+        prices.add(price3);
+
+        Rate rate = new Rate();
+        rate.setRateFromDate(new DateTime().minusYears(1).toDate());
+        rate.setRateFromDate(new DateTime().plusYears(1).toDate());
+        rate.setRoomTypeId(roomTypeId);
+        rate.setPrices(prices);
+
+        return rate;
     }
 
     @Override
@@ -149,4 +201,5 @@ public class RoomTypeServiceImpl implements RoomTypeService{
         roomTypeDAO.commit();
         return new IUDAnswer(id,true);
     }
+
 }

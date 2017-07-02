@@ -44,20 +44,20 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
     @Override
     public Integer insertRate(Rate rate) {
         if (rate == null) return null;
-        Long price1 = null;
-        Long price2 = null;
-        Long price3 = null;
+        Long cost1 = null;
+        Long cost2 = null;
+        Long cost3 = null;
         for (Price price : rate.getPrices()) {
-            if (price.getNumberOfPeople().equals(1)) price1 = price.getRate();
-            if (price.getNumberOfPeople().equals(2)) price2 = price.getRate();
-            if (price.getNumberOfPeople().equals(3)) price3 = price.getRate();
+            if (price.getNumberOfPeople().equals(1)) cost1 = price.getRate();
+            if (price.getNumberOfPeople().equals(2)) cost2 = price.getRate();
+            if (price.getNumberOfPeople().equals(3)) cost3 = price.getRate();
         }
         SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate).withCatalogName("Rate_tools")
                 .withFunctionName("new_rate");
         MapSqlParameterSource in = new MapSqlParameterSource();
-        in.addValue("in_price1_price", price1);
-        in.addValue("in_price2_price", price2);
-        in.addValue("in_price3_price", price3);
+        in.addValue("in_price1_price", cost1);
+        in.addValue("in_price2_price", cost2);
+        in.addValue("in_price3_price", cost3);
         in.addValue("in_room_type_id", rate.getRoomTypeId());
         in.addValue("in_new_rate_start", rate.getRateFromDate());
         in.addValue("in_new_rate_finish", rate.getRateToDate());

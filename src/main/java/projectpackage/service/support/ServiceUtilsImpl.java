@@ -1,6 +1,7 @@
 package projectpackage.service.support;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.dto.UserPasswordDTO;
@@ -50,6 +51,22 @@ public class ServiceUtilsImpl implements ServiceUtils{
         if (startDate.getTime() < secondValidStartDate) return false;
         if (finishDate.before(today)) return false;
         if (startDate.after(finishDate)) return false;
+
+        return true;
+    }
+
+    @Override
+    public boolean checkDatesForRate(Date startDate, Date finishDate) {
+        DateTime dateTime = new DateTime();
+
+        if (startDate.getTime() == finishDate.getTime()) return false;
+        if (finishDate.before(startDate)) return false;
+
+        if (finishDate.before(dateTime.minusYears(1).toDate())) return false;
+        if (finishDate.after(dateTime.plusYears(1).toDate())) return false;
+
+        if (startDate.before(dateTime.minusYears(1).toDate())) return false;
+        if (startDate.after(dateTime.plusYears(1).toDate())) return false;
 
         return true;
     }
