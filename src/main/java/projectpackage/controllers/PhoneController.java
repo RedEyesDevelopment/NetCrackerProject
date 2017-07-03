@@ -11,6 +11,7 @@ import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.User;
 import projectpackage.service.authservice.PhoneService;
 import projectpackage.service.authservice.UserService;
+import projectpackage.service.support.ServiceUtils;
 
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
@@ -34,6 +35,9 @@ public class PhoneController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    ServiceUtils serviceUtils;
 
     @ResponseStatus(HttpStatus.OK)
     @CacheResult(cacheName = "phoneList")
@@ -66,19 +70,23 @@ public class PhoneController {
     }
 
     @CacheRemoveAll(cacheName = "phoneList")
-    @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
+            consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> createPhone(@RequestBody Phone newPhone, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("USER");
-        if (user == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-        } else if (newPhone == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAndData(user, newPhone);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
+        if (serviceUtils.isClient(user)) {
+            if (newPhone.getUserId() != user.getObjectId()) {
+                return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, INVALID_USER_ID), HttpStatus.BAD_REQUEST);
+            }
         }
 
-        newPhone.setUserId(user.getObjectId());
         IUDAnswer result = phoneService.insertPhone(newPhone);
         HttpStatus status;
-        if (result.isSuccessful()) {
+        if ((result.isSuccessful() && !serviceUtils.isAdmin(user)) || user.getObjectId() == newPhone.getUserId()) {
             request.getSession().removeAttribute("USER");
             request.getSession().setAttribute("USER", userService.getSingleUserById(user.getObjectId()));
             status = HttpStatus.OK;
@@ -93,16 +101,19 @@ public class PhoneController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updatePhone(@PathVariable("id") Integer id, @RequestBody Phone changedPhone, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("USER");
-        if (user == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-        } else if (id == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, NULL_ID), HttpStatus.BAD_REQUEST);
-        } else if (changedPhone == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAndData(user, changedPhone);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
+        if (!serviceUtils.isAdmin(user)) {
+            if (changedPhone.getUserId() != user.getObjectId()) {
+                return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, INVALID_USER_ID), HttpStatus.BAD_REQUEST);
+            }
+        }
+
         IUDAnswer result = phoneService.updatePhone(id, changedPhone);
         HttpStatus status;
-        if (result.isSuccessful()) {
+        if ((result.isSuccessful() && !serviceUtils.isAdmin(user)) || user.getObjectId() == changedPhone.getUserId()) {
             request.getSession().removeAttribute("USER");
             request.getSession().setAttribute("USER", userService.getSingleUserById(id));
             status = HttpStatus.OK;
@@ -117,23 +128,31 @@ public class PhoneController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> deletePhone(@PathVariable("id") Integer id, HttpServletRequest request) {
         User sessionUser = (User) request.getSession().getAttribute("USER");
-        if (sessionUser == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-        } else if (sessionUser.getPhones().size() <= 1) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, TRY_TO_DELETE_LAST_PHONE), HttpStatus.BAD_REQUEST);
-        } else if (id == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, DISCREPANCY_PARENT_ID), HttpStatus.BAD_REQUEST);
+        IUDAnswer iudAnswer = serviceUtils.checkDelete(sessionUser, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
-        boolean isBelongToUser = false;
-        for (Phone phone : sessionUser.getPhones()) {
-            if (phone.getUserId() == sessionUser.getObjectId()) {
-                isBelongToUser = true;
-                break;
+        if (!serviceUtils.isAdmin(sessionUser)) {
+            if (sessionUser.getPhones().size() <= 1) {
+                return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, TRY_TO_DELETE_LAST_PHONE), HttpStatus.BAD_REQUEST);
+            }
+            boolean isBelongToUser = false;
+            for (Phone phone : sessionUser.getPhones()) {
+                if (phone.getUserId() == sessionUser.getObjectId()) {
+                    isBelongToUser = true;
+                    break;
+                }
+            }
+            if (!isBelongToUser) {
+                return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, PHONE_NOT_BELONG_TO_USER), HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            User user = userService.getSingleUserById(phoneService.getSinglePhoneById(id).getUserId());
+            if (user.getPhones().size() <= 1) {
+                return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, TRY_TO_DELETE_LAST_PHONE), HttpStatus.BAD_REQUEST);
             }
         }
-        if (!isBelongToUser) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, PHONE_NOT_BELONG_TO_USER), HttpStatus.BAD_REQUEST);
-        }
+
         IUDAnswer result = phoneService.deletePhone(id);
         HttpStatus status;
         if (result.isSuccessful()) {

@@ -29,6 +29,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import static projectpackage.service.MessageBook.NULL_ENTITY;
 import static projectpackage.service.MessageBook.WRONG_PASSWORD;
+import static projectpackage.service.MessageBook.WRONG_UPDATE_ID;
 
 @RestController
 @RequestMapping("/users")
@@ -167,21 +168,20 @@ public class UserController {
         if (!iudAnswer.isSuccessful()) {
             return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
-		User user = userService.getSingleUserById(id);
-
-		if (securityService.isPasswordMatchEncrypted(userPasswordDTO.getOldPassword(), user.getPassword())) {
-			user.setPassword(userPasswordDTO.getNewPassword());
-			IUDAnswer answer = userService.updateUser(id, user);
-			if (answer.isSuccessful()) {
-				request.getSession().removeAttribute("USER");
-				request.getSession().setAttribute("USER", userService.getSingleUserById(id));
-				return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
-			} else {
-				return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
-			}
-		}
-		return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_PASSWORD), HttpStatus.BAD_REQUEST);
+		return updatePassword(request, id, userPasswordDTO);
 	}
+
+    @RequestMapping(value = "admin/update/password/{id}", method = RequestMethod.PUT,
+            produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<IUDAnswer> updateAdminPassword(@PathVariable("id") Integer id,
+                                                    @RequestBody UserPasswordDTO userPasswordDTO, HttpServletRequest request) {
+        User sessionUser = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkAdminForChangePassword(sessionUser, userPasswordDTO, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
+        return updatePassword(request, id, userPasswordDTO);
+    }
 
 	@RequestMapping(value = "/update/basic/{id}", method = RequestMethod.PUT,
 			produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
@@ -190,7 +190,32 @@ public class UserController {
 		IUDAnswer iudAnswer = serviceUtils.checkSessionAndData(sessionUser, userBasicDTO, id);
 		if (!iudAnswer.isSuccessful()) {
 		    return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
-        }
+        } else if (id != sessionUser.getObjectId()) {
+			return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_UPDATE_ID), HttpStatus.BAD_REQUEST);
+		}
+		User user = userService.getSingleUserById(id);
+		user.setFirstName(userBasicDTO.getFirstName());
+		user.setLastName(userBasicDTO.getLastName());
+		user.setEmail(userBasicDTO.getEmail());
+		user.setAdditionalInfo(userBasicDTO.getAdditionalInfo());
+		IUDAnswer answer = userService.updateUser(id, user);
+		if (answer.isSuccessful()) {
+			request.getSession().removeAttribute("USER");
+			request.getSession().setAttribute("USER", userService.getSingleUserById(id));
+			return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
+		}
+
+		return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+	}
+
+	@RequestMapping(value = "admin/update/basic/{id}", method = RequestMethod.PUT,
+			produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+	public ResponseEntity<IUDAnswer> updateAdminBasicInfo(@PathVariable("id") Integer id, @RequestBody UserBasicDTO userBasicDTO, HttpServletRequest request) {
+		User sessionUser = (User) request.getSession().getAttribute("USER");
+		IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(sessionUser, userBasicDTO, id);
+		if (!iudAnswer.isSuccessful()) {
+			return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+		}
 		User user = userService.getSingleUserById(id);
 		user.setFirstName(userBasicDTO.getFirstName());
 		user.setLastName(userBasicDTO.getLastName());
@@ -208,7 +233,7 @@ public class UserController {
 
 	//Delete user method
 	@CacheRemoveAll(cacheName = "userList")
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+	@RequestMapping(value = "delete/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<IUDAnswer> deleteUser(@PathVariable("id") Integer id, HttpServletRequest request) {
 		User user = (User) request.getSession().getAttribute("USER");
 		IUDAnswer iudAnswer = serviceUtils.checkDeleteForAdmin(user, id);
@@ -226,6 +251,25 @@ public class UserController {
 		return responseEntity;
 	}
 
+    @CacheRemoveAll(cacheName = "userList")
+    @RequestMapping(value = "restore/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<IUDAnswer> restoreUser(@PathVariable("id") Integer id, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkDeleteForAdmin(user, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
+        IUDAnswer result = userService.restoreUser(id);
+        HttpStatus status;
+        if (result.isSuccessful()) {
+            status = HttpStatus.OK;
+        } else {
+            status = HttpStatus.NOT_FOUND;
+        }
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
+        return responseEntity;
+    }
+
 	//returned user-client from session
 	@RequestMapping(value = "/myself")
 	public ResponseEntity<User> getUser(HttpServletRequest request) {
@@ -239,4 +283,22 @@ public class UserController {
 
 		return new ResponseEntity<User>(user, status);
 	}
+
+	private ResponseEntity<IUDAnswer> updatePassword(HttpServletRequest request, Integer id, UserPasswordDTO userPasswordDTO) {
+        User user = userService.getSingleUserById(id);
+
+        if (!securityService.isPasswordMatchEncrypted(userPasswordDTO.getOldPassword(), user.getPassword())) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_PASSWORD), HttpStatus.BAD_REQUEST);
+        }
+
+        user.setPassword(userPasswordDTO.getNewPassword());
+        IUDAnswer answer = userService.updateUserPassword(id, user);
+        if (answer.isSuccessful()) {
+            request.getSession().removeAttribute("USER");
+            request.getSession().setAttribute("USER", userService.getSingleUserById(id));
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+        }
+    }
 }

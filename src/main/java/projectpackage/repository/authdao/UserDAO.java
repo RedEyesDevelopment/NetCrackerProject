@@ -7,11 +7,12 @@ import projectpackage.repository.Rollbackable;
 import java.util.List;
 
 public interface UserDAO extends Commitable, Rollbackable{
-    public User getUser(Integer id);
-    public List<User> getAllUsers();
-    public Integer insertUser(User user);
-    public Integer updateUser(User newUser, User oldUser);
-    public Integer updateUserPassword(User newUser, User oldUser);
-    public void deleteUser(Integer id);
+    User getUser(Integer id);
+    List<User> getAllUsers();
+    Integer insertUser(User user);
+    Integer updateUser(User newUser, User oldUser);
+    Integer updateUserPassword(User newUser, User oldUser);
+    void deleteUser(Integer id);
+    void restoreUser(Integer id);
     User getUserByUsername(String username);
 }

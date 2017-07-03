@@ -159,6 +159,45 @@ public class ServiceUtilsImpl implements ServiceUtils{
         }
     }
 
+    @Override
+    public IUDAnswer checkAdminForChangePassword(User user, UserPasswordDTO data, Integer id) {
+        IUDAnswer iudAnswer = checkForChangePassword(user, data, id);
+        return checkForAdmin(iudAnswer, user);
+    }
+
+    @Override
+    public boolean isClient(User user) {
+        if (user == null) {
+            return false;
+        } else if (user.getRole().getObjectId() != 3) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public boolean isReception(User user) {
+        if (user == null) {
+            return false;
+        } else if (user.getRole().getObjectId() != 2) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public boolean isAdmin(User user) {
+        if (user == null) {
+            return false;
+        } else if (user.getRole().getObjectId() != 1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     private IUDAnswer checkForAdmin(IUDAnswer iudAnswer, User user) {
         if (!iudAnswer.isSuccessful()) {
             return iudAnswer;

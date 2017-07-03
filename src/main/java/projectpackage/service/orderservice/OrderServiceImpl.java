@@ -259,7 +259,7 @@ public class OrderServiceImpl implements OrderService{
         if ((currentOrder.getLivingFinishDate().getTime() <= (changeOrderDTO.getLivingFinishDate().getTime()))
                 && (currentOrder.getRoom().getRoomType().getObjectId() == changeOrderDTO.getRoomTypeId())) {
             List<Room> freeRoomsOnNextDays = roomService.getFreeRooms(changeOrderDTO.getRoomTypeId(), changeOrderDTO.getNumberOfResidents(),
-                    new Date(currentOrder.getLivingFinishDate().getTime() + 10000L), changeOrderDTO.getLivingFinishDate());
+                    new Date(currentOrder.getLivingFinishDate().getTime() + 10_000L), changeOrderDTO.getLivingFinishDate());
             int currentRoomId = currentOrder.getRoom().getObjectId();
             boolean isFree = false;
             for (Room room : freeRoomsOnNextDays) {

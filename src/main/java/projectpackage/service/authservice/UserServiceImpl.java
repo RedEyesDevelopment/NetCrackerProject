@@ -59,7 +59,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public IUDAnswer deleteUser(Integer id) {
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             userDAO.deleteUser(id);
 		} catch (DeletedObjectNotExistsException e) {
@@ -74,6 +76,27 @@ public class UserServiceImpl implements UserService {
 		}
         userDAO.commit();
         return new IUDAnswer(id, true);
+	}
+
+	@Override
+	public IUDAnswer restoreUser(Integer id) {
+		if (id == null) {
+			return new IUDAnswer(false, NULL_ID);
+		}
+		try {
+			userDAO.restoreUser(id);
+		} catch (DeletedObjectNotExistsException e) {
+			LOGGER.warn(RESTORED_USER_NOT_EXISTS, e);
+			return new IUDAnswer(id, false, RESTORED_USER_NOT_EXISTS, e.getMessage());
+		} catch (IllegalArgumentException e) {
+			LOGGER.warn(NULL_ID, e);
+			return new IUDAnswer(id, false, NULL_ID, e.getMessage());
+		} catch (WrongEntityIdException e) {
+			LOGGER.warn(WRONG_RESTORED_ID, e);
+			return new IUDAnswer(id, false, WRONG_RESTORED_ID, e.getMessage());
+		}
+		userDAO.commit();
+		return new IUDAnswer(id, true);
 	}
 
 	@Override
@@ -116,7 +139,6 @@ public class UserServiceImpl implements UserService {
 	public IUDAnswer updateUser(Integer id, User newUser) {
 	    if (newUser == null) return null;
         if (id == null) return new IUDAnswer(false, NULL_ID);
-        if (!securityService.cryptUserPass(newUser)) return new IUDAnswer(false, FAIL_CRYPT_PASSWORD);
 		try {
 			newUser.setObjectId(id);
 			User oldUser = userDAO.getUser(id);

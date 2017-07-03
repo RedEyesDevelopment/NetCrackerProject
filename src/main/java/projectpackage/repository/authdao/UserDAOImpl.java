@@ -84,7 +84,6 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     public Integer updateUser(User newUser, User oldUser) {
         if (newUser == null || oldUser == null) return null;
         updateEmail(newUser, oldUser);
-        updatePassword(newUser, oldUser);
         updateFirstName(newUser, oldUser);
         updateLastName(newUser, oldUser);
         updateAdditionalInfo(newUser, oldUser);
@@ -114,6 +113,21 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         if (null == user) throw new DeletedObjectNotExistsException(this);
 
         jdbcTemplate.update(UPDATE_ATTRIBUTE, "false", null, id, 3);
+    }
+
+    @Transactional
+    @Override
+    public void restoreUser(Integer id) {
+        if (id == null) throw new IllegalArgumentException();
+        User user = null;
+        try {
+            user = getUser(id);
+        } catch (ClassCastException e) {
+            throw new WrongEntityIdException(this, e.getMessage());
+        }
+        if (null == user) throw new DeletedObjectNotExistsException(this);
+
+        jdbcTemplate.update(UPDATE_ATTRIBUTE, "true", null, id, 3);
     }
 
     @Override
