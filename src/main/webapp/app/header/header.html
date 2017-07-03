@@ -31,7 +31,9 @@
                                         <p class="text-left">
                                             <a href="#/personal/settings" class="btn btn-primary btn-block btn-sm">Personal settings</a>
                                             <a href="#/admin/rooms" class="btn btn-primary btn-block btn-sm" ng-if="auth.isAdmin">Admin desktop</a>
-                                            <a href="#/admin/statistic" class="btn btn-primary btn-block btn-sm" ng-if="auth.isAdmin">Get room statistic on email </a>
+                                            <a data-toggle="modal" data-target="#statisticConfirmation" class="btn btn-primary btn-block btn-sm"  ng-if="auth.isAdmin">
+                                                Get room statistic on email
+                                            </a>
                                         </p>
                                     </div>
                                 </div>
@@ -131,7 +133,6 @@
                            ng-model="registrationData.userEmail"
                            ng-pattern = '/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i'
                            ng-required="true">
-
                 </p>
                 <p>
                     <label for="passcform" class="passwordLabel">Password:</label>
@@ -184,5 +185,32 @@
             </form>
         </div>
 
+    </div>
+</div>
+
+
+
+
+
+
+<!-- Get statistic confirmation -->
+<div class="modal fade" id="statisticConfirmation" role="dialog">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog modal-sm vertical-align-center">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header popupheader">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Statistic</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="admin-notes">Do you really want to get statistics on the your email?</p>
+                    <div class="text-right">
+                        <button class="btn btn-success" data-dismiss="modal" ng-click="getStatistic()">Yes</button>
+                        <button class="btn btn-primary" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

@@ -190,4 +190,8 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', '$rootScope', 'sha
         }
     }
 
+    $scope.getStatistic = function() {
+        $location.path('/admin/statistic');
+    }
+
 }]);
