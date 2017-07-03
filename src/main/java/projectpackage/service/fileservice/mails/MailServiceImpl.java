@@ -55,28 +55,26 @@ public class MailServiceImpl implements MailService {
             javaMailSenderImpl.setPassword(password);
             javaMailSenderImpl.setJavaMailProperties(mailProperties);
             MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper messageHelper;
             try {
-                prepareMail(message, messageKey, receiver, attributeFile);
+                if (null != attributeFile) {
+                    messageHelper = new MimeMessageHelper(message, true);
+                } else {
+                    messageHelper = new MimeMessageHelper(message);
+                }
+                messageHelper.setTo(receiver);
+                messageHelper.setSubject(mailMessagesMap.getMessage(messageKey).getSubject());
+                messageHelper.setSentDate(new Date(System.currentTimeMillis()));
+                messageHelper.setText(mailMessagesMap.getMessage(messageKey).getMessage());
+                if (messageHelper.isMultipart()) {
+                    messageHelper.addAttachment(attributeFile.getName(), attributeFile);
+                }
             } catch (MessagingException e) {
-                LOGGER.error(message, e);
+                LOGGER.warn("Message from MailSenderImpl was not send.", e);
             }
             CustomMailSender sender = new CustomMailSender(pdfService, attributeFile.getPath(), LOGGER, javaMailSenderImpl, message);
             Thread thread = new Thread(sender);
             thread.start();
-        }
-    }
-
-    private void prepareMail(MimeMessage message, Integer messageKey, String receiver, File attributeFile) throws MessagingException {
-        MimeMessageHelper messageHelper;
-        if (null != attributeFile) {
-            messageHelper = new MimeMessageHelper(message, true);
-        } else messageHelper = new MimeMessageHelper(message);
-        messageHelper.setTo(receiver);
-        messageHelper.setSubject(mailMessagesMap.getMessage(messageKey).getSubject());
-        messageHelper.setSentDate(new Date(System.currentTimeMillis()));
-        messageHelper.setText(mailMessagesMap.getMessage(messageKey).getMessage());
-        if (messageHelper.isMultipart()) {
-            messageHelper.addAttachment(attributeFile.getName(), attributeFile);
         }
     }
 

@@ -66,6 +66,7 @@ public class PasswordChangeServiceImpl implements PasswordChangeService {
         }
         User user = userService.getSingleUserByUsername(userLogin);
         if (null!=user){
+            containers.invalidate(link);
             String newPassword = randomStringGenerator.nextString(10);
             user.setPassword(newPassword);
             userService.updateUserPassword(user.getObjectId(), user);
