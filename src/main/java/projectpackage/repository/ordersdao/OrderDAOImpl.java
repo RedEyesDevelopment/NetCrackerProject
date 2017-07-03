@@ -48,7 +48,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 .fetchRootChild(JournalRecord.class)
                 .fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
                 .closeAllFetches()
-                .fetchRootReference(Category.class, "OrderToCategory")
+                .fetchRootReference(Category.class, "CategoryToOrder")
                 .closeAllFetches()
                 .getEntityCollection();
     }
@@ -67,7 +67,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 .fetchRootChild(JournalRecord.class)
                 .fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
                 .closeAllFetches()
-                .fetchRootReference(Category.class, "OrderToCategory")
+                .fetchRootReference(Category.class, "CategoryToOrder")
                 .closeAllFetches()
                 .getSingleEntityWithId(id);
     }
@@ -94,7 +94,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 .fetchRootChild(JournalRecord.class)
                 .fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
                 .closeAllFetches()
-                .fetchRootReference(Category.class, "OrderToCategory")
+                .fetchRootReference(Category.class, "CategoryToOrder")
                 .fetchInnerChild(Complimentary.class)
                 .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
                 .closeAllFetches()
@@ -121,7 +121,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 .fetchRootChild(JournalRecord.class)
                 .fetchInnerReference(Maintenance.class, "MaintenanceToJournalRecord")
                 .closeAllFetches()
-                .fetchRootReference(Category.class, "OrderToCategory")
+                .fetchRootReference(Category.class, "CategoryToOrder")
                 .fetchInnerChild(Complimentary.class)
                 .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary")
                 .closeAllFetches()

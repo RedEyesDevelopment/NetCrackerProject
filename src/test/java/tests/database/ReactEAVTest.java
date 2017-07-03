@@ -234,7 +234,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
                     .closeFetch().closeFetch()
                     .fetchInnerReference(Room.class, "RoomToOrder")
                     .fetchInnerReference(RoomType.class, "RoomTypeToRoom").closeFetch().closeFetch()
-                    .fetchInnerReference(Category.class, "OrderToCategory")
+                    .fetchInnerReference(Category.class, "CategoryToOrder")
                     .fetchInnerChild(Complimentary.class)
                     .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary").closeAllFetches()
                     .fetchRootReference(User.class, "UserToNotificationAsExecutor")
@@ -341,4 +341,11 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     }
 
 
+    @Test
+    public void getNotExecutedNotifications(){
+        List<Notification> nots = manager.createReactEAV(Notification.class).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches().getEntityCollection();
+        for (Notification not: nots){
+            System.out.println(not);
+        }
+    }
 }
