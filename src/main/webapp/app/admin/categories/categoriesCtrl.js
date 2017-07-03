@@ -191,25 +191,28 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
     }
 
     var editCategory = function() {
-        $http({
-            url: sharedData.getLinks().https + '/categories/' + $scope.idForOperation,
-            method: 'PUT',
-            data: {
-                categoryTitle :     $scope.category.title,
-                categoryPrice :     ($scope.category.dollars * 100) + $scope.category.cents
-            },
-            headers: { 'Content-Type' : 'application/json' }
-        }).then(function(data) {
-            console.log(data);
-            $scope.listOfCategories[$scope.indexForOperation].categoryTitle = $scope.category.title;
-            $scope.listOfCategories[$scope.indexForOperation].categoryPrice = ($scope.category.dollars * 100) + $scope.category.cents;
-            $scope.stage = "updated";
-        }, function(response) {
-            console.log("Smth wrong!!");
-            console.log(response);
-            $scope.errMessage = "serverErr";
-        });
-    }
+        if (        $scope.category.dollars >= 0
+                &&  $scope.category.cents >= 0
+                &&  $scope.category.cents <= 99) {
+            $http({
+                url: sharedData.getLinks().https + '/categories/' + $scope.idForOperation,
+                method: 'PUT',
+                data: {
+                    categoryTitle :     $scope.category.title,
+                    categoryPrice :     ($scope.category.dollars * 100) + $scope.category.cents
+                },
+                headers: { 'Content-Type' : 'application/json' }
+            }).then(function(data) {
+                console.log(data);
+                $scope.listOfCategories[$scope.indexForOperation].categoryTitle = $scope.category.title;
+                $scope.listOfCategories[$scope.indexForOperation].categoryPrice = ($scope.category.dollars * 100) + $scope.category.cents;
+                $scope.stage = "updated";
+            }, function(response) {
+                console.log("Smth wrong!!");
+                console.log(response);
+                $scope.errMessage = "serverErr";
+            });
+        }
 
 
     $scope.prepareToDeleteCategory = function(categoryId, index) {

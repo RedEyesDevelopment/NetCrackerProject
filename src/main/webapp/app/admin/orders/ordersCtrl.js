@@ -253,28 +253,31 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 
 	/* Изменение заказа */
 	$scope.prepareToEditOrder = function(orderId, index) {
-		$http({
-			url: sharedData.getLinks().https + '/orders/' + orderId,
-			method: 'GET',
-			headers: {'Content-Type': 'application/json'}
-		}).then(function(data) {
-			console.log(data);
-			$scope.indexForOperation = index;
-			$scope.idForOperation = orderId;
+        $http({
+            url: sharedData.getLinks().https + '/orders/' + orderId,
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'}
+        }).then(function(data) {
+            console.log(data);
+            $scope.indexForOperation = index;
+            $scope.idForOperation = orderId;
             $scope.order.livingStartDate = new Date(data.data.livingStartDate);
             $scope.order.livingFinishDate = new Date(data.data.livingFinishDate);
-			$scope.order.room = data.data.room;
-			$scope.order.category = data.data.category;
+            $scope.order.room = data.data.room;
+            $scope.order.category = data.data.category;
             $scope.order.comment = data.data.comment;
             $scope.order.client = data.data.client;
             $scope.order.sum = data.data.sum;
-			$scope.stage = "searchForEdit";
-			$scope.mode = "edit";
-		}, function(response) {
-			console.log("Smth wrong!!");
-			console.log(response);
-		});
-	}
+            $scope.stage = "searchForEdit";
+            $scope.mode = "edit";
+        }, function(response) {
+            console.log("Smth wrong!!");
+            console.log(response);$scope.errMessage = "serverErr";
+        });
+    } else {
+        $scope.errMessage = "invalidInputData";
+    }
+}
 
 	$scope.searchForEdit = function() {
 		$http({
@@ -308,40 +311,46 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	}
 
 	var editOrder = function() {
-		$http({
-			url: sharedData.getLinks().https + '/orders/update/' + $scope.idForOperation,
-			method: 'PUT',
-			data: {
-				roomTypeId:				null,
-				roomTypeName:			null,
-				roomTypeDescription: 	null,
-				isAvailable:			null,
-				categoryCost:			$scope.anotherVariant.categoryCost,
-				livingCost:				$scope.anotherVariant.livingCost,
-				arrival:				$scope.order.livingStartDate.getTime(),
-				departure:				$scope.order.livingFinishDate.getTime(),
-				livingPersons:			null,
-				categoryId:				null,
-				clientId:				$scope.order.client.objectId,
-				roomId:					$scope.order.room.objectId
-			},
-			headers: { 'Content-Type' : 'application/json' }
-		}).then(function(data) {
-			console.log(data);
-			$scope.listOfOrders[$scope.indexForOperation].livingStartDate = $scope.order.livingStartDate;
-			$scope.listOfOrders[$scope.indexForOperation].livingFinishDate = $scope.order.livingFinishDate;
-			$scope.listOfOrders[$scope.indexForOperation].sum = $scope.anotherVariant.total;
-			$scope.listOfOrders[$scope.indexForOperation].category = util.getObjectInArrayById($scope.listOfCategories, $scope.order.category.objectId);
-			$scope.listOfOrders[$scope.indexForOperation].room = util.getObjectInArrayById($scope.listOfRooms, $scope.order.room.objectId);
-			$scope.listOfOrders[$scope.indexForOperation].lastModificator = util.getObjectInArrayById($scope.listOfUsers, sharedData.getMyself().objectId);
-			$scope.stage = "updated";
-			$scope.mode = "look";
-		}, function(response) {
-			console.log("Smth wrong!!");
-			console.log(response);
-            $scope.errMessage = "serverErr";
-		});
-	}
+        resetFlags();
+            if ($scope.order.livingStartDate.getTime() < $scope.order.livingFinishDate.getTime()
+                && $scope.order.livingStartDate.getTime() >= new Date().getTime()
+                && $scope.order.livingFinishDate.getTime() <= $scope.maxDate.getTime()) {
+                $http({
+                    url: sharedData.getLinks().https + '/orders/update/' + $scope.idForOperation,
+                    method: 'PUT',
+                    data: {
+                        roomTypeId:				null,
+                        roomTypeName:			null,
+                        roomTypeDescription: 	null,
+                        isAvailable:			null,
+                        categoryCost:			$scope.anotherVariant.categoryCost,
+                        livingCost:				$scope.anotherVariant.livingCost,
+                        arrival:				$scope.order.livingStartDate.getTime(),
+                        departure:				$scope.order.livingFinishDate.getTime(),
+                        livingPersons:			null,
+                        categoryId:				null,
+                        clientId:				$scope.order.client.objectId,
+                        roomId:					$scope.order.room.objectId
+                    },
+                    headers: { 'Content-Type' : 'application/json' }
+                }).then(function(data) {
+                    console.log(data);
+                    $scope.listOfOrders[$scope.indexForOperation].livingStartDate = $scope.order.livingStartDate;
+                    $scope.listOfOrders[$scope.indexForOperation].livingFinishDate = $scope.order.livingFinishDate;
+                    $scope.listOfOrders[$scope.indexForOperation].sum = $scope.anotherVariant.total;
+                    $scope.listOfOrders[$scope.indexForOperation].category = util.getObjectInArrayById($scope.listOfCategories, $scope.order.category.objectId);
+                    $scope.listOfOrders[$scope.indexForOperation].room = util.getObjectInArrayById($scope.listOfRooms, $scope.order.room.objectId);
+                    $scope.listOfOrders[$scope.indexForOperation].lastModificator = util.getObjectInArrayById($scope.listOfUsers, sharedData.getMyself().objectId);
+                    $scope.stage = "updated";
+                    $scope.mode = "look";
+                }, function(response) {
+                    console.log("Smth wrong!!");
+                    console.log(response);$scope.errMessage = "serverErr";
+                });
+            } else {
+                $scope.errMessage = "invalidInputData";
+            }
+        }
 
 	$scope.prepareToDeleteOrder = function(orderId, index) {
 		$scope.idForOperation = orderId;

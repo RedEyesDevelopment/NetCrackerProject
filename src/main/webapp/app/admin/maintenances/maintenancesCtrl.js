@@ -119,27 +119,30 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
     }
 
     var editMaintenance = function() {
-        $http({
-            url: sharedData.getLinks().https + '/maintenances/' + $scope.maintenance.idForOperation,
-            method: 'PUT',
-            data: {
-                maintenanceTitle :  $scope.maintenance.title,
-                maintenanceType :   $scope.maintenance.type,
-                maintenancePrice :  ($scope.maintenance.dollars * 100) + $scope.maintenance.cents
-            },
-            headers: { 'Content-Type' : 'application/json' }
-        }).then(function(data) {
-            console.log(data);
-            $scope.listOfMaintenances[$scope.indexForOperation].maintenanceTitle = $scope.maintenance.title;
-            $scope.listOfMaintenances[$scope.indexForOperation].maintenanceType = $scope.maintenance.type;
-            $scope.listOfMaintenances[$scope.indexForOperation].maintenancePrice = ($scope.maintenance.dollars * 100) + $scope.maintenance.cents;
-            $scope.stage = 'updated';
-        }, function(response) {
-            console.log("Smth wrong!!");
-            console.log(response);
-            $scope.errMessage = "serverErr";
-        });
-    }
+        if (        $scope.maintenance.dollars >= 0
+                &&  $scope.maintenance.cents >= 0
+                &&  $scope.maintenance.cents <= 99) {
+            $http({
+                url: sharedData.getLinks().https + '/maintenances/' + $scope.maintenance.idForOperation,
+                method: 'PUT',
+                data: {
+                    maintenanceTitle :  $scope.maintenance.title,
+                    maintenanceType :   $scope.maintenance.type,
+                    maintenancePrice :  ($scope.maintenance.dollars * 100) + $scope.maintenance.cents
+                },
+                headers: { 'Content-Type' : 'application/json' }
+            }).then(function(data) {
+                console.log(data);
+                $scope.listOfMaintenances[$scope.indexForOperation].maintenanceTitle = $scope.maintenance.title;
+                $scope.listOfMaintenances[$scope.indexForOperation].maintenanceType = $scope.maintenance.type;
+                $scope.listOfMaintenances[$scope.indexForOperation].maintenancePrice = ($scope.maintenance.dollars * 100) + $scope.maintenance.cents;
+                $scope.stage = 'updated';
+            }, function(response) {
+                console.log("Smth wrong!!");
+                console.log(response);
+                $scope.errMessage = "serverErr";
+            });
+        }
 
     var deleteMaintenance = function() {
         $http({
