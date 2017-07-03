@@ -1,9 +1,8 @@
-app.controller('statisticCtrl', ['$scope', '$http', '$location', 'sharedData', 'util',
-    function($scope, $http, $location, sharedData, util) {
-
+app.controller('statisticCtrl', ['$scope', '$http', '$location', 'sharedData',
+    function($scope, $http, $location, sharedData) {
         (function() {
             $http({
-                url: sharedData.getLinks().https + '/pdf',
+                url: 'http://localhost:8080/pdf',
                 method: 'GET',
                 headers: { 'Content-Type' : 'application/json' }
             }).then(function(data) {
@@ -14,4 +13,7 @@ app.controller('statisticCtrl', ['$scope', '$http', '$location', 'sharedData', '
             });
         }());
 
-    }]);
+        $scope.thanks = function() {
+            $location.path("/");
+        }
+}]);

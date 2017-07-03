@@ -11,21 +11,21 @@
   left: 0;
 }
 
-.book .jumbotron {
+.book .jumbotron, .statistic .jumbotron {
   margin: -10px auto 0;
   color: white;
   text-shadow: black 0.3em 0.3em 0.3em;
   padding: 70px 30px;
 }
 
-.book #noteForNotAuth {
+.book #noteForNotAuth, .statistic #noteForNotAuth {
   text-align: center;
   font-size: 24px;
   font-family: 'Times New Roman';
   text-shadow: #444 1px 1px 3px;
 }
 
-.book .img-thumbnail {
+.book .img-thumbnail, .statistic .img-thumbnail{
     max-height: 250px;
     max-width: 500px;
     min-height: 250px;
@@ -117,16 +117,16 @@
   margin-bottom: 10px;
 }
 
-.book .thanking {
+.thanking {
   text-align: center;
 }
 
-.book .thanking p {
+.thanking p {
   font-family: 'Times New Roman';
   font-size: 28px;
   text-shadow: #444 1px 1px 3px;
 }
 
-.book .thanking button {
+.thanking button {
   width: 100px;
 }

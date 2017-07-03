@@ -52,19 +52,16 @@ public class FileController {
         String path = request.getServletContext().getRealPath("/").toString();
         Order order = orderService.getSingleOrderById(id);
         File file = pdfService.createOrderPDF(order, path);
-        System.out.println("***************************************************************FROM ORDER PDF");
-        System.out.println(order);
-        System.out.println(order.getClient().getEmail());
         mailService.sendEmailWithAttachment(order.getClient().getEmail(), 1, file);
         return new ResponseEntity<IUDAnswer>(new IUDAnswer(true), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public File getStatistic(HttpServletRequest request){
+    public ResponseEntity<Boolean> getStatistic(HttpServletRequest request){
         User user = (User) request.getSession().getAttribute("USER");
         String path = request.getServletContext().getRealPath("/").toString();
         File file = adminService.getStatistic(path);
         mailService.sendEmailWithAttachment(user.getEmail(), 3, file);
-        return file;
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 }
