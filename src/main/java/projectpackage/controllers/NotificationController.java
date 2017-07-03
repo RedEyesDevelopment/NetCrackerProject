@@ -13,11 +13,13 @@ import projectpackage.model.notifications.Notification;
 import projectpackage.model.notifications.NotificationType;
 import projectpackage.model.orders.Order;
 import projectpackage.service.notificationservice.NotificationService;
+import projectpackage.service.support.ServiceUtils;
 
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -33,6 +35,9 @@ public class NotificationController {
 
     @Autowired
     NotificationService notificationService;
+
+    @Autowired
+    ServiceUtils serviceUtils;
 
     //Get Notification List
     @ResponseStatus(HttpStatus.OK)
@@ -61,6 +66,24 @@ public class NotificationController {
             resources.add(notificationResource);
         }
         return resources;
+    }
+
+    @RequestMapping(value = "/execute/{id}",method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<IUDAnswer> makeExecuted(@PathVariable("id") Integer id, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminReceptionAndData(user, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
+        Notification notification = notificationService.getSingleNotificationById(id);
+        notification.setExecutedDate(new Date());
+        notification.setExecutedBy(user);
+        IUDAnswer answer = notificationService.updateNotification(id, notification);
+        if (!answer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+        } else {
+           return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
+        }
     }
 
     //Get single Notification by id

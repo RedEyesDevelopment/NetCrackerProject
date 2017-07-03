@@ -11,7 +11,9 @@ import projectpackage.dto.IUDAnswer;
 import projectpackage.model.auth.User;
 import projectpackage.model.maintenances.Complimentary;
 import projectpackage.model.maintenances.Maintenance;
+import projectpackage.model.orders.Category;
 import projectpackage.service.maintenanceservice.ComplimentaryService;
+import projectpackage.service.orderservice.CategoryService;
 import projectpackage.service.support.ServiceUtils;
 
 import javax.cache.annotation.CacheRemoveAll;
@@ -22,6 +24,7 @@ import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static projectpackage.service.MessageBook.CANNOT_HAVE_DUPLICATE_COMPLIMENTARY;
 
 /**
  * Created by Arizel on 28.05.2017.
@@ -35,6 +38,9 @@ public class ComplimentaryController {
 
     @Autowired
     ServiceUtils serviceUtils;
+
+    @Autowired
+    CategoryService categoryService;
 
     @ResponseStatus(HttpStatus.OK)
     @CacheResult(cacheName = "complimentaryList")
@@ -52,7 +58,6 @@ public class ComplimentaryController {
         return resources;
     }
 
-    @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Resource<Complimentary>> getComplimentary(@PathVariable("id") Integer id, HttpServletRequest request) {
         User thisUser = (User) request.getSession().getAttribute("USER");
@@ -61,7 +66,7 @@ public class ComplimentaryController {
         Resource<Complimentary> resource = new Resource<>(Complimentary);
         HttpStatus status;
         if (null != Complimentary) {
-            status = HttpStatus.ACCEPTED;
+            status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
         }
@@ -78,14 +83,21 @@ public class ComplimentaryController {
         if (!iudAnswer.isSuccessful()) {
             return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
+        Category category = categoryService.getSingleCategoryById(complimentaryDTO.getCategoryId());
+        for (Complimentary complimentary : category.getComplimentaries()) {
+            if (complimentary.getMaintenance().getObjectId() == complimentaryDTO.getMaintenanceId()) {
+                return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, CANNOT_HAVE_DUPLICATE_COMPLIMENTARY), HttpStatus.BAD_REQUEST);
+            }
+        }
         Complimentary complimentary = new Complimentary();
         Maintenance maintenance = new Maintenance();
         maintenance.setObjectId(complimentaryDTO.getMaintenanceId());
         complimentary.setCategoryId(complimentaryDTO.getCategoryId());
         complimentary.setMaintenance(maintenance);
+
         IUDAnswer result = complimentaryService.insertComplimentary(complimentary);
 
-        HttpStatus status = result.isSuccessful() ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
+        HttpStatus status = result.isSuccessful() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
 
         return new ResponseEntity<IUDAnswer>(result, status);
     }

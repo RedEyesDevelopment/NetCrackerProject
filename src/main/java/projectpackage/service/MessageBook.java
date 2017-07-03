@@ -36,6 +36,7 @@ public interface MessageBook {
     String ORDER_STARTED = "Cannot delete order which was started!";
     String WRONG_RATE_DATES = "Rate dates cannot be set more then 1 year forward or before! Start date cannot be later then finish date!";
     String ORDER_DOESNT_BELONG_USER = "This order doesn't belong user!";
+    String CANNOT_HAVE_DUPLICATE_COMPLIMENTARY = "This category already has this complimentary!";
 }
 
 
