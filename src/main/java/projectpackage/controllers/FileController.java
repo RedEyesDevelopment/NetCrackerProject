@@ -18,6 +18,9 @@ import projectpackage.service.orderservice.OrderService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static projectpackage.service.MessageBook.NEED_TO_AUTH;
 import static projectpackage.service.MessageBook.NULL_ID;
@@ -41,6 +44,8 @@ public class FileController {
     @Autowired
     AdminService adminService;
 
+    private DateFormat targetDateFormat = new SimpleDateFormat("MM-dd-yyyy");
+
     @RequestMapping(value = "/order/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> sendOrderPdf(@PathVariable("id") Integer id, HttpServletRequest request){
         User user = (User) request.getSession().getAttribute("USER");
@@ -61,7 +66,7 @@ public class FileController {
         User user = (User) request.getSession().getAttribute("USER");
         String path = request.getServletContext().getRealPath("/").toString();
         File file = adminService.getStatistic(path);
-        String dates = //TODO
+        String dates = targetDateFormat.format(new Date(System.currentTimeMillis()));
         mailService.sendEmailForStatistics(user.getEmail(), dates, file);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
