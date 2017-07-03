@@ -27,8 +27,7 @@ import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-import static projectpackage.service.MessageBook.EMPTY_DTO_IN_SESSION;
-import static projectpackage.service.MessageBook.ORDER_STARTED;
+import static projectpackage.service.MessageBook.*;
 
 /**
  * Created by Lenovo on 28.05.2017.
@@ -58,6 +57,23 @@ public class OrderController {
     @GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public List<Resource<Order>> getOrderList(HttpServletRequest request){
         List<Order> orders = orderService.getAllOrders();
+        List<Resource<Order>> resources = new ArrayList<>();
+        for (Order order:orders){
+            Resource<Order> orderResource = new Resource<Order>(order);
+            orderResource.add(linkTo(methodOn(OrderController.class).getOrder(order.getObjectId(), null)).withSelfRel());
+            resources.add(orderResource);
+        }
+        return resources;
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/user", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public List<Resource<Order>> getOrderListByUser(HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("USER");
+        if (user == null) {
+            return null;
+        }
+        List<Order> orders = orderService.getOrdersByClient(user);
         List<Resource<Order>> resources = new ArrayList<>();
         for (Order order:orders){
             Resource<Order> orderResource = new Resource<Order>(order);
@@ -212,7 +228,7 @@ public class OrderController {
         }
     }
 
-    @RequestMapping(value = "update/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
+    @RequestMapping(value = "admin/update/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
             consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateOrder(@PathVariable("id") Integer id,
                                                                @RequestBody OrderDTO orderDTO,
@@ -229,6 +245,32 @@ public class OrderController {
         IUDAnswer answer = orderService.setNewDataIntoOrder(id, thisUser.getObjectId(), changeOrderDTO, orderDTO);
         request.getSession().removeAttribute("CHANGE_DTO");
         return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "user/update/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
+            consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<IUDAnswer> updateOrderForUser(@PathVariable("id") Integer id,
+                                                 @RequestBody String comment,
+                                                 HttpServletRequest request) {
+        User thisUser = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAndData(thisUser, comment, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
+        Order order = orderService.getSingleOrderById(id);
+        if (order == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_UPDATE_ID), HttpStatus.BAD_REQUEST);
+        }
+        if (order.getClient().getObjectId() != thisUser.getObjectId()) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, ORDER_DOESNT_BELONG_USER), HttpStatus.BAD_REQUEST);
+        }
+        order.setComment(comment);
+        IUDAnswer answer = orderService.updateOrder(id, order);
+        if (!answer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
+        }
     }
 
     //Delete order method

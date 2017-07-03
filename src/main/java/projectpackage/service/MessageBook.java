@@ -4,7 +4,7 @@ package projectpackage.service;
  * Created by Arizel on 24.06.2017.
  */
 public interface MessageBook {
-    String WRONG_UPDATE_ID = "Cannot update with wrong id! Updated entity id not equals original entity id, but id cannot be changed!";
+    String WRONG_UPDATE_ID = "Cannot update with wrong id!";
     String WRONG_DELETED_ID = "Cannot delete entity with inadequate id!";
     String DISCREPANCY_PARENT_ID = "Discrepancy parent id with current id!";
     String WRONG_DATES = "Date cannot be set on 1 year forward! Start date cannot be later then finish date!";
@@ -35,6 +35,7 @@ public interface MessageBook {
     String EMPTY_DTO_IN_SESSION = "Current room not available for reservation!";
     String ORDER_STARTED = "Cannot delete order which was started!";
     String WRONG_RATE_DATES = "Rate dates cannot be set more then 1 year forward or before! Start date cannot be later then finish date!";
+    String ORDER_DOESNT_BELONG_USER = "This order doesn't belong user!";
 }
 
 
