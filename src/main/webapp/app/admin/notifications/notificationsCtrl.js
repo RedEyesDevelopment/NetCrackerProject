@@ -17,6 +17,20 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 		});
 	}());
 
+	var getNotExecutedNotifications = (function() {
+            $http({
+                url: sharedData.getLinks().https + '/notifications/current',
+                method: 'GET',
+                headers: { 'Content-Type' : 'application/json' }
+            }).then(function(data) {
+                console.log(data);
+                $scope.listOfNotifications = data.data;
+            }, function(response) {
+                console.log("Smth wrong!!");
+                console.log(response);
+            });
+        });
+
 	(function() {
 		$http({
 			url: sharedData.getLinks().https + '/users',

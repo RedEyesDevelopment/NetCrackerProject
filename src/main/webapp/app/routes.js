@@ -23,6 +23,10 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
         })
 
         // // Admin routes
+        .when('/admin/statistic', {
+            templateUrl: 'app/admin/statistic/statistic.html',
+            controller: 'notificationsCtrl'
+        })
         .when('/admin/notifications', {
             templateUrl: 'app/admin/notifications/notifications.html',
             controller: 'notificationsCtrl'

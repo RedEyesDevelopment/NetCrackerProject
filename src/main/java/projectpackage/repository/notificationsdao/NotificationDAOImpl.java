@@ -18,8 +18,6 @@ import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.AbstractDAO;
-import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
-import projectpackage.repository.reacteav.conditions.StringWhereCondition;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
 import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
@@ -39,7 +37,10 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     @Override
     @Transactional(readOnly = true)
     public List<Notification> getAllNotExecutedNotifications() {
-        return manager.createReactEAV(Notification.class).addCondition(new StringWhereCondition("ATTRS3.DATE_VALUE IS NULL"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches().getEntityCollection();
+        return manager.createReactEAV(Notification.class)
+                .fetchRootReference(NotificationType.class, "NotificationTypeToNotification")
+                .fetchInnerReference(Role.class, "RoleToNotificationType")
+                .closeAllFetches().getEntityCollection();
     }
 
     @Override
@@ -59,7 +60,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                 .closeFetch().closeFetch()
                 .fetchInnerReference(Room.class, "RoomToOrder")
                 .fetchInnerReference(RoomType.class, "RoomTypeToRoom").closeFetch().closeFetch()
-                .fetchInnerReference(Category.class, "CategoryToOrder")
+                .fetchInnerReference(Category.class, "OrderToCategory")
                 .fetchInnerChild(Complimentary.class)
                 .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary").closeAllFetches()
                 .fetchRootReference(User.class, "UserToNotificationAsExecutor")
@@ -82,7 +83,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                 .closeFetch().closeFetch()
                 .fetchInnerReference(Room.class, "RoomToOrder")
                 .fetchInnerReference(RoomType.class, "RoomTypeToRoom").closeFetch().closeFetch()
-                .fetchInnerReference(Category.class, "CategoryToOrder")
+                .fetchInnerReference(Category.class, "OrderToCategory")
                 .fetchInnerChild(Complimentary.class)
                 .fetchInnerReference(Maintenance.class, "MaintenanceToComplimentary").closeAllFetches()
                 .fetchRootReference(User.class, "UserToNotificationAsExecutor")

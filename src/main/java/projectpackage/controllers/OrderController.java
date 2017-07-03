@@ -165,13 +165,14 @@ public class OrderController {
         }
         Category category = categoryService.getSingleCategoryById(dto.getCategoryId());
         Order order = orderService.createOrderTemplate(client, lastModificator, dto);
+        client = userService.getSingleUserById(client.getObjectId());
         order.setCategory(category);
         request.getSession().removeAttribute("ORDERDATA");
         request.getSession().setAttribute("NEWORDER", order);
 
         BookedOrderDTO responseDto = new BookedOrderDTO(dto);
         responseDto.setCategoryName(category.getCategoryTitle());
-        responseDto.setClient(new StringBuilder(thisUser.getFirstName()).append(thisUser.getLastName()).toString());
+        responseDto.setClient(client.getFirstName() + " " + client.getLastName());
         return new ResponseEntity<BookedOrderDTO>(responseDto, HttpStatus.OK);
 
     }

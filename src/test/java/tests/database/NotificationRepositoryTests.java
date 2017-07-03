@@ -105,6 +105,16 @@ public class NotificationRepositoryTests extends AbstractDatabaseTest{
 
     @Test
     @Rollback(true)
+    public void getAllNotExecutedNotifications() {
+        List<Notification> list = notificationService.getAllNotExecutedNotifications();
+        for (Notification notification:list){
+            System.out.println(notification);
+        }
+        System.out.println(SEPARATOR);
+    }
+
+    @Test
+    @Rollback(true)
     public void getSingleNotificationById(){
         Notification notification = null;
         int notificationId = 1400;

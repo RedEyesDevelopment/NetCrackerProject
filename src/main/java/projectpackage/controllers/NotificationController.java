@@ -52,7 +52,7 @@ public class NotificationController {
     //Get Notification List
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/current",method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public List<Resource<Notification>> getNotExevutedNotificationList() {
+    public List<Resource<Notification>> getNotExecutedNotificationList() {
         List<Notification> notifications = notificationService.getAllNotExecutedNotifications();
         List<Resource<Notification>> resources = new ArrayList<>();
         for (Notification notification : notifications) {
