@@ -1,10 +1,10 @@
 app.controller('checklistCtrl', ['$scope', '$http', 'sharedData', 'util',
     function($scope, $http, sharedData, util) {
 
-    /* All orders */
+    /* All user's orders */
     (function() {
         $http({
-            url: sharedData.getLinks().https + '/orders',
+            url: sharedData.getLinks().https + '/orders/user',
             method: 'GET',
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
@@ -30,16 +30,44 @@ app.controller('checklistCtrl', ['$scope', '$http', 'sharedData', 'util',
 
     $scope.editComment = {id : 0};
 
-    $scope.order = {};
+    $scope.stage = "looking";
 
     $scope.pager = {
         startPaging : 0,
         objectsOnPage : 6
     }
 
-    $scope.prepareToEditComment = function(index) {
-        // body...
+    $scope.query = function() {
+        switch ($scope.stage) {
+            case 'updateComment': editComment();
+                break;
+        }
     }
+
+    $scope.prepareToEditComment = function(orderId, index) {
+        $scope.idForOperation = orderId;
+        $scope.indexForOperation = index;
+        $scope.stage = "updateComment";
+    }
+
+    var editComment = function() {
+        $http({
+            url: sharedData.getLinks().https + '/orders/user/update/' + $scope.idForOperation,
+            method: 'PUT',
+            data: $scope.listOfOrders[$scope.indexForOperation].comment,
+            headers: { 'Content-Type' : 'application/json' }
+        }).then(function(data) {
+            console.log("OK");
+            console.log(data);
+            $scope.stage = "done";
+            $scope.editComment = {id : 0};
+        }, function(response) {
+            console.log("Smth wrong!!");
+            console.log(response);
+        });
+    }
+
+
 
 
     /* Для листания страниц с объектами */

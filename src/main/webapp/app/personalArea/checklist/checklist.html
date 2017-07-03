@@ -20,6 +20,10 @@
                 <li><a ng-click="nextOrders()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
 
+            <div class="done" ng-if="stage == 'done'">
+                Changes successfully accepted! <i class="fa fa-check" aria-hidden="true"></i>              
+            </div>
+
             <div ng-repeat="order in listOfOrders | orderBy : 'objectId' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-12 block-border">
                 <div class="admin-notes">
                     <div class="col-sm-12 order-bottom-border order-padding-bottom">
@@ -115,12 +119,12 @@
                     <div class="comment">
                         <div class="col-sm-12 order-padding-top-bottom order-top-border info"
                                 ng-if="editComment.id != order.objectId" ng-click="editComment.id = order.objectId">
-                            Comment: {{  order.comment }}
+                            Comment: {{ order.comment }}
                         </div>
                         <div ng-if="editComment.id == order.objectId" class="edit">
                             <textarea class="comment form-control" ng-model="order.comment"></textarea>
                             <div class="text-center">
-                                <button class="btn btn-default" ng-click="prepareToEditComment(listOfOrders.indexOf(order))" data-toggle="modal" data-target="#editConfirmModal">Save</button>    
+                                <button class="btn btn-default" ng-click="prepareToEditComment(order.objectId, listOfOrders.indexOf(order))" data-toggle="modal" data-target="#editConfirmModal">Save</button>    
                                 <button class="btn btn-default" ng-click="editComment.id = 0">Cancel</button>    
                             </div>
                         </div>

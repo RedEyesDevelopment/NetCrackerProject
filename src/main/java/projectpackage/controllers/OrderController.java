@@ -53,7 +53,7 @@ public class OrderController {
 
     //Get Order List
     @ResponseStatus(HttpStatus.OK)
-    @CacheResult(cacheName = "orderList")
+//    @CacheResult(cacheName = "orderList")
     @GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public List<Resource<Order>> getOrderList(HttpServletRequest request){
         List<Order> orders = orderService.getAllOrders();
@@ -69,11 +69,14 @@ public class OrderController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/user", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public List<Resource<Order>> getOrderListByUser(HttpServletRequest request){
+        System.out.println("WE GOING IN");
         User user = (User) request.getSession().getAttribute("USER");
         if (user == null) {
             return null;
         }
         List<Order> orders = orderService.getOrdersByClient(user);
+        System.out.println("*********************OOOOOOOOOOOOOOOOOOOOOO");
+        System.out.println(orders);
         List<Resource<Order>> resources = new ArrayList<>();
         for (Order order:orders){
             Resource<Order> orderResource = new Resource<Order>(order);

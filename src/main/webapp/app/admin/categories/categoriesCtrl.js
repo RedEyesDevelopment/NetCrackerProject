@@ -75,6 +75,14 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
     }   
 
     $scope.addComplimentary = function() {
+        var currCategory = util.getObjectInArrayById($scope.listOfCategories, $scope.newComplimentary.categoryId);
+        currCategory.complimentaries.forEach(function(complimentary) {
+            if (complimentary.maintenance.objectId == $scope.newComplimentary.maintenanceId) {
+                $scope.errMessage = "existMaintenance";
+                return;
+            }
+        });
+        // если всё ок, будет продолжение:
         $http({
             url: sharedData.getLinks().https + '/complimentaries',
             method: 'POST',

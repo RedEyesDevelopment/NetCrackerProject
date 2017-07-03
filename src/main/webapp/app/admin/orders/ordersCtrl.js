@@ -309,7 +309,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 
 	var editOrder = function() {
 		$http({
-			url: sharedData.getLinks().https + '/orders/update/' + $scope.idForOperation,
+			url: sharedData.getLinks().https + '/orders/admin/update/' + $scope.idForOperation,
 			method: 'PUT',
 			data: {
 				roomTypeId:				null,

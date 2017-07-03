@@ -110,8 +110,11 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', '$rootScope', 'sha
 
     $scope.resetPassword = function() {
         $http({
-            url: 'http://localhost:8080/cpass/for/' + $scope.auth.resetEmail,
-            method: 'GET',
+            url: 'http://localhost:8080/cpass/for',
+            method: 'POST',
+            data: {
+                "email": $scope.auth.resetEmail
+            },
             headers: {'Content-Type' : 'application/json'}
         }).then(function (data) {
             console.log(data.data);
