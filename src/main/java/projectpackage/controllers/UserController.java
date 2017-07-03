@@ -46,7 +46,6 @@ public class UserController {
 
 	//Get User List
 	@ResponseStatus(HttpStatus.OK)
-	@CacheResult(cacheName = "userList")
 	@GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public List<Resource<User>> getUserList() {
 		List<User> users = userService.getAllUsers();
@@ -76,7 +75,6 @@ public class UserController {
 	}
 
 	//Create user, fetch into database
-	@CacheRemoveAll(cacheName = "userList")
 	@RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<IUDAnswer> createUser(@RequestBody UserDTO userDTO, HttpServletRequest request) {
 	    User sessionUser = (User) request.getSession().getAttribute("USER");
@@ -128,7 +126,6 @@ public class UserController {
 	}
 
 	//Update user method
-	@CacheRemoveAll(cacheName = "userList")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<IUDAnswer> updateUser(@PathVariable("id") Integer id, @RequestBody UserDTO userDTO, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("USER");
@@ -249,7 +246,6 @@ public class UserController {
 	}
 
 	//Delete user method
-	@CacheRemoveAll(cacheName = "userList")
 	@RequestMapping(value = "delete/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public ResponseEntity<IUDAnswer> deleteUser(@PathVariable("id") Integer id, HttpServletRequest request) {
 		User user = (User) request.getSession().getAttribute("USER");
@@ -268,7 +264,6 @@ public class UserController {
 		return responseEntity;
 	}
 
-    @CacheRemoveAll(cacheName = "userList")
     @RequestMapping(value = "restore/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> restoreUser(@PathVariable("id") Integer id, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("USER");

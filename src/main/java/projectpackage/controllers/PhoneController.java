@@ -13,8 +13,6 @@ import projectpackage.service.authservice.PhoneService;
 import projectpackage.service.authservice.UserService;
 import projectpackage.service.support.ServiceUtils;
 
-import javax.cache.annotation.CacheRemoveAll;
-import javax.cache.annotation.CacheResult;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +38,6 @@ public class PhoneController {
     ServiceUtils serviceUtils;
 
     @ResponseStatus(HttpStatus.OK)
-    @CacheResult(cacheName = "phoneList")
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public List<Resource<Phone>> getPhoneList() {
         List<Phone> phones = phoneService.getAllPhones();
@@ -69,7 +66,6 @@ public class PhoneController {
         return response;
     }
 
-    @CacheRemoveAll(cacheName = "phoneList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
             consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> createPhone(@RequestBody Phone newPhone, HttpServletRequest request) {
@@ -86,9 +82,12 @@ public class PhoneController {
 
         IUDAnswer result = phoneService.insertPhone(newPhone);
         HttpStatus status;
-        if ((result.isSuccessful() && !serviceUtils.isAdmin(user)) || user.getObjectId() == newPhone.getUserId()) {
+        if ((result.isSuccessful() && !serviceUtils.isAdmin(user))
+                || (result.isSuccessful() && user.getObjectId() == newPhone.getUserId() && serviceUtils.isAdmin(user))) {
             request.getSession().removeAttribute("USER");
             request.getSession().setAttribute("USER", userService.getSingleUserById(user.getObjectId()));
+            status = HttpStatus.OK;
+        } else if (result.isSuccessful()) {
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -97,7 +96,6 @@ public class PhoneController {
         return responseEntity;
     }
 
-    @CacheRemoveAll(cacheName = "phoneList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updatePhone(@PathVariable("id") Integer id, @RequestBody Phone changedPhone, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("USER");
@@ -113,9 +111,12 @@ public class PhoneController {
 
         IUDAnswer result = phoneService.updatePhone(id, changedPhone);
         HttpStatus status;
-        if ((result.isSuccessful() && !serviceUtils.isAdmin(user)) || user.getObjectId() == changedPhone.getUserId()) {
+        if ((result.isSuccessful() && !serviceUtils.isAdmin(user))
+                || (result.isSuccessful() && user.getObjectId() == changedPhone.getUserId() && serviceUtils.isAdmin(user))) {
             request.getSession().removeAttribute("USER");
             request.getSession().setAttribute("USER", userService.getSingleUserById(id));
+            status = HttpStatus.OK;
+        } else if (result.isSuccessful()) {
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -124,7 +125,6 @@ public class PhoneController {
         return responseEntity;
     }
 
-    @CacheRemoveAll(cacheName = "phoneList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> deletePhone(@PathVariable("id") Integer id, HttpServletRequest request) {
         User sessionUser = (User) request.getSession().getAttribute("USER");
@@ -148,16 +148,22 @@ public class PhoneController {
             }
         } else {
             User user = userService.getSingleUserById(phoneService.getSinglePhoneById(id).getUserId());
+            if (user != null) {
+                return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, INVALID_USER), HttpStatus.BAD_REQUEST);
+            }
             if (user.getPhones().size() <= 1) {
                 return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, TRY_TO_DELETE_LAST_PHONE), HttpStatus.BAD_REQUEST);
             }
         }
-
+        Phone phone = phoneService.getSinglePhoneById(id);
         IUDAnswer result = phoneService.deletePhone(id);
         HttpStatus status;
-        if (result.isSuccessful()) {
+        if ((result.isSuccessful() && !serviceUtils.isAdmin(sessionUser))
+                || (result.isSuccessful() && sessionUser.getObjectId() == phone.getUserId() && serviceUtils.isAdmin(sessionUser))) {
             request.getSession().removeAttribute("USER");
-            request.getSession().setAttribute("USER", userService.getSingleUserById(sessionUser.getObjectId()));
+            request.getSession().setAttribute("USER", userService.getSingleUserById(id));
+            status = HttpStatus.OK;
+        } else if (result.isSuccessful()) {
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
