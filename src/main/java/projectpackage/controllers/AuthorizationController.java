@@ -34,9 +34,20 @@ public class AuthorizationController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Boolean> doLogin(@RequestBody AuthForm form, HttpServletRequest request){
+        ResponseEntity<Boolean> response = new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
+        if (null != form.getLogin()) {
+            User user = userService.getSingleUserByUsername(form.getLogin());
+            if (null != user) {
+                if (!user.getEnabled()){
+                    return response;
+                }
+            } else {
+                return response;
+            }
+        }
         boolean result = securityService.autologin(form.getLogin(), form.getPassword());
         if (!result){
-            return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
+            return response;
         } else {
             User user = userService.getSingleUserById(securityService.getAuthenticatedUserId(form.getLogin()));
             user.setPassword(null);

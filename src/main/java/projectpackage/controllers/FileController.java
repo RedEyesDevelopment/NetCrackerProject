@@ -44,7 +44,7 @@ public class FileController {
     @Autowired
     AdminService adminService;
 
-    private DateFormat targetDateFormat = new SimpleDateFormat("MM-dd-yyyy");
+    private DateFormat targetDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
     @RequestMapping(value = "/order/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> sendOrderPdf(@PathVariable("id") Integer id, HttpServletRequest request){

@@ -26,20 +26,16 @@ public class ChangePasswordController {
     @RequestMapping(value = "/{dynamic}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<String> changePassword(@PathVariable("dynamic") String dynamic, HttpServletRequest request) throws ServletException   {
         boolean result = passwordChangeService.verifyDynamicLink(dynamic);
-        StringBuilder resultString;
+        String resultString;
         HttpStatus status;
-
-        resultString = new StringBuilder(new StringBuilder().append("<html>\n").append("<style>\n").append("body{\n").append("background-color: #0000ff;\n").append("font-family: Lucida Console;\n").append("font-size: 56px;\n").append("font-style: normal;\n").append("font-variant: normal;\n").append("color: white;\n").append("</style>\n").append("<body>\n").append("<div style=\"text-align: center;\">"));
         if (result){
             status = HttpStatus.OK;
-            resultString.append("Success :)");
+            resultString = "Success :)";
         } else {
             status = HttpStatus.BAD_REQUEST;
-            resultString.append("Fail :(");
+            resultString = "Fail :(";
         }
-        resultString.append("</div>\n</body>\n</html>\n");
-
-        return new ResponseEntity<String>(resultString.toString(), status);
+        return new ResponseEntity<String>(resultString, status);
     }
 
     @RequestMapping(value = "/for", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
