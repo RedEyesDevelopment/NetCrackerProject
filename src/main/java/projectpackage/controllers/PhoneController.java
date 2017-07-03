@@ -148,7 +148,7 @@ public class PhoneController {
             }
         } else {
             User user = userService.getSingleUserById(phoneService.getSinglePhoneById(id).getUserId());
-            if (user != null) {
+            if (user == null) {
                 return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, INVALID_USER), HttpStatus.BAD_REQUEST);
             }
             if (user.getPhones().size() <= 1) {
