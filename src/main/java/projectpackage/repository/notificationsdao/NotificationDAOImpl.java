@@ -178,6 +178,8 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         if (notification.getExecutedBy() != null && notification.getExecutedDate() != null) {
             jdbcTemplate.update(INSERT_OBJ_REFERENCE, 24, objectId, notification.getExecutedBy().getObjectId());
             jdbcTemplate.update(INSERT_ATTRIBUTE, 25, objectId, null, notification.getExecutedDate());
+        } else if (notification.getExecutedBy() == null && notification.getExecutedDate() == null) {
+            jdbcTemplate.update(INSERT_ATTRIBUTE, 25, objectId, null, null);
         }
     }
 
