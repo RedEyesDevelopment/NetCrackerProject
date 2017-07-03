@@ -2,7 +2,6 @@ package projectpackage.repository.roomsdao;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -24,9 +23,6 @@ import java.util.*;
 @Repository
 public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
     private static final Logger LOGGER = Logger.getLogger(RoomTypeDAOImpl.class);
-
-    @Value("${default.price}")
-    private String defaultPrice;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -86,7 +82,6 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
         return bigDecimal.longValue();
     }
 
-    @Transactional
     @Override
     public Integer insertRoomType(RoomType roomType) {
         if (roomType == null) return null;

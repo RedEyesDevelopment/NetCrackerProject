@@ -63,6 +63,12 @@ body {
 	text-align: center;
 	margin-bottom: 15px;
 }
+
+.resetPassword {
+	text-align: center;
+	text-decoration: underline;
+	cursor: pointer;
+}
 /* ---------------------- */
 
 /* Registration form */

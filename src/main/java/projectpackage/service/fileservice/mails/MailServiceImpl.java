@@ -127,7 +127,11 @@ public class MailServiceImpl implements MailService {
                 messageHelper.setTo(receiver);
                 messageHelper.setSubject(mailMessagesMap.getMessage(messageKey).getSubject());
                 messageHelper.setSentDate(new Date(System.currentTimeMillis()));
-                messageHelper.setText(mailMessagesMap.getMessage(messageKey).getMessage() + link);
+                String stringMessage = mailMessagesMap.getMessage(messageKey).getMessage() + link;
+                if (messageKey.equals(4)){
+                    stringMessage = stringMessage + "\"/>";
+                }
+                messageHelper.setText(stringMessage);
             } catch (MessagingException e) {
                 LOGGER.warn("Message from MailSenderImpl was not send.", e);
             }

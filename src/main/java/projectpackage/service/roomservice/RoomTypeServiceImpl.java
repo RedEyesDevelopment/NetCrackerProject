@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.dto.OrderDTO;
 import projectpackage.model.rates.Price;
@@ -128,6 +129,7 @@ public class RoomTypeServiceImpl implements RoomTypeService{
         return new IUDAnswer(id, true);
     }
 
+    @Transactional
     @Override
     public IUDAnswer insertRoomType(RoomType roomType) {
         if (roomType == null) {
@@ -138,11 +140,12 @@ public class RoomTypeServiceImpl implements RoomTypeService{
         try {
             roomTypeId = roomTypeDAO.insertRoomType(roomType);
         } catch (IllegalArgumentException e) {
+            roomTypeDAO.rollback();
             LOGGER.warn(WRONG_FIELD, e);
             return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
         }
 
-        if (roomTypeId == null) {
+        if (roomTypeId != null) {
             roomTypeDAO.rollback();
             return new IUDAnswer(false, NULL_ID);
         }

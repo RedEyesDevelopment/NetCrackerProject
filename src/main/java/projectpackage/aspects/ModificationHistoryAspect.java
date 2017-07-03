@@ -4,9 +4,12 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import projectpackage.model.notifications.Notification;
+import projectpackage.model.notifications.NotificationType;
 import projectpackage.model.orders.Order;
 import projectpackage.service.notificationservice.NotificationService;
+import projectpackage.service.notificationservice.NotificationTypeService;
 import projectpackage.service.orderservice.ModificationHistoryService;
 
 import java.util.Date;
@@ -23,6 +26,12 @@ public class ModificationHistoryAspect {
     @Autowired
     NotificationService notificationService;
 
+    @Autowired
+    NotificationTypeService notificationTypeService;
+
+    @Value("${notification.confirmtext}")
+    private String notifText;
+
     @Around("execution(* projectpackage.repository.ordersdao.OrderDAOImpl.updateOrder(..))")
     public void logAroundUpdateOrder(ProceedingJoinPoint joinPoint) throws Throwable {
         Order newOrder = null;
@@ -36,7 +45,7 @@ public class ModificationHistoryAspect {
         }
         boolean orderUpdateGoneSuccessful = true;
         boolean createConfirmNotification =false;
-        if (null!=oldOrder && null!=newOrder && null!= oldOrder.getIsPaidFor() && null!=newOrder.getIsPaidFor() && !oldOrder.getIsPaidFor() && newOrder.getIsPaidFor()){
+        if (null!=oldOrder && null!= oldOrder.getIsPaidFor() && null!=newOrder.getIsPaidFor() && !oldOrder.getIsPaidFor() && newOrder.getIsPaidFor()){
             createConfirmNotification = true;
         }
         try {
@@ -51,11 +60,10 @@ public class ModificationHistoryAspect {
             Notification notification = new Notification();
             notification.setAuthor(newOrder.getClient());
             notification.setOrder(newOrder);
-            notification.setMessage("The client has paid for the order, please check bank account and confirm the order payment.");
+            notification.setMessage(notifText);
             notification.setSendDate(new Date(System.currentTimeMillis()));
-
-            //TODO: ВСТАВИТЬ НОТИФИКЕЙШН ТАЙП, предварительно создать его в sql-файлике.
-//            notification.setNotificationType();
+            NotificationType type = notificationTypeService.getSingleNotificationTypeById(23);
+            notification.setNotificationType(type);
             notificationService.insertNotification(notification);
         }
     }

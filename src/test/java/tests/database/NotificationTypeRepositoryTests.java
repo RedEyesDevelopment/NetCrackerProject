@@ -79,7 +79,7 @@ public class NotificationTypeRepositoryTests extends AbstractDatabaseTest {
     @Rollback(true)
     public void getSingleNotificationTypeById() {
         NotificationType notificationType = null;
-        int notifTypeId = 2067;
+        int notifTypeId = 23;
         notificationType = notificationTypeService.getSingleNotificationTypeById(notifTypeId);
         assertNotNull(notificationType);
         LOGGER.info(notificationType);

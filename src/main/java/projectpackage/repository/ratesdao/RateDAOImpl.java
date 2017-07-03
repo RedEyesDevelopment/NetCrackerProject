@@ -1,6 +1,7 @@
 package projectpackage.repository.ratesdao;
 
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -40,10 +41,13 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
         return manager.createReactEAV(Rate.class).fetchRootChild(Price.class).closeAllFetches().getEntityCollection();
     }
 
-    @Transactional
     @Override
     public Integer insertRate(Rate rate) {
         if (rate == null) return null;
+
+        DateTime rateFromDate = new DateTime(rate.getRateFromDate()).withHourOfDay(12);
+        DateTime rateToDate = new DateTime(rate.getRateToDate()).withHourOfDay(12);
+
         Long cost1 = null;
         Long cost2 = null;
         Long cost3 = null;
@@ -59,8 +63,8 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
         in.addValue("in_price2_price", cost2);
         in.addValue("in_price3_price", cost3);
         in.addValue("in_room_type_id", rate.getRoomTypeId());
-        in.addValue("in_new_rate_start", rate.getRateFromDate());
-        in.addValue("in_new_rate_finish", rate.getRateToDate());
+        in.addValue("in_new_rate_start", rateFromDate.toDate());
+        in.addValue("in_new_rate_finish", rateToDate.toDate());
         BigDecimal insertedRateId = call.executeFunction(BigDecimal.class, in);
 
         return insertedRateId.intValue();

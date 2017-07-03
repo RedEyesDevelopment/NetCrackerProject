@@ -128,6 +128,7 @@ public class RoomTypeRepositoryTests extends AbstractDatabaseTest{
         roomType.setRoomTypeTitle("Type epta");
         IUDAnswer iudAnswer = roomTypeService.insertRoomType(roomType);
         assertTrue(iudAnswer.isSuccessful());
+        LOGGER.info(iudAnswer);
         LOGGER.info("Create roomType result = " + iudAnswer.isSuccessful());
         LOGGER.info(SEPARATOR);
     }

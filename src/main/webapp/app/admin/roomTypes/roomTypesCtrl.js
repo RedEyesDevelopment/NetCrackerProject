@@ -2,7 +2,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
      function($scope, $http, $location, sharedData, util){
 
     /* Функция на получения всех типов комнат, вызывается сразу */
-    (function() {
+    var getAllRoomTypes = function() {
         $http({
             url: sharedData.getLinks().https + '/roomTypes',
             method: 'GET',
@@ -14,7 +14,8 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
             console.log("Smth wrong!!");
             console.log(response);
         });
-    }());
+    };
+    getAllRoomTypes();
     /* редирект на главную если не админ */
     (function() {
         if(!sharedData.getIsAdmin()) { $location.path('/') };
@@ -163,22 +164,14 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     }
 
 
-    $scope.prepareToAddRate = function(roomTypeId, index) {
+    $scope.prepareToAddRate = function(roomTypeId) {
         $scope.idForOperation = roomTypeId;
-        $scope.indexForOperation = index;
         $scope.rate= {};
         $scope.stage = "addingRate";
         $scope.mode = "addOrEditRate";
     }
 
     var addRate = function() {
-        // console.log({
-        //         rateFromDate:   $scope.rate.rateFromDate.getTime(),
-        //         rateToDate:   $scope.rate.rateToDate.getTime(),
-        //         priceForOne: ($scope.rate.priceForOneDlr * 100) + $scope.rate.priceForOneCent,
-        //         priceForTwo: ($scope.rate.priceForTwoDlr * 100) + $scope.rate.priceForTwoCent,
-        //         priceForThree: ($scope.rate.priceForThreeDlr * 100) + $scope.rate.priceForThreeCent
-        //     });
         $http({
             url: sharedData.getLinks().https + '/rates',
             method: 'POST',
@@ -192,19 +185,8 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
             },
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
-            console.log(data);
-            $http({
-                url: sharedData.getLinks().https + '/rates/' + data.data.objectId,
-                method: 'GET',
-                headers: { 'Content-Type' : 'application/json' }
-            }).then(function(data) {
-                console.log(data);
-                $scope.listOfRoomTypes[$scope.indexForOperation].rates.push(data.data);
-            }, function(response) {
-                console.log("Smth wrong!!");
-                console.log(response);
-            });
-            $scope.prepareToAddRate();
+            getAllRoomTypes();
+            $scope.prepareToAddRate($scope.idForOperation);
             $scope.stage = "rateDone";
         }, function(response) {
             console.log("Smth wrong!!");
@@ -213,7 +195,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
         });
     }
 
-    $scope.prepareToEditRate = function(roomTypeId, index, rateId) {
+    $scope.prepareToEditRate = function(roomTypeId, rateId) {
         $http({
             url: sharedData.getLinks().https + '/rates/' + rateId,
             method: 'GET',
@@ -221,19 +203,24 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
         }).then(function(data) {
             console.log(data);
             $scope.idForOperation = roomTypeId;
-            $scope.indexForOperation = index;
             $scope.rate = {
-                rateFromDate:       new Date(data.data.rateFromDate),
-                rateToDate:         new Date(data.data.rateToDate),
-                priceForOneDlr:     Math.floor(data.data.prices[0].rate / 100),
-                priceForOneCent:    data.data.prices[0].rate % 100,
-
-                priceForTwoDlr:     Math.floor(data.data.prices[1].rate / 100),
-                priceForTwoCent:    data.data.prices[1].rate % 100,
-
-                priceForThreeDlr:   Math.floor(data.data.prices[2].rate / 100),
-                priceForThreeCent:  data.data.prices[2].rate % 100
+                rateFromDate:   new Date(data.data.rateFromDate),
+                rateToDate:     new Date(data.data.rateToDate)
             }
+            data.data.prices.forEach(function(price) {
+                if (price.numberOfPeople == 1) {
+                    $scope.rate.priceForOneDlr = Math.floor(price.rate / 100);
+                    $scope.rate.priceForOneCent = price.rate % 100;
+                }
+                if (price.numberOfPeople == 2) {
+                    $scope.rate.priceForTwoDlr = Math.floor(price.rate / 100);
+                    $scope.rate.priceForTwoCent = price.rate % 100;
+                }
+                if (price.numberOfPeople == 3) {
+                    $scope.rate.priceForThreeDlr = Math.floor(price.rate / 100);
+                    $scope.rate.priceForThreeCent = price.rate % 100;
+                }
+            });
             $scope.stage = "editingRate";
             $scope.mode = "addOrEditRate";
         }, function(response) {

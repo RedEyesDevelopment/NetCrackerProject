@@ -27,13 +27,19 @@ public class ServiceUtilsImpl implements ServiceUtils{
         long validStartDate = startDate.getTime() - today.getTime();
         long validFinishDate = finishDate.getTime() - today.getTime();
 
-        if (validStartDate > MAX_VALID_TIME) return false;
-        if (validFinishDate > MAX_VALID_TIME) return false;
-        if (startDate.getTime() < today.getTime()) return false;
-        if (finishDate.getTime() < today.getTime()) return false;
-        if (startDate.getTime() > finishDate.getTime()) return false;
-
-        return true;
+        if (validStartDate > MAX_VALID_TIME) {
+            return false;
+        } else if (validFinishDate > MAX_VALID_TIME) {
+            return false;
+        } else if (startDate.getTime() < today.getTime()) {
+            return false;
+        } else if (finishDate.getTime() < today.getTime()) {
+            return false;
+        } else if (startDate.getTime() > finishDate.getTime()) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     @Override
