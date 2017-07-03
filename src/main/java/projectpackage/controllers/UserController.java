@@ -177,7 +177,7 @@ public class UserController {
                                                     @RequestBody UserPasswordDTO userPasswordDTO, HttpServletRequest request) {
         User sessionUser = (User) request.getSession().getAttribute("USER");
         IUDAnswer iudAnswer = serviceUtils.checkAdminForChangePassword(sessionUser, userPasswordDTO, id);
-        if (!iudAnswer.isSuccessful() && sessionUser.getObjectId() == id.intValue()) {
+        if (!iudAnswer.isSuccessful()) {
             return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
         return updatePassword(request, id, userPasswordDTO);
@@ -226,9 +226,11 @@ public class UserController {
 			request.getSession().removeAttribute("USER");
 			request.getSession().setAttribute("USER", userService.getSingleUserById(id));
 			return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
-		}
-
-		return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+		} else if (answer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+        }
 	}
 
 	//Delete user method
