@@ -84,7 +84,6 @@ public class PhoneController {
         HttpStatus status;
         if ((result.isSuccessful() && !serviceUtils.isAdmin(user))
                 || (result.isSuccessful() && user.getObjectId() == newPhone.getUserId() && serviceUtils.isAdmin(user))) {
-            request.getSession().removeAttribute("USER");
             request.getSession().setAttribute("USER", userService.getSingleUserById(user.getObjectId()));
             status = HttpStatus.OK;
         } else if (result.isSuccessful()) {
@@ -113,7 +112,6 @@ public class PhoneController {
         HttpStatus status;
         if ((result.isSuccessful() && !serviceUtils.isAdmin(user))
                 || (result.isSuccessful() && user.getObjectId() == changedPhone.getUserId() && serviceUtils.isAdmin(user))) {
-            request.getSession().removeAttribute("USER");
             request.getSession().setAttribute("USER", userService.getSingleUserById(id));
             status = HttpStatus.OK;
         } else if (result.isSuccessful()) {
@@ -160,7 +158,6 @@ public class PhoneController {
         HttpStatus status;
         if ((result.isSuccessful() && !serviceUtils.isAdmin(sessionUser))
                 || (result.isSuccessful() && sessionUser.getObjectId() == phone.getUserId() && serviceUtils.isAdmin(sessionUser))) {
-            request.getSession().removeAttribute("USER");
             request.getSession().setAttribute("USER", userService.getSingleUserById(id));
             status = HttpStatus.OK;
         } else if (result.isSuccessful()) {
