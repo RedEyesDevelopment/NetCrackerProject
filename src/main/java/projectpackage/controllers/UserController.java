@@ -168,7 +168,21 @@ public class UserController {
         if (!iudAnswer.isSuccessful()) {
             return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
-		return updatePassword(request, id, userPasswordDTO);
+        User user = userService.getSingleUserById(id);
+
+        if (!securityService.isPasswordMatchEncrypted(userPasswordDTO.getOldPassword(), user.getPassword())) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_PASSWORD), HttpStatus.BAD_REQUEST);
+        }
+
+        user.setPassword(userPasswordDTO.getNewPassword());
+        IUDAnswer answer = userService.updateUserPassword(id, user);
+        if (answer.isSuccessful()) {
+            request.getSession().removeAttribute("USER");
+            request.getSession().setAttribute("USER", userService.getSingleUserById(id));
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+        }
 	}
 
     @RequestMapping(value = "admin/update/password/{id}", method = RequestMethod.PUT,
@@ -180,7 +194,16 @@ public class UserController {
         if (!iudAnswer.isSuccessful()) {
             return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
-        return updatePassword(request, id, userPasswordDTO);
+
+        User user = userService.getSingleUserById(id);
+
+        if (!securityService.isPasswordMatchEncrypted(userPasswordDTO.getOldPassword(), user.getPassword())) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_PASSWORD), HttpStatus.BAD_REQUEST);
+        }
+
+        user.setPassword(userPasswordDTO.getNewPassword());
+        IUDAnswer answer = userService.updateUserPassword(id, user);
+        return checkUpdateForAdmin(answer, request, sessionUser, id);
     }
 
 	@RequestMapping(value = "/update/basic/{id}", method = RequestMethod.PUT,
@@ -222,15 +245,7 @@ public class UserController {
 		user.setEmail(userBasicDTO.getEmail());
 		user.setAdditionalInfo(userBasicDTO.getAdditionalInfo());
 		IUDAnswer answer = userService.updateUser(id, user);
-		if (answer.isSuccessful() && sessionUser.getObjectId() == id.intValue()) {
-			request.getSession().removeAttribute("USER");
-			request.getSession().setAttribute("USER", userService.getSingleUserById(id));
-			return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
-		} else if (answer.isSuccessful()) {
-            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
-        }
+		return checkUpdateForAdmin(answer, request, sessionUser, id);
 	}
 
 	//Delete user method
@@ -286,18 +301,12 @@ public class UserController {
 		return new ResponseEntity<User>(user, status);
 	}
 
-	private ResponseEntity<IUDAnswer> updatePassword(HttpServletRequest request, Integer id, UserPasswordDTO userPasswordDTO) {
-        User user = userService.getSingleUserById(id);
-
-        if (!securityService.isPasswordMatchEncrypted(userPasswordDTO.getOldPassword(), user.getPassword())) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_PASSWORD), HttpStatus.BAD_REQUEST);
-        }
-
-        user.setPassword(userPasswordDTO.getNewPassword());
-        IUDAnswer answer = userService.updateUserPassword(id, user);
-        if (answer.isSuccessful()) {
+	private ResponseEntity<IUDAnswer> checkUpdateForAdmin(IUDAnswer answer, HttpServletRequest request, User sessionUser, Integer id) {
+        if (answer.isSuccessful() && sessionUser.getObjectId() == id.intValue()) {
             request.getSession().removeAttribute("USER");
             request.getSession().setAttribute("USER", userService.getSingleUserById(id));
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
+        } else if (answer.isSuccessful()) {
             return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
         } else {
             return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
