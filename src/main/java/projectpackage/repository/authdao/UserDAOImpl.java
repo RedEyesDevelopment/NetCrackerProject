@@ -94,6 +94,13 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         return newUser.getObjectId();
     }
 
+    @Override
+    public Integer updateUserPassword(User newUser, User oldUser) {
+        if (newUser == null || oldUser == null) return null;
+        updatePassword(newUser, oldUser);
+        return newUser.getObjectId();
+    }
+
     @Transactional
     @Override
     public void deleteUser(Integer id) {

@@ -11,6 +11,7 @@ public interface UserDAO extends Commitable, Rollbackable{
     public List<User> getAllUsers();
     public Integer insertUser(User user);
     public Integer updateUser(User newUser, User oldUser);
+    public Integer updateUserPassword(User newUser, User oldUser);
     public void deleteUser(Integer id);
     User getUserByUsername(String username);
 }

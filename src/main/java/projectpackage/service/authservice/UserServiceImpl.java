@@ -132,4 +132,24 @@ public class UserServiceImpl implements UserService {
 		return new IUDAnswer(id, true);
 	}
 
+	@Override
+	public IUDAnswer updateUserPassword(Integer id, User newUser) {
+		if (newUser == null) return null;
+		if (id == null) return new IUDAnswer(false, NULL_ID);
+		if (!securityService.cryptUserPass(newUser)) return new IUDAnswer(false, FAIL_CRYPT_PASSWORD);
+		try {
+			newUser.setObjectId(id);
+			User oldUser = userDAO.getUser(id);
+			userDAO.updateUserPassword(newUser, oldUser);
+		} catch (IllegalArgumentException e) {
+			LOGGER.warn(WRONG_FIELD, e);
+			return new IUDAnswer(id, false, WRONG_FIELD, e.getMessage());
+		} catch (DuplicateEmailException e) {
+			LOGGER.warn(DUPLICATE_EMAIL, e);
+			return new IUDAnswer(id, false, DUPLICATE_EMAIL, e.getMessage());
+		}
+		userDAO.commit();
+		return new IUDAnswer(id, true);
+	}
+
 }

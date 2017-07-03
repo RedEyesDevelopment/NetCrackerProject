@@ -13,4 +13,5 @@ public interface UserService extends MessageBook{
     public IUDAnswer deleteUser(Integer id);
     public IUDAnswer insertUser(User user);
     public IUDAnswer updateUser(Integer id, User newUser);
+    public IUDAnswer updateUserPassword(Integer id, User newUser);
 }

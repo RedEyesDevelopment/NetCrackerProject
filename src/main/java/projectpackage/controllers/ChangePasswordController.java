@@ -24,7 +24,7 @@ public class ChangePasswordController {
     UserService userService;
 
     @RequestMapping(value = "/{dynamic}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<String> changePassword(@PathVariable("dynamic") String dynamic, HttpServletRequest request) throws ServletException {
+    public ResponseEntity<String> changePassword(@PathVariable("dynamic") String dynamic, HttpServletRequest request) throws ServletException   {
         boolean result = passwordChangeService.verifyDynamicLink(dynamic);
         String resultString;
         HttpStatus status;
@@ -38,12 +38,10 @@ public class ChangePasswordController {
             return new ResponseEntity<String>(resultString, status);
     }
 
-    @RequestMapping(value = "/for", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @RequestMapping(value = "/for", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<String> changeFor(@RequestBody LoginDTO login) throws ServletException {
-        System.out.println("login="+login);
         User user = userService.getSingleUserByUsername(login.getEmail());
         String response;
-        System.out.println("IN PC CONTROLLER, USER IS "+user);
         if (null!=user){
             passwordChangeService.createPasswordChangeTarget(user);
             response = "Email was sended.";

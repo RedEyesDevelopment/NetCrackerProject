@@ -128,14 +128,36 @@ public class MailServiceImpl implements MailService {
                 messageHelper.setSubject(mailMessagesMap.getMessage(messageKey).getSubject());
                 messageHelper.setSentDate(new Date(System.currentTimeMillis()));
                 String stringMessage = mailMessagesMap.getMessage(messageKey).getMessage() + link;
-                if (messageKey.equals(4)){
-                    stringMessage = stringMessage + "\"/>";
-                }
                 messageHelper.setText(stringMessage);
             } catch (MessagingException e) {
                 LOGGER.warn("Message from MailSenderImpl was not send.", e);
             }
             CustomMailSender sender = new CustomMailSender(null, null, LOGGER, javaMailSenderImpl, message);
+            Thread thread = new Thread(sender);
+            thread.start();
+        }
+    }
+
+    @Override
+    public void sendEmailForStatistics(String receiver, String dates, File attributeFile) {
+        synchronized (MailServiceImpl.class) {
+            JavaMailSenderImpl javaMailSenderImpl = (JavaMailSenderImpl) javaMailSender;
+            javaMailSenderImpl.setUsername(username);
+            javaMailSenderImpl.setPassword(password);
+            javaMailSenderImpl.setJavaMailProperties(mailProperties);
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper messageHelper = null;
+            try {
+                messageHelper = new MimeMessageHelper(message, true);
+                messageHelper.setTo(receiver);
+                messageHelper.setSubject(mailMessagesMap.getMessage(3).getSubject() + dates);
+                messageHelper.setSentDate(new Date(System.currentTimeMillis()));
+                messageHelper.setText(mailMessagesMap.getMessage(3).getMessage());
+                messageHelper.addAttachment(attributeFile.getName(), attributeFile);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+            CustomMailSender sender = new CustomMailSender(pdfService, attributeFile.getPath(), LOGGER, javaMailSenderImpl, message);
             Thread thread = new Thread(sender);
             thread.start();
         }

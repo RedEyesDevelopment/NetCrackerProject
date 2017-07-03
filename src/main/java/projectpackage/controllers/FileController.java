@@ -61,7 +61,8 @@ public class FileController {
         User user = (User) request.getSession().getAttribute("USER");
         String path = request.getServletContext().getRealPath("/").toString();
         File file = adminService.getStatistic(path);
-        mailService.sendEmailWithAttachment(user.getEmail(), 3, file);
+        String dates = //TODO
+        mailService.sendEmailForStatistics(user.getEmail(), dates, file);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 }
