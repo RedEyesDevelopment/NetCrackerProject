@@ -17,8 +17,6 @@ import projectpackage.service.authservice.UserService;
 import projectpackage.service.securityservice.SecurityService;
 import projectpackage.service.support.ServiceUtils;
 
-import javax.cache.annotation.CacheRemoveAll;
-import javax.cache.annotation.CacheResult;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -27,9 +25,7 @@ import java.util.Set;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-import static projectpackage.service.MessageBook.NULL_ENTITY;
-import static projectpackage.service.MessageBook.WRONG_PASSWORD;
-import static projectpackage.service.MessageBook.WRONG_UPDATE_ID;
+import static projectpackage.service.MessageBook.*;
 
 @RestController
 @RequestMapping("/users")
@@ -107,7 +103,7 @@ public class UserController {
 
 	@RequestMapping(value = "/registration", method = RequestMethod.POST, produces = {MediaType
 			.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-	public ResponseEntity<IUDAnswer> registrationUser(@RequestBody User newUser,HttpServletRequest request) {
+	public ResponseEntity<IUDAnswer> registrationUser(@RequestBody User newUser) {
         if (newUser == null) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
         }
@@ -181,6 +177,31 @@ public class UserController {
             return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
         }
 	}
+
+    @RequestMapping(value = "admin/update/role/{id}", method = RequestMethod.PUT,
+            produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<IUDAnswer> updateUserRole(@PathVariable("id") Integer id,
+                                                    @RequestBody Integer roleId, HttpServletRequest request) {
+        User sessionUser = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(sessionUser, roleId, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        }
+        User user = userService.getSingleUserById(id);
+
+        if (user == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, INVALID_USER_ID), HttpStatus.BAD_REQUEST);
+        }
+        Role role = new Role();
+        role.setObjectId(roleId);
+        user.setRole(role);
+        IUDAnswer answer = userService.updateUser(id, user);
+        if (answer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @RequestMapping(value = "admin/update/password/{id}", method = RequestMethod.PUT,
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
