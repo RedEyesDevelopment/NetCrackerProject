@@ -105,10 +105,13 @@
 
                     <div class="col-sm-12 order-padding-top-bottom order-top-border order-bottom-border"> Comment: {{
                         order.comment }}
-                    </div>
-                    <div class="form-group">
-                        <label for="body">Comment</label>
-                        <textarea id="body" class="form-control" ng-required="true" ng-model="checklist.message"></textarea>
+                        <div class="col-sm-3">
+                        <label for="comment">Comment:</label>
+                        </div>
+                        <div class="col-sm-9">
+                            <input type="text" id="comment"
+                                   ng-model="getChecklist().comment">
+                        </div>
                     </div>
                     <div class="col-sm-8 order-padding-top-bottom"> Last modificator: {{ order.lastModificator.firstName
                         }} {{ order.lastModificator.lastName }}
