@@ -19,27 +19,31 @@
                 <li><input type="number" min="1" max="999" ng-model="pager.objectsOnPage"></li>
                 <li><a ng-click="nextNotifications()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
-            <div ng-repeat="notification in listOfNotifications | orderBy : 'sendDate' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-4">
-                <div class="block-border">
-                    <p class="admin-notes"> Author: {{ notification.author.firstName }} {{ notification.author.lastName }} </p>
-                    <p class="admin-notes top-bottom-border"> Notification Type: {{ notification.notificationType.notificationTypeTitle }} </p>
-                    <p class="admin-notes"> Send Date: {{ notification.sendDate | date:'dd.MM.yyyy' }} </p>
-                    <p class="admin-notes top-bottom-border"> Message: {{ notification.message }} </p>
-                    <p class="admin-notes"> Executed By: {{ notification.author.firstName }} {{ notification.author.lastName }} </p>
-                    <p class="admin-notes top-bottom-border"> Executed date: {{ notification.executedDate | date:'dd.MM.yyyy' }} </p>
-                    <p class="admin-notes"> Connection to order №: {{ notification.order.objectId }} </p>
-                    <div class="text-right">
-                        <button type="button" class="btn btn-primary btn-md"
-                                ng-click="prepareToEditNotification(notification.objectId, listOfNotifications.indexOf(notification))">
-                            Edit
-                        </button>
-                        <button type="button" class="btn btn-warning btn-md"
-                                ng-click="prepareToDeleteNotification(notification.objectId, listOfNotifications.indexOf(notification))"
-                                data-toggle="modal" data-target="#deleteConfirmModal">
-                            Delete
-                        </button>
+            <div class="row">
+                <div ng-repeat-start="notification in listOfNotifications | orderBy : 'sendDate' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-4">
+                    <div class="block-border">
+                        <p class="admin-notes"> Author: {{ notification.author.firstName }} {{ notification.author.lastName }} </p>
+                        <p class="admin-notes top-bottom-border"> Notification Type: {{ notification.notificationType.notificationTypeTitle }} </p>
+                        <p class="admin-notes"> Send Date: {{ notification.sendDate | date:'dd.MM.yyyy' }} </p>
+                        <p class="admin-notes top-bottom-border"> Message: {{ notification.message }} </p>
+                        <p class="admin-notes"> Executed By: {{ notification.author.firstName }} {{ notification.author.lastName }} </p>
+                        <p class="admin-notes top-bottom-border"> Executed date: {{ notification.executedDate | date:'dd.MM.yyyy' }} </p>
+                        <p class="admin-notes"> Connection to order №: {{ notification.order.objectId }} </p>
+                        <div class="text-right">
+                            <button type="button" class="btn btn-primary btn-md"
+                                    ng-click="prepareToEditNotification(notification.objectId, listOfNotifications.indexOf(notification))">
+                                Edit
+                            </button>
+                            <button type="button" class="btn btn-warning btn-md"
+                                    ng-click="prepareToDeleteNotification(notification.objectId, listOfNotifications.indexOf(notification))"
+                                    data-toggle="modal" data-target="#deleteConfirmModal">
+                                Delete
+                            </button>
+                        </div>
                     </div>
                 </div>
+                <div class="clearfix" ng-if="($index+1)%3==0"></div>
+                <div ng-repeat-end=""></div>
             </div>
         </div>
 
