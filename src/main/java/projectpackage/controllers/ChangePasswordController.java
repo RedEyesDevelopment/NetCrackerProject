@@ -4,10 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import projectpackage.dto.LoginDTO;
 import projectpackage.model.auth.User;
 import projectpackage.service.authservice.UserService;
 import projectpackage.service.linksservice.PasswordChangeService;
@@ -40,10 +38,12 @@ public class ChangePasswordController {
             return new ResponseEntity<String>(resultString, status);
     }
 
-    @RequestMapping(value = "/for/{login}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<String> changeFor(@PathVariable("login") String login, HttpServletRequest request) throws ServletException {
-        User user = userService.getSingleUserByUsername(login);
+    @RequestMapping(value = "/for", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<String> changeFor(@RequestBody LoginDTO login) throws ServletException {
+        System.out.println("login="+login);
+        User user = userService.getSingleUserByUsername(login.getEmail());
         String response;
+        System.out.println("IN PC CONTROLLER, USER IS "+user);
         if (null!=user){
             passwordChangeService.createPasswordChangeTarget(user);
             response = "Email was sended.";

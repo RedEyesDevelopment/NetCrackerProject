@@ -32,10 +32,11 @@ public class PasswordChangeServiceImpl implements PasswordChangeService {
     MailService mailService;
 
     @Value("${server.http}")
-    private String https;
+    private String http;
 
     @Override
     public void createPasswordChangeTarget(User targetUser) {
+        System.out.println("IN PC SERVICE");
         String newLink = null;
         try {
             newLink = newLink();
@@ -43,7 +44,7 @@ public class PasswordChangeServiceImpl implements PasswordChangeService {
             log.warn("User getting from Guava cache was failed due to unknown reason."+e);
         }
         containers.put(newLink, targetUser);
-        StringBuilder builder = new StringBuilder(https).append("/cpass/").append(newLink);
+        StringBuilder builder = new StringBuilder(http).append("/cpass/").append(newLink);
         mailService.sendEmailToChangePassword(targetUser.getEmail(), 4, builder.toString());
     }
 
