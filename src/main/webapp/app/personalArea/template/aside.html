@@ -1,13 +1,13 @@
-<aside class="col-sm-3">
+<aside class="col-sm-3" ng-controller="asidePersonalAreaCtrl">
     <div class="info">
         <div class="profilePhoto"></div>
         <p class="name">
-            {{ myself.firstName }} {{ myself.lastName }}
+            {{ getMyself().firstName }} {{ getMyself().lastName }}
         </p>
     </div>
     <ul class="nav nav-sidebar">
         <li><a href="#/personal/settings"><i class="fa fa-cogs" aria-hidden="true"></i> User settings</a></li>
         <li><a href="#/personal/messageToAdmin"><i class="fa fa-envelope-o" aria-hidden="true"></i> Send message to administrator</a></li>
-        <li><a href="#/personal/checklist"><i class="fa fa-list" aria-hidden="true"></i> Checklist</a></li>
+        <li><a href="#/personal/checklist"><i class="fa fa-list" aria-hidden="true"></i> Orders</a></li>
     </ul>
 </aside>

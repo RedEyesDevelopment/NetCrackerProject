@@ -1,37 +1,47 @@
-<div class="container personalArea settings">
+<div class="container personalArea">
 
     <ng-include src="'app/personalArea/template/aside.html'"></ng-include>
 
 
-    <div class="col-sm-9">
+    <div class="workspace col-sm-9">
 
-        <div class="listOfObjects" ng-if="stage == 'looking'">
+        <!-- Top of workspace -->
+        <div class="top col-sm-12">
+            <h2>Orders</h2>
+        </div>
+        <ng-include src="'app/admin/template/serverError.html'"></ng-include>
+
+
+        <!-- Looking -->
+        <div class="listOfObjects">
             <ul class="pager">
                 <li><a ng-click="previousOrders()"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li>
                 <li><input type="number" min="1" max="999" ng-model="pager.objectsOnPage"></li>
                 <li><a ng-click="nextOrders()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
-            <div ng-repeat="order in listOfOrders | orderBy : 'objectId' | limitTo : pager.objectsOnPage : pager.startPaging"
-                 class="col-sm-12 block-border">
+
+            <div ng-repeat="order in listOfOrders | orderBy : 'objectId' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-12 block-border">
                 <div class="admin-notes">
                     <div class="col-sm-12 order-bottom-border order-padding-bottom">
-                        <div class="col-sm-4">
-                            Order id: {{ order.objectId }}
+                        <div class="col-sm-3">
+                            Order id: {{ order.objectId }}    
                         </div>
-                        <div class="col-sm-4 text-center">
+                        <div class="col-sm-5 text-center">
                             registration date: {{ order.registrationDate | date:'dd.MM.yyyy' }}
                         </div>
                         <div class="col-sm-4 text-right">
-                            {{ order.isPaidFor ? 'paid' : 'not paid' }} |
-                            {{ order.isConfirmed ? 'confirmed' : "not confirmed" }}
+                            <span ng-if="order.isPaidFor"> paid </span>
+                            <span ng-if="!order.isPaidFor"> not paid </span>
+                             | 
+                            <span ng-if="order.isConfirmed"> confirmed </span>
+                            <span ng-if="!order.isConfirmed"> not confirmed </span>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-sm-6 order-right-border">
                             <div class="order-padding-top-bottom order-bottom-border text-center">
-                                Living period: {{ order.livingStartDate | date:'dd.MM.yyyy' }} - {{
-                                order.livingFinishDate | date:'dd.MM.yyyy' }}
+                                Living period: {{ order.livingStartDate | date:'dd.MM.yyyy' }} - {{ order.livingFinishDate | date:'dd.MM.yyyy' }}
                             </div>
                             <div>
                                 <div class="col-sm-6 order-padding-top-bottom text-center order-right-border">
@@ -39,32 +49,22 @@
                                 </div>
                                 <div class="col-sm-6 order-padding-top-bottom text-center">
                                     type: {{ order.room.roomType.roomTypeTitle }}
-                                </div>
+                                </div> 
                             </div>
-                            <div class="col-sm-12 order-padding-top-bottom text-center order-top-border order-bottom-border">
+                            <div class="col-sm-12 order-padding-top-bottom text-center order-top-border">               
                                 category: {{ order.category.categoryTitle }}
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div>
-                                <div class="col-sm-12 order-padding-top-bottom  listButton"
-                                     ng-if="expand.id != order.objectId" ng-click="expand.id = order.objectId">
-                                    List of used maintenance
-                                </div>
-                                <div class="col-sm-12 order-padding-top-bottom  listButton"
-                                     ng-if="expand.id == order.objectId" ng-click="expand.id = 0">
-                                    Hide list
-                                </div>
-                            </div>
-                            <div>
                                 <div>
-                                    <div class="col-sm-4 order-padding-top-bottom order-top-border order-bottom-border">
+                                    <div class="col-sm-4 order-padding-top-bottom order-bottom-border">
                                         Living:
                                     </div>
-                                    <div class="col-sm-4 order-padding-top-bottom order-top-border order-bottom-border text-center">
+                                    <div class="col-sm-4 order-padding-top-bottom order-bottom-border text-center">
                                         Mantenances:
                                     </div>
-                                    <div class="col-sm-4 order-padding-top-bottom order-top-border order-bottom-border text-right">
+                                    <div class="col-sm-4 order-padding-top-bottom order-bottom-border text-right">
                                         Total:
                                     </div>
                                 </div>
@@ -79,46 +79,57 @@
                                         {{ (order.total / 100).toFixed(2) }} $
                                     </div>
                                 </div>
+                                <div>
+                                    <div class="col-sm-12 order-padding-top-bottom order-top-border listButton"
+                                            ng-if="expand.id != order.objectId" ng-click="expand.id = order.objectId">
+                                        List of used maintenance
+                                    </div>
+                                    <div class="col-sm-12 order-padding-top-bottom order-top-border listButton"
+                                            ng-if="expand.id == order.objectId" ng-click="expand.id = 0">
+                                        Hide list
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-12 table-responsive order-top-border" ng-if="expand.id == order.objectId">
                         <table class="table table-striped table-condensed">
                             <thead>
-                            <tr>
-                                <th>Maintenance</th>
-                                <th>Count</th>
-                                <th>Cost</th>
-                                <th>Used date</th>
-                            </tr>
+                                <tr>
+                                    <th>Maintenance</th>
+                                    <th>Count</th>
+                                    <th>Cost</th>
+                                    <th>Used date</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="record in order.journalRecords | orderBy : 'usedDate'">
-                                <th>{{ record.maintenance.maintenanceTitle }}</th>
-                                <th>{{ record.count }}</th>
-                                <th>{{ (record.cost / 100).toFixed(2) }} $</th>
-                                <th>{{ record.usedDate | date:'dd.MM.yyyy' }}</th>
-                            </tr>
+                                <tr ng-repeat="record in order.journalRecords | orderBy : 'usedDate'">
+                                    <th>{{ record.maintenance.maintenanceTitle }}</th>
+                                    <th>{{ record.count }}</th>
+                                    <th>{{ (record.cost / 100).toFixed(2) }} $</th>
+                                    <th>{{ record.usedDate | date:'dd.MM.yyyy' }}</th>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
-
-                    <div class="col-sm-12 order-padding-top-bottom order-top-border order-bottom-border"> Comment: {{
-                        order.comment }}
-                        <div class="col-sm-3">
-                        <label for="comment">Comment:</label>
+                    <div class="comment">
+                        <div class="col-sm-12 order-padding-top-bottom order-top-border info"
+                                ng-if="editComment.id != order.objectId" ng-click="editComment.id = order.objectId">
+                            Comment: {{  order.comment }}
                         </div>
-                        <div class="col-sm-9">
-                            <input type="text" id="comment"
-                                   ng-model="getChecklist().comment">
+                        <div ng-if="editComment.id == order.objectId" class="edit">
+                            <textarea class="comment form-control" ng-model="order.comment"></textarea>
+                            <div class="text-center">
+                                <button class="btn btn-default" ng-click="prepareToEditComment(listOfOrders.indexOf(order))" data-toggle="modal" data-target="#editConfirmModal">Save</button>    
+                                <button class="btn btn-default" ng-click="editComment.id = 0">Cancel</button>    
+                            </div>
                         </div>
                     </div>
-                    <div class="col-sm-8 order-padding-top-bottom"> Last modificator: {{ order.lastModificator.firstName
-                        }} {{ order.lastModificator.lastName }}
-                    </div>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+<ng-include src="'app/admin/template/confirmModalWindows.html'"></ng-include>

@@ -1,66 +1,52 @@
-app.controller('checklistCtrl', ['$scope', '$http', '$location', 'sharedData',
-	function($scope, $http, $location, sharedData) {
+app.controller('checklistCtrl', ['$scope', '$http', 'sharedData', 'util',
+    function($scope, $http, sharedData, util) {
 
-	/* Функция на получения всех заказов, вызываются сразу */
-    	(function() {
-    		$http({
-    			url: sharedData.getLinks().https + '/checklist',
-    			method: 'GET',
-    			headers: { 'Content-Type' : 'application/json' }
-    		}).then(function(data) {
-    			console.log(data);
-    			$scope.listOfOrders = data.data;
-    		}, function(response) {
-    			console.log("Smth wrong!!");
-    			console.log(response);
-    		});
-    	}());
-
-        $scope.checklist = {}
-        $scope.stage = "looking";
-
-        $scope.prepareToSend = function() {
-            $scope.stage = "sending"
-        }
-
-        $scope.query = function() {
-            switch ($scope.stage) {
-                case 'sending': sendMessage();
-                    break;
-            }
-        }
-
-        var sendMessage = function() {
-            $http({
-                url: sharedData.getLinks().https + '/clients/sendMessage',
-                method: 'POST',
-                data: {
-                    themeMessage: $scope.mail.theme,
-                    message: $scope.mail.message
-                },
-                headers: { 'Content-Type' : 'application/json' }
-            }).then(function(data) {
-                $scope.mail = {}
-                $scope.stage = "sended";
-            }, function(response) {
-                console.log("Smth wrong!!");
-                console.log(response);
+    /* All orders */
+    (function() {
+        $http({
+            url: sharedData.getLinks().https + '/orders',
+            method: 'GET',
+            headers: { 'Content-Type' : 'application/json' }
+        }).then(function(data) {
+            console.log(data);
+            $scope.listOfOrders = data.data;
+            $scope.listOfOrders.forEach(function(order) {
+                order.maintenanceSum = 0;
+                if (order.journalRecords != null) {
+                    order.journalRecords.forEach(function(record) {
+                        order.maintenanceSum += record.cost;
+                    });
+                }
+                order.total = order.sum + order.maintenanceSum;
             });
-        }
+        }, function(response) {
+            console.log("Smth wrong!!");
+            console.log(response);
+        });
+    }());
+
+    // это для кнопок журнала использованных услуг (не удалять!)
+    $scope.expand = {id : 0};
+
+    $scope.editComment = {id : 0};
+
+    $scope.order = {};
+
+    $scope.pager = {
+        startPaging : 0,
+        objectsOnPage : 6
+    }
+
+    $scope.prepareToEditComment = function(index) {
+        // body...
+    }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    /* Для листания страниц с объектами */
+    $scope.nextOrders = function() {
+        $scope.pager.startPaging = util.nextEntities($scope.listOfOrders.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
+    }
+    $scope.previousOrders = function() {
+        $scope.pager.startPaging = util.previousEntities($scope.pager.startPaging, $scope.pager.objectsOnPage);
+    }
 }]);

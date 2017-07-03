@@ -85,6 +85,22 @@
 	text-align: center;
 }
 
+.personalArea .comment {
+	padding-top: 10px;
+}
+
+.personalArea .comment .info {
+	cursor: pointer;
+}
+
+.personalArea .comment .edit textarea {
+	resize: none;
+}
+
+.personalArea .comment .edit button {
+	margin-top: 10px;
+}
+
 
 
 
