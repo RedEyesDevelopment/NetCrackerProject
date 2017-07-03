@@ -343,7 +343,8 @@ public class ReactEAVTest extends AbstractDatabaseTest {
 
     @Test
     public void getNotExecutedNotifications(){
-        List<Notification> nots = manager.createReactEAV(Notification.class).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches().getEntityCollection();
+        List<Notification> nots = manager.createReactEAV(Notification.class).addCondition(new StringWhereCondition("ATTRS3.DATE_VALUE IS NULL"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches().getEntityCollection();
+        System.out.println(SEPARATOR);
         for (Notification not: nots){
             System.out.println(not);
         }
