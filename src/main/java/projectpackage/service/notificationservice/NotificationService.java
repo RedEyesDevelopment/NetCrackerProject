@@ -21,7 +21,7 @@ public interface NotificationService extends MessageBook{
     public List<Notification> getNotificationsByExecutor(User user);
     public List<Notification> getNotificationsForRole(Role role);
 
-    public List<Notification> getAllNotificationsForInMemoryService();
+    public List<Notification> getAllNotExecutedNotifications();
     public List<Notification> getAllNotifications();
     public Notification getSingleNotificationById(Integer id);
     public IUDAnswer deleteNotification(Integer id);

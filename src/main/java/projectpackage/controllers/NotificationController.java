@@ -49,6 +49,20 @@ public class NotificationController {
         return resources;
     }
 
+    //Get Notification List
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(value = "/current",method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public List<Resource<Notification>> getNotExevutedNotificationList() {
+        List<Notification> notifications = notificationService.getAllNotExecutedNotifications();
+        List<Resource<Notification>> resources = new ArrayList<>();
+        for (Notification notification : notifications) {
+            Resource<Notification> notificationResource = new Resource<Notification>(notification);
+            notificationResource.add(linkTo(methodOn(NotificationController.class).getNotification(notification.getObjectId(), null)).withSelfRel());
+            resources.add(notificationResource);
+        }
+        return resources;
+    }
+
     //Get single Notification by id
     @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})

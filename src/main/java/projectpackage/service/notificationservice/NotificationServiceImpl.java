@@ -110,8 +110,8 @@ public class NotificationServiceImpl implements NotificationService{
     }
 
     @Override
-    public List<Notification> getAllNotificationsForInMemoryService() {
-        return notificationDAO.getAllNotificationsForInMemoryService();
+    public List<Notification> getAllNotExecutedNotifications() {
+        return notificationDAO.getAllNotExecutedNotifications();
     }
 
     @Override

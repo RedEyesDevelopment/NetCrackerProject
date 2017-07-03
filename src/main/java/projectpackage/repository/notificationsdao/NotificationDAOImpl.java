@@ -36,7 +36,7 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
 
     @Override
     @Transactional(readOnly = true)
-    public List<Notification> getAllNotificationsForInMemoryService() {
+    public List<Notification> getAllNotExecutedNotifications() {
         return manager.createReactEAV(Notification.class).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches().getEntityCollection();
     }
 

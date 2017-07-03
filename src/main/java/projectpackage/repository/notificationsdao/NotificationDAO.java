@@ -10,7 +10,7 @@ import java.util.List;
  * Created by Arizel on 16.05.2017.
  */
 public interface NotificationDAO extends Commitable, Rollbackable{
-    public List<Notification> getAllNotificationsForInMemoryService();
+    public List<Notification> getAllNotExecutedNotifications();
     public Notification getNotification(Integer id);
     public List<Notification> getAllNotifications();
     public Integer insertNotification(Notification notification);
