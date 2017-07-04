@@ -1,6 +1,7 @@
 package projectpackage.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
@@ -12,16 +13,21 @@ import projectpackage.dto.IUDAnswer;
 import projectpackage.dto.JacksonMappingMarker;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Category;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.service.orderservice.CategoryService;
 import projectpackage.service.support.ServiceUtils;
 
-import javax.cache.annotation.CacheRemoveAll;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static projectpackage.service.MessageBook.*;
+import static projectpackage.service.MessageBook.NULL_ID;
+import static projectpackage.service.MessageBook.WRONG_DELETED_ID;
 
 /**
  * Created by Lenovo on 28.05.2017.
@@ -29,6 +35,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {
+
+    private static final Logger LOGGER = Logger.getLogger(CategoryController.class);
 
     @Autowired
     CategoryService categoryService;
@@ -85,12 +93,20 @@ public class CategoryController {
         Category category = new Category();
         category.setCategoryTitle(categoryDTO.getCategoryTitle());
         category.setCategoryPrice(categoryDTO.getCategoryPrice());
-        IUDAnswer result = categoryService.insertCategory(category);
+
+        try {
+            iudAnswer = categoryService.insertCategory(category);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_FIELD, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
         HttpStatus status;
-        if (result.isSuccessful()) {
-            status = HttpStatus.CREATED;
-        } else status = HttpStatus.BAD_REQUEST;
-        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
+            status = HttpStatus.OK;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+        }
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(iudAnswer, status);
         return responseEntity;
     }
 
@@ -105,12 +121,20 @@ public class CategoryController {
         Category category = new Category();
         category.setCategoryTitle(categoryDTO.getCategoryTitle());
         category.setCategoryPrice(categoryDTO.getCategoryPrice());
-        IUDAnswer result = categoryService.updateCategory(id, category);
+
+        try {
+            iudAnswer = categoryService.updateCategory(id, category);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, WRONG_FIELD, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
         HttpStatus status;
-        if (result.isSuccessful()) {
-            status = HttpStatus.ACCEPTED;
-        } else status = HttpStatus.BAD_REQUEST;
-        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
+            status = HttpStatus.OK;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+        }
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(iudAnswer, status);
         return responseEntity;
     }
 
@@ -122,12 +146,28 @@ public class CategoryController {
         if (!iudAnswer.isSuccessful()) {
             return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
-        IUDAnswer result = categoryService.deleteCategory(id);
+
+        try {
+            iudAnswer = categoryService.deleteCategory(id);
+        } catch (ReferenceBreakException e) {
+            LOGGER.warn(ON_ENTITY_REFERENCE, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (DeletedObjectNotExistsException e) {
+            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (WrongEntityIdException e) {
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(NULL_ID, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, NULL_ID, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
         HttpStatus status;
-        if (result.isSuccessful()) {
-            status = HttpStatus.ACCEPTED;
-        } else status = HttpStatus.NOT_FOUND;
-        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
-        return responseEntity;
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
+            status = HttpStatus.OK;
+        } else {
+            status = HttpStatus.NOT_ACCEPTABLE;
+        }
+        return new ResponseEntity<IUDAnswer>(iudAnswer, status);
     }
 }

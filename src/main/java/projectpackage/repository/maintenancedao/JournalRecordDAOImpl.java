@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.maintenances.JournalRecord;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.repository.AbstractDAO;
@@ -26,7 +25,6 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
 
 
     @Override
-    @Transactional(readOnly = true)
     public JournalRecord getJournalRecord(Integer id) {
         if (null == id) {
             return null;
@@ -39,7 +37,6 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<JournalRecord> getAllJournalRecords() {
         return manager.createReactEAV(JournalRecord.class)
                 .fetchRootReference(Maintenance.class, "MaintenanceToJournalRecord")
@@ -47,7 +44,6 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
                 .getEntityCollection();
     }
 
-    @Transactional
     @Override
     public Integer insertJournalRecord(JournalRecord journalRecord) {
         if (journalRecord == null) {
@@ -63,7 +59,6 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
         return objectId;
     }
 
-    @Transactional
     @Override
     public Integer updateJournalRecord(JournalRecord newJournalRecord, JournalRecord oldJournalRecord) {
         if (oldJournalRecord == null || newJournalRecord == null) {
@@ -78,7 +73,6 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
         return newJournalRecord.getObjectId();
     }
 
-    @Transactional
     @Override
     public void deleteJournalRecord(Integer id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
         if (id == null) {

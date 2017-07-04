@@ -82,7 +82,9 @@ public class MaintenanceController {
         HttpStatus status;
         if (iudAnswer != null && iudAnswer.isSuccessful()) {
             status = HttpStatus.OK;
-        } else status = HttpStatus.BAD_REQUEST;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+        }
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(iudAnswer, status);
         return responseEntity;
     }
@@ -107,7 +109,9 @@ public class MaintenanceController {
         HttpStatus status;
         if (iudAnswer != null && iudAnswer.isSuccessful()) {
             status = HttpStatus.OK;
-        } else status = HttpStatus.BAD_REQUEST;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+        }
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(iudAnswer, status);
         return responseEntity;
     }

@@ -72,8 +72,10 @@ public class ModificationHistoryController {
         IUDAnswer result = modificationHistoryService.insertModificationHistory(newOrder, oldOrder);
         HttpStatus status;
         if (result.isSuccessful()) {
-            status = HttpStatus.CREATED;
-        } else status = HttpStatus.BAD_REQUEST;
+            status = HttpStatus.OK;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+        }
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
     }
@@ -85,8 +87,10 @@ public class ModificationHistoryController {
         IUDAnswer result = modificationHistoryService.deleteModificationHistory(id);
         HttpStatus status;
         if (result.isSuccessful()) {
-            status = HttpStatus.ACCEPTED;
-        } else status = HttpStatus.NOT_FOUND;
+            status = HttpStatus.OK;
+        } else {
+            status = HttpStatus.NOT_FOUND;
+        }
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
     }

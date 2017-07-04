@@ -4,13 +4,11 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.model.orders.Category;
 import projectpackage.repository.maintenancedao.ComplimentaryDAO;
 import projectpackage.repository.ordersdao.CategoryDAO;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 
@@ -28,6 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     ComplimentaryDAO complimentaryDAO;
 
+    @Transactional(readOnly = true)
     @Override
     public List<Category> getAllCategories() {
         List<Category> categories = categoryDAO.getAllCategories();
@@ -37,11 +36,13 @@ public class CategoryServiceImpl implements CategoryService {
         return categories;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Category> getSimpleCategoryList() {
         return categoryDAO.getSimpleCategoryList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Category getSingleCategoryById(Integer id) {
         Category category = categoryDAO.getCategory(id);
@@ -51,43 +52,29 @@ public class CategoryServiceImpl implements CategoryService {
         return category;
     }
 
+    @Transactional
     @Override
     public IUDAnswer deleteCategory(Integer id) {
         if (id == null) {
             return new IUDAnswer(false, NULL_ID);
         }
-        try {
-            categoryDAO.deleteCategory(id);
-        } catch (ReferenceBreakException e) {
-            LOGGER.warn(ON_ENTITY_REFERENCE, e);
-            return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage());
-        } catch (DeletedObjectNotExistsException e) {
-            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
-            return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
-        } catch (WrongEntityIdException e) {
-            LOGGER.warn(WRONG_DELETED_ID, e);
-            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn(NULL_ID, e);
-            return new IUDAnswer(id, false, NULL_ID, e.getMessage());
-        }
-        categoryDAO.commit();
+
+        categoryDAO.deleteCategory(id);
+
         return new IUDAnswer(id, true);
     }
 
+    @Transactional
     @Override
     public IUDAnswer insertCategory(Category category) {
         Integer categoryId = null;
-        try {
-            categoryId = categoryDAO.insertCategory(category);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn(WRONG_FIELD, e);
-            return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
-        }
-        categoryDAO.commit();
+
+        categoryId = categoryDAO.insertCategory(category);
+
         return new IUDAnswer(categoryId,true);
     }
 
+    @Transactional
     @Override
     public IUDAnswer updateCategory(Integer id, Category newCategory) {
         if (newCategory == null) {
@@ -96,15 +83,11 @@ public class CategoryServiceImpl implements CategoryService {
         if (id == null) {
             return new IUDAnswer(false, NULL_ID);
         }
-        try {
-            newCategory.setObjectId(id);
-            Category oldCategory = categoryDAO.getCategory(id);
-            categoryDAO.updateCategory(newCategory, oldCategory);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn(WRONG_FIELD, e);
-            return new IUDAnswer(id,false, WRONG_FIELD, e.getMessage());
-        }
-        categoryDAO.commit();
+
+        newCategory.setObjectId(id);
+        Category oldCategory = categoryDAO.getCategory(id);
+        categoryDAO.updateCategory(newCategory, oldCategory);
+
         return new IUDAnswer(id,true);
     }
 }

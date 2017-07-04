@@ -1,5 +1,6 @@
 package projectpackage.controllers;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,9 @@ import projectpackage.model.auth.User;
 import projectpackage.model.maintenances.Complimentary;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.model.orders.Category;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.service.maintenanceservice.ComplimentaryService;
 import projectpackage.service.orderservice.CategoryService;
 import projectpackage.service.support.ServiceUtils;
@@ -24,7 +28,8 @@ import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-import static projectpackage.service.MessageBook.CANNOT_HAVE_DUPLICATE_COMPLIMENTARY;
+import static projectpackage.service.MessageBook.*;
+import static projectpackage.service.MessageBook.NULL_ID;
 
 /**
  * Created by Arizel on 28.05.2017.
@@ -32,6 +37,8 @@ import static projectpackage.service.MessageBook.CANNOT_HAVE_DUPLICATE_COMPLIMEN
 @RestController
 @RequestMapping("/complimentaries")
 public class ComplimentaryController {
+
+    private static final Logger LOGGER = Logger.getLogger(ComplimentaryController.class);
 
     @Autowired
     ComplimentaryService complimentaryService;
@@ -95,11 +102,20 @@ public class ComplimentaryController {
         complimentary.setCategoryId(complimentaryDTO.getCategoryId());
         complimentary.setMaintenance(maintenance);
 
-        IUDAnswer result = complimentaryService.insertComplimentary(complimentary);
-
-        HttpStatus status = result.isSuccessful() ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
-
-        return new ResponseEntity<IUDAnswer>(result, status);
+        try {
+            iudAnswer = complimentaryService.insertComplimentary(complimentary);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_FIELD, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        HttpStatus status;
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
+            status = HttpStatus.OK;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+        }
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(iudAnswer, status);
+        return responseEntity;
     }
 
     @CacheRemoveAll(cacheName = "complimentaryList")
@@ -115,11 +131,20 @@ public class ComplimentaryController {
         maintenance.setObjectId(complimentaryDTO.getMaintenanceId());
         complimentary.setCategoryId(complimentaryDTO.getCategoryId());
         complimentary.setMaintenance(maintenance);
-        IUDAnswer result = complimentaryService.updateComplimentary(id, complimentary);
-
-        HttpStatus status = result.isSuccessful() ? HttpStatus.ACCEPTED : HttpStatus.BAD_REQUEST;
-
-        return new ResponseEntity<IUDAnswer>(result, status);
+        try {
+            iudAnswer = complimentaryService.updateComplimentary(id, complimentary);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, WRONG_FIELD, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        HttpStatus status;
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
+            status = HttpStatus.OK;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+        }
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(iudAnswer, status);
+        return responseEntity;
     }
 
     @CacheRemoveAll(cacheName = "complimentaryList")
@@ -130,10 +155,28 @@ public class ComplimentaryController {
         if (!iudAnswer.isSuccessful()) {
             return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
-        IUDAnswer result = complimentaryService.deleteComplimentary(id);
 
-        HttpStatus status = result.isSuccessful() ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND;
-
-        return new ResponseEntity<IUDAnswer>(result, status);
+        try {
+            iudAnswer = complimentaryService.deleteComplimentary(id);
+        } catch (ReferenceBreakException e) {
+            LOGGER.warn(ON_ENTITY_REFERENCE, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (DeletedObjectNotExistsException e) {
+            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (WrongEntityIdException e) {
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(NULL_ID, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, NULL_ID, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        HttpStatus status;
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
+            status = HttpStatus.OK;
+        } else {
+            status = HttpStatus.NOT_ACCEPTABLE;
+        }
+        return new ResponseEntity<IUDAnswer>(iudAnswer, status);
     }
 }
