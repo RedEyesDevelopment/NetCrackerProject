@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.dto.ChangeOrderDTO;
 import projectpackage.dto.FreeRoomsUpdateOrderDTO;
 import projectpackage.dto.IUDAnswer;
@@ -14,9 +15,6 @@ import projectpackage.model.orders.Order;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
 import projectpackage.repository.ordersdao.OrderDAO;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.service.roomservice.RoomService;
 import projectpackage.service.roomservice.RoomTypeService;
 import projectpackage.service.support.ServiceUtils;
@@ -46,6 +44,7 @@ public class OrderServiceImpl implements OrderService{
     @Autowired
     CategoryService categoryService;
 
+    @Transactional(readOnly = true)
     @Override
     public List<Order> getAllOrders() {
         List<Order> orders = orderDAO.getAllOrder();
@@ -55,6 +54,7 @@ public class OrderServiceImpl implements OrderService{
         return orders;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Order> getOrdersByRoom(Room room) {
         List<Order> answer = new ArrayList<>();
@@ -68,6 +68,7 @@ public class OrderServiceImpl implements OrderService{
         return answer;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Order> getOrdersByClient(User user) {
         List<Order> answer = new ArrayList<>();
@@ -81,6 +82,7 @@ public class OrderServiceImpl implements OrderService{
         return answer;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Order> getOrdersByRegistrationDate(Date date) {
         List<Order> answer = new ArrayList<>();
@@ -93,6 +95,7 @@ public class OrderServiceImpl implements OrderService{
         return answer;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Order> getCurrentOrders() {
         List<Order> answer = new ArrayList<>();
@@ -107,6 +110,7 @@ public class OrderServiceImpl implements OrderService{
         return answer;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Order> getPreviousOrders() {
         List<Order> answer = new ArrayList<>();
@@ -120,6 +124,7 @@ public class OrderServiceImpl implements OrderService{
         return answer;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Order> getFutureOrders() {
         List<Order> answer = new ArrayList<>();
@@ -133,6 +138,7 @@ public class OrderServiceImpl implements OrderService{
         return answer;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Order> getOrdersInRange(Date startDate, Date finishDate) {
         List<Order> answer = new ArrayList<>();
@@ -150,6 +156,7 @@ public class OrderServiceImpl implements OrderService{
         return answer;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Order> getOrdersForPayConfirmed() {
         List<Order> answer = new ArrayList<>();
@@ -162,6 +169,7 @@ public class OrderServiceImpl implements OrderService{
         return answer;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Order> getOrdersConfirmed() {
         List<Order> answer = new ArrayList<>();
@@ -174,6 +182,7 @@ public class OrderServiceImpl implements OrderService{
         return answer;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Order> getOrdersMustToBePaid() {
         List<Order> answer = new ArrayList<>();
@@ -214,6 +223,7 @@ public class OrderServiceImpl implements OrderService{
         }
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Order> getAllOrderForAdmin() {
         List<Order> orders = orderDAO.getAllOrderForAdmin();
@@ -227,6 +237,7 @@ public class OrderServiceImpl implements OrderService{
         return orders;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Order getOrderForAdmin(Integer id) {
         Order order = orderDAO.getOrderForAdmin(id);
@@ -332,6 +343,7 @@ public class OrderServiceImpl implements OrderService{
         return updateOrder(orderId, order);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Order getSingleOrderById(Integer id) {
         Order order = orderDAO.getOrder(id);
@@ -341,55 +353,37 @@ public class OrderServiceImpl implements OrderService{
         return order;
     }
 
+    @Transactional
     @Override
     public IUDAnswer deleteOrder(Integer id) {
         if (id == null) {
             return new IUDAnswer(false, NULL_ID);
         }
-        try {
-            orderDAO.deleteOrder(id);
-        } catch (ReferenceBreakException e) {
-            LOGGER.warn(ON_ENTITY_REFERENCE, e);
-            return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage());
-        } catch (DeletedObjectNotExistsException e) {
-            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
-            return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
-        } catch (WrongEntityIdException e) {
-            LOGGER.warn(WRONG_DELETED_ID, e);
-            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn(NULL_ID, e);
-            return new IUDAnswer(id, false, NULL_ID, e.getMessage());
-        }
-        orderDAO.commit();
+        orderDAO.deleteOrder(id);
+
         return new IUDAnswer(id, true);
     }
 
+    @Transactional
     @Override
     public IUDAnswer insertOrder(Order order) {
         if (order == null) {
-            return null;
+            return new IUDAnswer(false, NULL_ENTITY);
         }
         boolean isValidDates = serviceUtils.checkDates(order.getLivingStartDate(), order.getLivingFinishDate());
         if (!isValidDates) {
             return new IUDAnswer(false, WRONG_DATES);
         }
-        Integer orderId = null;
-        try {
-            orderId = orderDAO.insertOrder(order);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn(WRONG_FIELD, e);
-            return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
-        }
+        Integer orderId = orderDAO.insertOrder(order);
 
-        orderDAO.commit();
         return new IUDAnswer(orderId,true, ORDER_CREATED);
     }
 
+    @Transactional
     @Override
     public IUDAnswer updateOrder(Integer id, Order newOrder) {
         if (newOrder == null) {
-            return null;
+            return new IUDAnswer(false, NULL_ENTITY);
         }
         if (id == null) {
             return new IUDAnswer(false, NULL_ID);
@@ -398,15 +392,10 @@ public class OrderServiceImpl implements OrderService{
         if (!isValidDates) {
             return new IUDAnswer(false, WRONG_DATES);
         }
-        try {
-            newOrder.setObjectId(id);
-            Order oldOrder = orderDAO.getOrder(id);
-            orderDAO.updateOrder(newOrder, oldOrder);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn(WRONG_FIELD, e);
-            return new IUDAnswer(id,false, WRONG_FIELD, e.getMessage());
-        }
-        orderDAO.commit();
+        newOrder.setObjectId(id);
+        Order oldOrder = orderDAO.getOrder(id);
+        orderDAO.updateOrder(newOrder, oldOrder);
+
         return new IUDAnswer(id,true);
     }
 }

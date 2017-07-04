@@ -32,7 +32,7 @@ import static projectpackage.service.MessageBook.*;
 @RequestMapping("/phones")
 public class PhoneController {
 
-    private static final Logger LOGGER = Logger.getLogger(UserController.class);
+    private static final Logger LOGGER = Logger.getLogger(PhoneController.class);
 
     @Autowired
     PhoneService phoneService;

@@ -1,5 +1,7 @@
 package projectpackage.controllers;
 
+import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,9 @@ import projectpackage.dto.*;
 import projectpackage.model.auth.User;
 import projectpackage.model.orders.Category;
 import projectpackage.model.orders.Order;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.service.authservice.UserService;
 import projectpackage.service.orderservice.CategoryService;
 import projectpackage.service.orderservice.OrderService;
@@ -34,6 +39,8 @@ import static projectpackage.service.MessageBook.*;
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
+
+    private static final Logger LOGGER = Logger.getLogger(OrderController.class);
 
     @Autowired
     OrderService orderService;
@@ -104,11 +111,19 @@ public class OrderController {
     public ResponseEntity<IUDAnswer> acceptOrder(HttpServletRequest request) {
         Order order = (Order) request.getSession().getAttribute("NEWORDER");
         request.getSession().removeAttribute("NEWORDER");
-        IUDAnswer answer = orderService.insertOrder(order);
-        HttpStatus status = HttpStatus.OK;
-        if (!answer.isSuccessful()){
-            status = HttpStatus.BAD_REQUEST;
+        HttpStatus status = status = HttpStatus.BAD_REQUEST;;
+        IUDAnswer answer = null;
+        try {
+            answer = orderService.insertOrder(order);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_FIELD, e.getMessage()), status);
         }
+
+        if (answer != null && answer.isSuccessful()){
+            status = HttpStatus.OK;
+        }
+
         return new ResponseEntity<IUDAnswer>(answer, status);
     }
 
@@ -151,11 +166,19 @@ public class OrderController {
     @CacheRemoveAll(cacheName = "orderList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> createOrder(@RequestBody Order newOrder){
-        IUDAnswer result = orderService.insertOrder(newOrder);
+        IUDAnswer result = null;
+        try {
+            result = orderService.insertOrder(newOrder);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_FIELD, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
         HttpStatus status;
         if (result.isSuccessful()) {
             status = HttpStatus.OK;
-        } else status = HttpStatus.BAD_REQUEST;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+        }
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
         return responseEntity;
     }
@@ -228,11 +251,17 @@ public class OrderController {
         User user = new User();
         user.setObjectId(thisUser.getObjectId());
         order.setLastModificator(user);
-        IUDAnswer answer = orderService.updateOrder(id, order);
-        if (!answer.isSuccessful()) {
-            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+        try {
+            iudAnswer = orderService.updateOrder(id, order);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id,false, WRONG_FIELD, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.OK);
         } else {
-            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -250,9 +279,18 @@ public class OrderController {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, EMPTY_DTO_IN_SESSION), HttpStatus.BAD_REQUEST);
         }
 
-        IUDAnswer answer = orderService.setNewDataIntoOrder(id, thisUser.getObjectId(), changeOrderDTO, orderDTO);
+        try {
+            iudAnswer = orderService.setNewDataIntoOrder(id, thisUser.getObjectId(), changeOrderDTO, orderDTO);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id,false, WRONG_FIELD, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
+            status = HttpStatus.OK;
+        }
         request.getSession().removeAttribute("CHANGE_DTO");
-        return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
+        return new ResponseEntity<IUDAnswer>(iudAnswer, status);
     }
 
     @RequestMapping(value = "user/update/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
@@ -273,11 +311,18 @@ public class OrderController {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, ORDER_DOESNT_BELONG_USER), HttpStatus.BAD_REQUEST);
         }
         order.setComment(comment);
-        IUDAnswer answer = orderService.updateOrder(id, order);
-        if (!answer.isSuccessful()) {
-            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+
+        try {
+            iudAnswer = orderService.updateOrder(id, order);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id,false, WRONG_FIELD, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.OK);
         } else {
-            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -291,18 +336,32 @@ public class OrderController {
             return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
         Order order = orderService.getSingleOrderById(id);
-        Date validDate = new Date(new Date().getTime() + 86400000L);
+        Date validDate = new DateTime().plusDays(1).toDate();
         if (order.getLivingStartDate().after(validDate)) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, ORDER_STARTED), HttpStatus.FORBIDDEN);
         }
-        IUDAnswer result = orderService.deleteOrder(id);
+
+        try {
+            iudAnswer = orderService.deleteOrder(id);
+        } catch (ReferenceBreakException e) {
+            LOGGER.warn(ON_ENTITY_REFERENCE, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (DeletedObjectNotExistsException e) {
+            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (WrongEntityIdException e) {
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(NULL_ID, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, NULL_ID, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
         HttpStatus status;
-        if (result.isSuccessful()) {
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.NOT_ACCEPTABLE;
         }
-        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
-        return responseEntity;
+        return new ResponseEntity<IUDAnswer>(iudAnswer, status);
     }
 }
