@@ -71,7 +71,7 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
     @Override
     public IUDAnswer insertNotificationType(NotificationType notificationType) {
         if (notificationType == null) {
-            return null;
+            return new IUDAnswer(false, NULL_ENTITY);
         }
         Integer notifTypeId = null;
 
@@ -84,7 +84,7 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
     @Override
     public IUDAnswer updateNotificationType(Integer id, NotificationType newNotificationType) {
         if (newNotificationType == null) {
-            return null;
+            return new IUDAnswer(false, NULL_ENTITY);
         }
         if (id == null) {
             return new IUDAnswer(false, NULL_ID);

@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.maintenances.Maintenance;
 import projectpackage.repository.AbstractDAO;
 import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
@@ -20,7 +19,6 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
     JdbcTemplate jdbcTemplate;
 
     @Override
-    @Transactional(readOnly = true)
     public Maintenance getMaintenance(Integer id) {
         if (null == id) {
             return null;
@@ -31,12 +29,10 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Maintenance> getAllMaintenances() {
         return manager.createReactEAV(Maintenance.class).getEntityCollection();
     }
 
-    @Transactional
     @Override
     public Integer insertMaintenance(Maintenance maintenance) {
         if (maintenance == null) {
@@ -51,7 +47,6 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
         return objectId;
     }
 
-    @Transactional
     @Override
     public Integer updateMaintenance(Maintenance newMaintenance, Maintenance oldMaintenance) {
         if (newMaintenance == null || oldMaintenance == null) {
@@ -65,7 +60,6 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
         return newMaintenance.getObjectId();
     }
 
-    @Transactional
     @Override
     public void deleteMaintenance(Integer id) {
         if (id == null) {
