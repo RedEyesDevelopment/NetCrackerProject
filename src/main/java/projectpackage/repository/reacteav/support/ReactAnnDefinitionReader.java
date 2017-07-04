@@ -1,6 +1,7 @@
 package projectpackage.repository.reacteav.support;
 
 import lombok.extern.log4j.Log4j;
+import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import projectpackage.repository.reacteav.annotations.*;
 import projectpackage.repository.reacteav.relationsdata.EntityOuterRelationshipsData;
@@ -13,6 +14,9 @@ import java.util.*;
 
 @Log4j
 public class ReactAnnDefinitionReader {
+
+    private static final Logger LOGGER = Logger.getLogger(ReactAnnDefinitionReader.class);
+
     private String packageName;
     private Set<Class> classList;
     private static final Class ENTITYANNOTATION = ReactEntity.class;
@@ -150,9 +154,9 @@ public class ReactAnnDefinitionReader {
     }
 
     public void printClassesList() {
-        System.out.println("ClassList size is " + classList.size());
+        LOGGER.info("ClassList size is " + classList.size());
         for (Class clazz : classList) {
-            System.out.println("Class=" + clazz.getName());
+            LOGGER.info("Class=" + clazz.getName());
         }
     }
 

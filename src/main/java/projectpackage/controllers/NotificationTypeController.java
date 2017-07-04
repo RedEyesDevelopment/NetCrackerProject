@@ -40,7 +40,6 @@ public class NotificationTypeController {
     @GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public List<Resource<NotificationType>> getNotificationTypeList(){
         List<NotificationType> notificationTypes = notificationTypeService.getAllNotificationTypes();
-        System.out.println(notificationTypes.get(0).getOrientedRole());
         List<Resource<NotificationType>> resources = new ArrayList<>();
         for (NotificationType notificationType:notificationTypes){
             Resource<NotificationType> notificationTypeResource = new Resource<NotificationType>(notificationType);

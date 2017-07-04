@@ -74,7 +74,6 @@ public class OrderController {
         }
         List<Order> orders = orderService.getOrdersByClient(user);
 
-        System.out.println(user);
         List<Resource<Order>> resources = new ArrayList<>();
         for (Order order:orders){
             Resource<Order> orderResource = new Resource<Order>(order);

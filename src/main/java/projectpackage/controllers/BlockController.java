@@ -70,7 +70,6 @@ public class BlockController {
     @CacheRemoveAll(cacheName = "blockList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> createBlock(@RequestBody BlockDTO blockDTO, HttpServletRequest request) {
-        System.out.println(blockDTO);
         User user = (User) request.getSession().getAttribute("USER");
         if (user == null) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);

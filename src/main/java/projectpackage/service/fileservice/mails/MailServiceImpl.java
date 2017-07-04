@@ -153,7 +153,7 @@ public class MailServiceImpl implements MailService {
                 messageHelper.setText(mailMessagesMap.getMessage(3).getMessage());
                 messageHelper.addAttachment(attributeFile.getName(), attributeFile);
             } catch (MessagingException e) {
-                e.printStackTrace();
+                LOGGER.error(e);
             }
             CustomMailSender sender = new CustomMailSender(pdfService, attributeFile.getPath(), LOGGER, javaMailSenderImpl, message);
             Thread thread = new Thread(sender);
