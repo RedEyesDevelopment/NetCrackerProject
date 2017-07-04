@@ -1,5 +1,6 @@
 package projectpackage.controllers;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,9 @@ import projectpackage.model.auth.User;
 import projectpackage.model.notifications.Notification;
 import projectpackage.model.notifications.NotificationType;
 import projectpackage.model.orders.Order;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.service.notificationservice.NotificationService;
 import projectpackage.service.support.ServiceUtils;
 
@@ -22,6 +26,9 @@ import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static projectpackage.service.MessageBook.*;
+import static projectpackage.service.MessageBook.NULL_ID;
+import static projectpackage.service.MessageBook.WRONG_DELETED_ID;
 
 /**
  * Created by Lenovo on 28.05.2017.
@@ -29,6 +36,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/notifications")
 public class NotificationController {
+
+    private static final Logger LOGGER = Logger.getLogger(NotificationController.class);
 
     @Autowired
     NotificationService notificationService;
@@ -74,12 +83,19 @@ public class NotificationController {
         Notification notification = notificationService.getNotExecutedNotificationById(id);
         notification.setExecutedDate(new Date());
         notification.setExecutedBy(user);
-        IUDAnswer answer = notificationService.updateNotification(id, notification);
-        if (answer.isSuccessful()) {
-            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+
+        try {
+            iudAnswer = notificationService.updateNotification(id, notification);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, WRONG_FIELD, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
+        HttpStatus status;
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
+            status = HttpStatus.OK;
+        } else status = HttpStatus.BAD_REQUEST;
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(iudAnswer, status);
+        return responseEntity;
     }
 
     //Get single Notification by id
@@ -138,12 +154,18 @@ public class NotificationController {
         newNotification.setNotificationType(notificationType);
         newNotification.setOrder(order);
         newNotification.setAuthor(author);
-        IUDAnswer result = notificationService.insertNotification(newNotification);
+
+        try {
+            iudAnswer = notificationService.insertNotification(newNotification);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_FIELD, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
         HttpStatus status;
-        if (result.isSuccessful()) {
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
             status = HttpStatus.OK;
         } else status = HttpStatus.BAD_REQUEST;
-        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(iudAnswer, status);
         return responseEntity;
     }
 
@@ -159,12 +181,18 @@ public class NotificationController {
         changedNotification.setMessage(notificationDTO.getMessage());
         changedNotification.getNotificationType().setObjectId(notificationDTO.getNotificationTypeId());
         changedNotification.getOrder().setObjectId(notificationDTO.getOrderId());
-        IUDAnswer result = notificationService.updateNotification(id, changedNotification);
+
+        try {
+            iudAnswer = notificationService.updateNotification(id, changedNotification);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, WRONG_FIELD, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
         HttpStatus status;
-        if (result.isSuccessful()) {
-            status = HttpStatus.ACCEPTED;
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
+            status = HttpStatus.OK;
         } else status = HttpStatus.BAD_REQUEST;
-        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(iudAnswer, status);
         return responseEntity;
     }
 
@@ -175,12 +203,28 @@ public class NotificationController {
         if (!iudAnswer.isSuccessful()) {
             return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
-        IUDAnswer result = notificationService.deleteNotification(id);
+
+        try {
+            iudAnswer = notificationService.deleteNotification(id);
+        } catch (ReferenceBreakException e) {
+            LOGGER.warn(ON_ENTITY_REFERENCE, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (DeletedObjectNotExistsException e) {
+            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (WrongEntityIdException e) {
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(NULL_ID, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, NULL_ID, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
         HttpStatus status;
-        if (result.isSuccessful()) {
-            status = HttpStatus.ACCEPTED;
-        } else status = HttpStatus.NOT_FOUND;
-        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
-        return responseEntity;
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
+            status = HttpStatus.OK;
+        } else {
+            status = HttpStatus.NOT_ACCEPTABLE;
+        }
+        return new ResponseEntity<IUDAnswer>(iudAnswer, status);
     }
 }
