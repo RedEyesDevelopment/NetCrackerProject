@@ -75,7 +75,7 @@ public class NotificationController {
         if (!iudAnswer.isSuccessful()) {
             return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
-        Notification notification = notificationService.getSingleNotificationById(id);
+        Notification notification = notificationService.getNotExecutedNotificationById(id);
         notification.setExecutedDate(new Date());
         notification.setExecutedBy(user);
         IUDAnswer answer = notificationService.updateNotification(id, notification);

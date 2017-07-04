@@ -44,6 +44,12 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
 
     @Override
     @Transactional(readOnly = true)
+    public Notification getNotExecutedNotification(Integer id) {
+        return (Notification) manager.createReactEAV(Notification.class).addCondition(new StringWhereCondition("ATTRS3.DATE_VALUE IS NULL"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches().fetchRootReference(User.class, "UserToNotificationAsAuthor").closeAllFetches().getSingleEntityWithId(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Notification getNotification(Integer id) {
         if (id == null) return null;
 

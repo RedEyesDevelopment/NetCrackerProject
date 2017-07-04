@@ -122,6 +122,14 @@ public class NotificationServiceImpl implements NotificationService{
     }
 
     @Override
+    public Notification getNotExecutedNotificationById(Integer id) {
+        if (null == id){
+            return null;
+        }
+        return notificationDAO.getNotExecutedNotification(id);
+    }
+
+    @Override
     public IUDAnswer deleteNotification(Integer id) {
         if (id == null) return new IUDAnswer(false, NULL_ID);
         try {

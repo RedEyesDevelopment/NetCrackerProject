@@ -24,6 +24,7 @@ public interface NotificationService extends MessageBook{
     public List<Notification> getAllNotExecutedNotifications();
     public List<Notification> getAllNotifications();
     public Notification getSingleNotificationById(Integer id);
+    public Notification getNotExecutedNotificationById(Integer id);
     public IUDAnswer deleteNotification(Integer id);
     public IUDAnswer insertNotification(Notification notification);
     public IUDAnswer updateNotification(Integer id, Notification newNotification);
