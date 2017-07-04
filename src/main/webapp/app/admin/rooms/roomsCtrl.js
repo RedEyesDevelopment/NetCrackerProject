@@ -34,6 +34,8 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		if (!sharedData.getIsAdmin()) { $location.path('/') };
 	}());
 
+	$scope.isAdmin = sharedData.getIsAdmin();
+
 	/* Инициализация служебных переменных */
 	function resetFlags() {
 		$scope.added = false;

@@ -153,6 +153,14 @@
 .editWindow .createUpdateForm .form-field-bottom-border {
     border-bottom: 1px solid #d1d1d1;
 }
+
+.editWindow .groupInput {
+    margin-bottom: 30px;
+}
+
+.editWindow .phoneButtonGroup {
+    padding-top: 5px;
+}
 /* ---------------------------------- */
 
 

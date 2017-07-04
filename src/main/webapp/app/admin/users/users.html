@@ -12,59 +12,73 @@
         <ng-include src="'app/admin/template/serverError.html'"></ng-include>
 
         <!-- List of objects in workspace -->
-        <div class="listOfObjects" ng-if="!modificationMode">
+        <div class="listOfObjects" ng-if="mode == 'look'">
             <ul class="pager">
                 <li><a ng-click="previousUsers()"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li>
                 <li><input type="number" min="1" max="999" ng-model="pager.objectsOnPage"></li>
                 <li><a ng-click="nextUsers()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
             <div class="row">
-                <div ng-repeat-start="user in listOfUsers | orderBy : 'role' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-4 admin-notes">
+                <div ng-repeat-start="user in listOfUsers | orderBy : 'role' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-6 admin-notes">
                     <div class="block-border">
-                        <p> Last Name: {{ user.lastName }} </p>
-                        <p class="top-bottom-border"> First Name: {{ user.firstName }} </p>
-                        <p> Role: {{ user.role.roleName }} </p>
-                        <p class="top-bottom-border"> Email: {{ user.email }} </p>
-                        <p> Additional info: {{ user.additionalInfo }} </p>
-                        <p class="top-border"> Enabled: {{ user.enabled }} </p>
-                        <div ng-repeat="phone in user.phones" class="top-border">
-                            <p> Phone: {{ phone.phoneNumber }} </p>
+                        <div class="text-center order-padding-top-bottom" ng-if="!user.enabled">DISABLED</div>
+                        <div class="order-padding-bottom"> Name: {{ user.firstName }} {{ user.lastName }} </div>
+                        <div class="top-bottom-border"> Email: {{ user.email }} </div>
+                        <div class="bottom-border"> Role: {{ user.role.roleName }} </div>
+
+                        <div class="order-padding-top-bottom listButton bottom-border"
+                                    ng-if="expand.id != user.objectId" ng-click="expand.id = user.objectId">
+                            Show additional info
                         </div>
+                        <div class="order-padding-top-bottom bottom-border"
+                                    ng-if="expand.id == user.objectId" ng-click="expand.id = 0">
+                            <div class="listButton">
+                                Hide additional info
+                            </div>
+                            <div> {{ user.additionalInfo }} </div>
+                        </div>
+
+                        <div class="order-padding-top" ng-repeat="phone in user.phones"> Phone: {{ phone.phoneNumber }} </div>
+
                         <div class="text-right">
                             <button type="button" class="btn btn-primary btn-md"
                                     ng-click="prepareToEditUser(user.objectId, listOfUsers.indexOf(user))">
                                 Edit
                             </button>
-                            <button type="button" class="btn btn-warning btn-md"
+
+                            <button type="button" class="btn btn-warning btn-md" ng-if="user.enabled"
                                     ng-click="prepareToDeleteUser(user.objectId, listOfUsers.indexOf(user))"
                                     data-toggle="modal" data-target="#deleteConfirmModal">
                                 Delete
                             </button>
+
+                            <button type="button" class="btn btn-success btn-md" ng-if="!user.enabled"
+                                    ng-click="prepareToReestablishUser(user.objectId, listOfUsers.indexOf(user))"
+                                    data-toggle="modal" data-target="#editConfirmModal">
+                                Reestablish
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="clearfix" ng-if="($index+1)%3==0"></div>
+                <div class="clearfix" ng-if="($index+1)%2==0"></div>
                 <div ng-repeat-end=""></div>
             </div>
         </div>
 
 
-        <!-- Form for add or edit -->
-        <div class="editWindow" ng-if="modificationMode">
+
+
+
+        <!-- Form for add -->
+        <div class="editWindow" ng-if="mode == 'add'">
             <div>
                 <button ng-click="back()" class="btn btn-info btn-sm back">
                     <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back to users
                 </button>
 
                 <div class="answer">
-                    <!-- Successfully added -->
-                    <div ng-if="added">
+                    <div ng-if="stage == 'added'">
                         Successfully added! <i class="fa fa-check" aria-hidden="true"></i>
-                    </div>
-
-                    <!-- Successfully updated -->
-                    <div ng-if="stage == 'updated'">
-                        Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
                     </div>
                 </div>
 
@@ -72,78 +86,232 @@
             <div class="err" ng-if=" stage == 'invalidInputData'">
                 Password and confirm password not equals! <i class="fa fa-times" aria-hidden="true"></i>
             </div>
-            <div class="col-sm-offset-3 col-sm-5 createUpdateForm">
-                <form class="form-horizontal" name="createUpdateForm">
+            <div class="col-sm-offset-3 col-sm-6 createUpdateForm">
+                <form class="form-horizontal" name="createForm">
                     <div class="form-group">
-                        <label for="lastName" class="col-sm-6 control-label">First Name</label>
-                        <div class="col-sm-6">
-                            <input type="text" id="lastName" ng-required="true" ng-model="user.lastName">
+                        <label for="lastName" class="col-sm-4 control-label">First Name</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="lastName" ng-required="true" ng-model="user.lastName">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="firstName" class="col-sm-6 control-label">Last Name</label>
-                        <div class="col-sm-6">
-                            <input type="text" id="firstName" ng-required="true" ng-model="user.firstName">
+                        <label for="firstName" class="col-sm-4 control-label">Last Name</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="firstName" ng-required="true" ng-model="user.firstName">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="role" class="col-sm-6 control-label">Role</label>
-                        <div class="col-sm-6">
-                            <select id="role" class="form-control" ng-required="true" ng-model="user.role"
+                        <label for="role" class="col-sm-4 control-label">Role</label>
+                        <div class="col-sm-7">
+                            <select id="role" class="form-control" class="form-control" ng-required="true" ng-model="user.role"
                                     ng-options="role.objectId as role.roleName for role in listOfRoles">
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="email" class="col-sm-6 control-label">Email</label>
-                        <div class="col-sm-6">
-                            <input type="text" id="email" ng-required="true" ng-model="user.email"
+                        <label for="email" class="col-sm-4 control-label">Email</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="email" ng-required="true" ng-model="user.email"
                                    ng-pattern = '/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i'>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="password" class="col-sm-6 control-label">Password</label>
-                        <div class="col-sm-6">
-                            <input type="password" id="password" ng-required="true" ng-model="user.password"
+                        <label for="password" class="col-sm-4 control-label">Password</label>
+                        <div class="col-sm-7">
+                            <input type="password" class="form-control" id="password" ng-required="true" ng-model="user.password"
                                    ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="confirm" class="col-sm-6 control-label">Confirm password</label>
-                        <div class="col-sm-6">
-                            <input type="password" id="confirm" ng-required="true" ng-model="user.confirm"
+                        <label for="confirm" class="col-sm-4 control-label">Confirm</label>
+                        <div class="col-sm-7">
+                            <input type="password" class="form-control" id="confirm" ng-required="true" ng-model="user.confirm"
                                    ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="phone" class="col-sm-6 control-label">Phone </label>
-                        <div class="col-sm-6">
-                            <input type="text" id="phone" ng-required="true" ng-model="user.phone"
+                        <label for="phone" class="col-sm-4 control-label">Phone </label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" id="phone" ng-required="true" ng-model="user.phone"
                                    ng-pattern="/^\+\d{1,2}\(\d{3}\)\d{2}\-\d{2}\-\d{3}$|^\+\d{12}$|^\d{7}$|^[0]\d{9}$/">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="additionalInfo" class="col-sm-6 control-label">Additional info</label>
-                        <div class="col-sm-6">
-                            <input type="text" id="additionalInfo" ng-required="true" ng-model="user.additionalInfo">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="enabled" class="col-sm-6 control-label">Enables</label>
-                        <div class="col-sm-3">
-                            <select id="enabled" class="form-control" ng-required="true" ng-model="user.enabled"
-                                    ng-options="enb for enb in enabled">
-                            </select>
+                        <label for="additionalInfo" class="col-sm-4 control-label">Additional info</label>
+                        <div class="col-sm-7">
+                            <textarea class="form-control" id="additionalInfo" ng-required="true" ng-model="user.additionalInfo"></textarea>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="text-center">
-                            <button class="btn btn-primary" ng-disabled="createUpdateForm.$invalid" data-toggle="modal" data-target="#editConfirmModal">OK</button>
+                            <button class="btn btn-primary" ng-disabled="createForm.$invalid" data-toggle="modal" data-target="#editConfirmModal">OK</button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
+
+
+
+
+
+
+        <!-- Form for edit -->
+        <div class="editWindow" ng-if="mode == 'edit'">
+            <div>
+                <button ng-click="back()" class="btn btn-info btn-sm back">
+                    <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back to users
+                </button>
+
+                <div class="answer">
+                    <div ng-if="stage == 'edited'">
+                        Successfully edited! <i class="fa fa-check" aria-hidden="true"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="err" ng-if=" stage == 'invalidInputData'">
+                Password and confirm password not equals! <i class="fa fa-times" aria-hidden="true"></i>
+            </div>
+
+            <div class="col-sm-offset-3 col-sm-6 createUpdateForm">
+                <form class="form-horizontal" name="updateForm" novalidate>
+                    <div class="groupInput">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label" for="firstNameInput">First name:</label>
+                            <div class="col-sm-7">
+                                <input class="form-control" type="text" id="firstNameInput"
+                                    ng-model="user.firstName">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label" for="lastNameInput">Last name:</label>
+                            <div class="col-sm-7">
+                                <input class="form-control" type="text" id="lastNameInput"
+                                    ng-model="user.lastName">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label" for="emailInput">Email:</label>
+                            <div class="col-sm-7">
+                                <input class="form-control" type="text" id="emailInput" ng-model="user.email"
+                                       ng-pattern = '/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i'>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label" for="infoInput">Additional info:</label>
+                            <div class="col-sm-7">
+                                <textarea class="form-control" id="infoInput" ng-model="user.additionalInfo"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group text-center">
+                            <button class="btn btn-primary" ng-click="prepareToEditBasicInfo()"
+                                    data-toggle="modal" data-target="#editConfirmModal">
+                                Update basic info
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="groupInput">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label" for="oldPasswordInput">Old password:</label>
+                            <div class="col-sm-7">
+                                <input class="form-control" type="password" id="oldPasswordInput"
+                                    ng-model="user.oldPassword">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label" for="newPasswordInput">New password:</label>
+                            <div class="col-sm-7">
+                                <input class="form-control" type="password" id="newPasswordInput" ng-model="user.newPassword"
+                                       ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label" for="passwordRepInput">Repeat:</label>
+                            <div class="col-sm-7">
+                                <input class="form-control" type="password" id="passwordRepInput"
+                                    ng-model="user.newPasswordRep">
+                            </div>
+                        </div>
+                        <div class="form-group text-center">
+                            <button class="btn btn-primary" ng-click="prepareToChangePassword()"
+                                    data-toggle="modal" data-target="#editConfirmModal">
+                                Change password
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="groupInput">
+                        <div ng-repeat="phone in user.phones">
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Phone Number:</label>
+                                </div>
+                                <div class="col-sm-7">
+                                    <input type="tel" class="form-control" id="phoneNumberInput"
+                                        ng-model="phone.phoneNumber">
+                                </div>
+                                <div class="col-sm-7 col-sm-offset-4 phoneButtonGroup">
+                                    <button class="btn btn-default" ng-click="prepareToEditPhone(phone.objectId, user.phones.indexOf(phone))"
+                                            data-toggle="modal" data-target="#editConfirmModal">
+                                        Edit
+                                    </button>
+                                    <button class="btn btn-default"
+                                            ng-click="prepareToDeletePhone(phone.objectId, user.phones.indexOf(phone))"
+                                            data-toggle="modal" data-target="#deleteConfirmModal">
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="groupInput">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <button class="btn btn-default"
+                                        ng-click="prepareToAddPhone()">
+                                    <i class="fa fa-plus" aria-hidden="true"></i> Add one
+                                </button>
+                            </div>
+                            <div ng-if="stage == 'addPhone'" class="newPhone">
+                                <div class="col-sm-7">
+                                    <input class="form-control" type="tel" ng-model="user.newPhone">
+                                </div>
+                                <div class="col-sm-7 col-sm-offset-4 phoneButtonGroup">
+                                    <button class="btn btn-default" ng-click="query()">
+                                        Accept <i class="fa fa-check" aria-hidden="true"></i>
+                                    </button>
+                                    <button class="btn btn-default" ng-click="cancelPhone()">
+                                        Cancel <i class="fa fa-times" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="groupInput">
+                        <div class="col-sm-4">
+                            <label class="control-label">Role:</label>
+                        </div>
+                        <div class="col-sm-7">
+                            <select id="notificationTypeRole" class="form-control" ng-model="user.role.objectId"
+                                ng-options="role.objectId as role.roleName for role in listOfRoles">
+                            </select>
+                        </div>
+                        <div class="col-sm-7 col-sm-offset-4 phoneButtonGroup">
+                            <button class="btn btn-primary" ng-click="prepareToChangeRole()"
+                                    data-toggle="modal" data-target="#editConfirmModal">
+                                Change role
+                            </button>
+                        </div>
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+
+
     </div>
 </div>
 

@@ -154,7 +154,6 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
                 console.log($scope.notificationType);
                 console.log($scope.indexForOperation);
                 $scope.listOfNotificationTypes[$scope.indexForOperation].notificationTypeTitle = $scope.notificationType.notificationTypeTitle;
-                //$scope.listOfNotificationTypes[$scope.indexForOperation].orientedRole = $scope.notificationType.orientedRole;
                 $scope.listOfNotificationTypes[$scope.indexForOperation].orientedRole = util.getObjectInArrayById($scope.listOfRoles, $scope.notificationType.orientedRole);
                 console.log($scope.listOfNotificationTypes);
                 $scope.updated = true;

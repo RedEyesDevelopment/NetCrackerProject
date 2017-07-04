@@ -30,8 +30,12 @@
                                         <p class="text-left small">{{ auth.myself.email }}</p>
                                         <p class="text-left">
                                             <a href="#/personal/settings" class="btn btn-primary btn-block btn-sm">Personal settings</a>
-                                            <a href="#/admin/rooms" class="btn btn-primary btn-block btn-sm" ng-if="auth.isAdmin">Admin desktop</a>
-                                            <a data-toggle="modal" data-target="#statisticConfirmation" class="btn btn-primary btn-block btn-sm"  ng-if="auth.isAdmin">
+                                            <a href="#/admin/rooms" class="btn btn-primary btn-block btn-sm"
+                                                    ng-if="auth.isAdmin || auth.isReception">
+                                                Admin desktop
+                                            </a>
+                                            <a data-toggle="modal" data-target="#statisticConfirmation" class="btn btn-primary btn-block btn-sm" 
+                                                    ng-if="auth.isAdmin || auth.isReception">
                                                 Get room statistic on email
                                             </a>
                                         </p>

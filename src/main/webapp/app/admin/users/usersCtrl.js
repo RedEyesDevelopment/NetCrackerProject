@@ -34,101 +34,58 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		if (!sharedData.getIsAdmin()) { $location.path('/') };
 	}());
 
-	/* Инициализация служебных переменных */
-	function resetFlags() {
-		$scope.added = false;
-		$scope.updated = false;
-		$scope.deleted = false;
-	}
+	// это для кнопок дополнительной информации (не удалять!)
+	$scope.expand = {id : 0};
 
 	$scope.enabled = [true, false];
 	$scope.user = {};
-	resetFlags();
 
-	$scope.stage = "looking";
+	$scope.mode = "look";
 
 	$scope.pager = {
 		startPaging : 0,
 		objectsOnPage : 6
 	}
 
-
-	/* Функции подготовки запросов */
-	$scope.prepareToAddUser = function() {
-		$scope.indexForOperation = "";
-		$scope.user.idForOperation = "";
-		$scope.user.lastName = "";
-		$scope.user.firstName = "";
-		$scope.user.role = "";
-		$scope.user.email = "";
-        $scope.user.additionalInfo = "";
-        $scope.user.enabled = "";
-        $scope.user.phone = "";
-		resetFlags();
-		$scope.stage = "adding";
-		$scope.modificationMode = true;
-	}
-
-	$scope.prepareToEditUser = function(userId, index) {
-		$http({
-			url: sharedData.getLinks().https + '/users/' + userId,
-			method: 'GET',
-			headers: {'Content-Type': 'application/json'}
-		}).then(function(data) {
-			console.log(data);
-			$scope.indexForOperation = index;
-			$scope.user.idForOperation = userId;
-			$scope.user.lastName = data.data.lastName;
-			$scope.user.firstName = data.data.firstName;
-			$scope.user.role = data.data.role.objectId;
-			$scope.user.email = data.data.email;
-            $scope.user.additionalInfo = data.data.additionalInfo;
-            $scope.user.enabled = data.data.enabled;
-			resetFlags();
-			$scope.stage = "editing";
-			$scope.modificationMode = true;
-
-		}, function(response) {
-			console.log("Smth wrong!!");
-			console.log(response);
-		});
-	}
-
-	$scope.prepareToDeleteUser = function(userId, index) {
-		$scope.indexForOperation = index;
-		$scope.user.idForOperation = userId;
-		resetFlags();
-		$scope.stage = "deleting";
-	}
-
 	/* Возврат на просмотр */
 	$scope.back = function() {
-		$scope.stage = "looking";
+		$scope.mode = "look";
 		$scope.modificationMode = false;
 	}
 
-	/* Вызывает нужный запрос в зависимости от типа операции */
 	$scope.query = function() {
 		switch ($scope.stage) {
 			case 'adding': addUser();
 				break;
-			case 'editing': editUser();
-				break;
 			case 'deleting': deleteUser();
+				break;
+			case 'reestablishing': reestablishUser();
+				break;
+			case 'changeRole': changeRole();
+				break;
+			case 'editBasicInfo': editBasicInfo();
+				break;
+			case 'changePassword': changePassword();
+				break;
+			case 'addPhone': addPhone();
+				break;
+			case 'editPhone': editPhone();
+				break;
+			case 'deletePhone': deletePhone();
 				break;
 		}
 	}
 
-	/* Функции, выполняющие запросы */
+
+	$scope.prepareToAddUser = function() {
+		$scope.userIdForOperation = "";
+		$scope.userIndexForOperation = "";
+		$scope.user = {};
+		$scope.stage = "adding";
+		$scope.mode = "add";
+	}
+
 	var addUser = function() {
-		resetFlags();
-		console.log($scope.user.email)
-		console.log($scope.user.password)
-		console.log($scope.user.firstName)
-		console.log($scope.user.lastName)
-		console.log($scope.user.additionalInfo)
-		console.log($scope.user.phone)
-		console.log($scope.user.role)
         if ($scope.user.confirm == $scope.user.password) {
             $http({
                 url: sharedData.getLinks().https + '/users',
@@ -156,9 +113,8 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
                     console.log("Smth wrong!!");
                     console.log(response);
                 });
-
                 $scope.prepareToAddUser();
-                $scope.added = true;
+                $scope.stage = "added";
             }, function (response) {
                 console.log("Smth wrong!!");
                 console.log(response);
@@ -169,57 +125,228 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
         }
 	}
 
-	var editUser = function() {
-		resetFlags();
-        console.log($scope.user.confirm);
-        if ($scope.user.confirm == $scope.user.password) {
-            $http({
-                url: sharedData.getLinks().https + '/users/' + $scope.user.idForOperation,
-                method: 'PUT',
-                data: {
-                    lastName: $scope.user.lastName,
-                    firstName: $scope.user.firstName,
-                    role: parseInt($scope.user.role),
-                    email: $scope.user.email,
-                    additionalInfo: $scope.user.additionalInfo,
-                    enabled: $scope.user.enabled
-                },
-                headers: {'Content-Type': 'application/json'}
-            }).then(function (data) {
-                console.log(data);
-                $scope.listOfUsers[$scope.indexForOperation].lastName = $scope.user.lastName;
-                $scope.listOfUsers[$scope.indexForOperation].firstName = $scope.user.firstName;
-                $scope.listOfUsers[$scope.indexForOperation].role = util.getObjectInArrayById($scope.listOfRoles, $scope.user.role);
-                $scope.listOfUsers[$scope.indexForOperation].email = $scope.user.email;
-                $scope.listOfUsers[$scope.indexForOperation].additionalInfo = $scope.user.additionalInfo;
-                $scope.listOfUsers[$scope.indexForOperation].enabled = $scope.user.enabled;
-                $scope.stage = 'updated';
-            }, function (response) {
-                console.log("Smth wrong!!");
-                console.log(response);
-                $scope.errMessage = "serverErr";
-            });
-        } else {
-            $scope.stage = "invalidInputData";
-        }
+
+	$scope.prepareToDeleteUser = function(userId, index) {
+		$scope.userIndexForOperation = index;
+		$scope.userIdForOperation = userId;
+		$scope.stage = "deleting";
 	}
 
 	var deleteUser = function() {
-		resetFlags();
 		$http({
-			url: sharedData.getLinks().https + '/users/' + $scope.user.idForOperation,
-			method: 'DELETE',
+			url: sharedData.getLinks().https + '/users/delete/' + $scope.userIdForOperation,
+			method: 'PUT',
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfUsers.splice($scope.indexForOperation, 1);
-			$scope.deleted = true;
+			$scope.listOfUsers[$scope.userIndexForOperation].enabled = false;
+			$scope.stage = "deleted";
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
             $scope.errMessage = "serverErr";
 		});
 	}
+
+
+	$scope.prepareToReestablishUser = function(userId, index) {
+		$scope.userIndexForOperation = index;
+		$scope.userIdForOperation = userId;
+		$scope.stage = "reestablishing";
+	}
+
+	var reestablishUser = function() {
+		$http({
+			url: sharedData.getLinks().https + '/users/restore/' + $scope.userIdForOperation,
+			method: 'PUT',
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			$scope.listOfUsers[$scope.userIndexForOperation].enabled = true;
+			$scope.stage = "reestablished";
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+            $scope.errMessage = "serverErr";
+		});
+	}
+
+
+
+	$scope.prepareToEditUser = function(userId, index) {
+		$scope.userIdForOperation = userId;
+		$scope.userIndexForOperation = index;
+		$http({
+			url: sharedData.getLinks().https + '/users/' + $scope.userIdForOperation,
+			method: 'GET',
+			headers: {'Content-Type' : 'application/json'}
+		}).then(function(data) {
+			console.log(data);
+			$scope.user = data.data;
+			$scope.stage = "editing";
+			$scope.mode = 'edit';
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}
+
+
+	$scope.prepareToChangeRole = function() {
+		$scope.stage = "changeRole";
+	}
+
+	var changeRole = function() {
+		console.log($scope.user.role.objectId);
+		$http({
+			url: sharedData.getLinks().https + 'admin/update/role/' + $scope.userIdForOperation,
+			method: 'PUT',
+			data: $scope.user.role.objectId,
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			$scope.listOfUsers[$scope.userIndexForOperation].role = util.getObjectInArrayById($scope.listOfRoles, $scope.user.role.objectId);
+			$scope.stage = "edited";
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}
+
+
+	$scope.prepareToEditBasicInfo = function() {
+		$scope.stage = "editBasicInfo";
+	}
+
+	var editBasicInfo = function() {
+		$http({
+			url: sharedData.getLinks().https + '/users/admin/update/basic/' + $scope.userIdForOperation,
+			method: 'PUT',
+			data: {
+				firstName : $scope.user.firstName,
+				lastName : $scope.user.lastName,
+				email : $scope.user.email,
+				additionalInfo : $scope.user.additionalInfo
+			},
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			$scope.listOfUsers[$scope.userIndexForOperation].firstName = $scope.user.firstName;
+			$scope.listOfUsers[$scope.userIndexForOperation].lastName = $scope.user.lastName;
+			$scope.listOfUsers[$scope.userIndexForOperation].email = $scope.user.email;
+			$scope.listOfUsers[$scope.userIndexForOperation].additionalInfo = $scope.user.additionalInfo;
+			$scope.stage = "edited";
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}
+
+
+
+	$scope.prepareToChangePassword = function() {
+		$scope.stage = "changePassword";
+	}
+
+	var changePassword = function() {
+		if ($scope.user.newPassword === $scope.user.newPasswordRep) {			
+			$http({
+				url: sharedData.getLinks().https + '/users/admin/update/password/' + $scope.userIdForOperation,
+				method: 'PUT',
+				data: {
+					oldPassword : $scope.user.oldPassword,
+					newPassword : $scope.user.newPassword
+				},
+				headers: { 'Content-Type' : 'application/json' }
+			}).then(function(data) {
+				console.log(data);
+				$scope.stage = "edited";
+			}, function(response) {
+				console.log("Smth wrong!!");
+				console.log(response);
+			});
+		} else {
+			$scope.stage = "diffPasswords";
+		}
+	}
+
+
+
+	$scope.prepareToAddPhone = function() {
+		$scope.stage = "addPhone";
+	}
+
+	var addPhone = function() {
+		$http({
+			url: sharedData.getLinks().https + '/phones',
+			method: 'POST',
+			data: {
+				userId: 		$scope.userIdForOperation,
+				phoneNumber: 	$scope.user.newPhone
+			},
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			$scope.listOfUsers[$scope.userIndexForOperation].phones.push({
+				objectId: data.data.objectId,
+				phoneNumber: $scope.user.newPhone
+			});
+			$scope.stage = "edited";
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}
+
+
+	
+	$scope.prepareToEditPhone = function(objId, index) {
+		$scope.phoneObjIdForOperation = objId;
+		$scope.phoneIndexForOperation = index;
+		$scope.stage = "editPhone";
+	}
+
+	var editPhone = function() {
+		$http({
+			url: sharedData.getLinks().https + '/phones/' + $scope.phoneObjIdForOperation,
+			method: 'PUT',
+			data: {
+				userId: 		$scope.userIdForOperation,
+				phoneNumber: 	$scope.user.phones[$scope.phoneIndexForOperation].phoneNumber
+			},
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			$scope.listOfUsers[$scope.userIndexForOperation].phones[$scope.phoneIndexForOperation].phoneNumber = $scope.user.phones[$scope.phoneIndexForOperation].phoneNumber
+			$scope.stage = "edited";
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}
+
+
+
+	$scope.prepareToDeletePhone = function(objId, index) {
+		$scope.phoneObjIdForOperation = objId;
+		$scope.phoneIndexForOperation = index;
+		$scope.stage = "deletePhone";
+	}
+
+	var deletePhone = function() {
+		$http({
+			url: sharedData.getLinks().https + '/phones/' + $scope.phoneObjIdForOperation,
+			method: 'DELETE',
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			$scope.listOfUsers[$scope.userIndexForOperation].phones.splice($scope.phoneIndexForOperation, 1);
+			$scope.stage = "edited";
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}
+
 
 
 	/* Для листания страниц с объектами */

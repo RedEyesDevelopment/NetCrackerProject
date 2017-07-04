@@ -101,7 +101,8 @@ app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 			url: sharedData.getLinks().https + '/phones',
 			method: 'POST',
 			data: {
-				phoneNumber: $scope.getMyself().newPhone
+				userId: 		$scope.getMyself().objectId,
+				phoneNumber: 	$scope.getMyself().newPhone
 			},
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
@@ -121,7 +122,8 @@ app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 			url: sharedData.getLinks().https + '/phones/' + $scope.phoneObjIdForOperation,
 			method: 'PUT',
 			data: {
-				phoneNumber: $scope.getMyself().phones[$scope.phoneIndexForOperation].phoneNumber
+				userId: 		$scope.getMyself().objectId,
+				phoneNumber: 	$scope.getMyself().phones[$scope.phoneIndexForOperation].phoneNumber
 			},
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {

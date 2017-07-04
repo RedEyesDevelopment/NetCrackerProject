@@ -93,7 +93,7 @@
 	cursor: pointer;
 }
 
-.personalArea .comment .edit textarea {
+textarea {
 	resize: none;
 }
 
