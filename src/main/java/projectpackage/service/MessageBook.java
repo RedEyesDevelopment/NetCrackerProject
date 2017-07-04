@@ -41,6 +41,7 @@ public interface MessageBook {
     String CANNOT_HAVE_DUPLICATE_COMPLIMENTARY = "This category already has this complimentary!";
     String INVALID_USER_ID = "User id and session user id not equals!";
     String INVALID_USER = "This user does not exists in DB!";
+    String EMPTY_ENTITY_STRING = "String cannot be empty!";
 }
 
 

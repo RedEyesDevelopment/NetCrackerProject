@@ -6,10 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import projectpackage.dto.IUDAnswer;
-import projectpackage.dto.UserBasicDTO;
-import projectpackage.dto.UserDTO;
-import projectpackage.dto.UserPasswordDTO;
+import projectpackage.dto.*;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
@@ -181,11 +178,13 @@ public class UserController {
     @RequestMapping(value = "admin/update/role/{id}", method = RequestMethod.PUT,
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateUserRole(@PathVariable("id") Integer id,
-                                                    @RequestBody Integer roleId, HttpServletRequest request) {
+                                                    @RequestBody RoleDTO roleDTO, HttpServletRequest request) {
         User sessionUser = (User) request.getSession().getAttribute("USER");
-        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(sessionUser, roleId, id);
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(sessionUser, roleDTO, id);
         if (!iudAnswer.isSuccessful()) {
             return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
+        } else if (roleDTO.getRoleId() == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
         }
         User user = userService.getSingleUserById(id);
 
@@ -193,7 +192,7 @@ public class UserController {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, INVALID_USER_ID), HttpStatus.BAD_REQUEST);
         }
         Role role = new Role();
-        role.setObjectId(roleId);
+        role.setObjectId(roleDTO.getRoleId());
         user.setRole(role);
         IUDAnswer answer = userService.updateUser(id, user);
         if (answer.isSuccessful()) {

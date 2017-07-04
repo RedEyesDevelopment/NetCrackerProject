@@ -57,7 +57,6 @@ public class PhoneController {
         Resource<Phone> resource = new Resource<>(phone);
         HttpStatus status;
         if (null != phone) {
-            //resource.add(linkTo(methodOn(PhoneController.class).updatePhone(phone.getObjectId(), phone)).withRel("update"));
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -79,14 +78,14 @@ public class PhoneController {
                 return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, INVALID_USER_ID), HttpStatus.BAD_REQUEST);
             }
         }
-
+        if (newPhone.getPhoneNumber() == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
+        } else if (newPhone.getPhoneNumber().isEmpty()) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, EMPTY_ENTITY_STRING), HttpStatus.BAD_REQUEST);
+        }
         IUDAnswer result = phoneService.insertPhone(newPhone);
         HttpStatus status;
-        if ((result.isSuccessful() && !serviceUtils.isAdmin(user))
-                || (result.isSuccessful() && user.getObjectId() == newPhone.getUserId() && serviceUtils.isAdmin(user))) {
-            request.getSession().setAttribute("USER", userService.getSingleUserById(user.getObjectId()));
-            status = HttpStatus.OK;
-        } else if (result.isSuccessful()) {
+        if (result.isSuccessful()) {
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -98,7 +97,7 @@ public class PhoneController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updatePhone(@PathVariable("id") Integer id, @RequestBody Phone changedPhone, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("USER");
-        IUDAnswer iudAnswer = serviceUtils.checkSessionAndData(user, changedPhone);
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAndData(user, changedPhone, id);
         if (!iudAnswer.isSuccessful()) {
             return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
@@ -107,14 +106,14 @@ public class PhoneController {
                 return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, INVALID_USER_ID), HttpStatus.BAD_REQUEST);
             }
         }
-
+        if (changedPhone.getPhoneNumber() == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
+        } else if (changedPhone.getPhoneNumber().isEmpty()) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, EMPTY_ENTITY_STRING), HttpStatus.BAD_REQUEST);
+        }
         IUDAnswer result = phoneService.updatePhone(id, changedPhone);
         HttpStatus status;
-        if ((result.isSuccessful() && !serviceUtils.isAdmin(user))
-                || (result.isSuccessful() && user.getObjectId() == changedPhone.getUserId() && serviceUtils.isAdmin(user))) {
-            request.getSession().setAttribute("USER", userService.getSingleUserById(id));
-            status = HttpStatus.OK;
-        } else if (result.isSuccessful()) {
+        if (result.isSuccessful()) {
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -130,37 +129,31 @@ public class PhoneController {
         if (!iudAnswer.isSuccessful()) {
             return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
+        User user = null;
         if (!serviceUtils.isAdmin(sessionUser)) {
-            if (sessionUser.getPhones().size() <= 1) {
-                return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, TRY_TO_DELETE_LAST_PHONE), HttpStatus.BAD_REQUEST);
-            }
-            boolean isBelongToUser = false;
-            for (Phone phone : sessionUser.getPhones()) {
-                if (phone.getUserId() == sessionUser.getObjectId()) {
-                    isBelongToUser = true;
-                    break;
-                }
-            }
-            if (!isBelongToUser) {
-                return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, PHONE_NOT_BELONG_TO_USER), HttpStatus.BAD_REQUEST);
-            }
+            user = userService.getSingleUserById(sessionUser.getObjectId());
         } else {
-            User user = userService.getSingleUserById(phoneService.getSinglePhoneById(id).getUserId());
-            if (user == null) {
-                return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, INVALID_USER), HttpStatus.BAD_REQUEST);
-            }
-            if (user.getPhones().size() <= 1) {
-                return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, TRY_TO_DELETE_LAST_PHONE), HttpStatus.BAD_REQUEST);
+            user = userService.getSingleUserById(phoneService.getSinglePhoneById(id).getUserId());
+        }
+        if (user == null) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, INVALID_USER), HttpStatus.BAD_REQUEST);
+        }
+        if (user.getPhones().size() <= 1) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, TRY_TO_DELETE_LAST_PHONE), HttpStatus.BAD_REQUEST);
+        }
+        boolean isBelongToUser = false;
+        for (Phone phone : user.getPhones()) {
+            if (phone.getUserId() == sessionUser.getObjectId()) {
+                isBelongToUser = true;
+                break;
             }
         }
-        Phone phone = phoneService.getSinglePhoneById(id);
+        if (!isBelongToUser) {
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, PHONE_NOT_BELONG_TO_USER), HttpStatus.BAD_REQUEST);
+        }
         IUDAnswer result = phoneService.deletePhone(id);
         HttpStatus status;
-        if ((result.isSuccessful() && !serviceUtils.isAdmin(sessionUser))
-                || (result.isSuccessful() && sessionUser.getObjectId() == phone.getUserId() && serviceUtils.isAdmin(sessionUser))) {
-            request.getSession().setAttribute("USER", userService.getSingleUserById(id));
-            status = HttpStatus.OK;
-        } else if (result.isSuccessful()) {
+        if (result.isSuccessful()) {
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
