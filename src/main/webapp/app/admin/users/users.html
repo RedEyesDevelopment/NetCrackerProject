@@ -40,7 +40,7 @@
 
                         <div class="order-padding-top" ng-repeat="phone in user.phones"> Phone: {{ phone.phoneNumber }} </div>
 
-                        <div class="text-right order-padding-top">
+                        <div class="text-right order-padding-top" ng-if="myObjectId() !== user.objectId">
                             <button type="button" class="btn btn-primary btn-md" ng-if="isAdmin || user.role.objectId == 3"
                                     ng-click="prepareToEditUser(user.objectId, listOfUsers.indexOf(user))">
                                 Edit

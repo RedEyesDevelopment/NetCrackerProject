@@ -47,7 +47,10 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', '$rootScope', 'sha
     };
 
     var setAuthDataFromServer = function() {
-        setLinksFromServer();
+        // Заменить на вызов функции получение ссылок в случае запуска реального сервера
+        // setLinksFromServer();
+        $scope.auth.links = { https : "http://localhost:8080" };
+
         setRoleFromSever();
         setMyselfDataFromServer();
     };

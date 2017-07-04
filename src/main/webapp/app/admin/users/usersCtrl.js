@@ -53,6 +53,10 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		objectsOnPage : 6
 	}
 
+	$scope.myObjectId = function() {
+		return sharedData.getMyself().objectId;
+	}
+
 	/* Возврат на просмотр */
 	$scope.back = function() {
 		$scope.mode = "look";

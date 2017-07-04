@@ -1,7 +1,7 @@
 app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'sharedData', 'util',
     function($scope, $http, $location, sharedData, util){
 
-	/* Функция на получения всех услуг, вызываются сразу */
+	// All notificationTypes
     (function() {
         $http({
             url: sharedData.getLinks().https + '/notificationtypes',
@@ -15,7 +15,7 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
             console.log(response);
         });
     }());
-
+    // All roles, except client
     (function() {
         $http({
             url: sharedData.getLinks().https + '/roles',
@@ -23,7 +23,12 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
-            $scope.listOfRoles = data.data;
+            $scope.listOfRoles = new Array();
+            data.data.forEach(function(role) {
+                if (role.objectId != 3) {
+                    $scope.listOfRoles.push(role);
+                }
+            });
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);

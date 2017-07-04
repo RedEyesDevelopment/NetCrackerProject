@@ -301,7 +301,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
                 headers: {'Content-Type' : 'application/json'}
             }).then(function(data) {
                 console.log(data);
-                if (data.data.rooms.length > 0) {
+                if (data.data.rooms !== null) {
                     $scope.anotherVariant = data.data;
                     $scope.stage = "choosingAnotherVariant";
                 } else {

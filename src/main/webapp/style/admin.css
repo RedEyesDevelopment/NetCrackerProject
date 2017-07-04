@@ -13,6 +13,11 @@
 .workspace .top .newEntity {
 	margin-top: -15px;
 }
+
+.workspace .updateList {
+    float: right;
+    margin-top: 20px;
+}
 /* --------------------------------- */
 
 

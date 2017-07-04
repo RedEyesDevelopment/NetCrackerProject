@@ -8,8 +8,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			// $scope.listOfExecNotifications = data.data;
-			$scope.listOfCurrNotifications = data.data;
+			$scope.listOfExecNotifications = data.data;
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
@@ -32,7 +31,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
         });
     };
 	// Получаем все НЕЕЕЕЕЕЕ выполненные
-    // getCurrentNotifications();
+    getCurrentNotifications();
 
     // All users
 	(function() {
@@ -87,6 +86,10 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	$scope.back = function() {
 		$scope.stage = "looking";
 		$scope.modificationMode = false;
+	}
+
+	$scope.updateList = function() {
+		getCurrentNotifications();
 	}
 
 	$scope.query = function() {

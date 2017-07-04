@@ -8,6 +8,7 @@
         <div class="top col-sm-12">
             <h2>Notifications</h2>
             <button class="btn btn-primary btn-md newEntity" ng-click="prepareToAddNotification()">New notification</button>
+            <button class="btn btn-primary btn-md updateList" ng-click="updateList()">Update list</button>
         </div>
         <ng-include src="'app/admin/template/serverError.html'"></ng-include>
 
@@ -75,12 +76,9 @@
                 </button>
 
                 <div class="answer">
-                    <!-- Successfully added -->
                     <div ng-if="added">
                         Successfully added! <i class="fa fa-check" aria-hidden="true"></i>
                     </div>
-
-                    <!-- Successfully updated -->
                     <div ng-if="updated">
                         Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
                     </div>

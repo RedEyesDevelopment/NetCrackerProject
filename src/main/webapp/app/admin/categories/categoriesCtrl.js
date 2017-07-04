@@ -144,6 +144,8 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
     $scope.prepareToAddCategory = function() {
         $scope.indexForOperation = undefined;
         $scope.category = {};
+        $scope.category.dollars = 0;
+        $scope.category.cents = 0;
         $scope.stage = "adding";
         $scope.modificationMode = true;
     }

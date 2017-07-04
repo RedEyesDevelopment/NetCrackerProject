@@ -76,10 +76,6 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     }
 
     var addRoomType = function() {
-        console.log({
-                roomTypeTitle :     $scope.roomType.roomTypeTitle,
-                roomTypeContent :   $scope.roomType.content
-            });
         $http({
             url: sharedData.getLinks().https + '/roomTypes',
             method: 'POST',
@@ -173,7 +169,14 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
 
     $scope.prepareToAddRate = function(roomTypeId) {
         $scope.idForOperation = roomTypeId;
-        $scope.rate= {};
+        $scope.rate= {
+            priceForOneDlr: 0,
+            priceForTwoDlr: 0,
+            priceForThreeDlr: 0,
+            priceForOneCent: 0,
+            priceForTwoCent: 0,
+            priceForThreeCent: 0
+        };
         $scope.stage = "addingRate";
         $scope.mode = "addOrEditRate";
     }
