@@ -21,7 +21,7 @@
             </ul>
             <div class="row">
                 <div ng-repeat-start="notification in listOfNotifications | orderBy : 'sendDate' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-4">
-                    <div class="block-border">
+                    <div class="block-border clearfix">
 
                         <button ng-if="notification.executedBy == undefined"
                             ng-click="prepareToMarkAsDone(notification.objectId)"
@@ -33,7 +33,7 @@
                         <p class="admin-notes top-bottom-border"> Notification Type: {{ notification.notificationType.notificationTypeTitle }} </p>
                         <p class="admin-notes"> Send Date: {{ notification.sendDate | date:'dd.MM.yyyy' }} </p>
                         <p class="admin-notes top-bottom-border"> Message: {{ notification.message }} </p>
-                        <p class="admin-notes"> Executed By: {{ notification.author.firstName }} {{ notification.author.lastName }} </p>
+                        <p class="admin-notes"> Executed By: {{ notification.executedBy.firstName }} {{ notification.executedBy.lastName }} </p>
                         <p class="admin-notes top-bottom-border"> Executed date: {{ notification.executedDate | date:'dd.MM.yyyy' }} </p>
                         <p class="admin-notes"> Connection to order №: {{ notification.order.objectId }} </p>
                         <div class="text-right">

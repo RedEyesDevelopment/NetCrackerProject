@@ -99,10 +99,13 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	(function() {
 		$scope.listOfResidents = [1, 2, 3];
 	}());
-	/* редирект на главную если не админ */
+
+	/* редирект на главную если не админ и не рецепция */
 	(function() {
-		if (!sharedData.getIsAdmin()) { $location.path('/') };
+		if (!sharedData.getIsAdmin() && !sharedData.getIsReception()) { $location.path('/') };
 	}());
+
+	$scope.isAdmin = sharedData.getIsAdmin();
 
 	// это для кнопок журнала использованных услуг (не удалять!)
 	$scope.expand = {id : 0};

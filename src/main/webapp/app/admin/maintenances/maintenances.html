@@ -7,7 +7,7 @@
         <!-- Top of workspace -->
         <div class="top col-sm-12">
             <h2>Maintenances</h2>
-            <button class="btn btn-primary btn-md newEntity" ng-click="prepareToAddMaintenance()">New Maintenance</button>
+            <button class="btn btn-primary btn-md newEntity" ng-if="isAdmin" ng-click="prepareToAddMaintenance()">New Maintenance</button>
         </div>
         <ng-include src="'app/admin/template/serverError.html'"></ng-include>
 
@@ -26,11 +26,11 @@
                 <li><a ng-click="nextMaintenances()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
             <div ng-repeat="maintenance in listOfMaintenances | orderBy : 'maintenanceTitle' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-5 col-sm-offset-1">
-                <div class="block-border">
+                <div class="block-border clearfix">
                     <p class="admin-notes"> Title: {{ maintenance.maintenanceTitle }} </p>
                     <p class="admin-notes top-bottom-border"> Type: {{ maintenance.maintenanceType }} </p>
                     <p class="admin-notes"> Price: {{ (maintenance.maintenancePrice / 100).toFixed(2) }} $ </p>
-                    <div class="text-right">
+                    <div class="text-right" ng-if="isAdmin">
                         <button type="button" class="btn btn-primary btn-md"
                                 ng-click="prepareToEditMaintenance(maintenance.objectId, listOfMaintenances.indexOf(maintenance))">
                             Edit

@@ -76,10 +76,12 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
     			console.log(response);
     		});
     	}());
-	/* редирект на главную если не админ */
+	/* редирект на главную если не админ и не рецепция */
 	(function() {
-		if (!sharedData.getIsAdmin()) { $location.path('/') };
+		if (!sharedData.getIsAdmin() && !sharedData.getIsReception()) { $location.path('/') };
 	}());
+
+	$scope.isAdmin = sharedData.getIsAdmin();
 
 	$scope.query = function() {
 		switch ($scope.stage) {
@@ -118,6 +120,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 
 	var markAsDone = function() {
 		console.log("a");
+		console.log($scope.idForOperation);
 		$http({
 			url: sharedData.getLinks().https + '/notifications/execute/' + $scope.idForOperation,
 			method: 'PUT'

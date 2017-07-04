@@ -7,7 +7,7 @@
         <!-- Top of workspace -->
         <div class="top col-sm-12">
             <h2>Orders</h2>
-            <button class="btn btn-primary btn-md newEntity" ng-click="prepareToAddOrder()">New order</button>
+            <button class="btn btn-primary btn-md newEntity" ng-if="isAdmin" ng-click="prepareToAddOrder()">New order</button>
         </div>
         <ng-include src="'app/admin/template/serverError.html'"></ng-include>
 
@@ -30,7 +30,7 @@
             </div>
 
             <div ng-repeat="order in listOfOrders | orderBy : 'objectId' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-12 block-border">
-                <div class="admin-notes">
+                <div class="admin-notes clearfix">
                     <div class="col-sm-12 order-bottom-border order-padding-bottom">
                         <div class="col-sm-3">
                             Order id: {{ order.objectId }}    
@@ -40,26 +40,30 @@
                         </div>
                         <div class="col-sm-5 text-right">
                             <span ng-if="order.isPaidFor">paid
-                                <button class="toggle" ng-click="prepareToSwitch(order.objectId, listOfOrders.indexOf(order), false, order.isConfirmed)"
+                                <button class="toggle" ng-if="isAdmin"
+                                        ng-click="prepareToSwitch(order.objectId, listOfOrders.indexOf(order), false, order.isConfirmed)"
                                         data-toggle="modal" data-target="#editConfirmModal">
                                     <i class="fa fa-toggle-on" aria-hidden="true"></i>
                                 </button>
                             </span>
                             <span ng-if="!order.isPaidFor">not paid
-                                <button class="toggle" ng-click="prepareToSwitch(order.objectId, listOfOrders.indexOf(order), true, order.isConfirmed)"
+                                <button class="toggle" ng-if="isAdmin"
+                                        ng-click="prepareToSwitch(order.objectId, listOfOrders.indexOf(order), true, order.isConfirmed)"
                                         data-toggle="modal" data-target="#editConfirmModal">
                                     <i class="fa fa-toggle-off" aria-hidden="true"></i
                                 ></button>
                             </span>
                              | 
                             <span ng-if="order.isConfirmed">confirmed
-                                <button class="toggle" ng-click="prepareToSwitch(order.objectId, listOfOrders.indexOf(order), order.isPaidFor, false)"
+                                <button class="toggle" ng-if="isAdmin"
+                                        ng-click="prepareToSwitch(order.objectId, listOfOrders.indexOf(order), order.isPaidFor, false)"
                                         data-toggle="modal" data-target="#editConfirmModal">
                                     <i class="fa fa-toggle-on" aria-hidden="true"></i>
                                 </button>
                             </span>
                             <span ng-if="!order.isConfirmed">not confirmed
-                                <button class="toggle" ng-click="prepareToSwitch(order.objectId, listOfOrders.indexOf(order), order.isPaidFor, true)"
+                                <button class="toggle" ng-if="isAdmin"
+                                        ng-click="prepareToSwitch(order.objectId, listOfOrders.indexOf(order), order.isPaidFor, true)"
                                         data-toggle="modal" data-target="#editConfirmModal">
                                     <i class="fa fa-toggle-off" aria-hidden="true"></i
                                 ></button>
@@ -170,7 +174,7 @@
                                 ng-click="prepareToEditOrder(order.objectId, listOfOrders.indexOf(order))">
                             Edit
                         </button>
-                        <button type="button" class="btn btn-warning btn-md"
+                        <button type="button" class="btn btn-warning btn-md" ng-if="isAdmin"
                                 ng-click="prepareToDeleteOrder(order.objectId, listOfOrders.indexOf(order))"
                                 data-toggle="modal" data-target="#deleteConfirmModal">
                             Delete

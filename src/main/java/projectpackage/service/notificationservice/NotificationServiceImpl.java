@@ -171,7 +171,7 @@ public class NotificationServiceImpl implements NotificationService{
         if (id == null) return new IUDAnswer(false, NULL_ID);
         try {
             newNotification.setObjectId(id);
-            Notification oldNotification = notificationDAO.getNotification(id);
+            Notification oldNotification = notificationDAO.getNotExecutedNotification(id);
             notificationDAO.updateNotification(newNotification, oldNotification);
         } catch (IllegalArgumentException e) {
             LOGGER.warn(WRONG_FIELD, e);

@@ -20,7 +20,7 @@
             </ul>
             <div class="row">
                 <div ng-repeat-start="user in listOfUsers | orderBy : 'role' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-6 admin-notes">
-                    <div class="block-border">
+                    <div class="block-border clearfix">
                         <div class="text-center order-padding-top-bottom" ng-if="!user.enabled">DISABLED</div>
                         <div class="order-padding-bottom"> Name: {{ user.firstName }} {{ user.lastName }} </div>
                         <div class="top-bottom-border"> Email: {{ user.email }} </div>

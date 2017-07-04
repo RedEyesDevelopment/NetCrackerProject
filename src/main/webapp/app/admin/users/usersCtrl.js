@@ -29,10 +29,12 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			console.log(response);
 		});
 	}());
-	/* редирект на главную если не админ */
+	/* редирект на главную если не админ и не рецепция */
 	(function() {
-		if (!sharedData.getIsAdmin()) { $location.path('/') };
+		if (!sharedData.getIsAdmin() && !sharedData.getIsReception()) { $location.path('/') };
 	}());
+
+	$scope.isAdmin = sharedData.getIsAdmin();
 
 	// это для кнопок дополнительной информации (не удалять!)
 	$scope.expand = {id : 0};

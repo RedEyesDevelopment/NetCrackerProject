@@ -7,7 +7,7 @@
         <!-- Top of workspace -->
         <div class="top col-sm-12">
             <h2>Categories</h2>
-            <button class="btn btn-primary btn-md newEntity" ng-click="prepareToAddCategory()">New Category</button>
+            <button class="btn btn-primary btn-md newEntity" ng-if="isAdmin" ng-click="prepareToAddCategory()">New Category</button>
         </div>
         <ng-include src="'app/admin/template/serverError.html'"></ng-include>
 
@@ -25,7 +25,7 @@
             </div>
 
             <div ng-repeat="category in listOfCategories | orderBy : 'categoryTitle' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-6">
-                <div class="block-border">
+                <div class="block-border clearfix">
                     <div class="admin-notes">
                         <p> Title: {{ category.categoryTitle }} </p>
                         <p class="top-bottom-border"> Price: {{ (category.categoryPrice / 100).toFixed(2) }} $ </p>
@@ -45,22 +45,25 @@
                                 <tr>
                                     <th>Maintenance</th>
                                     <th>Type</th>
-                                    <th>Delete</th>
+                                    <th ng-if="isAdmin">Delete</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr ng-repeat="complimentary in category.complimentaries | orderBy : 'complimentary.maintenance.maintenanceTitle'">
                                     <th>{{ complimentary.maintenance.maintenanceTitle }}</th>
                                     <th>{{ complimentary.maintenance.maintenanceType }}</th>
-                                    <th><button class="deleteMaintenance" data-toggle="modal" data-target="#deleteConfirmModal"
+                                    <th ng-if="isAdmin">
+                                        <button class="deleteMaintenance" data-toggle="modal" data-target="#deleteConfirmModal"
                                         ng-click="prepareToDeleteComplimentary(complimentary.objectId, listOfCategories.indexOf(category), category.complimentaries.indexOf(complimentary))">
-                                    delete</button></th>
+                                            delete
+                                        </button>
+                                    </th>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <div class="text-right">
+                    <div class="text-right" ng-if="isAdmin">
                         <button type="button" class="btn btn-success btn-md"
                                 data-toggle="modal" data-target="#addComplimentary"
                                 ng-click="prepareToAddComplimentary(category.objectId, listOfCategories.indexOf(category))">

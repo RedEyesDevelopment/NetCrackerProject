@@ -47,8 +47,8 @@ app.controller('headerCtrl', ['$scope', '$http', '$location', '$rootScope', 'sha
     };
 
     var setAuthDataFromServer = function() {
-        setRoleFromSever();
         setLinksFromServer();
+        setRoleFromSever();
         setMyselfDataFromServer();
     };
 

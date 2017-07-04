@@ -16,10 +16,12 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
         });
     };
     getAllRoomTypes();
-    /* редирект на главную если не админ */
+    /* редирект на главную если не админ и не рецепция */
     (function() {
-        if(!sharedData.getIsAdmin()) { $location.path('/') };
+        if (!sharedData.getIsAdmin() && !sharedData.getIsReception()) { $location.path('/') };
     }());
+
+    $scope.isAdmin = sharedData.getIsAdmin();
 
     // это для кнопок списка rates (не удалять!)
     $scope.expand = {id : 0};

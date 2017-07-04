@@ -7,7 +7,7 @@
     	<!-- Top of workspace -->
         <div class="top col-sm-12">
             <h2>Rooms</h2>
-            <button class="btn btn-primary btn-md newEntity" ng-click="prepareToAddRoom()">New room</button>
+            <button class="btn btn-primary btn-md newEntity" ng-if="isAdmin" ng-click="prepareToAddRoom()">New room</button>
         </div>
         <ng-include src="'app/admin/template/serverError.html'"></ng-include>
 
@@ -20,11 +20,11 @@
                 <li><a ng-click="nextRooms()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
             <div ng-repeat="room in listOfRooms | orderBy : 'roomNumber' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-4">
-                <div class="block-border">
+                <div class="block-border clearfix">
                     <p class="admin-notes"> Room number: {{ room.roomNumber }} </p>
                     <p class="admin-notes top-bottom-border"> Room type: {{ room.roomType.roomTypeTitle }} </p>
                     <p class="admin-notes"> Number of residents: {{ room.numberOfResidents }} </p>
-                    <div class="text-right">
+                    <div class="text-right" ng-if="isAdmin">
                         <button type="button" class="btn btn-primary btn-md"
                                 ng-click="prepareToEditRoom(room.objectId, listOfRooms.indexOf(room))">
                             Edit
