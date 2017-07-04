@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
 import projectpackage.repository.AbstractDAO;
@@ -26,7 +25,6 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
     JdbcTemplate jdbcTemplate;
 
     @Override
-    @Transactional(readOnly = true)
     public Rate getRate(Integer id) {
         if (null == id) {
             return null;
@@ -38,7 +36,6 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Rate> getAllRates() {
         return manager.createReactEAV(Rate.class).fetchRootChild(Price.class).closeAllFetches().getEntityCollection();
     }
@@ -80,7 +77,6 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
         return insertedRateId.intValue();
     }
 
-    @Transactional
     @Override
     public void deleteRate(Integer id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
         if (id == null) {

@@ -10,8 +10,6 @@ import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.User;
 import projectpackage.repository.authdao.PhoneDAO;
 import projectpackage.repository.authdao.UserDAO;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.service.regex.RegexService;
 import projectpackage.service.securityservice.SecurityService;
 
@@ -70,19 +68,8 @@ public class UserServiceImpl implements UserService {
         if (id == null) {
             return new IUDAnswer(false, NULL_ID);
         }
-        try {
-            userDAO.deleteUser(id);
-		} catch (DeletedObjectNotExistsException e) {
-			LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
-			return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
-		} catch (WrongEntityIdException e) {
-			LOGGER.warn(WRONG_DELETED_ID, e);
-			return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
-		} catch (IllegalArgumentException e) {
-			LOGGER.warn(NULL_ID, e);
-			return new IUDAnswer(id, false, NULL_ID, e.getMessage());
-		}
-        userDAO.commit();
+        userDAO.deleteUser(id);
+
         return new IUDAnswer(id, true);
 	}
 
@@ -147,7 +134,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public IUDAnswer updateUserPassword(Integer id, User newUser) {
 		if (newUser == null) {
-			return null;
+			return new IUDAnswer(false, NULL_ENTITY);
 		}
 		if (id == null) {
 			return new IUDAnswer(false, NULL_ID);

@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.model.rates.Rate;
 import projectpackage.repository.ratesdao.RateDAO;
@@ -22,6 +23,7 @@ public class RateServiceImpl implements RateService{
     @Autowired
     ServiceUtils serviceUtils;
 
+    @Transactional(readOnly = true)
     @Override
     public List<Rate> getAllRates() {
         List<Rate> rates = rateDAO.getAllRates();
@@ -31,6 +33,7 @@ public class RateServiceImpl implements RateService{
         return rates;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Rate getSingleRateById(Integer id) {
         Rate rate = rateDAO.getRate(id);
@@ -40,21 +43,16 @@ public class RateServiceImpl implements RateService{
         return rate;
     }
 
+    @Transactional
     @Override
     public IUDAnswer insertRate(Rate rate) {
         if (rate == null) {
-            return null;
+            return new IUDAnswer(false, NULL_ENTITY);
         } else if (!serviceUtils.checkDatesForRate(rate.getRateFromDate(), rate.getRateToDate())) {
             return new IUDAnswer(false, WRONG_RATE_DATES);
         }
-        Integer rateId = null;
-        try {
-            rateId = rateDAO.insertRate(rate);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn(WRONG_FIELD, e);
-            return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
-        }
-        rateDAO.commit();
+        Integer rateId = rateDAO.insertRate(rate);
+
         return new IUDAnswer(rateId,true);
     }
 }

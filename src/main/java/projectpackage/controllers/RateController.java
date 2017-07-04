@@ -1,5 +1,6 @@
 package projectpackage.controllers;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
@@ -22,10 +23,13 @@ import java.util.Set;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static projectpackage.service.MessageBook.WRONG_FIELD;
 
 @RestController
 @RequestMapping("/rates")
 public class RateController {
+
+    private static final Logger LOGGER = Logger.getLogger(RateController.class);
 
     @Autowired
     RateService rateService;
@@ -88,13 +92,19 @@ public class RateController {
         rate.setRateToDate(rateDTO.getRateToDate());
         rate.setPrices(prices);
 
-        IUDAnswer result = rateService.insertRate(rate);
+        try {
+            iudAnswer = rateService.insertRate(rate);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_FIELD, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
         HttpStatus status;
-        if (result.isSuccessful()) {
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
             status = HttpStatus.CREATED;
-        } else status = HttpStatus.BAD_REQUEST;
-        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
-        return responseEntity;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+        }
+        return new ResponseEntity<IUDAnswer>(iudAnswer, status);
     }
 
 }

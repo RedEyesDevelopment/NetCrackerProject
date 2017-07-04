@@ -1,16 +1,17 @@
 package projectpackage.controllers;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import projectpackage.dto.IUDAnswer;
 import projectpackage.model.auth.User;
 import projectpackage.model.rates.Price;
-import projectpackage.dto.IUDAnswer;
-import projectpackage.service.MessageBook;
 import projectpackage.service.rateservice.PriceService;
+import projectpackage.service.support.ServiceUtils;
 
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static projectpackage.service.MessageBook.WRONG_FIELD;
 
 /**
  * Created by Lenovo on 28.05.2017.
@@ -27,8 +29,14 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/prices")
 public class PriceController {
+
+    private static final Logger LOGGER = Logger.getLogger(PriceController.class);
+
     @Autowired
     PriceService priceService;
+
+    @Autowired
+    ServiceUtils serviceUtils;
 
     //Get Price List
     @ResponseStatus(HttpStatus.OK)
@@ -46,16 +54,14 @@ public class PriceController {
     }
 
     //Get single Price by id
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Resource<Price>> getPrice(@PathVariable("id") Integer id, HttpServletRequest request){
-        User thisUser = (User) request.getSession().getAttribute("USER");
         Price price = priceService.getSinglePriceById(id);
         Resource<Price> resource = new Resource<>(price);
         HttpStatus status;
         if (null!=price){
-            resource.add(linkTo(methodOn(PriceController.class).updatePrice(price.getObjectId(), price)).withRel("update"));
-            status = HttpStatus.ACCEPTED;
+            status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
         }
@@ -66,16 +72,23 @@ public class PriceController {
     //Update price method
     @CacheRemoveAll(cacheName = "priceList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-    public ResponseEntity<IUDAnswer> updatePrice(@PathVariable("id") Integer id, @RequestBody Price changedPrice){
-        if (!id.equals(changedPrice.getObjectId())){
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, MessageBook.WRONG_UPDATE_ID), HttpStatus.NOT_ACCEPTABLE);
+    public ResponseEntity<IUDAnswer> updatePrice(@PathVariable("id") Integer id, @RequestBody Price changedPrice, HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(user, changedPrice, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
-        IUDAnswer result = priceService.updatePrice(id, changedPrice);
+        try {
+            iudAnswer = priceService.updatePrice(id, changedPrice);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id,false, WRONG_FIELD, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
         HttpStatus status;
-        if (result.isSuccessful()) {
-            status = HttpStatus.ACCEPTED;
+        if (iudAnswer.isSuccessful()) {
+            status = HttpStatus.OK;
         } else status = HttpStatus.BAD_REQUEST;
-        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(iudAnswer, status);
         return responseEntity;
     }
 
