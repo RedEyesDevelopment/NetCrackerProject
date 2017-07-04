@@ -4,6 +4,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 import net.sf.log4jdbc.Log4jdbcProxyDataSource;
 import net.sf.log4jdbc.tools.Log4JdbcCustomFormatter;
 import net.sf.log4jdbc.tools.LoggingType;
+import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -88,6 +89,8 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class TestDAOConfig implements TransactionManagementConfigurer {
 
+    private static final Logger LOGGER = Logger.getLogger(TestDAOConfig.class);
+
     private String driver;
     private String url;
     private String username;
@@ -105,13 +108,13 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
         try {
             fis = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         }
 
         try {
             props.load(fis);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         }
         driver = props.getProperty("dataSource.driverClassName");
         url = props.getProperty("dataSource.url");
@@ -164,12 +167,12 @@ public class TestDAOConfig implements TransactionManagementConfigurer {
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         }
         try {
             comboPooledDataSource.setDriverClass(driver);
         } catch (PropertyVetoException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         }
         comboPooledDataSource.setJdbcUrl(url);
         comboPooledDataSource.setUser(username);

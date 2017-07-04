@@ -1,11 +1,13 @@
 package tests.database;
 
 import lombok.extern.log4j.Log4j;
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import projectpackage.repository.reacteav.ReactEAVManager;
 import projectpackage.repository.support.ParentsDAO;
 import tests.database.reacteavperformance.*;
+import tests.pdf.TestPDFConfig;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -14,6 +16,9 @@ import java.util.HashSet;
 
 @Log4j
 public class ReactEAVPerformanceTest extends AbstractDatabaseTest {
+
+    private static final Logger LOGGER = Logger.getLogger(ReactEAVPerformanceTest.class);
+
     private static final int QUERYQUANTITY = 10;
 
     @Autowired
@@ -63,13 +68,13 @@ public class ReactEAVPerformanceTest extends AbstractDatabaseTest {
                 writer.write(job.getResult());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         } finally {
             try {
                 writer.flush();
                 writer.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error(e);
             }
         }
 

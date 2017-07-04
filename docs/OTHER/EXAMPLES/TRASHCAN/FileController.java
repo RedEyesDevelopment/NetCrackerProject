@@ -88,7 +88,7 @@ public class FileController {
                 return redirect;
 
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(e);
             }
         } else {
             return "You failed to upload " + name + " because the file was empty.";

@@ -60,14 +60,14 @@ public class ReactConditionBuilder {
                             try {
                                 startingObjectValue = field.get(startingTask.getResultList());
                             } catch (IllegalAccessException e) {
-                                e.printStackTrace();
+                                LOGGER.error(e);
                             }
                             ReactConditionThread thread = new ReactConditionThread(condition, startingTask, startingObjectValue);
                             threads.add(thread);
                         }
 
                     } catch (NoSuchFieldException e) {
-                        e.printStackTrace();
+                        LOGGER.error(e);
                     }
                 }
             }

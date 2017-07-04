@@ -97,7 +97,7 @@ public class FilesController {
                 return "redirect:/fileapi/filelist";
 
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(e);
             }
         } else {
             return "You failed to upload " + file.getOriginalFilename() + " because the file was empty.";

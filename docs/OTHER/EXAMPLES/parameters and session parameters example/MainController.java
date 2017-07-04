@@ -144,7 +144,7 @@ public class MainController {
             try {
                 response.sendRedirect("/ideas/list");
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error(e);
             }
         }
         logger.info(idea.getName() + " in maincontroller - loaded!");
@@ -180,7 +180,7 @@ public class MainController {
             try {
                 response.sendRedirect("/index");
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error(e);
             }
         }
         LOGGER.info(comment.toString());
@@ -201,7 +201,7 @@ public class MainController {
         try {
             response.sendRedirect(redirect);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         }
     }
 
