@@ -60,14 +60,13 @@ public class NotificationTypeController {
     }
 
     //Get single NotificationType by id
-    @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Resource<NotificationType>> getNotificationType(@PathVariable("id") Integer id, HttpServletRequest request){
         NotificationType notificationType = notificationTypeService.getSingleNotificationTypeById(id);
         Resource<NotificationType> resource = new Resource<>(notificationType);
         HttpStatus status;
         if (null!= notificationType){
-            status = HttpStatus.ACCEPTED;
+            status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
         }
@@ -101,7 +100,7 @@ public class NotificationTypeController {
         }
         HttpStatus status;
         if (iudAnswer != null && iudAnswer.isSuccessful()) {
-            status = HttpStatus.CREATED;
+            status = HttpStatus.OK;
         } else status = HttpStatus.BAD_REQUEST;
         ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(iudAnswer, status);
         return responseEntity;

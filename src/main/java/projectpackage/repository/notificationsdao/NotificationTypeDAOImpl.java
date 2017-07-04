@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.Role;
 import projectpackage.model.notifications.NotificationType;
 import projectpackage.repository.AbstractDAO;
@@ -21,7 +20,6 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     JdbcTemplate jdbcTemplate;
 
     @Override
-    @Transactional(readOnly = true)
     public NotificationType getNotificationType(Integer id) {
         if (id == null) {
             return null;
@@ -33,14 +31,12 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<NotificationType> getAllNotificationTypes() {
         return (List<NotificationType>) manager.createReactEAV(NotificationType.class)
                 .fetchRootReference(Role.class, "RoleToNotificationType")
                 .closeAllFetches().getEntityCollection();
     }
 
-    @Transactional
     @Override
     public Integer insertNotificationType(NotificationType notificationType) {
         if (notificationType == null) {
@@ -54,7 +50,6 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
         return objectId;
     }
 
-    @Transactional
     @Override
     public Integer updateNotificationType(NotificationType newNotificationType, NotificationType oldNotificationType) {
         if (oldNotificationType == null || newNotificationType == null) {
@@ -67,7 +62,6 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
         return newNotificationType.getObjectId();
     }
 
-    @Transactional
     @Override
     public void deleteNotificationType(Integer id) {
         if (id == null) {
