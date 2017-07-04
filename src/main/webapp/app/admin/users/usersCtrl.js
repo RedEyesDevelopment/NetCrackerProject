@@ -150,8 +150,8 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 
 	$scope.prepareToReestablishUser = function(userId, index) {
-		$scope.userIndexForOperation = index;
 		$scope.userIdForOperation = userId;
+		$scope.userIndexForOperation = index;
 		$scope.stage = "reestablishing";
 	}
 
@@ -197,11 +197,12 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}
 
 	var changeRole = function() {
-		console.log($scope.user.role.objectId);
 		$http({
-			url: sharedData.getLinks().https + 'admin/update/role/' + $scope.userIdForOperation,
+			url: sharedData.getLinks().https + '/users/admin/update/role/' + $scope.userIdForOperation,
 			method: 'PUT',
-			data: $scope.user.role.objectId,
+			data: {
+				roleId: parseInt($scope.user.role.objectId)
+			},
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
@@ -276,6 +277,10 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		$scope.stage = "addPhone";
 	}
 
+	$scope.cancelPhone = function() {
+		$scope.stage = "editing";
+	}
+
 	var addPhone = function() {
 		$http({
 			url: sharedData.getLinks().https + '/phones',
@@ -286,10 +291,13 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			},
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
-			$scope.listOfUsers[$scope.userIndexForOperation].phones.push({
+			var newPhone = {
 				objectId: data.data.objectId,
-				phoneNumber: $scope.user.newPhone
-			});
+				phoneNumber: $scope.user.newPhone,
+				userId: $scope.userIdForOperation
+			};
+			$scope.user.phones.push(newPhone);
+			$scope.listOfUsers[$scope.userIndexForOperation].phones.push(newPhone);
 			$scope.stage = "edited";
 		}, function(response) {
 			console.log("Smth wrong!!");
@@ -339,6 +347,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
+			$scope.user.phones.splice($scope.phoneIndexForOperation, 1);
 			$scope.listOfUsers[$scope.userIndexForOperation].phones.splice($scope.phoneIndexForOperation, 1);
 			$scope.stage = "edited";
 		}, function(response) {
