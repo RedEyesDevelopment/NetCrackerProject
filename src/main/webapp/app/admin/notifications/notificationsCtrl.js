@@ -33,6 +33,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	// Получаем все НЕЕЕЕЕЕЕ выполненные
     getCurrentNotifications();
 
+    // All users
 	(function() {
 		$http({
 			url: sharedData.getLinks().https + '/users',
@@ -46,7 +47,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 			console.log(response);
 		});
 	}());
-
+	// All notification type
 	(function() {
 		$http({
 			url: sharedData.getLinks().https + '/notificationtypes',
@@ -60,20 +61,20 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 			console.log(response);
 		});
 	}());
-
+	// All orders
 	(function() {
-    		$http({
-    			url: sharedData.getLinks().https + '/orders',
-    			method: 'GET',
-    			headers: { 'Content-Type' : 'application/json' }
-    		}).then(function(data) {
-    			console.log(data);
-    			$scope.listOfOrders = data.data;
-    		}, function(response) {
-    			console.log("Smth wrong!!");
-    			console.log(response);
-    		});
-    	}());
+		$http({
+			url: sharedData.getLinks().https + '/orders',
+			method: 'GET',
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			$scope.listOfOrders = data.data;
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
+	}());
 	/* редирект на главную если не админ и не рецепция */
 	(function() {
 		if (!sharedData.getIsAdmin() && !sharedData.getIsReception()) { $location.path('/') };
@@ -94,15 +95,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 		}
 	}
 
-	/* Инициализация служебных переменных */
-	function resetFlags() {
-		$scope.added = false;
-		$scope.updated = false;
-		$scope.deleted = false;
-	}
-
 	$scope.notification = {};
-	resetFlags();
 
 	$scope.stage = "looking";
 
@@ -134,43 +127,84 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	}
 
 
-	/* Функции подготовки запросов */
 	$scope.prepareToAddNotification = function() {
 		$scope.indexForOperation = "";
-		$scope.notification.idForOperation = "";
-		$scope.notification.author = "";
-		$scope.notification.type = "";
-		$scope.notification.sendDate = "";
-		$scope.notification.message = "";
-		$scope.notification.order = "";
-		resetFlags();
+		$scope.idForOperation = "";
+		$scope.notification = {};
 		$scope.stage = "adding";
 		$scope.modificationMode = true;
 	}
 
+	var addNotification = function() {
+		$http({
+			url: sharedData.getLinks().https + '/notifications',
+			method: 'POST',
+			data: {
+                authorId: 		    sharedData.getMyself().objectId,
+				notificationTypeId: $scope.notification.typeId,
+				message:           	$scope.notification.message,
+				orderId: 			$scope.notification.orderId
+			},
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			getCurrentNotifications();
+			$scope.prepareToAddNotification();
+			$scope.stage = "added";
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+            $scope.errMessage = "serverErr";
+		});
+	}
+
+
 	$scope.prepareToEditNotification = function(notificationId, index) {
 		$http({
-			url: sharedData.getLinks().https + '/notifications/' + notificationId,
+			url: sharedData.getLinks().https + '/notifications/notexecuted/' + notificationId,
 			method: 'GET',
 			headers: {'Content-Type': 'application/json'}
 		}).then(function(data) {
 			console.log(data);
-			$scope.indexForOperation = index;
-			$scope.notification.idForOperation = notificationId;
-			$scope.notification.author = data.data.author.objectId;
-            $scope.notification.type = data.data.notificationType.objectId;
-            $scope.notification.sendDate = data.data.sendDate;
+			$scope.notification.authorId = data.data.author.objectId;
+            $scope.notification.typeId = data.data.notificationType.objectId;
             $scope.notification.message = data.data.message;
-            $scope.notification.order = data.data.order.objectId;
-			resetFlags();
-			$scope.stage = "editing";
+            $scope.notification.orderId = data.data.order.objectId;
 			$scope.modificationMode = true;
-
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
 		});
 	}
+
+	var editNotification = function() {
+		$http({
+			url: sharedData.getLinks().https + '/notifications/' + $scope.notification.idForOperation,
+			method: 'PUT',
+			data: {
+                authorId : 		    $scope.notification.authorId,
+                notificationTypeId:  $scope.notification.typeId,
+                message :           $scope.notification.message,
+                orderId : 			$scope.notification.orderId
+			},
+			headers: { 'Content-Type' : 'application/json' }
+		}).then(function(data) {
+			console.log(data);
+			$scope.listOfNotifications[$scope.indexForOperation].author = util.getObjectInArrayById($scope.listOfUsers, $scope.notification.author);
+			$scope.listOfNotifications[$scope.indexForOperation].type = util.getObjectInArrayById($scope.listOfNotificationTypes, $scope.notification.type);
+			$scope.listOfNotifications[$scope.indexForOperation].message = $scope.notification.message;
+			$scope.listOfNotifications[$scope.indexForOperation].order = util.getObjectInArrayById($scope.listOfOrders, $scope.notification.order);
+			$scope.updated = true;
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+            $scope.errMessage = "serverErr";
+		});
+	}
+
+
+
+
 
 	$scope.prepareToDeleteNotification = function(notificationId, index) {
 		$scope.indexForOperation = index;
@@ -187,70 +221,9 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 
 
 	/* Функции, выполняющие запросы */
-	var addNotification = function() {
-		resetFlags();
-		console.log($scope.notification.author);
-		console.log($scope.notification.type);
-		console.log($scope.notification.message);
-		console.log($scope.notification.order);
-		$http({
-			url: sharedData.getLinks().https + '/notifications',
-			method: 'POST',
-			data: {
-                authorId : 		    $scope.notification.author,
-				notificationTypeId :  $scope.notification.type,
-				message :           $scope.notification.message,
-				orderId : 			$scope.notification.order
-			},
-			headers: { 'Content-Type' : 'application/json' }
-		}).then(function(data) {
-			console.log(data);
-			$scope.listOfNotifications.push({
-				idForOperation :          data.data.objectId,
-				author :            $scope.notification.author,
-				notificationType :  util.getObjectInArrayById($scope.listOfNotificationTypes, $scope.notification.type),
-				sendDate :          $scope.notification.sendDate,
-				message :           $scope.notification.message,
-				order :             util.getObjectInArrayById($scope.listOfOrders, $scope.notification.order)
-			});
-			$scope.prepareToAddNotification();
-			$scope.added = true;
-		}, function(response) {
-			console.log("Smth wrong!!");
-			console.log(response);
-            $scope.errMessage = "serverErr";
-		});
-	}
 
-	var editNotification = function() {
-		resetFlags();
-        console.log($scope.notification.author);
-        console.log($scope.notification.type);
-        console.log($scope.notification.message);
-        console.log($scope.notification.order);
-		$http({
-			url: sharedData.getLinks().https + '/notifications/' + $scope.notification.idForOperation,
-			method: 'PUT',
-			data: {
-                authorId : 		    $scope.notification.author,
-                notificationTypeId :  $scope.notification.type,
-                message :           $scope.notification.message,
-                orderId : 			$scope.notification.order
-			},
-			headers: { 'Content-Type' : 'application/json' }
-		}).then(function(data) {
-			console.log(data);
-			$scope.listOfNotifications[$scope.indexForOperation].author = util.getObjectInArrayById($scope.listOfUsers, $scope.notification.author);
-			$scope.listOfNotifications[$scope.indexForOperation].type = util.getObjectInArrayById($scope.listOfNotificationTypes, $scope.notification.type);
-			$scope.listOfNotifications[$scope.indexForOperation].message = $scope.notification.message;
-			$scope.listOfNotifications[$scope.indexForOperation].order = util.getObjectInArrayById($scope.listOfOrders, $scope.notification.order);
-			$scope.updated = true;
-		}, function(response) {
-			console.log("Smth wrong!!");
-			console.log(response);
-            $scope.errMessage = "serverErr";
-		});
-	}
+
+	
 
 	var deleteNotification = function() {
 		resetFlags();

@@ -21,22 +21,30 @@
             </ul>
             <div class="row">
                 <div ng-repeat-start="notification in listOfCurrNotifications | orderBy : 'sendDate' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-6">
-                    <div class="block-border clearfix">
+                    <div class="block-border admin-notes clearfix">
+                        <p> Author: {{ notification.author.firstName }} {{ notification.author.lastName }} </p>
 
-                        <button ng-if="notification.executedBy == undefined"
-                            ng-click="prepareToMarkAsDone(notification.objectId)"
-                            data-toggle="modal" data-target="#editConfirmModal">
-                            DONE
-                        </button>
+                        <p class="top-bottom-border">
+                            Notification Type: {{ notification.notificationType.notificationTypeTitle }}
+                        </p>
 
-                        <p class="admin-notes"> Author: {{ notification.author.firstName }} {{ notification.author.lastName }} </p>
-                        <p class="admin-notes top-bottom-border"> Notification Type: {{ notification.notificationType.notificationTypeTitle }} </p>
-                        <p class="admin-notes"> Send Date: {{ notification.sendDate | date:'dd.MM.yyyy' }} </p>
-                        <p class="admin-notes top-bottom-border"> Message: {{ notification.message }} </p>
-                        <p class="admin-notes"> Executed By: {{ notification.executedBy.firstName }} {{ notification.executedBy.lastName }} </p>
-                        <p class="admin-notes top-bottom-border"> Executed date: {{ notification.executedDate | date:'dd.MM.yyyy' }} </p>
-                        <p class="admin-notes"> Connection to order №: {{ notification.order.objectId }} </p>
+                        <p> Send Date: {{ notification.sendDate | date:'dd.MM.yyyy' }} </p>
+
+                        <p class="top-bottom-border text-justify"> Message: {{ notification.message }} </p>
+
+                        <p ng-if="notification.executedBy !== null"> Executed By: {{ notification.executedBy.firstName }} {{ notification.executedBy.lastName }} </p>
+
+                        <p class="top-bottom-border" ng-if="notification.executedBy !== null"> Executed date: {{ notification.executedDate | date:'dd.MM.yyyy' }} </p>
+
+                        <p> Link to order №: {{ notification.order.objectId }} </p>
+
                         <div class="text-right">
+                            <button ng-if="notification.executedBy === null" class="btn btn-success markAsDone" 
+                                ng-click="prepareToMarkAsDone(notification.objectId)"
+                                data-toggle="modal" data-target="#editConfirmModal">
+                                Mark as done
+                            </button>
+
                             <button type="button" class="btn btn-primary btn-md"
                                     ng-click="prepareToEditNotification(notification.objectId, listOfNotifications.indexOf(notification))">
                                 Edit
@@ -81,7 +89,7 @@
                         <label for="createAuthor" class="col-sm-6 control-label">Author</label>
                         <div class="col-sm-6">
                             <!--<input type="text" id="createAuthor" ng-required="true" ng-model="notification.author.lastName">-->
-                            <select id="createAuthor" class="form-control" ng-required="true" ng-model="notification.author"
+                            <select id="createAuthor" class="form-control" ng-required="true" ng-model="notification.authorId"
                                     ng-options="author.objectId as (author.firstName + ' ' + author.lastName) for author in listOfUsers | orderBy : author.role.objectId">
                             </select>
                         </div>
@@ -89,7 +97,7 @@
                     <div class="form-group">
                         <label for="notificationType" class="col-sm-6 control-label">Notification type</label>
                         <div class="col-sm-6">
-                            <select id="notificationType" class="form-control" ng-required="true" ng-model="notification.type"
+                            <select id="notificationType" class="form-control" ng-required="true" ng-model="notification.typeId"
                                     ng-options="type.objectId as type.notificationTypeTitle for type in listOfNotificationTypes">
                             </select>
                         </div>
@@ -103,7 +111,7 @@
                     <div class="form-group">
                         <label for="order" class="col-sm-6 control-label">Order</label>
                         <div class="col-sm-6">
-                            <select id="order" class="form-control" ng-required="true" ng-model="notification.order"
+                            <select id="order" class="form-control" ng-required="true" ng-model="notification.orderId"
                                     ng-options="order.objectId as order.objectId for order in listOfOrders">
                             </select>
                         </div>

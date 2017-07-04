@@ -99,6 +99,10 @@
 .workspace .toggle {
     border-radius: 20%;
 }
+
+.workspace .markAsDone {
+    float: left;
+}
 /* ---------------------------------- */
 
 /* ----- Form for add or update ----- */
