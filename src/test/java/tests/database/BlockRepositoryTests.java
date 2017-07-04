@@ -49,7 +49,7 @@ public class BlockRepositoryTests extends AbstractDatabaseTest{
         Block insertedBlock = blockService.getSingleBlockById(blockId);
 
         block.setObjectId(blockId);
-        System.out.println("TIME EQUALS? = " + block.getBlockStartDate().getTime() + " : " + insertedBlock.getBlockStartDate().getTime() + block.getBlockStartDate().equals(insertedBlock.getBlockStartDate()));
+        LOGGER.info("TIME EQUALS? = " + block.getBlockStartDate().getTime() + " : " + insertedBlock.getBlockStartDate().getTime() + block.getBlockStartDate().equals(insertedBlock.getBlockStartDate()));
         assertEquals(block, insertedBlock);
 
         Block newBlock = new Block();

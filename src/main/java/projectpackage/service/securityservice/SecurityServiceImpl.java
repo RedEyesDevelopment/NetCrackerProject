@@ -1,5 +1,6 @@
 package projectpackage.service.securityservice;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +21,8 @@ import java.util.Collection;
  */
 @Service
 public class SecurityServiceImpl implements SecurityService {
+
+    private static final Logger LOGGER = Logger.getLogger(SecurityServiceImpl.class);
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -58,8 +61,8 @@ public class SecurityServiceImpl implements SecurityService {
     public Boolean autologin(String username, String password) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         String encodedPassword = bCryptPasswordEncoder.encode(password);
-        System.out.println("login="+username);
-        System.out.println("password="+password+" encoded="+encodedPassword);
+        LOGGER.info("login="+username);
+        LOGGER.info("password="+password+" encoded="+encodedPassword);
         Collection<? extends GrantedAuthority> authorities;
         if(userDetails != null && null!=userDetails.getAuthorities()){
             authorities =userDetails.getAuthorities();
@@ -68,11 +71,11 @@ public class SecurityServiceImpl implements SecurityService {
                 (userDetails, password, authorities);
         authenticationManager.authenticate(authenticationToken);
         if (authenticationToken.isAuthenticated()){
-            System.out.println("auth+");
+            LOGGER.info("auth+");
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             return Boolean.TRUE;
         } else {
-            System.out.println("auth-");
+            LOGGER.info("auth-");
             return Boolean.FALSE;
         }
     }

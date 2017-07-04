@@ -15,10 +15,10 @@ public class RestClient {
         RestClient restClient = new RestClient("admin","admin");
 //        Book book = restClient.getBook();
 //        if (null==book) {
-//            System.out.println("Book is null");
-//        } else System.out.println(book.toString());
+//            LOGGER.info("Book is null");
+//        } else LOGGER.info(book.toString());
 
-        System.out.println(restClient.saveBook());
+        LOGGER.info(restClient.saveBook());
     }
 
     public RestClient(String username, String password) {

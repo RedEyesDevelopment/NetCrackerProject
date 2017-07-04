@@ -261,6 +261,6 @@ public class RoomRepositoryTests extends AbstractDatabaseTest {
     @Test
     public void testSimpleList(){
         List<Room> rooms = roomService.getSimpleRoomList();
-        System.out.println(rooms);
+        LOGGER.info(rooms);
     }
 }

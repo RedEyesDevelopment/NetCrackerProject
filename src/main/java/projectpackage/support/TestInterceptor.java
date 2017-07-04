@@ -1,5 +1,6 @@
 package projectpackage.support;
 
+import org.apache.log4j.Logger;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import projectpackage.dto.OrderDTO;
@@ -15,25 +16,27 @@ import java.util.List;
  * Created by Gvozd on 11.12.2016.
  */
 public class TestInterceptor implements HandlerInterceptor {
+    private static final Logger LOGGER = Logger.getLogger(TestInterceptor.class);
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
 
         HttpSession session = request.getSession();
-        System.out.println("**************************************************************************");
+        LOGGER.info("**************************************************************************");
         if (null!=session) {
             User thisUser = (User) session.getAttribute("USER");
-            System.out.println("SESSION = " + session.toString());
-            System.out.println("USER DATA = " + thisUser);
+            LOGGER.info("SESSION = " + session.toString());
+            LOGGER.info("USER DATA = " + thisUser);
             List<OrderDTO> orderdatra = (List<OrderDTO>) session.getAttribute("ORDERDATA");
             if (null != orderdatra) {
-                System.out.println("ORDER DTO DATA = " + orderdatra);
-            } else System.out.println("ORDER DTO DATA IS NULL");
+                LOGGER.info("ORDER DTO DATA = " + orderdatra);
+            } else LOGGER.info("ORDER DTO DATA IS NULL");
             Order order = (Order) session.getAttribute("NEWORDER");
             if (null != order) {
-                System.out.println("BOOKED ORDER = " + order);
-            } else System.out.println("BOOKED ORDER IS NULL");
-        } else System.out.println("SESSION IS NULL");
-        System.out.println("Object: "+o);
+                LOGGER.info("BOOKED ORDER = " + order);
+            } else LOGGER.info("BOOKED ORDER IS NULL");
+        } else LOGGER.info("SESSION IS NULL");
+        LOGGER.info("Object: "+o);
         return true;
     }
 

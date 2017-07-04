@@ -164,7 +164,7 @@ public class MainController {
     @RequestMapping(value = URLCLASSPREFIX + "editideahandler", method = RequestMethod.POST)
     public String editMyIdeaHandler(@ModelAttribute("ideaAttrib") IdeaDummy ideaDummy, BindingResult result,
                                     HttpServletRequest request) {
-        System.out.println(ideaDummy.toString());
+        LOGGER.info(ideaDummy.toString());
         Long targetIdeaId = (Long) request.getSession().getAttribute("TARGETIDEA");
         Long targetContentId = ideaService.getIdeaById(targetIdeaId).getContentId();
         ideaService.updateIdea(targetIdeaId, ideaDummy.getName(),ideaDummy.getDescription(),ideaDummy.getImage(),ideaDummy.getTags(),ideaDummy.isEnabled(),targetContentId,ideaDummy.getContent());
@@ -183,7 +183,7 @@ public class MainController {
                 e.printStackTrace();
             }
         }
-        System.out.println(comment.toString());
+        LOGGER.info(comment.toString());
         String redirect = (String) request.getSession().getAttribute("RETURNTO");
         Long userId = (Long) request.getSession().getAttribute("USER_ID");
         Long ideaId = (Long) request.getSession().getAttribute("TGTIDEA");
@@ -214,18 +214,18 @@ public class MainController {
         if (isIdeaLiked(ideaId, myId, request)) return "redirect:/index";
 
         if ((null==myId) || (null==doLike)){
-            System.out.println("MYID=NULL OR DOLIKE=NULL");
+            LOGGER.info("MYID=NULL OR DOLIKE=NULL");
             return "redirect:/index";
         } else if (myId.equals(ideaService.getIdeaById(ideaId).getAuthor().getId())){
-            System.out.println("MY ID IS AUTHOR ID");
+            LOGGER.info("MY ID IS AUTHOR ID");
             return "redirect:/ideas/showidea/"+ideaId;
         }
 
         if (doLike) {
-            System.out.println("liked it");
+            LOGGER.info("liked it");
             ideaService.like(ideaId);
         } else {
-            System.out.println("disliked it");
+            LOGGER.info("disliked it");
             ideaService.dislike(ideaId);
         }
 

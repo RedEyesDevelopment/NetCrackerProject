@@ -55,7 +55,7 @@ public class FilesController {
 
                 StringBuilder rootPath = new StringBuilder(request.getServletContext().getRealPath("/").toString());
                 rootPath.append("/dynamic/");
-                System.out.println(rootPath.toString());
+                LOGGER.info(rootPath.toString());
                 File dir = new File(rootPath.toString() + File.separator);
 
                 if (!dir.exists()) {
@@ -67,7 +67,7 @@ public class FilesController {
                     extension="file";
                 }
 
-                System.out.println("in file controller");
+                LOGGER.info("in file controller");
 
                 File uploadedFile = new File(dir.getAbsolutePath() + File.separator + name);
 
@@ -84,7 +84,7 @@ public class FilesController {
                 } else fileName= uploadedFile.getName();
 
                 Long userId = (Long) request.getSession().getAttribute("USER_ID");
-                System.out.println(userId.toString());
+                LOGGER.info(userId.toString());
 
                 FileOnServer newFile = new FileOnServer();
                 newFile.setFilename(fileName);

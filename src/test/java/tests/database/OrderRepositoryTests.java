@@ -96,7 +96,7 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
     @Test
     @Rollback(true)
     public void getAllOrders() {
-        System.out.println("IN TESTS:"+Thread.currentThread());
+        LOGGER.info("IN TESTS:"+Thread.currentThread());
         List<Order> orders = orderService.getAllOrders();
         for (Order order : orders) {
             LOGGER.info(order);
@@ -108,7 +108,7 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
     @Rollback(true)
     public void getOrdersByRoom(){
         Order order = orderService.getSingleOrderById(2080);
-        System.out.println(order);
+        LOGGER.info(order);
     }
 
     @Test
@@ -160,7 +160,7 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
         order.setClient(user);
         order.setLastModificator(user);
         IUDAnswer iudAnswer = orderService.insertOrder(order);
-        System.out.println(iudAnswer);
+        LOGGER.info(iudAnswer);
         assertTrue(iudAnswer.isSuccessful());
         LOGGER.info(iudAnswer.getObjectId());
         LOGGER.info("Create order result = " + iudAnswer.isSuccessful());
@@ -199,9 +199,9 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
 //        Order orderToUpdate = orderService.getSingleOrderById(2100);
 //        Order newOrder = (Order) orderToUpdate.clone();
 //        newOrder.setIsPaidFor(true);
-//        System.out.println("old="+orderToUpdate);
-//        System.out.println("new="+newOrder);
+//        LOGGER.info("old="+orderToUpdate);
+//        LOGGER.info("new="+newOrder);
 //        IUDAnswer answer = orderService.updateOrder(newOrder.getObjectId(), newOrder);
-//        System.out.println("result="+answer);
+//        LOGGER.info("result="+answer);
 //    }
 }

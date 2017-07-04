@@ -98,9 +98,9 @@ public class NotificationRepositoryTests extends AbstractDatabaseTest{
     public void getAllNotifications() {
         List<Notification> list = notificationService.getAllNotifications();
         for (Notification notification:list){
-            System.out.println(notification);
+            LOGGER.info(notification);
         }
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
@@ -108,17 +108,17 @@ public class NotificationRepositoryTests extends AbstractDatabaseTest{
     public void getAllNotExecutedNotifications() {
         List<Notification> list = notificationService.getAllNotExecutedNotifications();
         for (Notification notification:list){
-            System.out.println(notification);
+            LOGGER.info(notification);
         }
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
     @Rollback(true)
     public void getNotExecutedNotification() {
         Notification not = notificationService.getNotExecutedNotificationById(1402);
-        System.out.println(SEPARATOR);
-        System.out.println(not);
+        LOGGER.info(SEPARATOR);
+        LOGGER.info(not);
     }
 
     @Test
@@ -127,8 +127,8 @@ public class NotificationRepositoryTests extends AbstractDatabaseTest{
         Notification notification = null;
         int notificationId = 1400;
         notification = notificationService.getSingleNotificationById(notificationId);
-        System.out.println(notification);
-        System.out.println(SEPARATOR);
+        LOGGER.info(notification);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test

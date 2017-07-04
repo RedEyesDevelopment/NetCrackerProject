@@ -1,5 +1,6 @@
 package tests.database;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import java.sql.Connection;
@@ -14,30 +15,30 @@ import static org.junit.Assert.assertEquals;
  */
 public class OJDBCTest {
 
+    private static final Logger LOGGER = Logger.getLogger(OJDBCTest.class);
+
     @Test
     public void testJDBCConnection(){
         Locale.setDefault(Locale.ENGLISH);
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
         } catch (ClassNotFoundException e) {
-            System.out.println("NO ORACLE DRIVER");
-            e.printStackTrace();
+            LOGGER.error("NO ORACLE DRIVER");
         }
 
-        System.out.println("There is an ORACLE DRIVER!");
+        LOGGER.info("There is an ORACLE DRIVER!");
 
         Connection connection = null;
         try {
             connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "Hotel", "root");
         } catch (SQLException e){
-            System.out.println("CONNECTION FAILED");
-            e.printStackTrace();
+            LOGGER.error("CONNECTION FAILED");
         }
 
         if (connection!=null){
-            System.out.println("CONNECTION SUCCESS!");
+            LOGGER.info("CONNECTION SUCCESS!");
         } else {
-            System.out.println("NO VALID CONNECTION");
+            LOGGER.info("NO VALID CONNECTION");
         }
         assertEquals(true, null!=connection);
     }

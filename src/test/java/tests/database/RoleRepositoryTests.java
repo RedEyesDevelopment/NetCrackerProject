@@ -1,6 +1,7 @@
 package tests.database;
 
 import lombok.extern.log4j.Log4j;
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
@@ -16,6 +17,9 @@ import java.util.List;
 @Log4j
 @Transactional(value = "annotationDrivenTransactionManager")
 public class RoleRepositoryTests extends AbstractDatabaseTest {
+
+    private static final Logger LOGGER = Logger.getLogger(RoleRepositoryTests.class);
+
     private final String SEPARATOR = "**********************************************************";
 
     @Autowired
@@ -32,9 +36,9 @@ public class RoleRepositoryTests extends AbstractDatabaseTest {
     public void getAllRoles() {
         List<Role> list = roleService.getAllRoles("roleName", true);
         for (Role role:list){
-            System.out.println(role);
+            LOGGER.info(role);
         }
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
@@ -49,8 +53,8 @@ public class RoleRepositoryTests extends AbstractDatabaseTest {
         Role role = null;
         int roleId = 3;
         role = roleService.getSingleRoleById(roleId);
-        System.out.println(role);
-        System.out.println(SEPARATOR);
+        LOGGER.info(role);
+        LOGGER.info(SEPARATOR);
     }
 
 }

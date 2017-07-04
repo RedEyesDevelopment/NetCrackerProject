@@ -1,5 +1,6 @@
 package tests.database;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import projectpackage.model.security.AuthCredentials;
@@ -8,6 +9,9 @@ import projectpackage.repository.securitydao.AuthCredentialsDAO;
 import static org.junit.Assert.*;
 
 public class AuthCredentialsTests extends AbstractDatabaseTest{
+
+    private static final Logger LOGGER = Logger.getLogger(AuthCredentialsTests.class);
+
     private final String SEPARATOR = "**********************************************************";
 
     @Autowired
@@ -17,16 +21,16 @@ public class AuthCredentialsTests extends AbstractDatabaseTest{
     public void getCredentials(){
         String login = "stephenking@mail.ru";
         AuthCredentials credentials = authCredentialsDAO.getUserByUsername(login);
-        System.out.println(credentials);
-        System.out.println(SEPARATOR);
+        LOGGER.info(credentials);
+        LOGGER.info(SEPARATOR);
         assertNotNull(credentials);
     }
 
     @Test
     public void getNullCredentials(){
         AuthCredentials credentials = authCredentialsDAO.getUserByUsername(null);
-        System.out.println(credentials);
-        System.out.println(SEPARATOR);
+        LOGGER.info(credentials);
+        LOGGER.info(SEPARATOR);
         assertEquals(null, credentials);
     }
 

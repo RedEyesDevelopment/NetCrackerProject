@@ -54,14 +54,14 @@ public class FileController {
 
                 StringBuilder rootPath = new StringBuilder(request.getServletContext().getRealPath("/").toString());
                 rootPath.append("/dynamic/");
-                System.out.println(rootPath.toString());
+                LOGGER.info(rootPath.toString());
                 File dir = new File(rootPath.toString() + File.separator);
 
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
 
-                System.out.println("in file controller");
+                LOGGER.info("in file controller");
 
                 File uploadedFile = new File(dir.getAbsolutePath() + File.separator + name);
 
@@ -74,7 +74,7 @@ public class FileController {
 
                 String fileName = uploadedFile.getName();
                 Long userId = (Long) request.getSession().getAttribute("USER_ID");
-                System.out.println(userId.toString());
+                LOGGER.info(userId.toString());
 
                 Image image = new Image();
                 image.setImageName(fileName);
@@ -107,21 +107,21 @@ public class FileController {
         request.removeAttribute("PREVFILES");
         request.removeAttribute("IPREVFILES");
 
-        System.out.println("offsetStep is "+offsetStep);
-        System.out.println("images count is "+imagesCount);
-        System.out.println("image list size is "+imglist.size());
+        LOGGER.info("offsetStep is "+offsetStep);
+        LOGGER.info("images count is "+imagesCount);
+        LOGGER.info("image list size is "+imglist.size());
 
         if (offsetStep< ( imagesCount-Image.MAXIMAGESSHOWINGCAPACITY)){
             Long offsetForNext = offsetStep + Image.MAXIMAGESSHOWINGCAPACITY;
             request.setAttribute("NEXTFILES", offsetForNext);
             request.setAttribute("ISNEXTFILES", true);
-            System.out.println("NEXTFILES is "+offsetForNext);
+            LOGGER.info("NEXTFILES is "+offsetForNext);
         }
         if (offsetStep>=Image.MAXIMAGESSHOWINGCAPACITY){
             Long offsetForPrev = offsetStep - Image.MAXIMAGESSHOWINGCAPACITY;
             request.setAttribute("PREVFILES", offsetForPrev);
             request.setAttribute("ISPREVFILES", true);
-            System.out.println("PREVFILES is "+offsetForPrev);
+            LOGGER.info("PREVFILES is "+offsetForPrev);
 
         }
         map.put("imageList", imglist);

@@ -1,5 +1,6 @@
 package tests.mails;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,8 @@ import java.io.File;
  */
 public class MailTests extends AbstractMailTest {
 
+    private static final Logger LOGGER = Logger.getLogger(MailTests.class);
+
     @Value("denis.yakimov89@gmail.com")
     private String receiver;
 
@@ -20,7 +23,7 @@ public class MailTests extends AbstractMailTest {
 
     @Test
     public void sendEmail(){
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
         mailService.sendEmail(receiver,1);
         try {
             Thread.sleep(20000);
@@ -31,7 +34,7 @@ public class MailTests extends AbstractMailTest {
 
     @Test
     public void sendEmailWithFile(){
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
         File file = new File("c:\\temp\\eav.sql");
         mailService.sendEmailWithAttachment(receiver,1,file);
         try {

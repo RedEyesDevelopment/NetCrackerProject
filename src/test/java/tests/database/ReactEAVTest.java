@@ -1,6 +1,7 @@
 package tests.database;
 
 import lombok.extern.log4j.Log4j;
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import projectpackage.model.auth.Phone;
@@ -17,6 +18,7 @@ import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
+import projectpackage.repository.reacteav.ReactEAV;
 import projectpackage.repository.reacteav.ReactEAVManager;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
@@ -31,6 +33,9 @@ import static org.junit.Assert.assertNull;
 
 @Log4j
 public class ReactEAVTest extends AbstractDatabaseTest {
+
+    private static final Logger LOGGER = Logger.getLogger(ReactEAVTest.class);
+
     private final String SEPARATOR = "**********************************************************";
 
     @Autowired
@@ -44,10 +49,10 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     public void queryTestOfUsers(){
         List<User> list = (List<User>) manager.createReactEAV(User.class).getEntityCollection();
         for (User user:list){
-            System.out.println(user);
+            LOGGER.info(user);
             assertNotNull(user);
         }
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
     }
 
     //Получить сортированный список юзеров
@@ -56,10 +61,10 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         List<User> list = (List<User>) manager.createReactEAV(User.class).getEntityCollectionOrderByParameter("firstName", true);
 
         for (User user:list){
-            System.out.println(user);
+            LOGGER.info(user);
             assertNotNull(user);
         }
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
@@ -68,7 +73,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         User user = (User) manager.createReactEAV(User.class).getSingleEntityWithId(userId);
 
         assertNull(user);
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
     }
 
     //Получить одного юзера с вставленной ролью
@@ -78,8 +83,8 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         User user = (User) manager.createReactEAV(User.class).fetchRootReference(Role.class, "RoleToUser").closeAllFetches().getSingleEntityWithId(userId);
 
         assertNotNull(user);
-        System.out.println(user);
-        System.out.println(SEPARATOR);
+        LOGGER.info(user);
+        LOGGER.info(SEPARATOR);
     }
 
     //Получить список телефонов
@@ -88,10 +93,10 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         List<Phone> phones = (List<Phone>) manager.createReactEAV(Phone.class).getEntityCollection();
 
         for (Phone phone:phones){
-            System.out.println(phone);
+            LOGGER.info(phone);
             assertNotNull(phone);
         }
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
     }
 
     //Получить список ролей
@@ -100,22 +105,21 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         List<Role> roles = (List<Role>) manager.createReactEAV(Role.class).getEntityCollection();
 
         for (Role role:roles){
-            System.out.println(role);
+            LOGGER.info(role);
             assertNotNull(role);
         }
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
     }
 
     //Получить сортированный список ролей
     @Test
     public void queryTestOfRolesOrderBy(){
         List<Role> roles = (List<Role>) manager.createReactEAV(Role.class).getEntityCollectionOrderByParameter("objectId", true);
-
         for (Role role:roles){
-            System.out.println(role);
+            LOGGER.info(role);
             assertNotNull(role);
         }
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
     }
 
     //Получить одного юзера с вставленным телефоном и ролью
@@ -124,8 +128,8 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         User user = (User) manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches().fetchRootReference(Role.class, "RoleToUser").closeAllFetches().getSingleEntityWithId(901);
 
         assertNotNull(user);
-        System.out.println(user.toString());
-        System.out.println(SEPARATOR);
+        LOGGER.info(user.toString());
+        LOGGER.info(SEPARATOR);
     }
 //
 //    //Получить список юзеров со вставленными телефонами
@@ -137,13 +141,13 @@ public class ReactEAVTest extends AbstractDatabaseTest {
 //        } catch (ResultEntityNullException e) {
 //        }
 //        for (User user:list){
-//            System.out.println(user);
+//            LOGGER.info(user);
 //            assertNotNull(user);
 //                for (Phone phone:user.getPhones()){
 //                    assertNotNull(phone);
 //                }
 //        }
-//        System.out.println(SEPARATOR);
+//        LOGGER.info(SEPARATOR);
 //    }
 //
 //    //Получить список юзеров со вставленными ролями
@@ -155,12 +159,12 @@ public class ReactEAVTest extends AbstractDatabaseTest {
 //        } catch (ResultEntityNullException e) {
 //        }
 //        for (User user:list){
-//            System.out.println(user);
+//            LOGGER.info(user);
 //            assertNotNull(user);
 //            Role role = user.getRole();
 //            assertNotNull(role);
 //        }
-//        System.out.println(SEPARATOR);
+//        LOGGER.info(SEPARATOR);
 //    }
 
     //Получить список юзеров с ролями и телефонами
@@ -169,7 +173,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         List<User> list = (List<User>) manager.createReactEAV(User.class).fetchRootReference(Role.class, "RoleToUser").closeAllFetches().fetchRootChild(Phone.class).closeAllFetches().getEntityCollection();
 
         for (User user:list){
-            System.out.println(user);
+            LOGGER.info(user);
             assertNotNull(user);
 //            if (user.getObjectId()!=999) {
 //                for (Phone phone : user.getPhones()) {
@@ -179,7 +183,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
             Role role = user.getRole();
             assertNotNull(role);
         }
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
     }
 
     //Получить список юзеров с ролями и телефонами(порядок фетча наоборот)
@@ -188,35 +192,30 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         List<User> list = (List<User>) manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches().fetchRootReference(Role.class, "RoleToUser").closeAllFetches().getEntityCollection();
 
         for (User user:list){
-            System.out.println(user);
+            LOGGER.info(user);
             assertNotNull(user);
-//            if (user.getObjectId()!=999) {
-//                for (Phone phone : user.getPhones()) {
-//                    assertNotNull(phone);
-//                }
-//            }
             Role role = user.getRole();
             assertNotNull(role);
         }
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
     public void getNotifications(){
         List<Notification> nots = manager.createReactEAV(Notification.class).fetchRootReference(User.class, "UserToNotificationAsAuthor").closeAllFetches().fetchRootReference(NotificationType.class, "NotificationTypeToNotification").closeAllFetches().fetchRootReference(User.class, "UserToNotificationAsExecutor").closeAllFetches().fetchRootReference(Order.class, "OrderToNotification").closeAllFetches().getEntityCollection();
             for (Notification not:nots){
-                System.out.println(not);
+                LOGGER.info(not);
             }
-            System.out.println(SEPARATOR);
+            LOGGER.info(SEPARATOR);
     }
 
     @Test
     public void getNotificationsWithUserRole(){
         List<Notification> nots = manager.createReactEAV(Notification.class).fetchRootReference(User.class, "UserToNotificationAsAuthor").fetchInnerReference(Role.class, "RoleToUser").closeAllFetches().fetchRootReference(NotificationType.class, "NotificationTypeToNotification").closeAllFetches().fetchRootReference(User.class, "UserToNotificationAsExecutor").closeAllFetches().fetchRootReference(Order.class, "OrderToNotification").closeAllFetches().getEntityCollection();
             for (Notification not:nots){
-                System.out.println(not);
+                LOGGER.info(not);
             }
-            System.out.println(SEPARATOR);
+            LOGGER.info(SEPARATOR);
 
     }
 
@@ -241,14 +240,14 @@ public class ReactEAVTest extends AbstractDatabaseTest {
                     .fetchInnerChild(Phone.class)
                     .closeAllFetches()
                     .getSingleEntityWithId(1400);
-                System.out.println(nots);
-            System.out.println(SEPARATOR);
+                LOGGER.info(nots);
+            LOGGER.info(SEPARATOR);
     }
 
     @Test
     public void getRates2(){
         List<Rate> rates = manager.createReactEAV(Rate.class).getEntityCollection();
-        for (Rate rate:rates) System.out.println(rate);
+        for (Rate rate:rates) LOGGER.info(rate);
     }
 
     @Test
@@ -256,7 +255,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         List<Room> rooms = manager.createReactEAV(Room.class).fetchRootReference(RoomType.class, "RoomTypeToRoom").fetchInnerChild(Rate.class).closeAllFetches().getEntityCollection();
 
         for (Room room:rooms){
-            System.out.println(room);
+            LOGGER.info(room);
         }
     }
 
@@ -265,9 +264,9 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         List<Room> rooms = manager.createReactEAV(Room.class).addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY).fetchRootReference(RoomType.class, "RoomTypeToRoom").fetchInnerChild(Rate.class).fetchInnerChild(Price.class).closeAllFetches().getEntityCollection();
 
         for (Room room:rooms){
-            System.out.println(room);
+            LOGGER.info(room);
         }
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
 
     }
 
@@ -276,7 +275,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         List<Order> orders = manager.createReactEAV(Order.class).getEntityCollection();
 
         for (Order order:orders){
-            System.out.println(order);
+            LOGGER.info(order);
         }
     }
 
@@ -285,9 +284,9 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         List<Rate> rooms = manager.createReactEAV(Rate.class).getEntityCollection();
 
         for (Rate room:rooms){
-            System.out.println(room);
+            LOGGER.info(room);
         }
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
 
     }
 
@@ -296,9 +295,9 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         List<User> users = manager.createReactEAV(User.class).addCondition(new StringWhereCondition("ROOTABLE.OBJECT_ID=901"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).getEntityCollection();
 
         for (User user:users){
-            System.out.println(user);
+            LOGGER.info(user);
         }
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
 
     }
 
@@ -307,9 +306,9 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         List<User> users = manager.createReactEAV(User.class).addCondition(new VariableWhereCondition("email", "stephenking@mail.ru"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).getEntityCollection();
 
         for (User user:users){
-            System.out.println(user);
+            LOGGER.info(user);
         }
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
 
     }
 
@@ -318,17 +317,17 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         List<User> users = manager.createReactEAV(User.class).addCondition(new StringWhereCondition("R_REFOB1.REFERENCE=3"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).fetchRootReference(Role.class, "RoleToUser").addCondition(new VariableWhereCondition("roleName", "CLIENT"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).closeAllFetches().getEntityCollection();
 
         for (User user:users){
-            System.out.println(user);
+            LOGGER.info(user);
         }
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
 
     }
 
     @Test
     public void getParentId(){
         Integer parentId = parentsDAO.getParentId(1101);
-        System.out.println("PARENTID="+parentId);
-        System.out.println(SEPARATOR);
+        LOGGER.info("PARENTID="+parentId);
+        LOGGER.info(SEPARATOR);
     }
 
     @Test
@@ -336,26 +335,26 @@ public class ReactEAVTest extends AbstractDatabaseTest {
         Integer parentId = parentsDAO.getParentId(1101);
         User user = (User) manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches().getSingleEntityWithId(parentId);
 
-        System.out.println(user);
-        System.out.println(SEPARATOR);
+        LOGGER.info(user);
+        LOGGER.info(SEPARATOR);
     }
 
 
     @Test
     public void getNotExecutedNotifications(){
         List<Notification> nots = manager.createReactEAV(Notification.class).addCondition(new StringWhereCondition("ATTRS3.DATE_VALUE IS NULL"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches().getEntityCollection();
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
         for (Notification not: nots){
-            System.out.println(not);
+            LOGGER.info(not);
         }
     }
 
     @Test
     public void getAllNotifications(){
         List<Notification> nots = manager.createReactEAV(Notification.class).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches().getEntityCollection();
-        System.out.println(SEPARATOR);
+        LOGGER.info(SEPARATOR);
         for (Notification not: nots){
-            System.out.println(not);
+            LOGGER.info(not);
         }
     }
 }
