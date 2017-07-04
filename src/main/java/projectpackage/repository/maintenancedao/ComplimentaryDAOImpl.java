@@ -24,7 +24,6 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     JdbcTemplate jdbcTemplate;
 
     @Override
-    @Transactional(readOnly = true)
     public Complimentary getComplimentary(Integer id) {
         if (id == null) {
             return null;
@@ -36,14 +35,12 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Complimentary> getAllComplimentaries() {
         return manager.createReactEAV(Complimentary.class)
                 .fetchRootReference(Maintenance.class, "MaintenanceToComplimentary")
                 .closeAllFetches().getEntityCollection();
     }
 
-    @Transactional
     @Override
     public Integer insertComplimentary(Complimentary complimentary) {
         if (complimentary == null) {
@@ -56,7 +53,6 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
         return objectId;
     }
 
-    @Transactional
     @Override
     public Integer updateComplimentary(Complimentary newComplimentary, Complimentary oldComplimentary) {
         if (oldComplimentary == null || newComplimentary == null) {
@@ -67,7 +63,6 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
         return newComplimentary.getObjectId();
     }
 
-    @Transactional
     @Override
     public void deleteComplimentary(Integer id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
         if (id == null) {

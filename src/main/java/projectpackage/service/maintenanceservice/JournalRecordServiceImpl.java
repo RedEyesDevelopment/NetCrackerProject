@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.model.maintenances.Complimentary;
 import projectpackage.model.maintenances.JournalRecord;
@@ -12,9 +13,6 @@ import projectpackage.model.maintenances.Maintenance;
 import projectpackage.model.orders.Order;
 import projectpackage.repository.maintenancedao.JournalRecordDAO;
 import projectpackage.repository.ordersdao.OrderDAO;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,6 +30,7 @@ public class JournalRecordServiceImpl implements JournalRecordService{
     @Autowired
     OrderDAO orderDAO;
 
+    @Transactional(readOnly = true)
     @Override
     public List<JournalRecord> getAllJournalRecords() {
         List<JournalRecord> journalRecords = journalRecordDAO.getAllJournalRecords();
@@ -41,6 +40,7 @@ public class JournalRecordServiceImpl implements JournalRecordService{
         return journalRecords;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<JournalRecord> getJournalRecordsByOrder(Integer orderId) {
         List<JournalRecord> answer = new ArrayList<>();
@@ -53,6 +53,7 @@ public class JournalRecordServiceImpl implements JournalRecordService{
         return answer;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public JournalRecord getSingleEntityById(Integer id) {
         JournalRecord journalRecord = journalRecordDAO.getJournalRecord(id);
@@ -62,34 +63,23 @@ public class JournalRecordServiceImpl implements JournalRecordService{
         return journalRecord;
     }
 
+    @Transactional
     @Override
     public IUDAnswer deleteJournalRecord(Integer id) {
         if (id == null) {
             return new IUDAnswer(false, NULL_ID);
         }
-        try {
-            journalRecordDAO.deleteJournalRecord(id);
-        } catch (ReferenceBreakException e) {
-            LOGGER.warn(ON_ENTITY_REFERENCE, e);
-            return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage());
-        } catch (DeletedObjectNotExistsException e) {
-            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
-            return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
-        } catch (WrongEntityIdException e) {
-            LOGGER.warn(WRONG_DELETED_ID, e);
-            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn(NULL_ID, e);
-            return new IUDAnswer(id, false, NULL_ID, e.getMessage());
-        }
-        journalRecordDAO.commit();
+
+        journalRecordDAO.deleteJournalRecord(id);
+
         return new IUDAnswer(id, true);
     }
 
+    @Transactional
     @Override
     public IUDAnswer insertJournalRecord(JournalRecord journalRecord) {
         if (journalRecord == null) {
-            return null;
+            return new IUDAnswer(false, NULL_ENTITY);
         }
         Order order = orderDAO.getOrder(journalRecord.getOrderId());
         Set<Complimentary> freeComplimentaries = order.getCategory().getComplimentaries();
@@ -102,34 +92,25 @@ public class JournalRecordServiceImpl implements JournalRecordService{
         } else {
             journalRecord.setCost(journalRecord.getCount() * journalRecord.getMaintenance().getMaintenancePrice());
         }
-        Integer journalRecordId = null;
-        try {
-            journalRecordId = journalRecordDAO.insertJournalRecord(journalRecord);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn(WRONG_FIELD, e);
-            return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
-        }
-        journalRecordDAO.commit();
+        Integer journalRecordId = journalRecordDAO.insertJournalRecord(journalRecord);
+
         return new IUDAnswer(journalRecordId,true);
     }
 
+    @Transactional
     @Override
     public IUDAnswer updateJournalRecord(Integer id, JournalRecord newJournalRecord) {
         if (newJournalRecord == null) {
-            return null;
+            return new IUDAnswer(false, NULL_ENTITY);
         }
         if (id == null) {
             return new IUDAnswer(false, NULL_ID);
         }
-        try {
-            newJournalRecord.setObjectId(id);
-            JournalRecord oldJournalRecord = journalRecordDAO.getJournalRecord(id);
-            journalRecordDAO.updateJournalRecord(newJournalRecord, oldJournalRecord);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn(WRONG_FIELD, e);
-            return new IUDAnswer(id, false, WRONG_FIELD, e.getMessage());
-        }
-        journalRecordDAO.commit();
+
+        newJournalRecord.setObjectId(id);
+        JournalRecord oldJournalRecord = journalRecordDAO.getJournalRecord(id);
+        journalRecordDAO.updateJournalRecord(newJournalRecord, oldJournalRecord);
+
         return new IUDAnswer(id,true);
     }
 }

@@ -1,5 +1,6 @@
 package projectpackage.controllers;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
@@ -11,7 +12,11 @@ import projectpackage.dto.IUDAnswer;
 import projectpackage.model.auth.User;
 import projectpackage.model.blocks.Block;
 import projectpackage.model.rooms.Room;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.service.blockservice.BlockService;
+import projectpackage.service.support.ServiceUtils;
 
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
@@ -27,8 +32,13 @@ import static projectpackage.service.MessageBook.*;
 @RequestMapping("/blocks")
 public class BlockController {
 
+    private static final Logger LOGGER = Logger.getLogger(BlockController.class);
+
     @Autowired
     BlockService blockService;
+
+    @Autowired
+    ServiceUtils serviceUtils;
 
     @ResponseStatus(HttpStatus.OK)
     @CacheResult(cacheName = "blockList")
@@ -68,10 +78,9 @@ public class BlockController {
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> createBlock(@RequestBody BlockDTO blockDTO, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("USER");
-        if (user == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-        } else if (user.getRole().getObjectId() != 1) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_ADMIN), HttpStatus.BAD_REQUEST);
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminReceptionAndData(user, blockDTO);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
         Room room = new Room();
         room.setObjectId(blockDTO.getRoomId());
@@ -81,23 +90,29 @@ public class BlockController {
         block.setReason(blockDTO.getReason());
         block.setRoom(room);
 
-        IUDAnswer result = blockService.insertBlock(block);
-
-        HttpStatus status = result.isSuccessful() ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST;
-
-        return new ResponseEntity<IUDAnswer>(result, status);
+        try {
+            iudAnswer = blockService.insertBlock(block);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_FIELD, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        HttpStatus status;
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
+            status = HttpStatus.OK;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+        }
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(iudAnswer, status);
+        return responseEntity;
     }
 
     @CacheRemoveAll(cacheName = "blockList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateBlock(@PathVariable("id") Integer id, @RequestBody BlockDTO blockDTO, HttpServletRequest request) {
-        User sessionUser = (User) request.getSession().getAttribute("USER");
-        if (sessionUser == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-        } else if (sessionUser.getRole().getObjectId() != 1) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_ADMIN), HttpStatus.BAD_REQUEST);
-        } else if (id == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ID), HttpStatus.BAD_REQUEST);
+        User user = (User) request.getSession().getAttribute("USER");
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminReceptionAndData(user, blockDTO);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
 
         Room room = new Room();
@@ -107,30 +122,53 @@ public class BlockController {
         block.setRoom(room);
         block.setBlockStartDate(blockDTO.getBlockStartDate());
         block.setBlockFinishDate(blockDTO.getBlockFinishDate());
-        IUDAnswer result = blockService.updateBlock(id, block);
-
-        HttpStatus status = result.isSuccessful() ? HttpStatus.ACCEPTED : HttpStatus.BAD_REQUEST;
-
-        return new ResponseEntity<IUDAnswer>(result, status);
+        try {
+            iudAnswer = blockService.updateBlock(id, block);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_FIELD, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        HttpStatus status;
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
+            status = HttpStatus.OK;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+        }
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(iudAnswer, status);
+        return responseEntity;
     }
 
     @CacheRemoveAll(cacheName = "blockList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> deleteBlock(@PathVariable("id") Integer id, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("USER");
-        if (id == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ID), HttpStatus.BAD_REQUEST);
-        } else if (user.getRole().getObjectId() != 1) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_ADMIN), HttpStatus.BAD_REQUEST);
-        } else if (null == user) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
+        IUDAnswer iudAnswer = serviceUtils.checkDeleteForAdmin(user, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
 
-        IUDAnswer result = blockService.deleteBlock(id);
-
-        HttpStatus status = result.isSuccessful() ? HttpStatus.ACCEPTED : HttpStatus.NOT_FOUND;
-
-        return new ResponseEntity<IUDAnswer>(result, status);
+        try {
+            iudAnswer = blockService.deleteBlock(id);
+        } catch (ReferenceBreakException e) {
+            LOGGER.warn(ON_ENTITY_REFERENCE, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (DeletedObjectNotExistsException e) {
+            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (WrongEntityIdException e) {
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(NULL_ID, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, NULL_ID, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+        HttpStatus status;
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
+            status = HttpStatus.OK;
+        } else {
+            status = HttpStatus.NOT_ACCEPTABLE;
+        }
+        return new ResponseEntity<IUDAnswer>(iudAnswer, status);
     }
 
 }

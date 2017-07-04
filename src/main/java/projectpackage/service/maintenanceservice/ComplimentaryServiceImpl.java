@@ -4,12 +4,10 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.model.maintenances.Complimentary;
 import projectpackage.repository.maintenancedao.ComplimentaryDAO;
-import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
-import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
-import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 
@@ -21,6 +19,7 @@ public class ComplimentaryServiceImpl implements ComplimentaryService {
     @Autowired
     ComplimentaryDAO complimentaryDAO;
 
+    @Transactional(readOnly = true)
     @Override
     public List<Complimentary> getAllComplimentaries() {
         List<Complimentary> complimentaries = complimentaryDAO.getAllComplimentaries();
@@ -30,6 +29,7 @@ public class ComplimentaryServiceImpl implements ComplimentaryService {
         return complimentaries;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Complimentary getSingleComplimentaryById(Integer id) {
         Complimentary complimentary = complimentaryDAO.getComplimentary(id);
@@ -39,64 +39,43 @@ public class ComplimentaryServiceImpl implements ComplimentaryService {
         return complimentary;
     }
 
+    @Transactional
     @Override
     public IUDAnswer deleteComplimentary(Integer id) {
         if (id == null) {
             return new IUDAnswer(false, NULL_ID);
         }
-        try {
-            complimentaryDAO.deleteComplimentary(id);
-        } catch (ReferenceBreakException e) {
-            LOGGER.warn(ON_ENTITY_REFERENCE, e);
-            return new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage());
-        } catch (DeletedObjectNotExistsException e) {
-            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
-            return new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage());
-        } catch (WrongEntityIdException e) {
-            LOGGER.warn(WRONG_DELETED_ID, e);
-            return new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage());
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn(NULL_ID, e);
-            return new IUDAnswer(id, false, NULL_ID, e.getMessage());
-        }
-        complimentaryDAO.commit();
+
+        complimentaryDAO.deleteComplimentary(id);
+
         return new IUDAnswer(id, true);
     }
 
+    @Transactional
     @Override
     public IUDAnswer insertComplimentary(Complimentary complimentary) {
         if (complimentary == null) {
-            return null;
+            return new IUDAnswer(false, NULL_ENTITY);
         }
-        Integer complimentaryId = null;
-        try {
-            complimentaryId = complimentaryDAO.insertComplimentary(complimentary);
-            LOGGER.info("Get from DB complimentaryId = " + complimentaryId);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn(WRONG_FIELD, e);
-            return new IUDAnswer(false, WRONG_FIELD, e.getMessage());
-        }
-        complimentaryDAO.commit();
+        Integer complimentaryId = complimentaryDAO.insertComplimentary(complimentary);
+
         return new IUDAnswer(complimentaryId,true);
     }
 
+    @Transactional
     @Override
     public IUDAnswer updateComplimentary(Integer id, Complimentary newComplimentary) {
         if (newComplimentary == null) {
-            return null;
+            return new IUDAnswer(false, NULL_ENTITY);
         }
         if (id == null) {
             return new IUDAnswer(false, NULL_ID);
         }
-        try {
-            newComplimentary.setObjectId(id);
-            Complimentary oldComplimentary = complimentaryDAO.getComplimentary(id);
-            complimentaryDAO.updateComplimentary(newComplimentary, oldComplimentary);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn(WRONG_FIELD, e);
-            return new IUDAnswer(id, false, WRONG_FIELD, e.getMessage());
-        }
-        complimentaryDAO.commit();
+
+        newComplimentary.setObjectId(id);
+        Complimentary oldComplimentary = complimentaryDAO.getComplimentary(id);
+        complimentaryDAO.updateComplimentary(newComplimentary, oldComplimentary);
+
         return new IUDAnswer(id,true);
     }
 }
