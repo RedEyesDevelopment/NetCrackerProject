@@ -16,7 +16,6 @@ import projectpackage.service.notificationservice.NotificationService;
 import projectpackage.service.support.ServiceUtils;
 
 import javax.cache.annotation.CacheRemoveAll;
-import javax.cache.annotation.CacheResult;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,7 +40,6 @@ public class NotificationController {
 
     //Get Notification List
     @ResponseStatus(HttpStatus.OK)
-    @CacheResult(cacheName = "notificationList")
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public List<Resource<Notification>> getNotificationList() {
         List<Notification> notifications = notificationService.getAllNotifications();
@@ -79,15 +77,14 @@ public class NotificationController {
         notification.setExecutedDate(new Date());
         notification.setExecutedBy(user);
         IUDAnswer answer = notificationService.updateNotification(id, notification);
-        if (!answer.isSuccessful()) {
-            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
+        if (answer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
         } else {
-           return new ResponseEntity<IUDAnswer>(answer, HttpStatus.OK);
+            return new ResponseEntity<IUDAnswer>(answer, HttpStatus.BAD_REQUEST);
         }
     }
 
     //Get single Notification by id
-    @ResponseStatus(HttpStatus.ACCEPTED)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Resource<Notification>> getNotification(@PathVariable("id") Integer id, HttpServletRequest request) {
         User thisUser = (User) request.getSession().getAttribute("USER");
@@ -98,7 +95,7 @@ public class NotificationController {
         Resource<Notification> resource = new Resource<>(notification);
         HttpStatus status;
         if (null!= notification){
-            status = HttpStatus.ACCEPTED;
+            status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
         }
@@ -106,16 +103,12 @@ public class NotificationController {
         return response;
     }
 
-    @CacheRemoveAll(cacheName = "notificationList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> createNotification(@RequestBody NotificationDTO notificationDTO, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("USER");
-        if (user == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-        } else if (user.getRole().getObjectId() == 3) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_RECEPTION_OR_ADMIN), HttpStatus.BAD_REQUEST);
-        } else if (notificationDTO == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminReceptionAndData(user, notificationDTO);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
 
         NotificationType notificationType = new NotificationType();
@@ -142,14 +135,9 @@ public class NotificationController {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateNotification(@PathVariable("id") Integer id, @RequestBody NotificationDTO notificationDTO, HttpServletRequest request) {
         User sessionUser = (User) request.getSession().getAttribute("USER");
-        if (sessionUser == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-        } else if (sessionUser.getRole().getObjectId() == 3) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_RECEPTION_OR_ADMIN), HttpStatus.BAD_REQUEST);
-        } else if (id == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, NULL_ID), HttpStatus.BAD_REQUEST);
-        } else if (notificationDTO == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NULL_ENTITY), HttpStatus.BAD_REQUEST);
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminReceptionAndData(sessionUser, notificationDTO, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
         Notification changedNotification = notificationService.getSingleNotificationById(id);
         changedNotification.getAuthor().setObjectId(notificationDTO.getAuthorId());

@@ -148,9 +148,10 @@ public class PdfServiceImpl implements PdfService{
             Paragraph contentText = new Paragraph("Comment: " + order.getComment());
             Paragraph lease = new Paragraph("Living date : "
                     + df.format(order.getLivingStartDate()) + "  -  " + df.format(order.getLivingFinishDate()));
-            Paragraph priceText = new Paragraph("Price : " + order.getSum()/100);
+            Paragraph priceText = new Paragraph("Price : " + order.getSum()/100 + "." + order.getSum()%100 + " $");
 
             PdfPTable tableOfLastModificator = new PdfPTable(4);
+            tableOfLastModificator.setWidthPercentage(100);
             tableOfLastModificator.setSpacingBefore(25);
             tableOfLastModificator.setSpacingAfter(25);
 
@@ -170,6 +171,7 @@ public class PdfServiceImpl implements PdfService{
             tableOfLastModificator.addCell(user.getAdditionalInfo());
 
             PdfPTable tableOfCategory = new PdfPTable(2);
+            tableOfCategory.setWidthPercentage(100);
             tableOfCategory.setSpacingBefore(25);
             tableOfCategory.setSpacingAfter(25);
 

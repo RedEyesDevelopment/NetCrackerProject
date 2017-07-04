@@ -22,6 +22,7 @@ public interface ServiceUtils extends MessageBook{
     IUDAnswer checkSessionAdminAndData(User user, Object data);
     IUDAnswer checkSessionAdminAndData(User user, Object data, Integer id);
     IUDAnswer checkSessionAdminReceptionAndData(User user, Object data);
+    IUDAnswer checkSessionAdminReceptionAndData(User user, Object data, Integer id);
     IUDAnswer checkSessionAdminReceptionAndData(User user, Integer id);
     IUDAnswer checkForChangePassword(User user, UserPasswordDTO data, Integer id);
     IUDAnswer checkAdminForChangePassword(User user, UserPasswordDTO data, Integer id);
