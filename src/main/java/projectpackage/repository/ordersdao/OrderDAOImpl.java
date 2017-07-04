@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
@@ -33,7 +32,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     JdbcTemplate jdbcTemplate;
 
     @Override
-    @Transactional(readOnly = true)
     public List<Order> getAllOrderForAdmin() {
         return  manager.createReactEAV(Order.class).fetchRootReference(User.class, "UserToOrderAsClient")
                 .fetchInnerChild(Phone.class).closeAllFetches()
@@ -51,7 +49,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Order getOrderForAdmin(Integer id) {
         if (id == null) {
             return null;
@@ -72,7 +69,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Order getOrder(Integer id) {
         if (null == id) {
             return null;
@@ -103,7 +99,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Order> getAllOrder() {
         return (List<Order>) manager.createReactEAV(Order.class)
                 .fetchRootReference(User.class, "UserToOrderAsClient")
@@ -129,7 +124,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 .getEntityCollection();
     }
 
-    @Transactional
     @Override
     public Integer insertOrder(Order order) {
         if (order == null) {
@@ -155,7 +149,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         return objectId;
     }
 
-    @Transactional
     @Override
     public Integer updateOrder(Order newOrder, Order oldOrder) {
         if (newOrder == null || oldOrder == null) {
@@ -177,7 +170,6 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
         return newOrder.getObjectId();
     }
 
-    @Transactional
     @Override
     public void deleteOrder(Integer id) {
         if (id == null) {
