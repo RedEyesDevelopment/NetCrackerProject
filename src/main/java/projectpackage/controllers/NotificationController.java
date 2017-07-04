@@ -15,7 +15,6 @@ import projectpackage.model.orders.Order;
 import projectpackage.service.notificationservice.NotificationService;
 import projectpackage.service.support.ServiceUtils;
 
-import javax.cache.annotation.CacheRemoveAll;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
@@ -103,6 +102,24 @@ public class NotificationController {
         return response;
     }
 
+    @RequestMapping(value = "/notexecuted/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<Resource<Notification>> getNotExecutedNotification(@PathVariable("id") Integer id, HttpServletRequest request) {
+        User thisUser = (User) request.getSession().getAttribute("USER");
+        if (thisUser.getRole().getObjectId() == 3) {
+            return new ResponseEntity<Resource<Notification>>(new Resource<Notification>(new Notification()), HttpStatus.BAD_REQUEST);
+        }
+        Notification notification = notificationService.getNotExecutedNotificationById(id);
+        Resource<Notification> resource = new Resource<>(notification);
+        HttpStatus status;
+        if (null!= notification){
+            status = HttpStatus.OK;
+        } else {
+            status = HttpStatus.BAD_REQUEST;
+        }
+        ResponseEntity<Resource<Notification>> response = new ResponseEntity<Resource<Notification>>(resource, status);
+        return response;
+    }
+
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> createNotification(@RequestBody NotificationDTO notificationDTO, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("USER");
@@ -131,7 +148,6 @@ public class NotificationController {
         return responseEntity;
     }
 
-    @CacheRemoveAll(cacheName = "notificationList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateNotification(@PathVariable("id") Integer id, @RequestBody NotificationDTO notificationDTO, HttpServletRequest request) {
         User sessionUser = (User) request.getSession().getAttribute("USER");
@@ -139,7 +155,7 @@ public class NotificationController {
         if (!iudAnswer.isSuccessful()) {
             return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
-        Notification changedNotification = notificationService.getSingleNotificationById(id);
+        Notification changedNotification = notificationService.getNotExecutedNotificationById(id);
         changedNotification.getAuthor().setObjectId(notificationDTO.getAuthorId());
         changedNotification.setMessage(notificationDTO.getMessage());
         changedNotification.getNotificationType().setObjectId(notificationDTO.getNotificationTypeId());
@@ -153,7 +169,6 @@ public class NotificationController {
         return responseEntity;
     }
 
-    @CacheRemoveAll(cacheName = "notificationList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> deleteNotification(@PathVariable("id") Integer id, HttpServletRequest request) {
         User sessionUser = (User) request.getSession().getAttribute("USER");
