@@ -28,7 +28,9 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
     @Override
     @Transactional(readOnly = true)
     public JournalRecord getJournalRecord(Integer id) {
-        if (null == id) return null;
+        if (null == id) {
+            return null;
+        }
 
         return (JournalRecord) manager.createReactEAV(JournalRecord.class)
                 .fetchRootReference(Maintenance.class, "MaintenanceToJournalRecord")
@@ -48,7 +50,9 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
     @Transactional
     @Override
     public Integer insertJournalRecord(JournalRecord journalRecord) {
-        if (journalRecord == null) return null;
+        if (journalRecord == null) {
+            return null;
+        }
         Integer objectId = nextObjectId();
         jdbcTemplate.update(INSERT_OBJECT, objectId, journalRecord.getOrderId(), 16, null, null);
         insertCount(journalRecord, objectId);
@@ -62,7 +66,9 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
     @Transactional
     @Override
     public Integer updateJournalRecord(JournalRecord newJournalRecord, JournalRecord oldJournalRecord) {
-        if (oldJournalRecord == null || newJournalRecord == null) return null;
+        if (oldJournalRecord == null || newJournalRecord == null) {
+            return null;
+        }
 
         updateCount(newJournalRecord, oldJournalRecord);
         updateCost(newJournalRecord, oldJournalRecord);
@@ -75,14 +81,18 @@ public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDA
     @Transactional
     @Override
     public void deleteJournalRecord(Integer id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
-        if (id == null) throw new IllegalArgumentException();
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
         JournalRecord journalRecord = null;
         try {
             journalRecord = getJournalRecord(id);
         } catch (ClassCastException e) {
             throw new WrongEntityIdException(this, e.getMessage());
         }
-        if (null == journalRecord) throw new DeletedObjectNotExistsException(this);
+        if (null == journalRecord) {
+            throw new DeletedObjectNotExistsException(this);
+        }
 
         deleteSingleEntityById(id);
     }

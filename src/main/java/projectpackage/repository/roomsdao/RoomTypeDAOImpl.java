@@ -36,7 +36,9 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
     @Override
     @Transactional(readOnly = true)
     public RoomType getRoomType(Integer id) {
-        if (null == id) return null;
+        if (null == id) {
+            return null;
+        }
 
         return (RoomType) manager.createReactEAV(RoomType.class).fetchRootChild(Rate.class)
                 .fetchInnerChild(Price.class).closeAllFetches().getSingleEntityWithId(id);
@@ -84,7 +86,9 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
 
     @Override
     public Integer insertRoomType(RoomType roomType) {
-        if (roomType == null) return null;
+        if (roomType == null) {
+            return null;
+        }
         Integer objectId = nextObjectId();
 
         jdbcTemplate.update(INSERT_OBJECT, objectId, null, 5, null, null);
@@ -97,7 +101,9 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
     @Transactional
     @Override
     public Integer updateRoomType(RoomType newRoomType, RoomType oldRoomType) {
-        if (oldRoomType == null || newRoomType == null) return null;
+        if (oldRoomType == null || newRoomType == null) {
+            return null;
+        }
 
         updateTitle(newRoomType, oldRoomType);
         updateContent(newRoomType, oldRoomType);
@@ -108,14 +114,18 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
     @Transactional
     @Override
     public void deleteRoomType(Integer id) {
-        if (id == null) throw new IllegalArgumentException();
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
         RoomType roomType = null;
         try {
             roomType = getRoomType(id);
         } catch (ClassCastException e) {
             throw new WrongEntityIdException(this, e.getMessage());
         }
-        if (null == roomType) throw new DeletedObjectNotExistsException(this);
+        if (null == roomType) {
+            throw new DeletedObjectNotExistsException(this);
+        }
 
         deleteSingleEntityById(id);
     }

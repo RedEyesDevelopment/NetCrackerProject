@@ -20,7 +20,9 @@ public class ServiceUtilsImpl implements ServiceUtils{
 
     @Override
     public boolean checkDates(Date startDate, Date finishDate) {
-        if (startDate == null || finishDate == null) return false;
+        if (startDate == null || finishDate == null) {
+            return false;
+        }
 
         Date today = new Date();
 
@@ -44,7 +46,9 @@ public class ServiceUtilsImpl implements ServiceUtils{
 
     @Override
     public boolean checkDatesForUpdate(Date startDate, Date finishDate) {
-        if (startDate == null || finishDate == null) return false;
+        if (startDate == null || finishDate == null) {
+            return false;
+        }
 
         Date today = new Date();
 
@@ -52,23 +56,43 @@ public class ServiceUtilsImpl implements ServiceUtils{
         long validFinishDate = finishDate.getTime() - today.getTime();
         long secondValidStartDate = today.getTime() - MAX_VALID_TIME;
 
-        if (validStartDate > MAX_VALID_TIME) return false;
-        if (validFinishDate > MAX_VALID_TIME) return false;
-        if (startDate.getTime() < secondValidStartDate) return false;
-        if (finishDate.before(today)) return false;
-        if (startDate.after(finishDate)) return false;
+        if (validStartDate > MAX_VALID_TIME) {
+            return false;
+        }
+        if (validFinishDate > MAX_VALID_TIME) {
+            return false;
+        }
+        if (startDate.getTime() < secondValidStartDate) {
+            return false;
+        }
+        if (finishDate.before(today)) {
+            return false;
+        }
+        if (startDate.after(finishDate)) {
+            return false;
+        }
 
         return true;
     }
 
     @Override
     public boolean checkDatesForRate(Date startDate, Date finishDate) {
-        if (startDate == null || finishDate == null) return false;
+        if (startDate == null || finishDate == null) {
+            return false;
+        }
         DateTime dateTime = new DateTime();
-        if (startDate.getTime() == finishDate.getTime()) return false;
-        if (finishDate.before(startDate)) return false;
-        if (finishDate.before(dateTime.minusYears(1).toDate())) return false;
-        if (startDate.after(dateTime.plusYears(2).toDate())) return false;
+        if (startDate.getTime() == finishDate.getTime()) {
+            return false;
+        }
+        if (finishDate.before(startDate)) {
+            return false;
+        }
+        if (finishDate.before(dateTime.minusYears(1).toDate())) {
+            return false;
+        }
+        if (startDate.after(dateTime.plusYears(2).toDate())) {
+            return false;
+        }
         return true;
     }
 

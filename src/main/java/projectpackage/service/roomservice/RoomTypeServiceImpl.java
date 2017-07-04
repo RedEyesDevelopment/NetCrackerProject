@@ -91,7 +91,9 @@ public class RoomTypeServiceImpl implements RoomTypeService{
     @Override
     public List<RoomType> getAllRoomTypes() {
         List<RoomType> roomTypes = roomTypeDAO.getAllRoomTypes();
-        if (roomTypes == null) LOGGER.info("Returned NULL!!!");
+        if (roomTypes == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return roomTypes;
     }
 
@@ -103,13 +105,17 @@ public class RoomTypeServiceImpl implements RoomTypeService{
     @Override
     public RoomType getSingleRoomTypeById(Integer id) {
         RoomType roomType = roomTypeDAO.getRoomType(id);
-        if (roomType == null) LOGGER.info("Returned NULL!!!");
+        if (roomType == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return roomType;
     }
 
     @Override
     public IUDAnswer deleteRoomType(Integer id) {
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             roomTypeDAO.deleteRoomType(id);
         } catch (ReferenceBreakException e) {
@@ -191,8 +197,12 @@ public class RoomTypeServiceImpl implements RoomTypeService{
 
     @Override
     public IUDAnswer updateRoomType(Integer id, RoomType newRoomType) {
-        if (newRoomType == null) return null;
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (newRoomType == null) {
+            return null;
+        }
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             newRoomType.setObjectId(id);
             RoomType oldRoomType = roomTypeDAO.getRoomType(id);

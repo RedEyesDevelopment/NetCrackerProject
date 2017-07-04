@@ -49,7 +49,9 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public List<Order> getAllOrders() {
         List<Order> orders = orderDAO.getAllOrder();
-        if (orders == null) LOGGER.info("Returned NULL!!!");
+        if (orders == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return orders;
     }
 
@@ -186,9 +188,13 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public IUDAnswer createOrder(User client, int roomTypeId, int numberOfResidents, Date start, Date finish, Category category, long summ) {
-        if (start == null || finish == null || category == null) return new IUDAnswer(false, WRONG_DATES + WRONG_FIELD);
+        if (start == null || finish == null || category == null) {
+            return new IUDAnswer(false, WRONG_DATES + WRONG_FIELD);
+        }
         boolean isValidDates = serviceUtils.checkDates(start, finish);
-        if (!isValidDates) return new IUDAnswer(false, WRONG_DATES);
+        if (!isValidDates) {
+            return new IUDAnswer(false, WRONG_DATES);
+        }
         Room room = roomService.getFreeRoom(roomTypeId, numberOfResidents, start, finish);
         if (null != room) {
             Order order = new Order();
@@ -211,7 +217,9 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public List<Order> getAllOrderForAdmin() {
         List<Order> orders = orderDAO.getAllOrderForAdmin();
-        if (orders == null) LOGGER.info("Returned NULL!!!");
+        if (orders == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         for (Order order : orders) {
             order.getClient().setPassword(null);
             order.getLastModificator().setPassword(null);
@@ -222,7 +230,9 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public Order getOrderForAdmin(Integer id) {
         Order order = orderDAO.getOrderForAdmin(id);
-        if (order == null) LOGGER.info("Returned NULL!!!");
+        if (order == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         order.getClient().setPassword(null);
         order.getLastModificator().setPassword(null);
         return order;
@@ -325,13 +335,17 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public Order getSingleOrderById(Integer id) {
         Order order = orderDAO.getOrder(id);
-        if (order == null) LOGGER.info("Returned NULL!!!");
+        if (order == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return order;
     }
 
     @Override
     public IUDAnswer deleteOrder(Integer id) {
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             orderDAO.deleteOrder(id);
         } catch (ReferenceBreakException e) {
@@ -353,9 +367,13 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public IUDAnswer insertOrder(Order order) {
-        if (order == null) return null;
+        if (order == null) {
+            return null;
+        }
         boolean isValidDates = serviceUtils.checkDates(order.getLivingStartDate(), order.getLivingFinishDate());
-        if (!isValidDates) return new IUDAnswer(false, WRONG_DATES);
+        if (!isValidDates) {
+            return new IUDAnswer(false, WRONG_DATES);
+        }
         Integer orderId = null;
         try {
             orderId = orderDAO.insertOrder(order);
@@ -370,10 +388,16 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public IUDAnswer updateOrder(Integer id, Order newOrder) {
-        if (newOrder == null) return null;
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (newOrder == null) {
+            return null;
+        }
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         boolean isValidDates = serviceUtils.checkDatesForUpdate(newOrder.getLivingStartDate(), newOrder.getLivingFinishDate());
-        if (!isValidDates) return new IUDAnswer(false, WRONG_DATES);
+        if (!isValidDates) {
+            return new IUDAnswer(false, WRONG_DATES);
+        }
         try {
             newOrder.setObjectId(id);
             Order oldOrder = orderDAO.getOrder(id);

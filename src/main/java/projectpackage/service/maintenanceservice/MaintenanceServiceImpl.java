@@ -36,7 +36,9 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 
     @Override
     public IUDAnswer deleteMaintenance(Integer id) {
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             maintenanceDAO.deleteMaintenance(id);
         } catch (ReferenceBreakException e) {
@@ -58,7 +60,9 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 
     @Override
     public IUDAnswer insertMaintenance(Maintenance maintenance) {
-        if (maintenance == null) return null;
+        if (maintenance == null) {
+            return null;
+        }
         Integer maintenanceId = null;
         try {
             maintenanceId = maintenanceDAO.insertMaintenance(maintenance);
@@ -73,8 +77,12 @@ public class MaintenanceServiceImpl implements MaintenanceService {
 
     @Override
     public IUDAnswer updateMaintenance(Integer id, Maintenance newMaintenance) {
-        if (newMaintenance == null) return null;
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (newMaintenance == null) {
+            return null;
+        }
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             newMaintenance.setObjectId(id);
             Maintenance oldMaintenance = maintenanceDAO.getMaintenance(id);

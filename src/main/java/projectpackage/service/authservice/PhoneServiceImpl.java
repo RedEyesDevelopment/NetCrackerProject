@@ -34,7 +34,9 @@ public class PhoneServiceImpl implements PhoneService{
     @Override
     public List<Phone> getAllPhones() {
         List<Phone> phones = phoneDAO.getAllPhones();
-        if (phones == null) LOGGER.info("Returned NULL!!!");
+        if (phones == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return phones;
     }
 
@@ -63,13 +65,17 @@ public class PhoneServiceImpl implements PhoneService{
     @Override
     public Phone getSinglePhoneById(Integer id) {
         Phone phone = phoneDAO.getPhone(id);
-        if (phone == null) LOGGER.info("Returned NULL!!!");
+        if (phone == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return phone;
     }
 
     @Override
     public IUDAnswer deletePhone(Integer id) {
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             phoneDAO.deletePhone(id);
         } catch (ReferenceBreakException e) {
@@ -91,9 +97,13 @@ public class PhoneServiceImpl implements PhoneService{
 
     @Override
     public IUDAnswer insertPhone(Phone phone) {
-        if (phone == null) return null;
+        if (phone == null) {
+            return null;
+        }
         boolean isValid = regexService.isValidPhone(phone.getPhoneNumber());
-        if (!isValid) return new IUDAnswer(false, WRONG_PHONE_NUMBER);
+        if (!isValid) {
+            return new IUDAnswer(false, WRONG_PHONE_NUMBER);
+        }
         Integer phoneId = null;
         try {
             phoneId = phoneDAO.insertPhone(phone);
@@ -107,10 +117,16 @@ public class PhoneServiceImpl implements PhoneService{
 
     @Override
     public IUDAnswer updatePhone(Integer id, Phone newPhone) {
-        if (newPhone == null) return null;
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (newPhone == null) {
+            return null;
+        }
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         boolean isValid = regexService.isValidPhone(newPhone.getPhoneNumber());
-        if (!isValid) return new IUDAnswer(id, false, WRONG_PHONE_NUMBER);
+        if (!isValid) {
+            return new IUDAnswer(id, false, WRONG_PHONE_NUMBER);
+        }
         try {
             newPhone.setObjectId(id);
             Phone oldPhone = phoneDAO.getPhone(id);

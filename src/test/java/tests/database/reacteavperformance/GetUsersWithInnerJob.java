@@ -27,7 +27,9 @@ public class GetUsersWithInnerJob extends PerformanceJob {
         for (User user:list){
             assertNotNull(user);
             assertNotNull(user.getRole());
-            if (user.getObjectId()!=999) assertNotNull(user.getPhones());
+            if (user.getObjectId()!=999) {
+                assertNotNull(user.getPhones());
+            }
         }
         insertResult(System.currentTimeMillis()-diy);
     }

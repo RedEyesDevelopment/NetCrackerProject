@@ -38,7 +38,9 @@ public class JournalRecordServiceImpl implements JournalRecordService{
     @Override
     public List<JournalRecord> getAllJournalRecords() {
         List<JournalRecord> journalRecords = journalRecordDAO.getAllJournalRecords();
-        if (null == journalRecords) LOGGER.info("Returned NULL!!!");
+        if (null == journalRecords) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return journalRecords;
     }
 
@@ -57,13 +59,17 @@ public class JournalRecordServiceImpl implements JournalRecordService{
     @Override
     public JournalRecord getSingleEntityById(Integer id) {
         JournalRecord journalRecord = journalRecordDAO.getJournalRecord(id);
-        if (null == journalRecord) LOGGER.info("Returned NULL!!!");
+        if (null == journalRecord) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return journalRecord;
     }
 
     @Override
     public IUDAnswer deleteJournalRecord(Integer id) {
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             journalRecordDAO.deleteJournalRecord(id);
         } catch (ReferenceBreakException e) {
@@ -85,7 +91,9 @@ public class JournalRecordServiceImpl implements JournalRecordService{
 
     @Override
     public IUDAnswer insertJournalRecord(JournalRecord journalRecord) {
-        if (journalRecord == null) return null;
+        if (journalRecord == null) {
+            return null;
+        }
         Order order = orderDAO.getOrder(journalRecord.getOrderId());
         Set<Complimentary> freeComplimentaries = order.getCategory().getComplimentaries();
         Set<Maintenance> freeMaintenances = new HashSet<>();
@@ -110,8 +118,12 @@ public class JournalRecordServiceImpl implements JournalRecordService{
 
     @Override
     public IUDAnswer updateJournalRecord(Integer id, JournalRecord newJournalRecord) {
-        if (newJournalRecord == null) return null;
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (newJournalRecord == null) {
+            return null;
+        }
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             newJournalRecord.setObjectId(id);
             JournalRecord oldJournalRecord = journalRecordDAO.getJournalRecord(id);

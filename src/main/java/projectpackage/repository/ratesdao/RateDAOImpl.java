@@ -28,7 +28,9 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
     @Override
     @Transactional(readOnly = true)
     public Rate getRate(Integer id) {
-        if (null == id) return null;
+        if (null == id) {
+            return null;
+        }
 
         return (Rate) manager.createReactEAV(Rate.class).fetchRootChild(Price.class).closeAllFetches()
                 .getSingleEntityWithId(id);
@@ -43,7 +45,9 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
 
     @Override
     public Integer insertRate(Rate rate) {
-        if (rate == null) return null;
+        if (rate == null) {
+            return null;
+        }
 
         DateTime rateFromDate = new DateTime(rate.getRateFromDate()).withHourOfDay(12);
         DateTime rateToDate = new DateTime(rate.getRateToDate()).withHourOfDay(12);
@@ -52,9 +56,15 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
         Long cost2 = null;
         Long cost3 = null;
         for (Price price : rate.getPrices()) {
-            if (price.getNumberOfPeople().equals(1)) cost1 = price.getRate();
-            if (price.getNumberOfPeople().equals(2)) cost2 = price.getRate();
-            if (price.getNumberOfPeople().equals(3)) cost3 = price.getRate();
+            if (price.getNumberOfPeople().equals(1)) {
+                cost1 = price.getRate();
+            }
+            if (price.getNumberOfPeople().equals(2)) {
+                cost2 = price.getRate();
+            }
+            if (price.getNumberOfPeople().equals(3)) {
+                cost3 = price.getRate();
+            }
         }
         SimpleJdbcCall call = new SimpleJdbcCall(jdbcTemplate).withCatalogName("Rate_tools")
                 .withFunctionName("new_rate");
@@ -73,14 +83,18 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
     @Transactional
     @Override
     public void deleteRate(Integer id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
-        if (id == null) throw new IllegalArgumentException();
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
         Rate rate = null;
         try {
             rate = getRate(id);
         } catch (ClassCastException e) {
             throw new WrongEntityIdException(this, e.getMessage());
         }
-        if (null == rate) throw new DeletedObjectNotExistsException(this);
+        if (null == rate) {
+            throw new DeletedObjectNotExistsException(this);
+        }
 
         deleteSingleEntityById(id);
     }

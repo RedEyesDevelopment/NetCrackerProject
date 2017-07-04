@@ -23,7 +23,9 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public List<Role> getAllRoles() {
         List<Role> roles = roleDAO.getAllRoles();
-        if (roles == null) LOGGER.info("Returned NULL!!!");
+        if (roles == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return roles;
     }
 
@@ -35,13 +37,17 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Role getSingleRoleById(Integer id) {
         Role role = roleDAO.getRole(id);
-        if (role == null) LOGGER.info("Returned NULL!!!");
+        if (role == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return role;
     }
 
     @Override
     public Role getSingleRoleByRoleName(String rolename) {
-        if (null == rolename) return null;
+        if (null == rolename) {
+            return null;
+        }
         List<Role> roles = getAllRoles("objectId", true);
         for (Role role:roles){
             if (rolename.equals(role.getRoleName())){

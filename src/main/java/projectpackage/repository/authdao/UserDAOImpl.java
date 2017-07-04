@@ -46,7 +46,9 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     @Override
     @Transactional(readOnly = true)
     public User getUser(Integer id) {
-        if (id == null) return null;
+        if (id == null) {
+            return null;
+        }
 
         return (User) manager.createReactEAV(User.class).fetchRootChild(Phone.class)
                 .closeAllFetches().fetchRootReference(Role.class, "RoleToUser")
@@ -64,7 +66,9 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     @Transactional
     @Override
     public Integer insertUser(User user) {
-        if (user == null) return null;
+        if (user == null) {
+            return null;
+        }
         Integer objectId = nextObjectId();
         checkEmailForDuplicate(user.getEmail());
         jdbcTemplate.update(INSERT_OBJECT, objectId, null, 3, null, null);
@@ -82,7 +86,9 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     @Transactional
     @Override
     public Integer updateUser(User newUser, User oldUser) {
-        if (newUser == null || oldUser == null) return null;
+        if (newUser == null || oldUser == null) {
+            return null;
+        }
         updateEmail(newUser, oldUser);
         updateFirstName(newUser, oldUser);
         updateLastName(newUser, oldUser);
@@ -95,7 +101,9 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
 
     @Override
     public Integer updateUserPassword(User newUser, User oldUser) {
-        if (newUser == null || oldUser == null) return null;
+        if (newUser == null || oldUser == null) {
+            return null;
+        }
         updatePassword(newUser, oldUser);
         return newUser.getObjectId();
     }
@@ -103,14 +111,18 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     @Transactional
     @Override
     public void deleteUser(Integer id) {
-        if (id == null) throw new IllegalArgumentException();
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
         User user = null;
         try {
             user = getUser(id);
         } catch (ClassCastException e) {
             throw new WrongEntityIdException(this, e.getMessage());
         }
-        if (null == user) throw new DeletedObjectNotExistsException(this);
+        if (null == user) {
+            throw new DeletedObjectNotExistsException(this);
+        }
 
         jdbcTemplate.update(UPDATE_ATTRIBUTE, "false", null, id, 3);
     }
@@ -118,14 +130,18 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     @Transactional
     @Override
     public void restoreUser(Integer id) {
-        if (id == null) throw new IllegalArgumentException();
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
         User user = null;
         try {
             user = getUser(id);
         } catch (ClassCastException e) {
             throw new WrongEntityIdException(this, e.getMessage());
         }
-        if (null == user) throw new DeletedObjectNotExistsException(this);
+        if (null == user) {
+            throw new DeletedObjectNotExistsException(this);
+        }
 
         jdbcTemplate.update(UPDATE_ATTRIBUTE, "true", null, id, 3);
     }

@@ -26,7 +26,9 @@ public class WhereAppendingConditionExecutor implements ConditionExecutor {
 
     boolean isThisExecutorContainsConditionForCurrentNode(ReacTask task){
         for (ReactConditionData data: tasks){
-            if (data.getTargetTask().equals(task)) return true;
+            if (data.getTargetTask().equals(task)) {
+                return true;
+            }
         }
         return false;
     }

@@ -33,7 +33,9 @@ public class NotificationServiceImpl implements NotificationService{
     @Override
     public List<Notification> getAllNotifications() {
         List<Notification> notifications = notificationDAO.getAllNotifications();
-        if (notifications == null) LOGGER.info("Returned NULL!!!");
+        if (notifications == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return notifications;
     }
 
@@ -117,7 +119,9 @@ public class NotificationServiceImpl implements NotificationService{
     @Override
     public Notification getSingleNotificationById(Integer id) {
         Notification notification = notificationDAO.getNotification(id);
-        if (notification == null) LOGGER.info("Returned NULL!!!");
+        if (notification == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return notification;
     }
 
@@ -131,7 +135,9 @@ public class NotificationServiceImpl implements NotificationService{
 
     @Override
     public IUDAnswer deleteNotification(Integer id) {
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             notificationDAO.deleteNotification(id);
         } catch (ReferenceBreakException e) {
@@ -153,7 +159,9 @@ public class NotificationServiceImpl implements NotificationService{
 
     @Override
     public IUDAnswer insertNotification(Notification notification) {
-        if (notification == null) return null;
+        if (notification == null) {
+            return null;
+        }
         Integer notifId = null;
         try {
             notifId = notificationDAO.insertNotification(notification);
@@ -167,8 +175,12 @@ public class NotificationServiceImpl implements NotificationService{
 
     @Override
     public IUDAnswer updateNotification(Integer id, Notification newNotification) {
-        if (newNotification == null) return null;
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (newNotification == null) {
+            return null;
+        }
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             newNotification.setObjectId(id);
             Notification oldNotification = notificationDAO.getNotExecutedNotification(id);

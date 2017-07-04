@@ -25,7 +25,9 @@ public class GetSingleUserWithInnerJob extends PerformanceJob {
         User user = (User) manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches().fetchRootReference(Role.class, "RoleToUser").closeAllFetches().getSingleEntityWithId(USERID);
         assertNotNull(user);
         assertNotNull(user.getRole());
-        if (user.getObjectId()!=999) assertNotNull(user.getPhones());
+        if (user.getObjectId()!=999) {
+            assertNotNull(user.getPhones());
+        }
         insertResult(System.currentTimeMillis()-diy);
     }
 

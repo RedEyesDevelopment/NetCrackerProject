@@ -30,7 +30,9 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
     @Override
     @Transactional(readOnly = true)
     public ModificationHistory getModificationHistory(Integer id) {
-        if (null == id) return null;
+        if (null == id) {
+            return null;
+        }
 
         return (ModificationHistory) manager.createReactEAV(ModificationHistory.class)
                 .fetchRootReference(User.class,"UserToModificationHistory")
@@ -48,7 +50,9 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
     @Transactional
     @Override
     public Integer insertModificationHistory(Order newOrder, Order oldOrder) {
-        if (newOrder == null || oldOrder == null) return null;
+        if (newOrder == null || oldOrder == null) {
+            return null;
+        }
         Integer objectId = nextObjectId();
 
         jdbcTemplate.update(INSERT_OBJECT, objectId, oldOrder.getObjectId(), 12, null, null);
@@ -71,14 +75,18 @@ public class ModificationHistoryDAOImpl extends AbstractDAO implements Modificat
     @Transactional
     @Override
     public void deleteModificationHistory(Integer id) {
-        if (id == null) throw new IllegalArgumentException();
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
         ModificationHistory modificationHistory = null;
         try {
             modificationHistory = getModificationHistory(id);
         } catch (ClassCastException e) {
             throw new WrongEntityIdException(this, e.getMessage());
         }
-        if (null == modificationHistory) throw new DeletedObjectNotExistsException(this);
+        if (null == modificationHistory) {
+            throw new DeletedObjectNotExistsException(this);
+        }
 
         deleteSingleEntityById(id);
     }

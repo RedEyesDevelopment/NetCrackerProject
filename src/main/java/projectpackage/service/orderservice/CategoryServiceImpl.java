@@ -31,7 +31,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<Category> getAllCategories() {
         List<Category> categories = categoryDAO.getAllCategories();
-        if (null == categories) LOGGER.info("Returned NULL!!!");
+        if (null == categories) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return categories;
     }
 
@@ -43,13 +45,17 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category getSingleCategoryById(Integer id) {
         Category category = categoryDAO.getCategory(id);
-        if (null == category) LOGGER.info("Returned NULL!!!");
+        if (null == category) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return category;
     }
 
     @Override
     public IUDAnswer deleteCategory(Integer id) {
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             categoryDAO.deleteCategory(id);
         } catch (ReferenceBreakException e) {
@@ -84,8 +90,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public IUDAnswer updateCategory(Integer id, Category newCategory) {
-        if (newCategory == null) return null;
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (newCategory == null) {
+            return null;
+        }
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             newCategory.setObjectId(id);
             Category oldCategory = categoryDAO.getCategory(id);

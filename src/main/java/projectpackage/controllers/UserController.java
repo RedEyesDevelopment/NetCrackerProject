@@ -92,8 +92,9 @@ public class UserController {
         newUser.setEnabled(Boolean.TRUE);
 		IUDAnswer result = userService.insertUser(newUser);
 		HttpStatus status;
-		if (result.isSuccessful()) status = HttpStatus.OK;
-        else status = HttpStatus.BAD_REQUEST;
+		if (result.isSuccessful()) {
+		    status = HttpStatus.OK;
+        } else status = HttpStatus.BAD_REQUEST;
 		ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
 		return responseEntity;
 	}
@@ -143,8 +144,9 @@ public class UserController {
         changedUser.setPhones(phones);
 		IUDAnswer result = userService.updateUser(id, changedUser);
 		HttpStatus status;
-		if (result.isSuccessful()) status = HttpStatus.OK;
-        else status = HttpStatus.BAD_REQUEST;
+		if (result.isSuccessful()) {
+		    status = HttpStatus.OK;
+        } else status = HttpStatus.BAD_REQUEST;
 		ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
 		return responseEntity;
 	}
@@ -306,7 +308,9 @@ public class UserController {
 	@RequestMapping(value = "/myself")
 	public ResponseEntity<User> getUser(HttpServletRequest request) {
 		User user = (User) request.getSession().getAttribute("USER");
-		if (user == null) return new ResponseEntity<User>(user, HttpStatus.BAD_REQUEST);
+		if (user == null) {
+		    return new ResponseEntity<User>(user, HttpStatus.BAD_REQUEST);
+        }
 		Integer userId = user.getObjectId();
 		HttpStatus status;
 		user = userService.getSingleUserById(userId);

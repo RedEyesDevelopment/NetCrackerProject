@@ -23,7 +23,9 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
     @Override
     @Transactional(readOnly = true)
     public Phone getPhone(Integer id) {
-        if (id == null) return null;
+        if (id == null) {
+            return null;
+        }
 
         return (Phone) manager.createReactEAV(Phone.class).getSingleEntityWithId(id);
     }
@@ -42,7 +44,9 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
     @Transactional
     @Override
     public Integer insertPhone(Phone phone) {
-        if (phone == null) return null;
+        if (phone == null) {
+            return null;
+        }
         Integer objectId = nextObjectId();
         jdbcTemplate.update(INSERT_OBJECT, objectId, phone.getUserId(), 9, null, null);
         insertPhoneNumber(objectId, phone);
@@ -58,7 +62,9 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
     @Transactional
     @Override
     public Integer updatePhone(Phone newPhone, Phone oldPhone) {
-        if (oldPhone == null || newPhone == null) return null;
+        if (oldPhone == null || newPhone == null) {
+            return null;
+        }
         updatePhoneNumber(newPhone, oldPhone);
         return newPhone.getObjectId();
     }
@@ -72,14 +78,18 @@ public class PhoneDAOImpl extends AbstractDAO implements PhoneDAO{
     @Transactional
     @Override
     public void deletePhone(Integer id) {
-        if (id == null) throw new IllegalArgumentException();
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
         Phone phone = null;
         try{
             phone = getPhone(id);
         } catch (ClassCastException e) {
             throw new WrongEntityIdException(this, e.getMessage());
         }
-        if (null == phone) throw new DeletedObjectNotExistsException(this);
+        if (null == phone){
+            throw new DeletedObjectNotExistsException(this);
+        }
 
         deleteSingleEntityById(id);
     }

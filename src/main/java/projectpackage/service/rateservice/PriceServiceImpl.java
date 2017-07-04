@@ -24,21 +24,29 @@ public class PriceServiceImpl implements PriceService{
     @Override
     public List<Price> getAllPrices() {
         List<Price> prices = priceDAO.getAllPrices();
-        if (prices == null) LOGGER.info("Returned NULL!!!");
+        if (prices == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return prices;
     }
 
     @Override
     public Price getSinglePriceById(Integer id) {
         Price price = priceDAO.getPrice(id);
-        if (price == null) LOGGER.info("Returned NULL!!!");
+        if (price == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return price;
     }
 
     @Override
     public IUDAnswer updatePrice(Integer id, Price newPrice) {
-        if (newPrice == null) return null;
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (newPrice == null) {
+            return null;
+        }
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             newPrice.setObjectId(id);
             Price oldPrice = priceDAO.getPrice(id);

@@ -26,7 +26,9 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     @Override
     @Transactional(readOnly = true)
     public Complimentary getComplimentary(Integer id) {
-        if (id == null) return null;
+        if (id == null) {
+            return null;
+        }
 
         return (Complimentary) manager.createReactEAV(Complimentary.class)
                 .fetchRootReference(Maintenance.class, "MaintenanceToComplimentary")
@@ -44,7 +46,9 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     @Transactional
     @Override
     public Integer insertComplimentary(Complimentary complimentary) {
-        if (complimentary == null) return null;
+        if (complimentary == null) {
+            return null;
+        }
         Integer objectId = nextObjectId();
         jdbcTemplate.update(INSERT_OBJECT, objectId, complimentary.getCategoryId(), 15, null, null);
         insertMaintenance(complimentary, objectId);
@@ -55,7 +59,9 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     @Transactional
     @Override
     public Integer updateComplimentary(Complimentary newComplimentary, Complimentary oldComplimentary) {
-        if (oldComplimentary == null || newComplimentary == null) return null;
+        if (oldComplimentary == null || newComplimentary == null) {
+            return null;
+        }
 
         updateMaintenance(newComplimentary, oldComplimentary);
         return newComplimentary.getObjectId();
@@ -64,14 +70,18 @@ public class ComplimentaryDAOImpl extends AbstractDAO implements ComplimentaryDA
     @Transactional
     @Override
     public void deleteComplimentary(Integer id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
-        if (id == null) throw new IllegalArgumentException();
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
         Complimentary complimentary = null;
         try {
             complimentary = getComplimentary(id);
         } catch (ClassCastException e) {
             throw new WrongEntityIdException(this, e.getMessage());
         }
-        if (null == complimentary) throw new DeletedObjectNotExistsException(this);
+        if (null == complimentary) {
+            throw new DeletedObjectNotExistsException(this);
+        }
 
         deleteSingleEntityById(id);
     }

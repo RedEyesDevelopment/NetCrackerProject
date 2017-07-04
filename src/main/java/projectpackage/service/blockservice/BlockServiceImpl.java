@@ -34,7 +34,9 @@ public class BlockServiceImpl implements BlockService{
     @Override
     public List<Block> getAllBlocks() {
         List<Block> blocks = blockDAO.getAllBlocks();
-        if (blocks == null) LOGGER.info("Returned NULL!!!");
+        if (blocks == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return blocks;
     }
 
@@ -94,13 +96,17 @@ public class BlockServiceImpl implements BlockService{
     @Override
     public Block getSingleBlockById(Integer id) {
         Block block = blockDAO.getBlock(id);
-        if (block == null) LOGGER.info("Returned NULL!!!");
+        if (block == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return block;
     }
 
     @Override
     public IUDAnswer deleteBlock(Integer id) {
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             blockDAO.deleteBlock(id);
         } catch (ReferenceBreakException e) {
@@ -122,9 +128,13 @@ public class BlockServiceImpl implements BlockService{
 
     @Override
     public IUDAnswer insertBlock(Block block) {
-        if (block == null) return null;
+        if (block == null) {
+            return null;
+        }
         boolean isValidDates = serviceUtils.checkDates(block.getBlockStartDate(), block.getBlockFinishDate());
-        if (!isValidDates) return new IUDAnswer(false, WRONG_DATES);
+        if (!isValidDates) {
+            return new IUDAnswer(false, WRONG_DATES);
+        }
         Integer blockId = null;
         try {
             blockId = blockDAO.insertBlock(block);
@@ -138,10 +148,16 @@ public class BlockServiceImpl implements BlockService{
 
     @Override
     public IUDAnswer updateBlock(Integer id, Block newBlock) {
-        if (newBlock == null) return null;
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (newBlock == null) {
+            return null;
+        }
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         boolean isValidDates = serviceUtils.checkDates(newBlock.getBlockStartDate(), newBlock.getBlockFinishDate());
-        if (!isValidDates) return new IUDAnswer(false, WRONG_DATES);
+        if (!isValidDates) {
+            return new IUDAnswer(false, WRONG_DATES);
+        }
         try {
             newBlock.setObjectId(id);
             Block oldBlock = blockDAO.getBlock(id);

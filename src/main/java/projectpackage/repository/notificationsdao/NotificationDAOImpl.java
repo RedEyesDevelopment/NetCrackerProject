@@ -51,7 +51,9 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     @Override
     @Transactional(readOnly = true)
     public Notification getNotification(Integer id) {
-        if (id == null) return null;
+        if (id == null) {
+            return null;
+        }
 
         return (Notification) manager.createReactEAV(Notification.class)
                 .fetchRootReference(User.class, "UserToNotificationAsAuthor")
@@ -100,7 +102,9 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     @Transactional
     @Override
     public Integer insertNotification(Notification notification) {
-        if (notification == null) return null;
+        if (notification == null) {
+            return null;
+        }
         Integer objectId = nextObjectId();
         jdbcTemplate.update(INSERT_OBJECT, objectId, null, 4, null, null);
         insertSendDate(objectId, notification);
@@ -115,7 +119,9 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     @Transactional
     @Override
     public Integer updateNotification(Notification newNotification, Notification oldNotification) {
-        if (oldNotification == null || newNotification == null) return null;
+        if (oldNotification == null || newNotification == null) {
+            return null;
+        }
 
         updateMessage(newNotification, oldNotification);
         updateSendDate(newNotification, oldNotification);
@@ -142,7 +148,9 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         } catch (ClassCastException e) {
             throw new WrongEntityIdException(this, e.getMessage());
         }
-        if (null == notification) throw new DeletedObjectNotExistsException(this);
+        if (null == notification) {
+            throw new DeletedObjectNotExistsException(this);
+        }
 
         deleteSingleEntityById(id);
     }

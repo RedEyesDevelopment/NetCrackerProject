@@ -26,7 +26,9 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     @Override
     @Transactional(readOnly = true)
     public NotificationType getNotificationType(Integer id) {
-        if (id == null) return null;
+        if (id == null) {
+            return null;
+        }
 
         return (NotificationType) manager.createReactEAV(NotificationType.class)
                 .fetchRootReference(Role.class, "RoleToNotificationType")
@@ -44,7 +46,9 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     @Transactional
     @Override
     public Integer insertNotificationType(NotificationType notificationType) {
-        if (notificationType == null) return null;
+        if (notificationType == null) {
+            return null;
+        }
         Integer objectId = nextObjectId();
         jdbcTemplate.update(INSERT_OBJECT, objectId, null, 11, null, null);
         insertNotificationTypeTitle(objectId, notificationType);
@@ -56,7 +60,9 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     @Transactional
     @Override
     public Integer updateNotificationType(NotificationType newNotificationType, NotificationType oldNotificationType) {
-        if (oldNotificationType == null || newNotificationType == null) return null;
+        if (oldNotificationType == null || newNotificationType == null) {
+            return null;
+        }
 
         updateTitle(newNotificationType, oldNotificationType);
         updateRole(newNotificationType, oldNotificationType);
@@ -67,14 +73,18 @@ public class NotificationTypeDAOImpl extends AbstractDAO implements Notification
     @Transactional
     @Override
     public void deleteNotificationType(Integer id) {
-        if (id == null) throw new IllegalArgumentException();
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
         NotificationType notificationType = null;
         try {
             notificationType = getNotificationType(id);
         } catch (ClassCastException e) {
             throw new WrongEntityIdException(this, e.getMessage());
         }
-        if (null == notificationType) throw new DeletedObjectNotExistsException(this);
+        if (null == notificationType) {
+            throw new DeletedObjectNotExistsException(this);
+        }
 
         deleteSingleEntityById(id);
     }

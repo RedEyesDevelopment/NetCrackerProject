@@ -23,7 +23,9 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
     @Override
     @Transactional(readOnly = true)
     public Price getPrice(Integer id) {
-        if (null == id) return null;
+        if (null == id) {
+            return null;
+        }
 
         return (Price) manager.createReactEAV(Price.class).getSingleEntityWithId(id);
     }
@@ -37,7 +39,9 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
     @Transactional
     @Override
     public Integer updatePrice(Price newPrice, Price oldPrice) {
-        if (newPrice == null || oldPrice == null) return null;
+        if (newPrice == null || oldPrice == null) {
+            return null;
+        }
 
         updateNumberOfPeople(newPrice, oldPrice);
         updateRate(newPrice, oldPrice);

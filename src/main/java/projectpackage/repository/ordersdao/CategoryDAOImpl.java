@@ -28,7 +28,9 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
     @Override
     @Transactional(readOnly = true)
     public Category getCategory(Integer id) {
-        if (null == id) return null;
+        if (null == id) {
+            return null;
+        }
 
         return (Category) manager.createReactEAV(Category.class)
                 .fetchRootChild(Complimentary.class)
@@ -56,7 +58,9 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
     @Transactional
     @Override
     public Integer insertCategory(Category category) {
-        if (category == null) return null;
+        if (category == null) {
+            return null;
+        }
         Integer objectId = nextObjectId();
 
         jdbcTemplate.update(INSERT_OBJECT, objectId, null, 13, null, null);
@@ -69,7 +73,9 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
     @Transactional
     @Override
     public Integer updateCategory(Category newCategory, Category oldCategory) {
-        if (newCategory == null || oldCategory == null) return null;
+        if (newCategory == null || oldCategory == null) {
+            return null;
+        }
 
         updateCategoryTitle(newCategory, oldCategory);
         updateCategoryPrice(newCategory, oldCategory);
@@ -80,14 +86,18 @@ public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
     @Transactional
     @Override
     public void deleteCategory(Integer id) {
-        if (id == null) throw new IllegalArgumentException();
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
         Category category = null;
         try {
             category = getCategory(id);
         } catch (ClassCastException e) {
             throw new WrongEntityIdException(this, e.getMessage());
         }
-        if (null == category) throw new DeletedObjectNotExistsException(this);
+        if (null == category) {
+            throw new DeletedObjectNotExistsException(this);
+        }
 
         deleteSingleEntityById(id);
     }

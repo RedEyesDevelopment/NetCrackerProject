@@ -19,7 +19,9 @@ public class RoleDAOImpl extends AbstractDAO implements RoleDAO{
     @Override
     @Transactional(readOnly = true)
     public Role getRole(Integer id) {
-        if (id == null) return null;
+        if (id == null) {
+            return null;
+        }
             return (Role) manager.createReactEAV(Role.class).getSingleEntityWithId(id);
     }
 

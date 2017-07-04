@@ -30,7 +30,9 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
     @Override
     public List<NotificationType> getAllNotificationTypes() {
         List<NotificationType> notificationTypes = notificationTypeDAO.getAllNotificationTypes();
-        if (notificationTypes == null) LOGGER.info("Returned NULL!!!");
+        if (notificationTypes == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return notificationTypes;
     }
 
@@ -49,13 +51,17 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
     @Override
     public NotificationType getSingleNotificationTypeById(Integer id) {
         NotificationType notificationType = notificationTypeDAO.getNotificationType(id);
-        if (notificationType == null) LOGGER.info("Returned NULL!!!");
+        if (notificationType == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return notificationType;
     }
 
     @Override
     public IUDAnswer deleteNotificationType(Integer id) {
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             notificationTypeDAO.deleteNotificationType(id);
         } catch (ReferenceBreakException e) {
@@ -77,7 +83,9 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
 
     @Override
     public IUDAnswer insertNotificationType(NotificationType notificationType) {
-        if (notificationType == null) return null;
+        if (notificationType == null) {
+            return null;
+        }
         Integer notifTypeId = null;
         try {
             notifTypeId = notificationTypeDAO.insertNotificationType(notificationType);
@@ -91,8 +99,12 @@ public class NotificationTypeServiceImpl implements NotificationTypeService {
 
     @Override
     public IUDAnswer updateNotificationType(Integer id, NotificationType newNotificationType) {
-        if (newNotificationType == null) return null;
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (newNotificationType == null) {
+            return null;
+        }
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             newNotificationType.setObjectId(id);
             NotificationType oldNotificationType = notificationTypeDAO.getNotificationType(id);

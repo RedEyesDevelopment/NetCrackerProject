@@ -20,7 +20,9 @@ class ReactQueryBuilder {
     StringBuilder getQueryForEntity(LinkedHashMap<String, EntityVariablesData> currentNodeVariables, ReacTask currentNode, boolean isSearchById, String orderingParameter, boolean ascend, WhereAppendingConditionExecutor executor) throws NoSuchMethodException, IllegalAccessException, InstantiationException, InvocationTargetException {
         //Вставляем экзекутор, если он есть и проверяем на наличие variable-where-условий
         WhereAppendingConditionExecutor conditionExecutor;
-        if (null!=executor) conditionExecutor = executor;
+        if (null!=executor) {
+            conditionExecutor = executor;
+        }
         boolean thisNodeNeedsCustomWhereCondition = false;
         if (null!=executor){
             thisNodeNeedsCustomWhereCondition = executor.isThisExecutorContainsVariableConditionForCurrentNode(currentNode);
@@ -186,7 +188,9 @@ class ReactQueryBuilder {
         }
 
         //Добавляем кляузу WHERE OBJECTS.OBJECT_ID=...
-        if (isSearchById) queryAppender.appendWhereConditionWithRootTableObjectIdSearching();
+        if (isSearchById) {
+            queryAppender.appendWhereConditionWithRootTableObjectIdSearching();
+        }
         if (null!=executor) {
             if (executor.isThisExecutorContainsConditionForCurrentNode(currentNode)){
                 executor.setBuilder(queryBuilder);

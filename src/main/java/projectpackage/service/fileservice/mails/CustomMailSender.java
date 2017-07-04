@@ -31,7 +31,9 @@ public class CustomMailSender implements Runnable {
         } catch (MailException e){
             log.error(e);
         } finally {
-            if (null!=pdfService) pdfService.deletePDF(filePath);
+            if (null!=pdfService) {
+                pdfService.deletePDF(filePath);
+            }
         }
     }
 

@@ -28,20 +28,26 @@ public class ModificationHistoryServiceImpl implements ModificationHistoryServic
     @Override
     public List<ModificationHistory> getAllModificationHistory() {
         List<ModificationHistory> modificationHistories = modificationHistoryDAO.getAllModificationHistories();
-        if (modificationHistories == null) LOGGER.info("Returned NULL!!!");
+        if (modificationHistories == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return modificationHistories;
     }
 
     @Override
     public ModificationHistory getSingleModificationHistoryById(Integer id) {
         ModificationHistory modificationHistory = modificationHistoryDAO.getModificationHistory(id);
-        if (modificationHistory == null) LOGGER.info("Returned NULL!!!");
+        if (modificationHistory == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return modificationHistory;
     }
 
     @Override
     public IUDAnswer insertModificationHistory(Order newOrder, Order oldOrder) {
-        if (newOrder == null || oldOrder == null) return null;
+        if (newOrder == null || oldOrder == null) {
+            return null;
+        }
         Integer modificationId = null;
         try {
             modificationId = modificationHistoryDAO.insertModificationHistory(newOrder, oldOrder);
@@ -55,7 +61,9 @@ public class ModificationHistoryServiceImpl implements ModificationHistoryServic
 
     @Override
     public IUDAnswer deleteModificationHistory(Integer id) {
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             modificationHistoryDAO.deleteModificationHistory(id);
         } catch (ReferenceBreakException e) {

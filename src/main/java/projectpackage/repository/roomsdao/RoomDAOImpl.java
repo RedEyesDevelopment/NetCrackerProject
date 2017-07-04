@@ -34,7 +34,9 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     @Override
     @Transactional(readOnly = true)
     public Room getRoom(Integer id) {
-        if (null==id) return null;
+        if (null==id) {
+            return null;
+        }
 
         return (Room) manager.createReactEAV(Room.class).addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
                 .fetchRootReference(RoomType.class, "RoomTypeToRoom")
@@ -45,7 +47,9 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     @Override
     @Transactional(readOnly = true)
     public Room getSimpleRoom(Integer id) {
-        if (null==id) return null;
+        if (null==id) {
+            return null;
+        }
 
         return (Room) manager.createReactEAV(Room.class)
                 .fetchRootReference(RoomType.class, "RoomTypeToRoom").closeAllFetches().getSingleEntityWithId(id);
@@ -125,7 +129,9 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     @Transactional
     @Override
     public Integer insertRoom(Room room) {
-        if (room == null) return null;
+        if (room == null) {
+            return null;
+        }
         Integer objectId = nextObjectId();
 
         jdbcTemplate.update(INSERT_OBJECT, objectId, null, 1, null, null);
@@ -139,7 +145,9 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     @Transactional
     @Override
     public Integer updateRoom(Room newRoom, Room oldRoom) {
-        if (oldRoom == null || newRoom == null) return null;
+        if (oldRoom == null || newRoom == null) {
+            return null;
+        }
 
         updateRoomNumber(newRoom, oldRoom);
         updateNumberOfResidents(newRoom, oldRoom);
@@ -151,14 +159,18 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     @Transactional
     @Override
     public void deleteRoom(Integer id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
-        if (id == null) throw new IllegalArgumentException();
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
         Room room = null;
         try {
             room = getRoom(id);
         } catch (ClassCastException e) {
             throw new WrongEntityIdException(this, e.getMessage());
         }
-        if (null == room) throw new DeletedObjectNotExistsException(this);
+        if (null == room) {
+            throw new DeletedObjectNotExistsException(this);
+        }
 
 
         deleteSingleEntityById(id);

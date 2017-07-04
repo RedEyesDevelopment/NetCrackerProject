@@ -25,7 +25,9 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
     @Override
     @Transactional(readOnly = true)
     public Maintenance getMaintenance(Integer id) {
-        if (null == id) return null;
+        if (null == id) {
+            return null;
+        }
 
         return (Maintenance) manager.createReactEAV(Maintenance.class).getSingleEntityWithId(id);
 
@@ -40,7 +42,9 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
     @Transactional
     @Override
     public Integer insertMaintenance(Maintenance maintenance) {
-        if (maintenance == null) return null;
+        if (maintenance == null) {
+            return null;
+        }
         Integer objectId = nextObjectId();
         jdbcTemplate.update(INSERT_OBJECT, objectId, null, 14, null, null);
         insertTitle(maintenance, objectId);
@@ -53,7 +57,9 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
     @Transactional
     @Override
     public Integer updateMaintenance(Maintenance newMaintenance, Maintenance oldMaintenance) {
-        if (newMaintenance == null || oldMaintenance == null) return null;
+        if (newMaintenance == null || oldMaintenance == null) {
+            return null;
+        }
 
         updateTitle(newMaintenance, oldMaintenance);
         updateType(newMaintenance, oldMaintenance);
@@ -65,14 +71,18 @@ public class MaintenanceDAOImpl extends AbstractDAO implements MaintenanceDAO {
     @Transactional
     @Override
     public void deleteMaintenance(Integer id) {
-        if (id == null) throw new IllegalArgumentException();
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
         Maintenance maintenance = null;
         try {
             maintenance = getMaintenance(id);
         } catch (ClassCastException e) {
             throw new WrongEntityIdException(this, e.getMessage());
         }
-        if (null == maintenance) throw new DeletedObjectNotExistsException(this);
+        if (null == maintenance) {
+            throw new DeletedObjectNotExistsException(this);
+        }
 
         deleteSingleEntityById(id);
     }

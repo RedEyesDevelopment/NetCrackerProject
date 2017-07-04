@@ -62,7 +62,9 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public List<Room> getAllRooms() {
         List<Room> rooms = roomDAO.getAllRooms();
-        if (rooms == null) LOGGER.info("Returned NULL!!!");
+        if (rooms == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return rooms;
     }
 
@@ -74,7 +76,9 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Room getSingleRoomById(Integer id) {
         Room room = roomDAO.getRoom(id);
-        if (room == null) LOGGER.info("Returned NULL!!!");
+        if (room == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return room;
     }
 
@@ -132,7 +136,9 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public IUDAnswer deleteRoom(Integer id) {
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             roomDAO.deleteRoom(id);
         } catch (ReferenceBreakException e) {
@@ -154,7 +160,9 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public IUDAnswer insertRoom(RoomDTO roomDTO) {
-        if (roomDTO == null) return null;
+        if (roomDTO == null) {
+            return null;
+        }
         if (roomDTO.getNumberOfResidents() > 3 || roomDTO.getNumberOfResidents() < 1) {
             return new IUDAnswer(false, INCORRECT_NUMBER_OF_RESIDENTS);
         }
@@ -176,8 +184,12 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public IUDAnswer updateRoom(Integer id, RoomDTO roomDTO) {
-        if (roomDTO == null) return null;
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (roomDTO == null) {
+            return null;
+        }
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         if (roomDTO.getNumberOfResidents() > 3 || roomDTO.getNumberOfResidents() < 1) {
             return new IUDAnswer(false, INCORRECT_NUMBER_OF_RESIDENTS);
         }

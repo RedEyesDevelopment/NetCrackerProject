@@ -28,14 +28,18 @@ public class RateServiceImpl implements RateService{
     @Override
     public List<Rate> getAllRates() {
         List<Rate> rates = rateDAO.getAllRates();
-        if (rates == null) LOGGER.info("Returned NULL!!!");
+        if (rates == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return rates;
     }
 
     @Override
     public Rate getSingleRateById(Integer id) {
         Rate rate = rateDAO.getRate(id);
-        if (rate == null) LOGGER.info("Returned NULL!!!");
+        if (rate == null) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return rate;
     }
 

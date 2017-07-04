@@ -93,7 +93,9 @@ public class ReactEntityRowMapper implements RowMapper {
             } catch (IllegalAccessException e) {
                 throw new WrongTypeClassException(field.getDeclaringClass(), throwedClass);
             }
-            if (fieldWasPrivate) field.setAccessible(false);
+            if (fieldWasPrivate) {
+                field.setAccessible(false);
+            }
         }
         return targetReacEntityObject;
     }

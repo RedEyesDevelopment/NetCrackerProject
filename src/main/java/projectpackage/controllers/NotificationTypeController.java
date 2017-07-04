@@ -58,7 +58,9 @@ public class NotificationTypeController {
         Resource<NotificationType> resource = new Resource<>(notificationType);
         HttpStatus status;
         if (null!= notificationType){
-            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(NotificationTypeController.class).deleteNotificationType(notificationType.getObjectId())).withRel("delete"));
+            if (thisUser.getRole().getRoleName().equals("ADMIN")) {
+                resource.add(linkTo(methodOn(NotificationTypeController.class).deleteNotificationType(notificationType.getObjectId())).withRel("delete"));
+            }
             //resource.add(linkTo(methodOn(NotificationTypeController.class).updateNotificationType(notificationType.getObjectId(), notificationType)).withRel("update"));
             status = HttpStatus.ACCEPTED;
         } else {

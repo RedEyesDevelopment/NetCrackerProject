@@ -28,7 +28,9 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     @Override
     @Transactional(readOnly = true)
     public Block getBlock(Integer id) {
-        if (id == null) return null;
+        if (id == null) {
+            return null;
+        }
 
         return (Block) manager.createReactEAV(Block.class).fetchRootReference(Room.class, "RoomToBlock")
                 .closeAllFetches().getSingleEntityWithId(id);
@@ -44,7 +46,9 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     @Transactional
     @Override
     public Integer insertBlock(Block block) {
-        if (block == null) return null;
+        if (block == null) {
+            return null;
+        }
         Integer objectId = nextObjectId();
         jdbcTemplate.update(INSERT_OBJECT, objectId, null, 8, null, null);
         insertStartDate(block, objectId);
@@ -57,7 +61,9 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     @Transactional
     @Override
     public Integer updateBlock(Block newBlock, Block oldBlock) {
-        if (oldBlock == null || newBlock == null) return null;
+        if (oldBlock == null || newBlock == null) {
+            return null;
+        }
         updateStartDate(newBlock, oldBlock);
         updateFinishDate(newBlock, oldBlock);
         updateReason(newBlock, oldBlock);
@@ -69,14 +75,18 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     @Transactional
     @Override
     public void deleteBlock(Integer id) {
-        if (id == null) throw new IllegalArgumentException();
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
         Block block = null;
         try {
             block = getBlock(id);
         } catch (ClassCastException e) {
             throw new WrongEntityIdException(this, e.getMessage());
         }
-        if (null == block) throw new DeletedObjectNotExistsException(this);
+        if (null == block) {
+            throw new DeletedObjectNotExistsException(this);
+        }
 
         deleteSingleEntityById(id);
     }

@@ -56,7 +56,9 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     @Override
     @Transactional(readOnly = true)
     public Order getOrderForAdmin(Integer id) {
-        if (id == null) return null;
+        if (id == null) {
+            return null;
+        }
         return (Order) manager.createReactEAV(Order.class).fetchRootReference(User.class, "UserToOrderAsClient")
                 .fetchInnerChild(Phone.class).closeAllFetches()
                 .fetchRootReference(User.class, "UserToOrderAsLastModificator")
@@ -75,7 +77,9 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     @Override
     @Transactional(readOnly = true)
     public Order getOrder(Integer id) {
-        if (null == id) return null;
+        if (null == id) {
+            return null;
+        }
 
         return (Order) manager.createReactEAV(Order.class)
                 .fetchRootReference(User.class, "UserToOrderAsClient")
@@ -131,7 +135,9 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     @Transactional
     @Override
     public Integer insertOrder(Order order) {
-        if (order == null) return null;
+        if (order == null) {
+            return null;
+        }
         Integer objectId = nextObjectId();
 
         jdbcTemplate.update(INSERT_OBJECT, objectId, null, 2, null, null);
@@ -155,7 +161,9 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     @Transactional
     @Override
     public Integer updateOrder(Order newOrder, Order oldOrder) {
-        if (newOrder == null || oldOrder == null) return null;
+        if (newOrder == null || oldOrder == null) {
+            return null;
+        }
 
         updateRegistrationDate(newOrder, oldOrder);
         updateIsPaidFor(newOrder, oldOrder);
@@ -175,14 +183,18 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     @Transactional
     @Override
     public void deleteOrder(Integer id) {
-        if (id == null) throw new IllegalArgumentException();
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
         Order order = null;
         try {
             order = getOrder(id);
         } catch (ClassCastException e) {
             throw new WrongEntityIdException(this, e.getMessage());
         }
-        if (null == order) throw new DeletedObjectNotExistsException(this);
+        if (null == order) {
+            throw new DeletedObjectNotExistsException(this);
+        }
 
         deleteSingleEntityById(id);
     }

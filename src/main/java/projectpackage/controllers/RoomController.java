@@ -75,7 +75,9 @@ public class RoomController {
         Resource<Room> resource = new Resource<>(room);
         HttpStatus status;
         if (null != room){
-            if (thisUser.getRole().getRoleName().equals("ADMIN")) resource.add(linkTo(methodOn(RoomController.class).deleteRoom(room.getObjectId())).withRel("delete"));
+            if (thisUser.getRole().getRoleName().equals("ADMIN")) {
+                resource.add(linkTo(methodOn(RoomController.class).deleteRoom(room.getObjectId())).withRel("delete"));
+            }
             //resource.add(linkTo(methodOn(RoomController.class).updateRoom(room.getObjectId(), room)).withRel("update"));
             status = HttpStatus.OK;
         } else {

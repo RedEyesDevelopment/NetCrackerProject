@@ -27,20 +27,26 @@ public class ComplimentaryServiceImpl implements ComplimentaryService {
     @Override
     public List<Complimentary> getAllComplimentaries() {
         List<Complimentary> complimentaries = complimentaryDAO.getAllComplimentaries();
-        if (null == complimentaries) LOGGER.info("Returned NULL!!!");
+        if (null == complimentaries) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return complimentaries;
     }
 
     @Override
     public Complimentary getSingleComplimentaryById(Integer id) {
         Complimentary complimentary = complimentaryDAO.getComplimentary(id);
-        if (null == complimentary) LOGGER.info("Returned NULL!!!");
+        if (null == complimentary) {
+            LOGGER.info("Returned NULL!!!");
+        }
         return complimentary;
     }
 
     @Override
     public IUDAnswer deleteComplimentary(Integer id) {
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             complimentaryDAO.deleteComplimentary(id);
         } catch (ReferenceBreakException e) {
@@ -62,7 +68,9 @@ public class ComplimentaryServiceImpl implements ComplimentaryService {
 
     @Override
     public IUDAnswer insertComplimentary(Complimentary complimentary) {
-        if (complimentary == null) return null;
+        if (complimentary == null) {
+            return null;
+        }
         Integer complimentaryId = null;
         try {
             complimentaryId = complimentaryDAO.insertComplimentary(complimentary);
@@ -77,8 +85,12 @@ public class ComplimentaryServiceImpl implements ComplimentaryService {
 
     @Override
     public IUDAnswer updateComplimentary(Integer id, Complimentary newComplimentary) {
-        if (newComplimentary == null) return null;
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+        if (newComplimentary == null) {
+            return null;
+        }
+        if (id == null) {
+            return new IUDAnswer(false, NULL_ID);
+        }
         try {
             newComplimentary.setObjectId(id);
             Complimentary oldComplimentary = complimentaryDAO.getComplimentary(id);

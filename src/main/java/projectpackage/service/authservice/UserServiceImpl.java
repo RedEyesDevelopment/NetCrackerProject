@@ -38,14 +38,18 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<User> getAllUsers() {
 		List<User> users = userDAO.getAllUsers();
-		if (users == null) LOGGER.info("Returned NULL!!!");
+		if (users == null) {
+			LOGGER.info("Returned NULL!!!");
+		}
 		return users;
 	}
 
 	@Override
 	public User getSingleUserById(Integer id) {
 		User user = userDAO.getUser(id);
-		if (user == null) LOGGER.info("Returned NULL!!!");
+		if (user == null) {
+			LOGGER.info("Returned NULL!!!");
+		}
 		return user;
 	}
 
@@ -101,11 +105,17 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public IUDAnswer insertUser(User user) {
-		if (user == null) return null;
-		if (user.getPhones() == null) return null;
+		if (user == null) {
+			return null;
+		}
+		if (user.getPhones() == null) {
+			return null;
+		}
         for (Phone phone : user.getPhones()) {
             boolean isValid = regexService.isValidPhone(phone.getPhoneNumber());
-            if (!isValid) return new IUDAnswer(false, WRONG_PHONE_NUMBER);
+            if (!isValid) {
+            	return new IUDAnswer(false, WRONG_PHONE_NUMBER);
+			}
         }
         if (!securityService.cryptUserPass(user)){
         	return new IUDAnswer(false, INVALID_PASSWORD);
@@ -137,8 +147,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public IUDAnswer updateUser(Integer id, User newUser) {
-	    if (newUser == null) return null;
-        if (id == null) return new IUDAnswer(false, NULL_ID);
+	    if (newUser == null) {
+	    	return null;
+		}
+        if (id == null) {
+	    	return new IUDAnswer(false, NULL_ID);
+		}
 		try {
 			newUser.setObjectId(id);
 			User oldUser = userDAO.getUser(id);
@@ -156,9 +170,15 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public IUDAnswer updateUserPassword(Integer id, User newUser) {
-		if (newUser == null) return null;
-		if (id == null) return new IUDAnswer(false, NULL_ID);
-		if (!securityService.cryptUserPass(newUser)) return new IUDAnswer(false, FAIL_CRYPT_PASSWORD);
+		if (newUser == null) {
+			return null;
+		}
+		if (id == null) {
+			return new IUDAnswer(false, NULL_ID);
+		}
+		if (!securityService.cryptUserPass(newUser)) {
+			return new IUDAnswer(false, FAIL_CRYPT_PASSWORD);
+		}
 		try {
 			newUser.setObjectId(id);
 			User oldUser = userDAO.getUser(id);

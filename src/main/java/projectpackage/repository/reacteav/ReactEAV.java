@@ -68,7 +68,9 @@ public class ReactEAV {
     private void checkInnerRelations(Class clazz, Set<Class> set) {
         boolean rootHasIt = false;
         for (Class currentClass : set) {
-            if (currentClass.equals(clazz)) rootHasIt = true;
+            if (currentClass.equals(clazz)) {
+                rootHasIt = true;
+            }
         }
         if (!rootHasIt) {
             throw new WrongFetchException(clazz, rootNode.getObjectClass(), "root");

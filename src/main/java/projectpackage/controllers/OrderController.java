@@ -125,7 +125,9 @@ public class OrderController {
     public ResponseEntity<List<Order>> getAllOrdersByUser(HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("USER");
         List<Order> orders = orderService.getOrdersByClient(user);
-        if (null == orders) return new ResponseEntity<List<Order>>((List<Order>) null,HttpStatus.NOT_FOUND);
+        if (null == orders) {
+            return new ResponseEntity<List<Order>>((List<Order>) null,HttpStatus.NOT_FOUND);
+        }
 
         return new ResponseEntity<List<Order>>(orders, HttpStatus.OK);
     }
@@ -163,8 +165,12 @@ public class OrderController {
         User thisUser = (User) request.getSession().getAttribute("USER");
         OrderDTO dto = null;
         User client = null;
-        if (thisUser == null) return new ResponseEntity<BookedOrderDTO>(new BookedOrderDTO(dto), HttpStatus.BAD_REQUEST);
-        if (bookDTO.getRoomTypeId() == null) return new ResponseEntity<BookedOrderDTO>(new BookedOrderDTO(dto), HttpStatus.BAD_REQUEST);
+        if (thisUser == null) {
+            return new ResponseEntity<BookedOrderDTO>(new BookedOrderDTO(dto), HttpStatus.BAD_REQUEST);
+        }
+        if (bookDTO.getRoomTypeId() == null) {
+            return new ResponseEntity<BookedOrderDTO>(new BookedOrderDTO(dto), HttpStatus.BAD_REQUEST);
+        }
         if (thisUser.getRole().getObjectId() == 3) {
             client = thisUser;
         } else {
@@ -197,7 +203,9 @@ public class OrderController {
     public ResponseEntity<List<OrderDTO>> searchAvailabilityForOrderCreation(@RequestBody SearchAvailabilityParamsDTO searchDto, HttpServletRequest request) throws ParseException {
         List<OrderDTO> data = roomTypeService.getRoomTypes(searchDto.getArrival(),searchDto.getDeparture(),
                 searchDto.getLivingPersons(), searchDto.getCategoryId());
-        if (data == null || data.isEmpty()) return new ResponseEntity<List<OrderDTO>>(data, HttpStatus.BAD_REQUEST);
+        if (data == null || data.isEmpty()) {
+            return new ResponseEntity<List<OrderDTO>>(data, HttpStatus.BAD_REQUEST);
+        }
 
         ResponseEntity<List<OrderDTO>> responseEntity = new ResponseEntity<List<OrderDTO>>(data, HttpStatus.OK);
         List<OrderDTO> dtoData = data.stream().filter(dto -> dto.isAvailable()).collect(Collectors.toList());
