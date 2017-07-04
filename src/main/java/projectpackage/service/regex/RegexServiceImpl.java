@@ -6,9 +6,6 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by Lenovo on 02.05.2017.
- */
 @Service
 public class RegexServiceImpl implements RegexService {
     private static final String[] REGEXES = {"\\+\\d{1,2}\\(\\d{3}\\)\\d{2}\\-\\d{2}\\-\\d{3}", "\\+\\d{12}", "\\d{7}", "[0]\\d{9}"};

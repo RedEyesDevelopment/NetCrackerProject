@@ -25,9 +25,6 @@ import java.util.List;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-/**
- * Created by Arizel on 28.05.2017.
- */
 @RestController
 @RequestMapping("/journalRecords")
 public class JournalRecordController {

@@ -16,9 +16,6 @@ import projectpackage.service.securityservice.SecurityService;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * Created by Lenovo on 21.05.2017.
- */
 @RestController
 @RequestMapping("/auth")
 public class AuthorizationController {

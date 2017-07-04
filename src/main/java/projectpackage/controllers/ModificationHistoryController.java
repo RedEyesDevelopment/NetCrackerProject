@@ -21,9 +21,6 @@ import java.util.List;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-/**
- * Created by Lenovo on 28.05.2017.
- */
 @RestController
 @RequestMapping("/histories")
 public class ModificationHistoryController {

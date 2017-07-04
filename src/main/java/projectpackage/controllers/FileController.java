@@ -25,9 +25,6 @@ import java.util.Date;
 import static projectpackage.service.MessageBook.NEED_TO_AUTH;
 import static projectpackage.service.MessageBook.NULL_ID;
 
-/**
- * Created by Lenovo on 06.06.2017.
- */
 @RestController
 @RequestMapping("/pdf")
 public class FileController {

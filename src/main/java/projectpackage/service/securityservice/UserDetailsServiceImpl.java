@@ -13,9 +13,6 @@ import projectpackage.repository.securitydao.AuthCredentialsDAO;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Created by Gvozd on 07.01.2017.
- */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -33,6 +30,4 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             grantedAuthorities.add(new SimpleGrantedAuthority(credentials.getRolename()));
         return new org.springframework.security.core.userdetails.User(credentials.getLogin(), credentials.getPassword(), grantedAuthorities);
     }
-
-
 }

@@ -23,9 +23,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import static projectpackage.service.MessageBook.*;
 
-/**
- * Created by Arizel on 28.05.2017.
- */
 @RestController
 @RequestMapping("/blocks")
 public class BlockController {

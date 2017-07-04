@@ -6,9 +6,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import projectpackage.aspects.ModificationHistoryAspect;
 import projectpackage.aspects.OrderIsPaidForAspect;
 
-/**
- * Created by Lenovo on 29.05.2017.
- */
 @Configuration
 @EnableAspectJAutoProxy
 public class AspectConfiguration {

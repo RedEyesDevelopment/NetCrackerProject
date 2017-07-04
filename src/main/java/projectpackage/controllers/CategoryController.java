@@ -15,7 +15,6 @@ import projectpackage.model.orders.Category;
 import projectpackage.service.orderservice.CategoryService;
 import projectpackage.service.support.ServiceUtils;
 
-import javax.cache.annotation.CacheRemoveAll;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +22,6 @@ import java.util.List;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-/**
- * Created by Lenovo on 28.05.2017.
- */
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {

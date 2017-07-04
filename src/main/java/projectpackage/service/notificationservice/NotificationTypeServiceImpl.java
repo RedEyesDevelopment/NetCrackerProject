@@ -15,9 +15,6 @@ import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
 @Log4j
 @Service
 public class NotificationTypeServiceImpl implements NotificationTypeService {

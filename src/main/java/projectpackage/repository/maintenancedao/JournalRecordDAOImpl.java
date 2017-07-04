@@ -14,9 +14,6 @@ import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 
-/**
- * Created by Dima on 21.05.2017.
- */
 @Repository
 public class JournalRecordDAOImpl extends AbstractDAO implements JournalRecordDAO {
     private static final Logger LOGGER = Logger.getLogger(JournalRecordDAOImpl.class);

@@ -19,10 +19,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
-/**
- * Created by Arizel on 16.05.2017.
- */
 @Log4j
 @Service
 public class RoomServiceImpl implements RoomService {

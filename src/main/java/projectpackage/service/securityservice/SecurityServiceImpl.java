@@ -16,9 +16,6 @@ import projectpackage.repository.securitydao.AuthCredentialsDAO;
 
 import java.util.Collection;
 
-/**
- * Created by Gvozd on 07.01.2017.
- */
 @Service
 public class SecurityServiceImpl implements SecurityService {
 

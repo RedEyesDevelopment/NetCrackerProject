@@ -9,9 +9,6 @@ import projectpackage.repository.authdao.RoleDAO;
 
 import java.util.List;
 
-/**
- * Created by Lenovo on 15.05.2017.
- */
 @Log4j
 @Service
 public class RoleServiceImpl implements RoleService {

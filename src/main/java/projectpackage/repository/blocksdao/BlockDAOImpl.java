@@ -13,9 +13,6 @@ import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
 @Transactional
 @Repository
 public class BlockDAOImpl extends AbstractDAO implements BlockDAO{

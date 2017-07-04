@@ -26,9 +26,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import static projectpackage.service.MessageBook.CANNOT_HAVE_DUPLICATE_COMPLIMENTARY;
 
-/**
- * Created by Arizel on 28.05.2017.
- */
 @RestController
 @RequestMapping("/complimentaries")
 public class ComplimentaryController {

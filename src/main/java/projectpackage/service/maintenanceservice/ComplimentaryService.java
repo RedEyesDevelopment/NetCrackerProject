@@ -6,9 +6,6 @@ import projectpackage.service.MessageBook;
 
 import java.util.List;
 
-/**
- * Created by Dmitry on 21.05.2017.
- */
 public interface ComplimentaryService extends MessageBook{
     public List<Complimentary> getAllComplimentaries();
     public Complimentary getSingleComplimentaryById(Integer id);

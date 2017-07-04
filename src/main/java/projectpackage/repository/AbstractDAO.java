@@ -14,9 +14,6 @@ import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
 import java.sql.Types;
 import java.util.Map;
 
-/**
- * Created by Arizel on 17.05.2017.
- */
 public abstract class AbstractDAO implements Commitable, Rollbackable{
 
     private static final Logger LOGGER = Logger.getLogger(AbstractDAO.class);

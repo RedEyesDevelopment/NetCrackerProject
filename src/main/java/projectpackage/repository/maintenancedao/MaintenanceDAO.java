@@ -6,9 +6,6 @@ import projectpackage.repository.Rollbackable;
 
 import java.util.List;
 
-/**
- * Created by Lenovo on 21.05.2017.
- */
 public interface MaintenanceDAO extends Commitable, Rollbackable{
     public Maintenance getMaintenance(Integer id);
     public List<Maintenance> getAllMaintenances();

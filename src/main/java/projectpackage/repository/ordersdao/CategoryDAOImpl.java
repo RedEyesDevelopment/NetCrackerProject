@@ -14,9 +14,6 @@ import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 
-/**
- * Created by Dima on 21.05.2017.
- */
 @Repository
 public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
     private static final Logger LOGGER = Logger.getLogger(CategoryDAOImpl.class);

@@ -13,9 +13,6 @@ import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 
-/**
- * Created by Dmitry on 21.05.2017.
- */
 @Service
 @Log4j
 public class ComplimentaryServiceImpl implements ComplimentaryService {

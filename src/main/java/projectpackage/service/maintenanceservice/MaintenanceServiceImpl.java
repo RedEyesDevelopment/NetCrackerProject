@@ -13,9 +13,6 @@ import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 
 import java.util.List;
 
-/**
- * Created by Dima on 21.05.2017.
- */
 @Log4j
 @Service
 public class MaintenanceServiceImpl implements MaintenanceService {

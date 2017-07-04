@@ -16,9 +16,6 @@ import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by Arizel on 21.05.2017.
- */
 @Log4j
 @Repository
 public class ModificationHistoryDAOImpl extends AbstractDAO implements ModificationHistoryDAO {

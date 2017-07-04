@@ -7,9 +7,6 @@ import projectpackage.service.MessageBook;
 
 import java.util.List;
 
-/**
- * Created by Lenovo on 15.05.2017.
- */
 public interface PhoneService extends MessageBook{
     public List<Phone> getAllPhonesByUser(User user);
     public List<Phone> getAllPhones();

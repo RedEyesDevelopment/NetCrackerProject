@@ -14,9 +14,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by Arizel on 04.06.2017.
- */
 @Log4j
 @Service
 public class AdminServiceImpl implements AdminService{

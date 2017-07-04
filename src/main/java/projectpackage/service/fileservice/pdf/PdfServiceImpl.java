@@ -16,9 +16,6 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-/**
- * Created by Gvozd on 09.04.2017.
- */
 @Service
 public class PdfServiceImpl implements PdfService{
     private static final Logger LOGGER = Logger.getLogger(PdfServiceImpl.class);

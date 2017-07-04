@@ -4,9 +4,6 @@ import lombok.Data;
 
 import java.util.Date;
 
-/**
- * Created by Arizel on 02.07.2017.
- */
 @Data
 public class RateDTO {
     private Integer roomTypeId;

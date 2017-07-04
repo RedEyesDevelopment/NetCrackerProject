@@ -18,7 +18,6 @@ import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
 import projectpackage.model.rooms.RoomType;
-import projectpackage.repository.reacteav.ReactEAV;
 import projectpackage.repository.reacteav.ReactEAVManager;
 import projectpackage.repository.reacteav.conditions.ConditionExecutionMoment;
 import projectpackage.repository.reacteav.conditions.PriceEqualsToRoomCondition;
@@ -114,7 +113,7 @@ public class ReactEAVTest extends AbstractDatabaseTest {
     //Получить сортированный список ролей
     @Test
     public void queryTestOfRolesOrderBy(){
-        List<Role> roles = (List<Role>) manager.createReactEAV(Role.class).getEntityCollectionOrderByParameter("objectId", true);
+        List<Role> roles = manager.createReactEAV(Role.class).getEntityCollectionOrderByParameter("objectId", true);
         for (Role role:roles){
             LOGGER.info(role);
             assertNotNull(role);

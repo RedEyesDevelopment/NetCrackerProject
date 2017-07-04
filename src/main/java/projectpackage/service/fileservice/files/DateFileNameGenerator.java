@@ -7,9 +7,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by Lenovo on 05.06.2017.
- */
 @Component
 public class DateFileNameGenerator {
     @Value("${files.default.filename}")

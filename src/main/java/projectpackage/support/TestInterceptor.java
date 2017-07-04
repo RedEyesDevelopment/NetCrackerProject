@@ -12,9 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
-/**
- * Created by Gvozd on 11.12.2016.
- */
 public class TestInterceptor implements HandlerInterceptor {
     private static final Logger LOGGER = Logger.getLogger(TestInterceptor.class);
 

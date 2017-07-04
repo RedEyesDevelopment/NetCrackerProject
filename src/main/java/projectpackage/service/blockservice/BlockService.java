@@ -7,9 +7,6 @@ import projectpackage.service.MessageBook;
 
 import java.util.List;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
 public interface BlockService extends MessageBook{
     public List<Block> getBlocksByRoom(Room room);
     public List<Block> getCurrentBlocks();//livingStartDate < SYSDATE < livingFinishDate ясно?

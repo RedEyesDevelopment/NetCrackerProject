@@ -12,9 +12,6 @@ import projectpackage.repository.support.rowmappers.AuthCredentialsRowMapper;
 
 import java.util.List;
 
-/**
- * Created by Lenovo on 21.05.2017.
- */
 @Repository
 public class AuthCredentialsDAOImpl implements AuthCredentialsDAO {
     private static final String GETCREDENTIALS = "SELECT USR.OBJECT_ID \"USERID\", USALOG.VALUE \"LOGIN\", USAPASS.VALUE \"PASSWORD\", RLENAME.VALUE \"ROLE\"\n" +

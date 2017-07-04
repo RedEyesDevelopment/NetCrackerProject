@@ -13,9 +13,6 @@ import javax.cache.annotation.CacheResult;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Arizel on 28.05.2017.
- */
 @RestController
 @RequestMapping("/roles")
 public class RoleController {

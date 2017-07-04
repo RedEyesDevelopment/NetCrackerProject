@@ -24,9 +24,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import static projectpackage.service.MessageBook.NULL_ENTITY;
 
-/**
- * Created by Lenovo on 28.05.2017.
- */
 @RestController
 @RequestMapping("/notificationtypes")
 public class NotificationTypeController {
@@ -61,7 +58,6 @@ public class NotificationTypeController {
             if (thisUser.getRole().getRoleName().equals("ADMIN")) {
                 resource.add(linkTo(methodOn(NotificationTypeController.class).deleteNotificationType(notificationType.getObjectId())).withRel("delete"));
             }
-            //resource.add(linkTo(methodOn(NotificationTypeController.class).updateNotificationType(notificationType.getObjectId(), notificationType)).withRel("update"));
             status = HttpStatus.ACCEPTED;
         } else {
             status = HttpStatus.BAD_REQUEST;
@@ -93,7 +89,6 @@ public class NotificationTypeController {
     }
 
     //Update notificationType method
-//    	@Secured("ROLE_ADMIN")
     @CacheRemoveAll(cacheName = "notificationTypeList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> updateNotificationType(@PathVariable("id") Integer id, @RequestBody NotificationTypeDTO notificationTypeDTO){

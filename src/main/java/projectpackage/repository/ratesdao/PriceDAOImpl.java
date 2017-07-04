@@ -10,9 +10,6 @@ import projectpackage.repository.AbstractDAO;
 
 import java.util.List;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
 @Repository
 public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
     private static final Logger LOGGER = Logger.getLogger(PriceDAOImpl.class);

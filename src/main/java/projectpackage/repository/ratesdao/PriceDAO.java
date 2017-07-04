@@ -6,9 +6,6 @@ import projectpackage.repository.Rollbackable;
 
 import java.util.List;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
 public interface PriceDAO extends Commitable, Rollbackable {
     public Price getPrice(Integer id);
     public List<Price> getAllPrices();

@@ -11,9 +11,6 @@ import projectpackage.service.support.ServiceUtils;
 
 import java.util.List;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
 @Log4j
 @Service
 public class RateServiceImpl implements RateService{

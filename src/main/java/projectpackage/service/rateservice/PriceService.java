@@ -6,9 +6,6 @@ import projectpackage.service.MessageBook;
 
 import java.util.List;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
 public interface PriceService extends MessageBook{
     public List<Price> getAllPrices();
     public Price getSinglePriceById(Integer id);

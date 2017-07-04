@@ -1,8 +1,5 @@
 package projectpackage.service;
 
-/**
- * Created by Arizel on 24.06.2017.
- */
 public interface MessageBook {
     String WRONG_UPDATE_ID = "Cannot update with wrong id!";
     String WRONG_DELETED_ID = "Cannot delete entity with inadequate id!";

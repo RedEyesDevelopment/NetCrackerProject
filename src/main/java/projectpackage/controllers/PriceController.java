@@ -63,19 +63,6 @@ public class PriceController {
         return response;
     }
 
-   // //Create price, fetch into database
-//    @CacheRemoveAll(cacheName = "priceList")
-//    @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-//    public ResponseEntity<IUDAnswer> createPrice(@RequestBody Price newPrice){
-//        IUDAnswer result = priceService.insertPrice(newPrice);
-//        HttpStatus status;
-//        if (result.isSuccessful()) {
-//            status = HttpStatus.CREATED;
-//        } else status = HttpStatus.BAD_REQUEST;
-//        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
-//        return responseEntity;
-//    }
-
     //Update price method
     @CacheRemoveAll(cacheName = "priceList")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
@@ -92,16 +79,4 @@ public class PriceController {
         return responseEntity;
     }
 
-//    //Delete price method
-//    @CacheRemoveAll(cacheName = "priceList")
-//    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
-//    public ResponseEntity<IUDAnswer> deletePrice(@PathVariable("id") Integer id){
-//        IUDAnswer result = priceService.deletePrice(id);
-//        HttpStatus status;
-//        if (result.isSuccessful()) {
-//            status = HttpStatus.ACCEPTED;
-//        } else status = HttpStatus.NOT_FOUND;
-//        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
-//        return responseEntity;
-//    }
 }

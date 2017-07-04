@@ -10,9 +10,6 @@ import projectpackage.repository.ratesdao.PriceDAO;
 
 import java.util.List;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
 @Log4j
 @Service
 public class PriceServiceImpl implements PriceService{

@@ -7,9 +7,6 @@ import projectpackage.service.MessageBook;
 
 import java.util.List;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
 public interface NotificationTypeService extends MessageBook{
     public List<NotificationType> getNotificationTypeByRole(Role role);
     public List<NotificationType> getAllNotificationTypes();

@@ -6,9 +6,6 @@ import projectpackage.repository.Rollbackable;
 
 import java.util.List;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
 public interface BlockDAO extends Commitable, Rollbackable{
     public Block getBlock(Integer id);
     public List<Block> getAllBlocks();

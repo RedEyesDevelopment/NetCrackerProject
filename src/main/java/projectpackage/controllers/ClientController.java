@@ -12,9 +12,6 @@ import projectpackage.service.fileservice.mails.MailService;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * Created by Lenovo on 08.06.2017.
- */
 @RestController
 @RequestMapping("/clients")
 public class ClientController {

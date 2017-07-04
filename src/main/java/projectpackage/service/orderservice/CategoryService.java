@@ -6,9 +6,6 @@ import projectpackage.service.MessageBook;
 
 import java.util.List;
 
-/**
- * Created by Dima on 21.05.2017.
- */
 public interface CategoryService extends MessageBook{
     public List<Category> getAllCategories();
     public List<Category> getSimpleCategoryList();

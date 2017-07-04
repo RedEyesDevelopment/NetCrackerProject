@@ -8,9 +8,6 @@ import projectpackage.service.MessageBook;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
 public interface RoomTypeService extends MessageBook{
     List<OrderDTO> getRoomTypes(Date startDate, Date finishDate, int numberOfPeople, int categoryId);
     List<RoomType> getAllRoomTypes();

@@ -9,9 +9,6 @@ import projectpackage.repository.AbstractDAO;
 import java.util.List;
 
 
-/**
- * Created by Arizel on 21.05.2017.
- */
 @Repository
 public class RoleDAOImpl extends AbstractDAO implements RoleDAO{
     private static final Logger LOGGER = Logger.getLogger(RoleDAOImpl.class);

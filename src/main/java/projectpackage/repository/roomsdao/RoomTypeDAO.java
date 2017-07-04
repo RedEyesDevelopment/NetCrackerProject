@@ -8,9 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
 public interface RoomTypeDAO extends Commitable, Rollbackable {
     public RoomType getRoomType(Integer id);
     public List<RoomType> getAllRoomTypes();

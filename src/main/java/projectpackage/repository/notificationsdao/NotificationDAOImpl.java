@@ -26,9 +26,6 @@ import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
 @Repository
 public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO {
     private static final Logger LOGGER = Logger.getLogger(NotificationDAOImpl.class);

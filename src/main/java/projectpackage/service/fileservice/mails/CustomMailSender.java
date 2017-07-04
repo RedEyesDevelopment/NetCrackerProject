@@ -7,9 +7,6 @@ import projectpackage.service.fileservice.pdf.PdfService;
 
 import javax.mail.internet.MimeMessage;
 
-/**
- * Created by Lenovo on 05.06.2017.
- */
 public class CustomMailSender implements Runnable {
     private JavaMailSenderImpl javaMailSender;
     private String filePath;

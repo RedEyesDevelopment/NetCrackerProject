@@ -10,9 +10,6 @@ import projectpackage.service.MessageBook;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
 public interface RoomService extends MessageBook{
     List<Room> getRoomsByNumberOfResidents(Integer count);
     List<Room> getRoomsByType(RoomType roomType);

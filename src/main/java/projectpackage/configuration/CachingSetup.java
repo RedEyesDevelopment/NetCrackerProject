@@ -8,9 +8,6 @@ import javax.cache.expiry.Duration;
 import javax.cache.expiry.TouchedExpiryPolicy;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by Lenovo on 23.04.2017.
- */
 @Component
 public class CachingSetup implements JCacheManagerCustomizer {
     @Override

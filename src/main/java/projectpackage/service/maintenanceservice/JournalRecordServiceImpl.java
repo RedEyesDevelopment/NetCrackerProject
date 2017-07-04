@@ -21,9 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created by Dima on 21.05.2017.
- */
 @Log4j
 @Service
 public class JournalRecordServiceImpl implements JournalRecordService{

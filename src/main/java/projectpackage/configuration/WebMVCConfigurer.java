@@ -9,9 +9,6 @@ import org.springframework.web.servlet.config.annotation.*;
 import projectpackage.service.support.RandomStringGenerator;
 import projectpackage.support.TestInterceptor;
 
-/**
- * Created by Gvozd on 30.12.2016.
- */
 @Log4j
 @Configuration
 @EnableWebMvc

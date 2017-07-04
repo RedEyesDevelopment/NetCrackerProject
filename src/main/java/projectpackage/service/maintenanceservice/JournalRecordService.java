@@ -6,9 +6,6 @@ import projectpackage.service.MessageBook;
 
 import java.util.List;
 
-/**
- * Created by Dima on 21.05.2017.
- */
 public interface JournalRecordService extends MessageBook{
     public List<JournalRecord> getAllJournalRecords();
     public List<JournalRecord> getJournalRecordsByOrder(Integer orderId);

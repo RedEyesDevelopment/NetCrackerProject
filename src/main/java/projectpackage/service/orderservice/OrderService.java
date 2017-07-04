@@ -13,9 +13,6 @@ import projectpackage.service.MessageBook;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
 public interface OrderService extends MessageBook{
     List<Order> getOrdersByRoom(Room room);
     List<Order> getOrdersByClient(User user);

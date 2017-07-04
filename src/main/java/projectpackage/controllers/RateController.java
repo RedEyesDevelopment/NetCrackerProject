@@ -23,9 +23,6 @@ import java.util.Set;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
-/**
- * Created by Lenovo on 28.05.2017.
- */
 @RestController
 @RequestMapping("/rates")
 public class RateController {

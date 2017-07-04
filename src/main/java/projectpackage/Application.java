@@ -13,10 +13,6 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.Arrays;
 
-/**
- * Created by Gvozd on 30.12.2016.
- */
-
 @SpringBootApplication(exclude = {MultipartAutoConfiguration.class})
 @EnableCaching
 public class Application extends SpringBootServletInitializer {

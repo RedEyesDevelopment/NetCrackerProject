@@ -17,9 +17,6 @@ import projectpackage.service.regex.RegexService;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Lenovo on 15.05.2017.
- */
 @Log4j
 @Service
 public class PhoneServiceImpl implements PhoneService{

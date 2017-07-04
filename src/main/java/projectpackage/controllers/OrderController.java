@@ -16,7 +16,6 @@ import projectpackage.service.orderservice.OrderService;
 import projectpackage.service.roomservice.RoomTypeService;
 import projectpackage.service.support.ServiceUtils;
 
-import javax.cache.annotation.CacheRemoveAll;
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -28,9 +27,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import static projectpackage.service.MessageBook.*;
 
-/**
- * Created by Lenovo on 28.05.2017.
- */
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -52,7 +48,6 @@ public class OrderController {
 
     //Get Order List
     @ResponseStatus(HttpStatus.OK)
-    //@CacheResult(cacheName = "orderList")
     @GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public List<Resource<Order>> getOrderList(HttpServletRequest request){
         List<Order> orders = orderService.getAllOrders();
@@ -148,7 +143,6 @@ public class OrderController {
     }
 
     //Create order, fetch into database
-    @CacheRemoveAll(cacheName = "orderList")
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> createOrder(@RequestBody Order newOrder){
         IUDAnswer result = orderService.insertOrder(newOrder);
@@ -282,7 +276,6 @@ public class OrderController {
     }
 
     //Delete order method
-    @CacheRemoveAll(cacheName = "orderList")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> deleteOrder(@PathVariable("id") Integer id, HttpServletRequest request){
         User thisUser = (User) request.getSession().getAttribute("USER");

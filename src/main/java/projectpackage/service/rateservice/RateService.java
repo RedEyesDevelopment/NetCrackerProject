@@ -6,9 +6,6 @@ import projectpackage.service.MessageBook;
 
 import java.util.List;
 
-/**
- * Created by Arizel on 16.05.2017.
- */
 public interface RateService extends MessageBook{
     public List<Rate> getAllRates();
     public Rate getSingleRateById(Integer id);
