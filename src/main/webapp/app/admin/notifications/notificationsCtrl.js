@@ -1,8 +1,6 @@
 app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util',
     function($scope, $http, $location, sharedData, util) {
-
-
-	/* Функция на получения всех уведомлений, типов уведомлений и заказов, вызываются сразу */
+	
 	var getExecutedNotifications = function() {
 		$http({
 			url: sharedData.getLinks().https + '/notifications',
@@ -10,13 +8,13 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfExecutedNotifications = data.data;
+			$scope.listOfExecNotifications = data.data;
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
 		});
 	};
-
+	// Получаем все выполненные
 	getExecutedNotifications();
 
 	var getCurrentNotifications = function() {
@@ -26,13 +24,13 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
-            $scope.listOfNotifications = data.data;
+            $scope.listOfCurrNotifications = data.data;
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
         });
     };
-
+	// Получаем все НЕЕЕЕЕЕЕ выполненные
     getCurrentNotifications();
 
 	(function() {

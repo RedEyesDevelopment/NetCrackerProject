@@ -107,10 +107,15 @@
     border-radius: 15px;
 }
 
+.editWindow h3 {
+    margin: 15px 0;
+}
+
 .editWindow .createUpdateForm {
     border: 1px solid #d1d1d1;
     padding: 15px;
     border-radius: 10px;
+    margin-bottom: 15px;
 }
 
 .editWindow .createUpdateForm .wrapInput {
@@ -152,6 +157,10 @@
 
 .editWindow .createUpdateForm .form-field-bottom-border {
     border-bottom: 1px solid #d1d1d1;
+}
+
+.editWindow .createUpdateForm .form-field-margin-bottom {
+    margin-bottom: 10px;
 }
 
 .editWindow .groupInput {

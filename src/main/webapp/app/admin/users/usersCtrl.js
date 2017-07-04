@@ -23,7 +23,11 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfRoles = data.data;
+			if ($scope.isAdmin) {
+				$scope.listOfRoles = data.data;
+			} else {
+				$scope.listOfRoles = [util.getObjectInArrayById(data.data, 3)];
+			}
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
@@ -57,7 +61,9 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 	$scope.query = function() {
 		switch ($scope.stage) {
-			case 'adding': addUser();
+			case 'addingByAdmin': addUser();
+				break;
+			case 'addingByReception': registration();
 				break;
 			case 'deleting': deleteUser();
 				break;
@@ -82,8 +88,15 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	$scope.prepareToAddUser = function() {
 		$scope.userIdForOperation = "";
 		$scope.userIndexForOperation = "";
-		$scope.user = {};
-		$scope.stage = "adding";
+		$scope.user = {
+			additionalInfo: ""
+		};
+		if (!$scope.isAdmin) {
+			$scope.user.role = $scope.listOfRoles[0].objectId;
+			$scope.stage = "addingByReception";
+		} else {
+			$scope.stage = "addingByAdmin";
+		}
 		$scope.mode = "add";
 	}
 
@@ -126,6 +139,54 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
             $scope.errMessage = "'invalidInputData'";
         }
 	}
+
+	var registration = function() {
+        if ($scope.user.password === $scope.user.confirm) {
+            $http({
+                url: sharedData.getLinks().https + '/users/registration',
+                method: 'POST',
+                data: {
+                    objectId: 0,
+                    email: $scope.user.email,
+                    password: $scope.user.password,
+                    firstName: $scope.user.firstName,
+                    lastName: $scope.user.lastName,
+                    additionalInfo: $scope.user.additionalInfo,
+                    enabled: true,
+                    role: { objectId: 0, roleName: "" },
+                    phones: [
+                        {
+                            objectId: 0,
+                            userId: 0,
+                            phoneNumber: $scope.user.phone
+                        }
+                    ]
+                },
+                headers: {'Content-Type' : 'application/json'}
+            }).then(function (data) {
+                console.log(data);
+                $http({
+                    url: sharedData.getLinks().https + '/users/' + data.data.objectId,
+                    method: 'GET',
+                    headers: {'Content-Type': 'application/json'}
+                }).then(function(data) {
+                    console.log(data);
+                    $scope.listOfUsers.push(data.data);
+                }, function(response) {
+                    console.log("Smth wrong!!");
+                    console.log(response);
+                });
+                $scope.prepareToAddUser();
+                $scope.stage = "added";
+            }, function (response) {
+                console.log(response);
+                console.log("Smth wrong!!");
+                // тут отобразить отказ от сервера
+            });
+        } else {
+            $scope.errMessage = "'invalidInputData'";
+        }
+    }
 
 
 	$scope.prepareToDeleteUser = function(userId, index) {

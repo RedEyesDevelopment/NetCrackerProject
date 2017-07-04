@@ -40,19 +40,19 @@
 
                         <div class="order-padding-top" ng-repeat="phone in user.phones"> Phone: {{ phone.phoneNumber }} </div>
 
-                        <div class="text-right">
-                            <button type="button" class="btn btn-primary btn-md"
+                        <div class="text-right order-padding-top">
+                            <button type="button" class="btn btn-primary btn-md" ng-if="isAdmin || user.role.objectId == 3"
                                     ng-click="prepareToEditUser(user.objectId, listOfUsers.indexOf(user))">
                                 Edit
                             </button>
 
-                            <button type="button" class="btn btn-warning btn-md" ng-if="user.enabled"
+                            <button type="button" class="btn btn-warning btn-md" ng-if="user.enabled && isAdmin"
                                     ng-click="prepareToDeleteUser(user.objectId, listOfUsers.indexOf(user))"
                                     data-toggle="modal" data-target="#deleteConfirmModal">
                                 Delete
                             </button>
 
-                            <button type="button" class="btn btn-success btn-md" ng-if="!user.enabled"
+                            <button type="button" class="btn btn-success btn-md" ng-if="!user.enabled && isAdmin"
                                     ng-click="prepareToReestablishUser(user.objectId, listOfUsers.indexOf(user))"
                                     data-toggle="modal" data-target="#editConfirmModal">
                                 Reestablish
@@ -139,7 +139,7 @@
                     <div class="form-group">
                         <label for="additionalInfo" class="col-sm-4 control-label">Additional info</label>
                         <div class="col-sm-7">
-                            <textarea class="form-control" id="additionalInfo" ng-required="true" ng-model="user.additionalInfo"></textarea>
+                            <textarea class="form-control" id="additionalInfo" ng-model="user.additionalInfo"></textarea>
                         </div>
                     </div>
                     <div class="form-group">
@@ -174,136 +174,140 @@
                 Password and confirm password not equals! <i class="fa fa-times" aria-hidden="true"></i>
             </div>
 
-            <div class="col-sm-offset-3 col-sm-6 createUpdateForm">
+            <div class="col-sm-12 createUpdateForm">
                 <form class="form-horizontal" name="updateForm" novalidate>
-                    <div class="groupInput">
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label" for="firstNameInput">First name:</label>
-                            <div class="col-sm-7">
-                                <input class="form-control" type="text" id="firstNameInput"
-                                    ng-model="user.firstName">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label" for="lastNameInput">Last name:</label>
-                            <div class="col-sm-7">
-                                <input class="form-control" type="text" id="lastNameInput"
-                                    ng-model="user.lastName">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label" for="emailInput">Email:</label>
-                            <div class="col-sm-7">
-                                <input class="form-control" type="text" id="emailInput" ng-model="user.email"
-                                       ng-pattern = '/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i'>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label" for="infoInput">Additional info:</label>
-                            <div class="col-sm-7">
-                                <textarea class="form-control" id="infoInput" ng-model="user.additionalInfo"></textarea>
-                            </div>
-                        </div>
-                        <div class="form-group text-center">
-                            <button class="btn btn-primary" ng-click="prepareToEditBasicInfo()"
-                                    data-toggle="modal" data-target="#editConfirmModal">
-                                Update basic info
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="groupInput">
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label" for="oldPasswordInput">Old password:</label>
-                            <div class="col-sm-7">
-                                <input class="form-control" type="password" id="oldPasswordInput"
-                                    ng-model="user.oldPassword">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label" for="newPasswordInput">New password:</label>
-                            <div class="col-sm-7">
-                                <input class="form-control" type="password" id="newPasswordInput" ng-model="user.newPassword"
-                                       ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label" for="passwordRepInput">Repeat:</label>
-                            <div class="col-sm-7">
-                                <input class="form-control" type="password" id="passwordRepInput"
-                                    ng-model="user.newPasswordRep">
-                            </div>
-                        </div>
-                        <div class="form-group text-center">
-                            <button class="btn btn-primary" ng-click="prepareToChangePassword()"
-                                    data-toggle="modal" data-target="#editConfirmModal">
-                                Change password
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="groupInput">
-                        <div ng-repeat="phone in user.phones">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h3 class="text-center">Basic info</h3>
                             <div class="form-group">
-                                <div class="col-sm-4">
-                                    <label class="control-label">Phone Number:</label>
-                                </div>
+                                <label class="col-sm-4 control-label" for="firstNameInput">First name:</label>
                                 <div class="col-sm-7">
-                                    <input type="tel" class="form-control" id="phoneNumberInput"
-                                        ng-model="phone.phoneNumber">
-                                </div>
-                                <div class="col-sm-7 col-sm-offset-4 phoneButtonGroup">
-                                    <button class="btn btn-default" ng-click="prepareToEditPhone(phone.objectId, user.phones.indexOf(phone))"
-                                            data-toggle="modal" data-target="#editConfirmModal">
-                                        Edit
-                                    </button>
-                                    <button class="btn btn-default"
-                                            ng-click="prepareToDeletePhone(phone.objectId, user.phones.indexOf(phone))"
-                                            data-toggle="modal" data-target="#deleteConfirmModal">
-                                        Delete
-                                    </button>
+                                    <input class="form-control" type="text" id="firstNameInput"
+                                        ng-model="user.firstName">
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="groupInput">
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <button class="btn btn-default"
-                                        ng-click="prepareToAddPhone()">
-                                    <i class="fa fa-plus" aria-hidden="true"></i> Add one
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="lastNameInput">Last name:</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" type="text" id="lastNameInput"
+                                        ng-model="user.lastName">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="emailInput">Email:</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" type="text" id="emailInput" ng-model="user.email"
+                                           ng-pattern = '/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i'>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="infoInput">Additional info:</label>
+                                <div class="col-sm-7">
+                                    <textarea class="form-control" id="infoInput" ng-model="user.additionalInfo"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group text-center">
+                                <button class="btn btn-primary" ng-click="prepareToEditBasicInfo()"
+                                        data-toggle="modal" data-target="#editConfirmModal">
+                                    Update basic info
                                 </button>
                             </div>
-                            <div ng-if="stage == 'addPhone'" class="newPhone">
-                                <div class="col-sm-7">
-                                    <input class="form-control" type="tel" ng-model="user.newPhone">
+                        </div>
+
+                        <div class="col-sm-6">
+                            <h3 class="text-center">Phones</h3>
+                            <div class="">
+                                <div ng-repeat="phone in user.phones">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-4">Phone Number:</label>
+                                        <div class="col-sm-7">
+                                            <input type="tel" class="form-control" id="phoneNumberInput"
+                                                ng-model="phone.phoneNumber">
+                                        </div>
+                                        <div class="col-sm-7 col-sm-offset-4 phoneButtonGroup">
+                                            <button class="btn btn-default" ng-click="prepareToEditPhone(phone.objectId, user.phones.indexOf(phone))"
+                                                    data-toggle="modal" data-target="#editConfirmModal">
+                                                Edit
+                                            </button>
+                                            <button class="btn btn-default"
+                                                    ng-click="prepareToDeletePhone(phone.objectId, user.phones.indexOf(phone))"
+                                                    data-toggle="modal" data-target="#deleteConfirmModal">
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-sm-7 col-sm-offset-4 phoneButtonGroup">
-                                    <button class="btn btn-default" ng-click="query()">
-                                        Accept <i class="fa fa-check" aria-hidden="true"></i>
+                            </div>
+                            <div class="row form-field-margin-bottom">
+                                <div class="col-sm-4">
+                                    <button class="btn btn-default"
+                                            ng-click="prepareToAddPhone()">
+                                        <i class="fa fa-plus" aria-hidden="true"></i> Add one
                                     </button>
-                                    <button class="btn btn-default" ng-click="cancelPhone()">
-                                        Cancel <i class="fa fa-times" aria-hidden="true"></i>
-                                    </button>
+                                </div>
+                                <div ng-if="stage == 'addPhone'" class="newPhone">
+                                    <div class="col-sm-7">
+                                        <input class="form-control" type="tel" ng-model="user.newPhone">
+                                    </div>
+                                    <div class="col-sm-7 col-sm-offset-4 phoneButtonGroup">
+                                        <button class="btn btn-default" ng-click="query()">
+                                            Accept <i class="fa fa-check" aria-hidden="true"></i>
+                                        </button>
+                                        <button class="btn btn-default" ng-click="cancelPhone()">
+                                            Cancel <i class="fa fa-times" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="groupInput">
-                        <div class="col-sm-4">
-                            <label class="control-label">Role:</label>
-                        </div>
-                        <div class="col-sm-7">
-                            <select id="notificationTypeRole" class="form-control" ng-model="user.role.objectId"
-                                ng-options="role.objectId as role.roleName for role in listOfRoles">
-                            </select>
-                        </div>
-                        <div class="col-sm-7 col-sm-offset-4 phoneButtonGroup">
-                            <button class="btn btn-primary" ng-click="prepareToChangeRole()"
-                                    data-toggle="modal" data-target="#editConfirmModal">
-                                Change role
-                            </button>
+                    <div class="row form-field-top-border">
+                        <div class="col-sm-6">
+                            <h3 class="text-center">Password</h3>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="oldPasswordInput">Old password:</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" type="password" id="oldPasswordInput"
+                                        ng-model="user.oldPassword">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="newPasswordInput">New password:</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" type="password" id="newPasswordInput" ng-model="user.newPassword"
+                                           ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="passwordRepInput">Repeat:</label>
+                                <div class="col-sm-7">
+                                    <input class="form-control" type="password" id="passwordRepInput"
+                                        ng-model="user.newPasswordRep">
+                                </div>
+                            </div>
+                            <div class="form-group text-center">
+                                <button class="btn btn-primary" ng-click="prepareToChangePassword()"
+                                        data-toggle="modal" data-target="#editConfirmModal">
+                                    Change password
+                                </button>
+                            </div>
+                        </div>                        
+
+                        <div class="groupInput col-sm-6" ng-if="isAdmin">
+                            <h3 class="text-center">Role</h3>
+                            <label class="control-label col-sm-4">Role:</label>
+                            <div class="col-sm-7">
+                                <select id="notificationTypeRole" class="form-control" ng-model="user.role.objectId"
+                                    ng-options="role.objectId as role.roleName for role in listOfRoles">
+                                </select>
+                            </div>
+                            <div class="col-sm-7 col-sm-offset-4 phoneButtonGroup">
+                                <button class="btn btn-primary" ng-click="prepareToChangeRole()"
+                                        data-toggle="modal" data-target="#editConfirmModal">
+                                    Change role
+                                </button>
+                            </div>
                         </div>
                     </div>
                     
