@@ -1,6 +1,7 @@
 package projectpackage.configuration;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,8 @@ import java.util.Locale;
 @EnableTransactionManagement
 public class JDBCConfiguration implements TransactionManagementConfigurer {
 
+    private static final Logger LOGGER = Logger.getLogger(JDBCConfiguration.class);
+
     @Value("${dataSource.driverClassName}")
     private String driver;
     @Value("${dataSource.url}")
@@ -44,12 +47,12 @@ public class JDBCConfiguration implements TransactionManagementConfigurer {
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error("Driver not found!", e);
         }
         try {
             comboPooledDataSource.setDriverClass(driver);
         } catch (PropertyVetoException e) {
-            e.printStackTrace();
+            LOGGER.error("Driver not supported!", e);
         }
         //ссылка
         comboPooledDataSource.setJdbcUrl(url);

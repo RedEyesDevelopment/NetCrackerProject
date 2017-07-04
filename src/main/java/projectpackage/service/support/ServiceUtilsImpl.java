@@ -92,7 +92,8 @@ public class ServiceUtilsImpl implements ServiceUtils{
 
     @Override
     public IUDAnswer checkSessionAdminReceptionAndData(User user, Object data, Integer id) {
-        return null;
+        IUDAnswer iudAnswer = checkSessionAndData(user, data, id);
+        return checkForAdminAndReception(iudAnswer, user);
     }
 
     @Override

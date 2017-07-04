@@ -30,7 +30,6 @@ public class CustomMailSender implements Runnable {
             javaMailSender.send(message);
         } catch (MailException e){
             log.error(e);
-            e.printStackTrace();
         } finally {
             if (null!=pdfService) pdfService.deletePDF(filePath);
         }
