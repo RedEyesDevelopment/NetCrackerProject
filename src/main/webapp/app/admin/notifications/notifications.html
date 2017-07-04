@@ -22,6 +22,13 @@
             <div class="row">
                 <div ng-repeat-start="notification in listOfNotifications | orderBy : 'sendDate' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-4">
                     <div class="block-border">
+
+                        <button ng-if="notification.executedBy == undefined"
+                            ng-click="prepareToMarkAsDone(notification.objectId)"
+                            data-toggle="modal" data-target="#editConfirmModal">
+                            DONE
+                        </button>
+
                         <p class="admin-notes"> Author: {{ notification.author.firstName }} {{ notification.author.lastName }} </p>
                         <p class="admin-notes top-bottom-border"> Notification Type: {{ notification.notificationType.notificationTypeTitle }} </p>
                         <p class="admin-notes"> Send Date: {{ notification.sendDate | date:'dd.MM.yyyy' }} </p>

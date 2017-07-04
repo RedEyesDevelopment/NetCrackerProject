@@ -3,33 +3,37 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 
 
 	/* Функция на получения всех уведомлений, типов уведомлений и заказов, вызываются сразу */
-	(function() {
+	var getExecutedNotifications = function() {
 		$http({
 			url: sharedData.getLinks().https + '/notifications',
 			method: 'GET',
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfNotifications = data.data;
+			$scope.listOfExecutedNotifications = data.data;
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
 		});
-	}());
+	};
 
-	var getNotExecutedNotifications = (function() {
-            $http({
-                url: sharedData.getLinks().https + '/notifications/current',
-                method: 'GET',
-                headers: { 'Content-Type' : 'application/json' }
-            }).then(function(data) {
-                console.log(data);
-                $scope.listOfNotifications = data.data;
-            }, function(response) {
-                console.log("Smth wrong!!");
-                console.log(response);
-            });
+	getExecutedNotifications();
+
+	var getCurrentNotifications = function() {
+        $http({
+            url: sharedData.getLinks().https + '/notifications/current',
+            method: 'GET',
+            headers: { 'Content-Type' : 'application/json' }
+        }).then(function(data) {
+            console.log(data);
+            $scope.listOfNotifications = data.data;
+        }, function(response) {
+            console.log("Smth wrong!!");
+            console.log(response);
         });
+    };
+
+    getCurrentNotifications();
 
 	(function() {
 		$http({
@@ -77,6 +81,19 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 		if (!sharedData.getIsAdmin()) { $location.path('/') };
 	}());
 
+	$scope.query = function() {
+		switch ($scope.stage) {
+			case 'markAsDone': markAsDone();
+				break;
+			case 'adding': addNotification();
+				break;
+			case 'editing': editNotification();
+				break;
+			case 'deleting': deleteNotification();
+				break;
+		}
+	}
+
 	/* Инициализация служебных переменных */
 	function resetFlags() {
 		$scope.added = false;
@@ -92,6 +109,27 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	$scope.pager = {
 		startPaging : 0,
 		objectsOnPage : 6
+	}
+
+	$scope.prepareToMarkAsDone = function(notifId) {
+		$scope.idForOperation = notifId;
+		$scope.stage = "markAsDone";
+	}
+
+	var markAsDone = function() {
+		console.log("a");
+		$http({
+			url: sharedData.getLinks().https + '/notifications/execute/' + $scope.idForOperation,
+			method: 'PUT'
+		}).then(function(data) {
+			console.log("b");
+			console.log(data);
+			getCurrentNotifications();
+			$scope.stage = "marked";
+		}, function(response) {
+			console.log("Smth wrong!!");
+			console.log(response);
+		});
 	}
 
 
@@ -146,17 +184,6 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 		$scope.modificationMode = false;
 	}
 
-	/* Вызывает нужный запрос в зависимости от типа операции */
-	$scope.query = function() {
-		switch ($scope.stage) {
-			case 'adding': addNotification();
-				break;
-			case 'editing': editNotification();
-				break;
-			case 'deleting': deleteNotification();
-				break;
-		}
-	}
 
 	/* Функции, выполняющие запросы */
 	var addNotification = function() {
