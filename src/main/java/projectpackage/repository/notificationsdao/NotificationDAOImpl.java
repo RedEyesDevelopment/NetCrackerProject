@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
@@ -37,19 +36,16 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     JdbcTemplate jdbcTemplate;
 
     @Override
-    @Transactional(readOnly = true)
     public List<Notification> getAllNotExecutedNotifications() {
         return manager.createReactEAV(Notification.class).addCondition(new StringWhereCondition("ATTRS3.DATE_VALUE IS NULL"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches().fetchRootReference(User.class, "UserToNotificationAsAuthor").closeAllFetches().fetchRootReference(Order.class, "OrderToNotification").closeAllFetches().getEntityCollection();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Notification getNotExecutedNotification(Integer id) {
         return (Notification) manager.createReactEAV(Notification.class).addCondition(new StringWhereCondition("ATTRS3.DATE_VALUE IS NULL"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches().fetchRootReference(User.class, "UserToNotificationAsAuthor").closeAllFetches().fetchRootReference(Order.class, "OrderToNotification").closeAllFetches().getSingleEntityWithId(id);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Notification getNotification(Integer id) {
         if (id == null) {
             return null;
@@ -77,7 +73,6 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Notification> getAllNotifications() {
         return manager.createReactEAV(Notification.class)
                 .fetchRootReference(User.class, "UserToNotificationAsAuthor")
@@ -99,7 +94,6 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
                 .getEntityCollection();
     }
 
-    @Transactional
     @Override
     public Integer insertNotification(Notification notification) {
         if (notification == null) {
@@ -116,7 +110,6 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         return objectId;
     }
 
-    @Transactional
     @Override
     public Integer updateNotification(Notification newNotification, Notification oldNotification) {
         if (oldNotification == null || newNotification == null) {
@@ -133,7 +126,6 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
         return newNotification.getObjectId();
     }
 
-    @Transactional
     @Override
     public void deleteNotification(Integer id) {
         if (id == null) {
