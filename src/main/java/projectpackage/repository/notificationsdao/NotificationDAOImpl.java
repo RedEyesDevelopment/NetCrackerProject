@@ -130,10 +130,15 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     @Transactional
     @Override
     public void deleteNotification(Integer id) {
-        if (id == null) throw new IllegalArgumentException();
+        if (id == null) {
+            throw new IllegalArgumentException();
+        }
         Notification notification = null;
         try {
-            notification = getNotification(id);
+            notification = getNotExecutedNotification(id);
+            if (notification == null) {
+                notification = getNotification(id);
+            }
         } catch (ClassCastException e) {
             throw new WrongEntityIdException(this, e.getMessage());
         }
