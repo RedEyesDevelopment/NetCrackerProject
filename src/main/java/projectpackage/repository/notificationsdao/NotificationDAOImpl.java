@@ -39,13 +39,13 @@ public class NotificationDAOImpl extends AbstractDAO implements NotificationDAO 
     @Override
     @Transactional(readOnly = true)
     public List<Notification> getAllNotExecutedNotifications() {
-        return manager.createReactEAV(Notification.class).addCondition(new StringWhereCondition("ATTRS3.DATE_VALUE IS NULL"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches().fetchRootReference(User.class, "UserToNotificationAsAuthor").closeAllFetches().getEntityCollection();
+        return manager.createReactEAV(Notification.class).addCondition(new StringWhereCondition("ATTRS3.DATE_VALUE IS NULL"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches().fetchRootReference(User.class, "UserToNotificationAsAuthor").closeAllFetches().fetchRootReference(Order.class, "OrderToNotification").closeAllFetches().getEntityCollection();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Notification getNotExecutedNotification(Integer id) {
-        return (Notification) manager.createReactEAV(Notification.class).addCondition(new StringWhereCondition("ATTRS3.DATE_VALUE IS NULL"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches().fetchRootReference(User.class, "UserToNotificationAsAuthor").closeAllFetches().getSingleEntityWithId(id);
+        return (Notification) manager.createReactEAV(Notification.class).addCondition(new StringWhereCondition("ATTRS3.DATE_VALUE IS NULL"), ConditionExecutionMoment.AFTER_APPENDING_WHERE).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches().fetchRootReference(User.class, "UserToNotificationAsAuthor").closeAllFetches().fetchRootReference(Order.class, "OrderToNotification").closeAllFetches().getSingleEntityWithId(id);
     }
 
     @Override
