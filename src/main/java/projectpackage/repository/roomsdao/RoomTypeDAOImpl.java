@@ -34,7 +34,6 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    @Transactional(readOnly = true)
     public RoomType getRoomType(Integer id) {
         if (null == id) {
             return null;
@@ -45,20 +44,17 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<RoomType> getAllRoomTypes() {
         return manager.createReactEAV(RoomType.class).fetchRootChild(Rate.class).fetchInnerChild(Price.class)
                 .closeAllFetches().getEntityCollection();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<RoomType> getSimpleRoomTypeList() {
         return manager.createReactEAV(RoomType.class).getEntityCollection();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Set<Integer> getAvailableRoomTypes(int numberOfPeople, Date startDate, Date finishDate) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("num_of_res", numberOfPeople);
@@ -98,7 +94,6 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
         return objectId;
     }
 
-    @Transactional
     @Override
     public Integer updateRoomType(RoomType newRoomType, RoomType oldRoomType) {
         if (oldRoomType == null || newRoomType == null) {
@@ -111,7 +106,6 @@ public class RoomTypeDAOImpl extends AbstractDAO implements RoomTypeDAO {
         return newRoomType.getObjectId();
     }
 
-    @Transactional
     @Override
     public void deleteRoomType(Integer id) {
         if (id == null) {
