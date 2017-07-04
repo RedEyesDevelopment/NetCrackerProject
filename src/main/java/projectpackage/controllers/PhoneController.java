@@ -1,5 +1,6 @@
 package projectpackage.controllers;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.User;
+import projectpackage.repository.support.daoexceptions.DeletedObjectNotExistsException;
+import projectpackage.repository.support.daoexceptions.ReferenceBreakException;
+import projectpackage.repository.support.daoexceptions.WrongEntityIdException;
 import projectpackage.service.authservice.PhoneService;
 import projectpackage.service.authservice.UserService;
 import projectpackage.service.support.ServiceUtils;
@@ -27,6 +31,8 @@ import static projectpackage.service.MessageBook.*;
 @RestController
 @RequestMapping("/phones")
 public class PhoneController {
+
+    private static final Logger LOGGER = Logger.getLogger(UserController.class);
 
     @Autowired
     PhoneService phoneService;
@@ -52,7 +58,6 @@ public class PhoneController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Resource<Phone>> getPhone(@PathVariable("id") Integer id, HttpServletRequest request) {
-        User thisUser = (User) request.getSession().getAttribute("USER");
         Phone phone = phoneService.getSinglePhoneById(id);
         Resource<Phone> resource = new Resource<>(phone);
         HttpStatus status;
@@ -83,14 +88,19 @@ public class PhoneController {
         } else if (newPhone.getPhoneNumber().isEmpty()) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, EMPTY_ENTITY_STRING), HttpStatus.BAD_REQUEST);
         }
-        IUDAnswer result = phoneService.insertPhone(newPhone);
+        try {
+            iudAnswer = phoneService.insertPhone(newPhone);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, WRONG_FIELD, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
         HttpStatus status;
-        if (result.isSuccessful()) {
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
         }
-        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(iudAnswer, status);
         return responseEntity;
     }
 
@@ -111,14 +121,20 @@ public class PhoneController {
         } else if (changedPhone.getPhoneNumber().isEmpty()) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, EMPTY_ENTITY_STRING), HttpStatus.BAD_REQUEST);
         }
-        IUDAnswer result = phoneService.updatePhone(id, changedPhone);
+
+        try {
+            iudAnswer = phoneService.updatePhone(id, changedPhone);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(WRONG_FIELD, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id,false, WRONG_FIELD, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
         HttpStatus status;
-        if (result.isSuccessful()) {
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
         }
-        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(result, status);
+        ResponseEntity<IUDAnswer> responseEntity = new ResponseEntity<IUDAnswer>(iudAnswer, status);
         return responseEntity;
     }
 
@@ -151,13 +167,27 @@ public class PhoneController {
         if (!isBelongToUser) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, PHONE_NOT_BELONG_TO_USER), HttpStatus.BAD_REQUEST);
         }
-        IUDAnswer result = phoneService.deletePhone(id);
+        try {
+            iudAnswer = phoneService.deletePhone(id);
+        } catch (ReferenceBreakException e) {
+            LOGGER.warn(ON_ENTITY_REFERENCE, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id,false, ON_ENTITY_REFERENCE, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (DeletedObjectNotExistsException e) {
+            LOGGER.warn(DELETED_OBJECT_NOT_EXISTS, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, DELETED_OBJECT_NOT_EXISTS, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (WrongEntityIdException e) {
+            LOGGER.warn(WRONG_DELETED_ID, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, WRONG_DELETED_ID, e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(NULL_ID, e);
+            return new ResponseEntity<IUDAnswer>(new IUDAnswer(id, false, NULL_ID, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
         HttpStatus status;
-        if (result.isSuccessful()) {
+        if (iudAnswer != null && iudAnswer.isSuccessful()) {
             status = HttpStatus.OK;
         } else {
             status = HttpStatus.BAD_REQUEST;
         }
-        return new ResponseEntity<IUDAnswer>(result, status);
+        return new ResponseEntity<IUDAnswer>(iudAnswer, status);
     }
 }

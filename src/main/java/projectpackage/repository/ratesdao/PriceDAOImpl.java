@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.rates.Price;
 import projectpackage.repository.AbstractDAO;
 
@@ -21,7 +20,6 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
     JdbcTemplate jdbcTemplate;
 
     @Override
-    @Transactional(readOnly = true)
     public Price getPrice(Integer id) {
         if (null == id) {
             return null;
@@ -31,12 +29,10 @@ public class PriceDAOImpl extends AbstractDAO implements PriceDAO {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Price> getAllPrices() {
         return manager.createReactEAV(Price.class).getEntityCollection();
     }
 
-    @Transactional
     @Override
     public Integer updatePrice(Price newPrice, Price oldPrice) {
         if (newPrice == null || oldPrice == null) {

@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import projectpackage.dto.IUDAnswer;
 import projectpackage.model.rates.Price;
 import projectpackage.repository.ratesdao.PriceDAO;
@@ -21,6 +22,7 @@ public class PriceServiceImpl implements PriceService{
     @Autowired
     PriceDAO priceDAO;
 
+    @Transactional(readOnly = true)
     @Override
     public List<Price> getAllPrices() {
         List<Price> prices = priceDAO.getAllPrices();
@@ -30,6 +32,7 @@ public class PriceServiceImpl implements PriceService{
         return prices;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Price getSinglePriceById(Integer id) {
         Price price = priceDAO.getPrice(id);
@@ -39,23 +42,19 @@ public class PriceServiceImpl implements PriceService{
         return price;
     }
 
+    @Transactional
     @Override
     public IUDAnswer updatePrice(Integer id, Price newPrice) {
         if (newPrice == null) {
-            return null;
+            return new IUDAnswer(false, NULL_ENTITY);
         }
         if (id == null) {
             return new IUDAnswer(false, NULL_ID);
         }
-        try {
-            newPrice.setObjectId(id);
-            Price oldPrice = priceDAO.getPrice(id);
-            priceDAO.updatePrice(newPrice, oldPrice);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn(WRONG_FIELD, e);
-            return new IUDAnswer(id,false, WRONG_FIELD, e.getMessage());
-        }
-        priceDAO.commit();
+        newPrice.setObjectId(id);
+        Price oldPrice = priceDAO.getPrice(id);
+        priceDAO.updatePrice(newPrice, oldPrice);
+
         return new IUDAnswer(id,true);
     }
 }

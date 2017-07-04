@@ -23,7 +23,7 @@ public class RoleController {
     @Autowired
     RoleService roleService;
 
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.OK)
     @CacheResult(cacheName = "roleList")
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public List<Resource<Role>> getRoleList() {
@@ -38,13 +38,13 @@ public class RoleController {
         return resources;
     }
 
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<Resource<Role>> getRole(@PathVariable("id") Integer id) {
         Role role = roleService.getSingleRoleById(id);
         Resource<Role> resource = new Resource<>(role);
 
-        HttpStatus status = null != role ? HttpStatus.ACCEPTED : HttpStatus.BAD_REQUEST;
+        HttpStatus status = (null != role) ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
         ResponseEntity<Resource<Role>> response = new ResponseEntity<Resource<Role>>(resource, status);
         return response;
     }
