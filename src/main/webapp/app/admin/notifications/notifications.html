@@ -25,7 +25,7 @@
                         <p> Author: {{ notification.author.firstName }} {{ notification.author.lastName }} </p>
 
                         <p class="top-bottom-border">
-                            Notification Type: {{ notification.notificationType.notificationTypeTitle }}
+                            Type: {{ notification.notificationType.notificationTypeTitle }}
                         </p>
 
                         <p> Send Date: {{ notification.sendDate | date:'dd.MM.yyyy' }} </p>
@@ -39,18 +39,22 @@
                         <p> Link to order №: {{ notification.order.objectId }} </p>
 
                         <div class="text-right">
-                            <button ng-if="notification.executedBy === null" class="btn btn-success markAsDone" 
+                            <button ng-if="notification.executedBy === null" class="btn btn-success markedOfDone" 
                                 ng-click="prepareToMarkAsDone(notification.objectId)"
                                 data-toggle="modal" data-target="#editConfirmModal">
                                 Mark as done
                             </button>
 
-                            <button type="button" class="btn btn-primary btn-md"
-                                    ng-click="prepareToEditNotification(notification.objectId, listOfNotifications.indexOf(notification))">
+                            <div ng-if="notification.executedBy !== null" class="markedOfDone">
+                                <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                            </div>
+
+                            <button type="button" class="btn btn-primary btn-md" ng-if="notification.executedBy === null"
+                                    ng-click="prepareToEditNotification(notification.objectId, listOfCurrNotifications.indexOf(notification))">
                                 Edit
                             </button>
                             <button type="button" class="btn btn-warning btn-md"
-                                    ng-click="prepareToDeleteNotification(notification.objectId, listOfNotifications.indexOf(notification))"
+                                    ng-click="prepareToDeleteNotification(notification.objectId, listOfCurrNotifications.indexOf(notification))"
                                     data-toggle="modal" data-target="#deleteConfirmModal">
                                 Delete
                             </button>
@@ -86,16 +90,7 @@
             <div class="col-sm-offset-3 col-sm-5 createUpdateForm">
                 <form class="form-horizontal" name="createUpdateForm">
                     <div class="form-group">
-                        <label for="createAuthor" class="col-sm-6 control-label">Author</label>
-                        <div class="col-sm-6">
-                            <!--<input type="text" id="createAuthor" ng-required="true" ng-model="notification.author.lastName">-->
-                            <select id="createAuthor" class="form-control" ng-required="true" ng-model="notification.authorId"
-                                    ng-options="author.objectId as (author.firstName + ' ' + author.lastName) for author in listOfUsers | orderBy : author.role.objectId">
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="notificationType" class="col-sm-6 control-label">Notification type</label>
+                        <label for="notificationType" class="col-sm-6 control-label">Type</label>
                         <div class="col-sm-6">
                             <select id="notificationType" class="form-control" ng-required="true" ng-model="notification.typeId"
                                     ng-options="type.objectId as type.notificationTypeTitle for type in listOfNotificationTypes">
@@ -105,7 +100,7 @@
                     <div class="form-group">
                         <label for="message" class="col-sm-6 control-label">Message</label>
                         <div class="col-sm-6">
-                            <input type="text" id="message" ng-required="true" ng-model="notification.message">
+                            <input type="text" class="form-control" id="message" ng-required="true" ng-model="notification.message">
                         </div>
                     </div>
                     <div class="form-group">

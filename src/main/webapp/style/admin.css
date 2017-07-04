@@ -100,8 +100,13 @@
     border-radius: 20%;
 }
 
-.workspace .markAsDone {
+.workspace .markedOfDone {
     float: left;
+}
+
+.workspace .markedOfDone i {
+    font-size: 40px;
+    color: green;
 }
 /* ---------------------------------- */
 

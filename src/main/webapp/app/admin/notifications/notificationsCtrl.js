@@ -8,7 +8,8 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfExecNotifications = data.data;
+			// $scope.listOfExecNotifications = data.data;
+			$scope.listOfCurrNotifications = data.data;
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
@@ -31,7 +32,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
         });
     };
 	// Получаем все НЕЕЕЕЕЕЕ выполненные
-    getCurrentNotifications();
+    // getCurrentNotifications();
 
     // All users
 	(function() {
@@ -82,6 +83,12 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 
 	$scope.isAdmin = sharedData.getIsAdmin();
 
+	/* Возврат на просмотр */
+	$scope.back = function() {
+		$scope.stage = "looking";
+		$scope.modificationMode = false;
+	}
+
 	$scope.query = function() {
 		switch ($scope.stage) {
 			case 'markAsDone': markAsDone();
@@ -110,13 +117,11 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	}
 
 	var markAsDone = function() {
-		console.log("a");
 		console.log($scope.idForOperation);
 		$http({
 			url: sharedData.getLinks().https + '/notifications/execute/' + $scope.idForOperation,
 			method: 'PUT'
 		}).then(function(data) {
-			console.log("b");
 			console.log(data);
 			getCurrentNotifications();
 			$scope.stage = "marked";
@@ -128,8 +133,8 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 
 
 	$scope.prepareToAddNotification = function() {
-		$scope.indexForOperation = "";
 		$scope.idForOperation = "";
+		$scope.indexForOperation = "";
 		$scope.notification = {};
 		$scope.stage = "adding";
 		$scope.modificationMode = true;
@@ -166,10 +171,13 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 			headers: {'Content-Type': 'application/json'}
 		}).then(function(data) {
 			console.log(data);
-			$scope.notification.authorId = data.data.author.objectId;
+			$scope.idForOperation = notificationId;
+			$scope.indexForOperation = index;
+			$scope.notification.authorId = sharedData.getMyself().objectId;
             $scope.notification.typeId = data.data.notificationType.objectId;
             $scope.notification.message = data.data.message;
             $scope.notification.orderId = data.data.order.objectId;
+            $scope.stage = "editing";
 			$scope.modificationMode = true;
 		}, function(response) {
 			console.log("Smth wrong!!");
@@ -179,22 +187,19 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 
 	var editNotification = function() {
 		$http({
-			url: sharedData.getLinks().https + '/notifications/' + $scope.notification.idForOperation,
+			url: sharedData.getLinks().https + '/notifications/' + $scope.idForOperation,
 			method: 'PUT',
 			data: {
-                authorId : 		    $scope.notification.authorId,
-                notificationTypeId:  $scope.notification.typeId,
-                message :           $scope.notification.message,
-                orderId : 			$scope.notification.orderId
+                authorId: 		    sharedData.getMyself().objectId,
+				notificationTypeId: $scope.notification.typeId,
+				message:           	$scope.notification.message,
+				orderId: 			$scope.notification.orderId
 			},
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfNotifications[$scope.indexForOperation].author = util.getObjectInArrayById($scope.listOfUsers, $scope.notification.author);
-			$scope.listOfNotifications[$scope.indexForOperation].type = util.getObjectInArrayById($scope.listOfNotificationTypes, $scope.notification.type);
-			$scope.listOfNotifications[$scope.indexForOperation].message = $scope.notification.message;
-			$scope.listOfNotifications[$scope.indexForOperation].order = util.getObjectInArrayById($scope.listOfOrders, $scope.notification.order);
-			$scope.updated = true;
+			getCurrentNotifications();
+			$scope.stage = "edited";
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
@@ -203,38 +208,21 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	}
 
 
-
-
-
 	$scope.prepareToDeleteNotification = function(notificationId, index) {
+        $scope.idForOperation = notificationId;
 		$scope.indexForOperation = index;
-        $scope.notification.idForOperation = notificationId;
-		resetFlags();
 		$scope.stage = "deleting";
 	}
 
-	/* Возврат на просмотр */
-	$scope.back = function() {
-		$scope.stage = "looking";
-		$scope.modificationMode = false;
-	}
-
-
-	/* Функции, выполняющие запросы */
-
-
-	
-
 	var deleteNotification = function() {
-		resetFlags();
 		$http({
-			url: sharedData.getLinks().https + '/notifications/' + $scope.notification.idForOperation,
+			url: sharedData.getLinks().https + '/notifications/' + $scope.idForOperation,
 			method: 'DELETE',
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfNotifications.splice($scope.indexForOperation, 1);
-			$scope.deleted = true;
+			getCurrentNotifications();
+			$scope.stage = "deleted";
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
@@ -245,7 +233,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 
 	/* Для листания страниц с объектами */
 	$scope.nextNotifications = function() {
-		$scope.pager.startPaging = util.nextEntities($scope.listOfNotifications.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
+		$scope.pager.startPaging = util.nextEntities($scope.listOfCurrNotifications.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
 	}
 	$scope.previousNotifications = function() {
 		$scope.pager.startPaging = util.previousEntities($scope.pager.startPaging, $scope.pager.objectsOnPage);
