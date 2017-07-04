@@ -194,14 +194,14 @@ public class OrderRepositoryTests extends AbstractDatabaseTest{
         LOGGER.info(SEPARATOR);
     }
 
-    @Test
-    public void getOrder(){
-        Order orderToUpdate = orderService.getSingleOrderById(2100);
-        Order newOrder = (Order) orderToUpdate.clone();
-        newOrder.setIsPaidFor(true);
-        System.out.println("old="+orderToUpdate);
-        System.out.println("new="+newOrder);
-        IUDAnswer answer = orderService.updateOrder(newOrder.getObjectId(), newOrder);
-        System.out.println("result="+answer);
-    }
+//    @Test
+//    public void getOrder(){
+//        Order orderToUpdate = orderService.getSingleOrderById(2100);
+//        Order newOrder = (Order) orderToUpdate.clone();
+//        newOrder.setIsPaidFor(true);
+//        System.out.println("old="+orderToUpdate);
+//        System.out.println("new="+newOrder);
+//        IUDAnswer answer = orderService.updateOrder(newOrder.getObjectId(), newOrder);
+//        System.out.println("result="+answer);
+//    }
 }
