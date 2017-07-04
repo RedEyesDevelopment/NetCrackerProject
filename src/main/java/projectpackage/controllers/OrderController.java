@@ -136,7 +136,7 @@ public class OrderController {
             consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<FreeRoomsUpdateOrderDTO> getInfoForUpdateOrder(@PathVariable("id") Integer id, @RequestBody ChangeOrderDTO changeOrderDTO, HttpServletRequest request) {
         User thisUser = (User) request.getSession().getAttribute("USER");
-        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminAndData(thisUser, changeOrderDTO, id);
+        IUDAnswer iudAnswer = serviceUtils.checkSessionAdminReceptionAndData(thisUser, changeOrderDTO, id);
         FreeRoomsUpdateOrderDTO dto = null;
         if (!iudAnswer.isSuccessful()) {
             return new ResponseEntity<FreeRoomsUpdateOrderDTO>(dto, HttpStatus.BAD_REQUEST);

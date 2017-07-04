@@ -272,16 +272,22 @@ public class OrderServiceImpl implements OrderService{
                 freeRooms.add(currentOrder.getRoom());
             }
         }
+
+        FreeRoomsUpdateOrderDTO dto = new FreeRoomsUpdateOrderDTO();
+
+        if (freeRooms.isEmpty()) {
+            return dto;
+        }
+
         RoomType roomType = new RoomType();
         roomType.setObjectId(changeOrderDTO.getRoomTypeId());
-        Long livingCost = roomTypeService.getLivingCost(changeOrderDTO.getLivingStartDate(), changeOrderDTO.getLivingFinishDate(),
-                changeOrderDTO.getNumberOfResidents(), roomType);
+        Long livingCost = roomTypeService.getLivingCost(changeOrderDTO.getLivingStartDate(),
+                changeOrderDTO.getLivingFinishDate(), changeOrderDTO.getNumberOfResidents(), roomType);
         Category category = new Category();
         category.getCategoryPrice();
         Long categoryPrice = categoryService.getSingleCategoryById(changeOrderDTO.getCategoryId()).getCategoryPrice();
         Long days = (changeOrderDTO.getLivingFinishDate().getTime() - changeOrderDTO.getLivingStartDate().getTime()) / (24 * 60 * 60 * 1000);
         Long categoryCost = categoryPrice * days;
-        FreeRoomsUpdateOrderDTO dto = new FreeRoomsUpdateOrderDTO();
         dto.setCategoryCost(categoryCost);
         dto.setLivingCost(livingCost);
         dto.setTotal(categoryCost + livingCost);

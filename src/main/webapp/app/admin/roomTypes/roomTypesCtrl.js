@@ -36,6 +36,11 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     $scope.stage = "looking";
     $scope.mode = "look";
 
+     $scope.maxDate = new Date();
+     $scope.maxDate.setFullYear(new Date().getFullYear() + 2);
+     $scope.minDate = new Date();
+     $scope.minDate.setFullYear(new Date().getFullYear() - 1);
+
     $scope.pager = {
         startPaging : 0,
         objectsOnPage : 6
@@ -174,27 +179,35 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     }
 
     var addRate = function() {
-        $http({
-            url: sharedData.getLinks().https + '/rates',
-            method: 'POST',
-            data: {
-                roomTypeId:     $scope.idForOperation,
-                rateFromDate:   $scope.rate.rateFromDate.getTime(),
-                rateToDate:     $scope.rate.rateToDate.getTime(),
-                priceForOne:    ($scope.rate.priceForOneDlr * 100) + $scope.rate.priceForOneCent,
-                priceForTwo:    ($scope.rate.priceForTwoDlr * 100) + $scope.rate.priceForTwoCent,
-                priceForThree:  ($scope.rate.priceForThreeDlr * 100) + $scope.rate.priceForThreeCent
-            },
-            headers: { 'Content-Type' : 'application/json' }
-        }).then(function(data) {
-            getAllRoomTypes();
-            $scope.prepareToAddRate($scope.idForOperation);
-            $scope.stage = "rateDone";
-        }, function(response) {
-            console.log("Smth wrong!!");
-            console.log(response);
-            $scope.errMessage = "serverErr";
-        });
+        if ($scope.rate.rateFromDate.getTime() != $scope.rate.rateToDate.getTime()
+            && $scope.rate.rateToDate.getTime() > $scope.rate.rateFromDate.getTime()
+            && $scope.rate.rateToDate.getTime() < $scope.maxDate.getTime()
+            && $scope.rate.rateFromDate.getTime() > $scope.minDate.getTime()) {
+
+            $http({
+                url: sharedData.getLinks().https + '/rates',
+                method: 'POST',
+                data: {
+                    roomTypeId:     $scope.idForOperation,
+                    rateFromDate:   $scope.rate.rateFromDate.getTime(),
+                    rateToDate:     $scope.rate.rateToDate.getTime(),
+                    priceForOne:    ($scope.rate.priceForOneDlr * 100) + $scope.rate.priceForOneCent,
+                    priceForTwo:    ($scope.rate.priceForTwoDlr * 100) + $scope.rate.priceForTwoCent,
+                    priceForThree:  ($scope.rate.priceForThreeDlr * 100) + $scope.rate.priceForThreeCent
+                },
+                headers: { 'Content-Type' : 'application/json' }
+            }).then(function(data) {
+                getAllRoomTypes();
+                $scope.prepareToAddRate($scope.idForOperation);
+                $scope.stage = "rateDone";
+            }, function(response) {
+                console.log("Smth wrong!!");
+                console.log(response);
+                $scope.errMessage = "serverErr";
+            });
+        } else {
+            $scope.errMessage = "invalidInputData";
+        }
     }
 
     $scope.prepareToEditRate = function(roomTypeId, rateId) {

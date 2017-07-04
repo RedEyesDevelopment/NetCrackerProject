@@ -68,8 +68,6 @@ public class ServiceUtilsImpl implements ServiceUtils{
         if (startDate.getTime() == finishDate.getTime()) return false;
         if (finishDate.before(startDate)) return false;
         if (finishDate.before(dateTime.minusYears(1).toDate())) return false;
-        //if (finishDate.after(dateTime.plusYears(2).toDate())) return false;
-        //if (startDate.before(dateTime.minusYears(1).toDate())) return false;
         if (startDate.after(dateTime.plusYears(2).toDate())) return false;
         return true;
     }

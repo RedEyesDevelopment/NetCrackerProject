@@ -185,9 +185,6 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
             });
         } else {
             $scope.errMessage = "invalidInputData";
-            $timeout(function () {
-                $scope.errMessage = "none";
-            }, 5000);
         }
     }
 
