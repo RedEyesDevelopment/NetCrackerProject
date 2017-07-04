@@ -16,7 +16,7 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
         outerFieldName = "maintenance")
 @ReactReference(referenceName = "MaintenanceToComplimentary", outerEntityClass = Complimentary.class,
         outerFieldName = "maintenance")
-public class Maintenance implements ReactEntityWithId, Cloneable{
+public class Maintenance implements ReactEntityWithId {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 47)
@@ -26,13 +26,4 @@ public class Maintenance implements ReactEntityWithId, Cloneable{
     @ReactAttrField(valueObjectClass = Long.class, databaseAttrtypeIdValue = 49)
     private Long maintenancePrice;
 
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

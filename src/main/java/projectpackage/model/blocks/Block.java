@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Data
 @ReactEntity(entityTypeId = 8)
-public class Block implements ReactEntityWithId, Cloneable {
+public class Block implements ReactEntityWithId {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = 35)
@@ -22,16 +22,5 @@ public class Block implements ReactEntityWithId, Cloneable {
     private String reason;
 
     private Room room;
-
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
 
 }

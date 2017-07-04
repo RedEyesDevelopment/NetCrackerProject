@@ -22,7 +22,6 @@ import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-import static projectpackage.service.MessageBook.*;
 
 /**
  * Created by Lenovo on 28.05.2017.
@@ -172,12 +171,9 @@ public class NotificationController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<IUDAnswer> deleteNotification(@PathVariable("id") Integer id, HttpServletRequest request) {
         User sessionUser = (User) request.getSession().getAttribute("USER");
-        if (sessionUser == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NEED_TO_AUTH), HttpStatus.BAD_REQUEST);
-        } else if (sessionUser.getRole().getObjectId() == 3) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, NOT_RECEPTION_OR_ADMIN), HttpStatus.BAD_REQUEST);
-        } else if (id == null) {
-            return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, DISCREPANCY_PARENT_ID), HttpStatus.BAD_REQUEST);
+        IUDAnswer iudAnswer = serviceUtils.checkDeleteForAdminAndReception(sessionUser, id);
+        if (!iudAnswer.isSuccessful()) {
+            return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
         IUDAnswer result = notificationService.deleteNotification(id);
         HttpStatus status;

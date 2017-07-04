@@ -18,7 +18,7 @@ import java.util.Set;
 @Data
 @ReactEntity(entityTypeId = 13)
 @ReactReference(referenceName = "CategoryToOrder", outerEntityClass = Order.class, outerFieldName = "category")
-public class Category implements ReactEntityWithId, Cloneable {
+public class Category implements ReactEntityWithId {
     @JsonView(JacksonMappingMarker.List.class)
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
@@ -32,13 +32,4 @@ public class Category implements ReactEntityWithId, Cloneable {
     @JsonView(JacksonMappingMarker.Data.class)
     private Set<Complimentary> complimentaries;
 
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

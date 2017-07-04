@@ -13,7 +13,7 @@ import java.util.Date;
 @Data
 @ReactEntity(entityTypeId = 12)
 @ReactChild(outerEntityClass = Order.class, outerFieldName = "historys", innerFieldKey = "savedOrder")
-public class ModificationHistory implements ReactEntityWithId, Cloneable {
+public class ModificationHistory implements ReactEntityWithId {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = 43)
@@ -22,13 +22,4 @@ public class ModificationHistory implements ReactEntityWithId, Cloneable {
     private User modifAuthor;
     private Order savedOrder;
 
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

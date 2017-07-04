@@ -12,7 +12,7 @@ import java.util.Date;
 
 @Data
 @ReactEntity(entityTypeId = 4)
-public class Notification implements ReactEntityWithId, Cloneable {
+public class Notification implements ReactEntityWithId {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 22)
@@ -27,13 +27,4 @@ public class Notification implements ReactEntityWithId, Cloneable {
     private User executedBy;
     private NotificationType notificationType;
 
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }
