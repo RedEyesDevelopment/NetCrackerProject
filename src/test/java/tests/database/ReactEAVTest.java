@@ -349,4 +349,13 @@ public class ReactEAVTest extends AbstractDatabaseTest {
             System.out.println(not);
         }
     }
+
+    @Test
+    public void getAllNotifications(){
+        List<Notification> nots = manager.createReactEAV(Notification.class).fetchRootReference(NotificationType.class, "NotificationTypeToNotification").fetchInnerReference(Role.class, "RoleToNotificationType").closeAllFetches().getEntityCollection();
+        System.out.println(SEPARATOR);
+        for (Notification not: nots){
+            System.out.println(not);
+        }
+    }
 }
