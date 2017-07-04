@@ -9,7 +9,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfRooms = data.data;
+			$scope.originListOfRooms = data.data;
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
@@ -127,7 +127,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfRooms.push({
+			$scope.originListOfRooms.push({
 				objectId :          data.data.objectId,
 				roomNumber :        $scope.room.number,
 				numberOfResidents : $scope.room.numberOfResidents,
@@ -155,9 +155,9 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfRooms[$scope.indexForOperation].roomNumber = $scope.room.number;
-			$scope.listOfRooms[$scope.indexForOperation].numberOfResidents = $scope.room.numberOfResidents;
-			$scope.listOfRooms[$scope.indexForOperation].roomType = util.getObjectInArrayById($scope.listOfRoomTypes, $scope.room.type);
+			$scope.originListOfRooms[$scope.indexForOperation].roomNumber = $scope.room.number;
+			$scope.originListOfRooms[$scope.indexForOperation].numberOfResidents = $scope.room.numberOfResidents;
+			$scope.originListOfRooms[$scope.indexForOperation].roomType = util.getObjectInArrayById($scope.listOfRoomTypes, $scope.room.type);
 			$scope.updated = true;
 		}, function(response) {
 			console.log("Smth wrong!!");
@@ -174,7 +174,7 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfRooms.splice($scope.indexForOperation, 1);
+			$scope.originListOfRooms.splice($scope.indexForOperation, 1);
 			$scope.deleted = true;
 		}, function(response) {
 			console.log("Smth wrong!!");
@@ -184,9 +184,24 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}
 
 
+	/* Filters */
+	$scope.resetFilter = function() {
+		$scope.filter = {};
+		$scope.filteredListOfRooms = [];
+	}	
+	$scope.resetFilter();
+	$scope.updateFilter = function() {
+		$scope.filteredListOfRooms = $scope.originListOfRooms.filter(function(item) {
+			if ($scope.filter.roomTypeId !== undefined) return (item.roomType.objectId === $scope.filter.roomTypeId); else return true;
+		}).filter(function(item) {
+			if ($scope.filter.residents !== undefined) return (item.numberOfResidents === $scope.filter.residents); else return true;
+		});
+	}
+
+
 	/* Для листания страниц с объектами */
 	$scope.nextRooms = function() {
-		$scope.pager.startPaging = util.nextEntities($scope.listOfRooms.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
+		$scope.pager.startPaging = util.nextEntities($scope.originListOfRooms.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
 	}
 	$scope.previousRooms = function() {
 		$scope.pager.startPaging = util.previousEntities($scope.pager.startPaging, $scope.pager.objectsOnPage);

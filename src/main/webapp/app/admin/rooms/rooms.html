@@ -19,18 +19,18 @@
                 <li><input type="number" min="1" max="999" ng-model="pager.objectsOnPage"></li>
                 <li><a ng-click="nextRooms()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
-            <div ng-repeat="room in listOfRooms | orderBy : 'roomNumber' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-4">
+            <div ng-repeat="room in filteredListOfRooms.length && filteredListOfRooms || originListOfRooms | orderBy : 'roomNumber' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-4">
                 <div class="block-border clearfix">
                     <p class="admin-notes"> Room number: {{ room.roomNumber }} </p>
                     <p class="admin-notes top-bottom-border"> Room type: {{ room.roomType.roomTypeTitle }} </p>
                     <p class="admin-notes"> Number of residents: {{ room.numberOfResidents }} </p>
                     <div class="text-right" ng-if="isAdmin">
                         <button type="button" class="btn btn-primary btn-md"
-                                ng-click="prepareToEditRoom(room.objectId, listOfRooms.indexOf(room))">
+                                ng-click="prepareToEditRoom(room.objectId, originListOfRooms.indexOf(room))">
                             Edit
                         </button>
                         <button type="button" class="btn btn-warning btn-md"
-                                ng-click="prepareToDeleteRoom(room.objectId, listOfRooms.indexOf(room))"
+                                ng-click="prepareToDeleteRoom(room.objectId, originListOfRooms.indexOf(room))"
                         		data-toggle="modal" data-target="#deleteConfirmModal">
                             Delete
                         </button>
@@ -94,6 +94,25 @@
             </div>
         </div>
     </div>
+</div>
+
+
+<!-- Filters, position fixed -->
+<div class="filter-panel">
+    <h4>Filters</h4>
+    <p>
+        Room type
+        <select class="form-control" ng-model="filter.roomTypeId" ng-change="updateFilter()"
+            ng-options="type.objectId as type.roomTypeTitle for type in listOfRoomTypes | orderBy: 'roomTypeTitle'">
+        </select>
+    </p>
+    <p>
+        Number of residents
+        <select class="form-control" ng-model="filter.residents" ng-change="updateFilter()"
+            ng-options="res for res in residents | orderBy: 'res'">
+        </select>
+    </p>
+    <button class="btn btn-default" ng-click="resetFilter()">Reset filters</button>
 </div>
 
 

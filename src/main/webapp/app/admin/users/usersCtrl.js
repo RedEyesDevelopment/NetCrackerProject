@@ -1,7 +1,7 @@
 app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util',
 	function($scope, $http, $location, sharedData, util) {
 
-	/* Функция на получения всех юзеров и их ролей, вызываются сразу */
+	// All users
 	(function() {
 		$http({
 			url: sharedData.getLinks().https + '/users/',
@@ -9,13 +9,13 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfUsers = data.data;
+			$scope.originListOfUsers = data.data;
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
 		});
 	}());
-
+	// All roles
 	(function() {
 		$http({
 			url: sharedData.getLinks().https + '/roles',
@@ -127,7 +127,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
                     headers: {'Content-Type': 'application/json'}
                 }).then(function(data) {
                     console.log(data);
-                    $scope.listOfUsers.push(data.data);
+                    $scope.originListOfUsers.push(data.data);
                 }, function(response) {
                     console.log("Smth wrong!!");
                     console.log(response);
@@ -175,7 +175,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
                     headers: {'Content-Type': 'application/json'}
                 }).then(function(data) {
                     console.log(data);
-                    $scope.listOfUsers.push(data.data);
+                    $scope.originListOfUsers.push(data.data);
                 }, function(response) {
                     console.log("Smth wrong!!");
                     console.log(response);
@@ -206,7 +206,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfUsers[$scope.userIndexForOperation].enabled = false;
+			$scope.originListOfUsers[$scope.userIndexForOperation].enabled = false;
 			$scope.stage = "deleted";
 		}, function(response) {
 			console.log("Smth wrong!!");
@@ -229,7 +229,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfUsers[$scope.userIndexForOperation].enabled = true;
+			$scope.originListOfUsers[$scope.userIndexForOperation].enabled = true;
 			$scope.stage = "reestablished";
 		}, function(response) {
 			console.log("Smth wrong!!");
@@ -273,7 +273,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfUsers[$scope.userIndexForOperation].role = util.getObjectInArrayById($scope.listOfRoles, $scope.user.role.objectId);
+			$scope.originListOfUsers[$scope.userIndexForOperation].role = util.getObjectInArrayById($scope.listOfRoles, $scope.user.role.objectId);
 			$scope.stage = "edited";
 		}, function(response) {
 			console.log("Smth wrong!!");
@@ -299,10 +299,10 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfUsers[$scope.userIndexForOperation].firstName = $scope.user.firstName;
-			$scope.listOfUsers[$scope.userIndexForOperation].lastName = $scope.user.lastName;
-			$scope.listOfUsers[$scope.userIndexForOperation].email = $scope.user.email;
-			$scope.listOfUsers[$scope.userIndexForOperation].additionalInfo = $scope.user.additionalInfo;
+			$scope.originListOfUsers[$scope.userIndexForOperation].firstName = $scope.user.firstName;
+			$scope.originListOfUsers[$scope.userIndexForOperation].lastName = $scope.user.lastName;
+			$scope.originListOfUsers[$scope.userIndexForOperation].email = $scope.user.email;
+			$scope.originListOfUsers[$scope.userIndexForOperation].additionalInfo = $scope.user.additionalInfo;
 			$scope.stage = "edited";
 		}, function(response) {
 			console.log("Smth wrong!!");
@@ -364,7 +364,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 				userId: $scope.userIdForOperation
 			};
 			$scope.user.phones.push(newPhone);
-			$scope.listOfUsers[$scope.userIndexForOperation].phones.push(newPhone);
+			$scope.originListOfUsers[$scope.userIndexForOperation].phones.push(newPhone);
 			$scope.stage = "edited";
 		}, function(response) {
 			console.log("Smth wrong!!");
@@ -391,7 +391,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfUsers[$scope.userIndexForOperation].phones[$scope.phoneIndexForOperation].phoneNumber = $scope.user.phones[$scope.phoneIndexForOperation].phoneNumber
+			$scope.originListOfUsers[$scope.userIndexForOperation].phones[$scope.phoneIndexForOperation].phoneNumber = $scope.user.phones[$scope.phoneIndexForOperation].phoneNumber
 			$scope.stage = "edited";
 		}, function(response) {
 			console.log("Smth wrong!!");
@@ -415,7 +415,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}).then(function(data) {
 			console.log(data);
 			$scope.user.phones.splice($scope.phoneIndexForOperation, 1);
-			$scope.listOfUsers[$scope.userIndexForOperation].phones.splice($scope.phoneIndexForOperation, 1);
+			$scope.originListOfUsers[$scope.userIndexForOperation].phones.splice($scope.phoneIndexForOperation, 1);
 			$scope.stage = "edited";
 		}, function(response) {
 			console.log("Smth wrong!!");
@@ -424,10 +424,23 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}
 
 
+	/* Filters */
+	$scope.resetFilter = function() {
+		$scope.filter = {};
+		$scope.filteredListOfUsers = [];
+	}	
+	$scope.resetFilter();
+	$scope.updateFilter = function() {
+		$scope.filteredListOfUsers = $scope.originListOfUsers.filter(function(item) {
+			if ($scope.filter.roleId !== undefined) return (item.role.objectId === $scope.filter.roleId); else return true;
+		});
+	}
+
+
 
 	/* Для листания страниц с объектами */
 	$scope.nextUsers = function() {
-		$scope.pager.startPaging = util.nextEntities($scope.listOfUsers.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
+		$scope.pager.startPaging = util.nextEntities($scope.originListOfUsers.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
 	}
 	$scope.previousUsers = function() {
 		$scope.pager.startPaging = util.previousEntities($scope.pager.startPaging, $scope.pager.objectsOnPage);

@@ -1,7 +1,7 @@
 app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'util','$timeout',
     function($scope, $http, $location, sharedData, util, $timeout) {
 
-	/* Функция на получения всех комнат и типов комнат, вызываются сразу */
+	// All blocks
     (function() {
         $http({
             url: sharedData.getLinks().https + '/blocks/',
@@ -9,13 +9,13 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
-            $scope.listOfBlocks = data.data;
+            $scope.originListOfBlocks = data.data;
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
         });
     }());
-
+    // All rooms
     (function() {
         $http({
             url: sharedData.getLinks().https + '/rooms/simpleList',
@@ -135,7 +135,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
                 headers: {'Content-Type': 'application/json'}
             }).then(function (data) {
                 console.log(data);
-                $scope.listOfBlocks.push({
+                $scope.originListOfBlocks.push({
                     idForOperation: data.data.objectId,
                     blockStartDate: new Date($scope.block.blockStartDate),
                     blockFinishDate: new Date($scope.block.blockFinishDate),
@@ -173,10 +173,10 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
                 headers: {'Content-Type': 'application/json'}
             }).then(function (data) {
                 console.log(data);
-                $scope.listOfBlocks[$scope.indexForOperation].blockStartDate = new Date($scope.block.blockStartDate);
-                $scope.listOfBlocks[$scope.indexForOperation].blockFinishDate = new Date($scope.block.blockFinishDate);
-                $scope.listOfBlocks[$scope.indexForOperation].reason = $scope.block.reason;
-                $scope.listOfBlocks[$scope.indexForOperation].room = util.getObjectInArrayById($scope.listOfRooms, $scope.block.roomId);
+                $scope.originListOfBlocks[$scope.indexForOperation].blockStartDate = new Date($scope.block.blockStartDate);
+                $scope.originListOfBlocks[$scope.indexForOperation].blockFinishDate = new Date($scope.block.blockFinishDate);
+                $scope.originListOfBlocks[$scope.indexForOperation].reason = $scope.block.reason;
+                $scope.originListOfBlocks[$scope.indexForOperation].room = util.getObjectInArrayById($scope.listOfRooms, $scope.block.roomId);
                 $scope.updated = true;
             }, function (response) {
                 console.log("Smth wrong!!");
@@ -196,7 +196,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
-            $scope.listOfBlocks.splice($scope.indexForOperation, 1);
+            $scope.originListOfBlocks.splice($scope.indexForOperation, 1);
             $scope.deleted = true;
         }, function(response) {
             console.log("Smth wrong!!");
@@ -206,9 +206,22 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
     }
 
 
+    /* Filters */
+    $scope.resetFilter = function() {
+        $scope.filter = {};
+        $scope.filteredListOfBlocks = [];
+    }   
+    $scope.resetFilter();
+    $scope.updateFilter = function() {
+        $scope.filteredListOfBlocks = $scope.originListOfBlocks.filter(function(item) {
+            if ($scope.filter.roomId !== undefined) return (item.room.objectId === $scope.filter.roomId); else return true;
+        });
+    }
+
+
 	/* Для листания страниц с объектами */
     $scope.nextBlocks = function() {
-        $scope.pager.startPaging = util.nextEntities($scope.listOfBlocks.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
+        $scope.pager.startPaging = util.nextEntities($scope.originListOfBlocks.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
     }
     $scope.previousBlocks = function() {
         $scope.pager.startPaging = util.previousEntities($scope.pager.startPaging, $scope.pager.objectsOnPage);

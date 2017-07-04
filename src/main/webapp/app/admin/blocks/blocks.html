@@ -12,7 +12,6 @@
         <ng-include src="'app/admin/template/serverError.html'"></ng-include>
 
 
-
         <!-- List of objects in workspace -->
         <div class="listOfObjects" ng-if="!modificationMode">
             <ul class="pager">
@@ -20,7 +19,7 @@
                 <li><input type="number" min="1" max="999" ng-model="pager.objectsOnPage"></li>
                 <li><a ng-click="nextBlocks()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
-            <div ng-repeat="block in listOfBlocks | orderBy : 'blockStartDate' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-4">
+            <div ng-repeat="block in filteredListOfBlocks.length && filteredListOfBlocks || originListOfBlocks | orderBy : 'blockStartDate' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-4">
                 <div class="block-border clearfix">
                     <p class="admin-notes bottom-border"> On room : {{ block.room.roomNumber }} </p>
                     <p class="admin-notes "> Start date: {{ block.blockStartDate | date:'dd.MM.yyyy'}} </p>
@@ -28,11 +27,11 @@
                     <p class="admin-notes"> Reason : {{ block.reason }} </p>
                     <div class="text-right">
                         <button type="button" class="btn btn-primary btn-md"
-                                ng-click="prepareToEditBlock(block.objectId, listOfBlocks.indexOf(block))">
+                                ng-click="prepareToEditBlock(block.objectId, originListOfBlocks.indexOf(block))">
                             Edit
                         </button>
                         <button type="button" class="btn btn-warning btn-md"
-                                ng-click="prepareToDeleteBlock(block.objectId, listOfBlocks.indexOf(block))"
+                                ng-click="prepareToDeleteBlock(block.objectId, originListOfBlocks.indexOf(block))"
                                 data-toggle="modal" data-target="#deleteConfirmModal">
                             Delete
                         </button>
@@ -100,6 +99,19 @@
             </div>
         </div>
     </div>
+</div>
+
+
+<!-- Filters, position fixed -->
+<div class="filter-panel">
+    <h4>Filters</h4>
+    <p>
+        Room number
+        <select class="form-control" ng-model="filter.roomId" ng-change="updateFilter()"
+            ng-options="room.objectId as room.roomNumber for room in listOfRooms | orderBy: 'roomNumber'">
+        </select>
+    </p>
+    <button class="btn btn-default" ng-click="resetFilter()">Reset filters</button>
 </div>
 
 

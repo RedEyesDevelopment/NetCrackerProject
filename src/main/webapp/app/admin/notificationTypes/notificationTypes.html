@@ -19,17 +19,17 @@
                 <li><input type="number" min="1" max="999" ng-model="pager.objectsOnPage"></li>
                 <li><a ng-click="nextNotificationTypes()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
-            <div ng-repeat="notificationType in listOfNotificationTypes | orderBy : 'notificationTypeTitle' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-5 col-sm-offset-1">
+            <div ng-repeat="notificationType in filteredListOfNotificationTypes.length && filteredListOfNotificationTypes || originListOfNotificationTypes | orderBy : 'notificationTypeTitle' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-5 col-sm-offset-1">
                 <div class="block-border clearfix">
                     <p class="admin-notes"> Title: {{ notificationType.notificationTypeTitle }} </p>
                     <p class="admin-notes"> Role: {{ notificationType.orientedRole.roleName }} </p>
                     <div class="text-right" ng-if="isAdmin">
                         <button type="button" class="btn btn-primary btn-md"
-                                ng-click="prepareToEditNotificationType(notificationType.objectId, listOfNotificationTypes.indexOf(notificationType))">
+                                ng-click="prepareToEditNotificationType(notificationType.objectId, originListOfNotificationTypes.indexOf(notificationType))">
                             Edit
                         </button>
                         <button type="button" class="btn btn-warning btn-md"
-                                ng-click="prepareToDeleteNotificationType(notificationType.objectId, listOfNotificationTypes.indexOf(notificationType))"
+                                ng-click="prepareToDeleteNotificationType(notificationType.objectId, originListOfNotificationTypes.indexOf(notificationType))"
                                 data-toggle="modal" data-target="#deleteConfirmModal">
                             Delete
                         </button>
@@ -81,6 +81,20 @@
         </div>
     </div>
 </div>
+
+
+<!-- Filters, position fixed -->
+<div class="filter-panel">
+    <h4>Filters</h4>
+    <p>
+        Oriented role
+        <select class="form-control" ng-model="filter.roleId" ng-change="updateFilter()"
+            ng-options="role.objectId as role.roleName for role in listOfRoles | orderBy: 'roleName'">
+        </select>
+    </p>
+    <button class="btn btn-default" ng-click="resetFilter()">Reset filters</button>
+</div>
+
 
 <ng-include src="'app/admin/template/confirmModalWindows.html'"></ng-include>
 

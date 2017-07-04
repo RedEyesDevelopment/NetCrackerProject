@@ -211,10 +211,26 @@
     margin: 50px 0 30px 0;
 }
 
+/* ----- Для панель фильтров ----- */
+.filter-panel {
+    display: inline-block;
+    width: 200px;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #d1d1d1;
+    border-radius: 10px;
+    background: white;
 
+    position: fixed;
+    right: 10px;
+    top: 61px;
+}
 
-
-
+.filter-panel h4 {
+    font-size: 18px;
+    margin-top: 0;
+}
+/* ------------------------------- */
 
 
 

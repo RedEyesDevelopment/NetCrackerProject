@@ -19,7 +19,7 @@
                 <li><a ng-click="nextUsers()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
             <div class="row">
-                <div ng-repeat-start="user in listOfUsers | orderBy : 'role' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-6 admin-notes">
+                <div ng-repeat-start="user in filteredListOfUsers.length && filteredListOfUsers || originListOfUsers | orderBy : 'lastName' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-6 admin-notes">
                     <div class="block-border clearfix">
                         <div class="text-center order-padding-top-bottom" ng-if="!user.enabled">DISABLED</div>
                         <div class="order-padding-bottom"> Name: {{ user.firstName }} {{ user.lastName }} </div>
@@ -42,18 +42,18 @@
 
                         <div class="text-right order-padding-top" ng-if="myObjectId() !== user.objectId">
                             <button type="button" class="btn btn-primary btn-md" ng-if="isAdmin || user.role.objectId == 3"
-                                    ng-click="prepareToEditUser(user.objectId, listOfUsers.indexOf(user))">
+                                    ng-click="prepareToEditUser(user.objectId, originListOfUsers.indexOf(user))">
                                 Edit
                             </button>
 
                             <button type="button" class="btn btn-warning btn-md" ng-if="user.enabled && isAdmin"
-                                    ng-click="prepareToDeleteUser(user.objectId, listOfUsers.indexOf(user))"
+                                    ng-click="prepareToDeleteUser(user.objectId, originListOfUsers.indexOf(user))"
                                     data-toggle="modal" data-target="#deleteConfirmModal">
                                 Delete
                             </button>
 
                             <button type="button" class="btn btn-success btn-md" ng-if="!user.enabled && isAdmin"
-                                    ng-click="prepareToReestablishUser(user.objectId, listOfUsers.indexOf(user))"
+                                    ng-click="prepareToReestablishUser(user.objectId, originListOfUsers.indexOf(user))"
                                     data-toggle="modal" data-target="#editConfirmModal">
                                 Reestablish
                             </button>
@@ -314,9 +314,20 @@
                 </form>
             </div>
         </div>
-
-
     </div>
+</div>
+
+
+<!-- Filters, position fixed -->
+<div class="filter-panel">
+    <h4>Filters</h4>
+    <p>
+        Role
+        <select class="form-control" ng-model="filter.roleId" ng-change="updateFilter()"
+            ng-options="role.objectId as role.roleName for role in listOfRoles | orderBy: 'roleName'">
+        </select>
+    </p>
+    <button class="btn btn-default" ng-click="resetFilter()">Reset filters</button>
 </div>
 
 

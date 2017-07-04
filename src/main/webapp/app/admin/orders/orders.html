@@ -29,7 +29,7 @@
                 </div>
             </div>
 
-            <div ng-repeat="order in listOfOrders | orderBy : 'objectId' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-12 block-border">
+            <div ng-repeat="order in filteredListOfOrders.length && filteredListOfOrders || originListOfOrders | orderBy : 'objectId' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-12 block-border">
                 <div class="admin-notes clearfix">
                     <div class="col-sm-12 order-bottom-border order-padding-bottom">
                         <div class="col-sm-3">
@@ -41,14 +41,14 @@
                         <div class="col-sm-5 text-right">
                             <span ng-if="order.isPaidFor">paid
                                 <button class="toggle" ng-if="isAdmin"
-                                        ng-click="prepareToSwitch(order.objectId, listOfOrders.indexOf(order), false, order.isConfirmed)"
+                                        ng-click="prepareToSwitch(order.objectId, originListOfOrders.indexOf(order), false, order.isConfirmed)"
                                         data-toggle="modal" data-target="#editConfirmModal">
                                     <i class="fa fa-toggle-on" aria-hidden="true"></i>
                                 </button>
                             </span>
                             <span ng-if="!order.isPaidFor">not paid
                                 <button class="toggle" ng-if="isAdmin"
-                                        ng-click="prepareToSwitch(order.objectId, listOfOrders.indexOf(order), true, order.isConfirmed)"
+                                        ng-click="prepareToSwitch(order.objectId, originListOfOrders.indexOf(order), true, order.isConfirmed)"
                                         data-toggle="modal" data-target="#editConfirmModal">
                                     <i class="fa fa-toggle-off" aria-hidden="true"></i
                                 ></button>
@@ -56,14 +56,14 @@
                              | 
                             <span ng-if="order.isConfirmed">confirmed
                                 <button class="toggle" ng-if="isAdmin"
-                                        ng-click="prepareToSwitch(order.objectId, listOfOrders.indexOf(order), order.isPaidFor, false)"
+                                        ng-click="prepareToSwitch(order.objectId, originListOfOrders.indexOf(order), order.isPaidFor, false)"
                                         data-toggle="modal" data-target="#editConfirmModal">
                                     <i class="fa fa-toggle-on" aria-hidden="true"></i>
                                 </button>
                             </span>
                             <span ng-if="!order.isConfirmed">not confirmed
                                 <button class="toggle" ng-if="isAdmin"
-                                        ng-click="prepareToSwitch(order.objectId, listOfOrders.indexOf(order), order.isPaidFor, true)"
+                                        ng-click="prepareToSwitch(order.objectId, originListOfOrders.indexOf(order), order.isPaidFor, true)"
                                         data-toggle="modal" data-target="#editConfirmModal">
                                     <i class="fa fa-toggle-off" aria-hidden="true"></i
                                 ></button>
@@ -154,7 +154,7 @@
                                     <th>{{ (record.cost / 100).toFixed(2) }} $</th>
                                     <th>{{ record.usedDate | date:'dd.MM.yyyy' }}</th>
                                     <th><button class="deleteMaintenance" data-toggle="modal" data-target="#deleteConfirmModal"
-                                        ng-click="prepareToDeleteJournalRecord(record.objectId, listOfOrders.indexOf(order), order.journalRecords.indexOf(record))">
+                                        ng-click="prepareToDeleteJournalRecord(record.objectId, originListOfOrders.indexOf(order), order.journalRecords.indexOf(record))">
                                     delete</button></th>
                                 </tr>
                             </tbody>
@@ -167,15 +167,15 @@
                     <div class="col-sm-4 text-right order-padding-top-bottom">
                         <button type="button" class="btn btn-success btn-md"
                                 data-toggle="modal" data-target="#addMaintenance"
-                                ng-click="prepareToAddMaintenance(order.objectId, listOfOrders.indexOf(order))">
+                                ng-click="prepareToAddMaintenance(order.objectId, originListOfOrders.indexOf(order))">
                             Add maintenance
                         </button>
                         <button type="button" class="btn btn-primary btn-md"
-                                ng-click="prepareToEditOrder(order.objectId, listOfOrders.indexOf(order))">
+                                ng-click="prepareToEditOrder(order.objectId, originListOfOrders.indexOf(order))">
                             Edit
                         </button>
                         <button type="button" class="btn btn-warning btn-md" ng-if="isAdmin"
-                                ng-click="prepareToDeleteOrder(order.objectId, listOfOrders.indexOf(order))"
+                                ng-click="prepareToDeleteOrder(order.objectId, originListOfOrders.indexOf(order))"
                                 data-toggle="modal" data-target="#deleteConfirmModal">
                             Delete
                         </button>
@@ -384,6 +384,37 @@
             </div>
         </div>
     </div>
+</div>
+
+
+<!-- Filters, position fixed -->
+<div class="filter-panel">
+    <h4>Filters</h4>
+    <p>
+        Client
+        <select class="form-control" ng-model="filter.userId" ng-change="updateFilter()"
+            ng-options="user.objectId as (user.firstName + ' ' + user.lastName + ' | ' + user.email) for user in listOfUsers | orderBy: 'lastName'">
+        </select>
+    </p>
+    <p>
+        Room number
+        <select class="form-control" ng-model="filter.roomId" ng-change="updateFilter()"
+            ng-options="room.objectId as room.roomNumber for room in listOfRooms | orderBy: 'roomNumber'">
+        </select>
+    </p>
+    <p>
+        Room type
+        <select class="form-control" ng-model="filter.roomTypeId" ng-change="updateFilter()"
+            ng-options="type.objectId as type.roomTypeTitle for type in listOfRoomTypes | orderBy: 'roomTypeTitle'">
+        </select>
+    </p>
+    <p>
+        Category
+        <select class="form-control" ng-model="filter.categoryId" ng-change="updateFilter()"
+            ng-options="category.objectId as category.categoryTitle for category in listOfCategories | orderBy: 'categoryTitle'">
+        </select>
+    </p>
+    <button class="btn btn-default" ng-click="resetFilter()">Reset filters</button>
 </div>
 
 

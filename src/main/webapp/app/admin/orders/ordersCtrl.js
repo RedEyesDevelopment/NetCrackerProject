@@ -9,8 +9,8 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfOrders = data.data;
-			$scope.listOfOrders.forEach(function(order) {
+			$scope.originListOfOrders = data.data;
+			$scope.originListOfOrders.forEach(function(order) {
 				order.maintenanceSum = 0;
 				if (order.journalRecords != null) {
 					order.journalRecords.forEach(function(record) {
@@ -173,9 +173,9 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			console.log(data);
 			console.log("confirmed: ");
 			console.log($scope.confirmed);
-			$scope.listOfOrders[$scope.indexForOperation].isPaidFor = $scope.confirmed.isPaidFor;
-			$scope.listOfOrders[$scope.indexForOperation].isConfirmed = $scope.confirmed.isConfirmed;
-			$scope.listOfOrders[$scope.indexForOperation].lastModificator = util.getObjectInArrayById($scope.listOfUsers, sharedData.getMyself().objectId);
+			$scope.originListOfOrders[$scope.indexForOperation].isPaidFor = $scope.confirmed.isPaidFor;
+			$scope.originListOfOrders[$scope.indexForOperation].isConfirmed = $scope.confirmed.isConfirmed;
+			$scope.originListOfOrders[$scope.indexForOperation].lastModificator = util.getObjectInArrayById($scope.listOfUsers, sharedData.getMyself().objectId);
 			$scope.stage = "looking";
 			$scope.mode = "look";
 		}, function(response) {
@@ -208,7 +208,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 				method: 'GET',
 				headers: { 'Content-Type' : 'application/json' }
 			}).then(function(data) {
-				$scope.listOfOrders[$scope.indexForOperation].journalRecords.push(data.data);
+				$scope.originListOfOrders[$scope.indexForOperation].journalRecords.push(data.data);
 			}, function(response) {
 				console.log("Smth wrong!!");
 				console.log(response);
@@ -235,7 +235,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfOrders[$scope.indexForOperation].journalRecords.splice($scope.indexJournalForOperation, 1);
+			$scope.originListOfOrders[$scope.indexForOperation].journalRecords.splice($scope.indexJournalForOperation, 1);
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
@@ -345,12 +345,12 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
                 headers: {'Content-Type': 'application/json'}
             }).then(function (data) {
                 console.log(data);
-                $scope.listOfOrders[$scope.indexForOperation].livingStartDate = $scope.order.livingStartDate;
-                $scope.listOfOrders[$scope.indexForOperation].livingFinishDate = $scope.order.livingFinishDate;
-                $scope.listOfOrders[$scope.indexForOperation].sum = $scope.anotherVariant.total;
-                $scope.listOfOrders[$scope.indexForOperation].category = util.getObjectInArrayById($scope.listOfCategories, $scope.order.category.objectId);
-                $scope.listOfOrders[$scope.indexForOperation].room = util.getObjectInArrayById($scope.listOfRooms, $scope.order.room.objectId);
-                $scope.listOfOrders[$scope.indexForOperation].lastModificator = util.getObjectInArrayById($scope.listOfUsers, sharedData.getMyself().objectId);
+                $scope.originListOfOrders[$scope.indexForOperation].livingStartDate = $scope.order.livingStartDate;
+                $scope.originListOfOrders[$scope.indexForOperation].livingFinishDate = $scope.order.livingFinishDate;
+                $scope.originListOfOrders[$scope.indexForOperation].sum = $scope.anotherVariant.total;
+                $scope.originListOfOrders[$scope.indexForOperation].category = util.getObjectInArrayById($scope.listOfCategories, $scope.order.category.objectId);
+                $scope.originListOfOrders[$scope.indexForOperation].room = util.getObjectInArrayById($scope.listOfRooms, $scope.order.room.objectId);
+                $scope.originListOfOrders[$scope.indexForOperation].lastModificator = util.getObjectInArrayById($scope.listOfUsers, sharedData.getMyself().objectId);
                 $scope.stage = "updated";
                 $scope.mode = "look";
             }, function (response) {
@@ -376,7 +376,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfOrders.splice($scope.indexForOperation, 1);
+			$scope.originListOfOrders.splice($scope.indexForOperation, 1);
 			$scope.stage = "deleted";
 		}, function(response) {
 			console.log("Smth wrong!!");
@@ -386,9 +386,28 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	}
 
 
+	/* Filters */
+	$scope.resetFilter = function() {
+		$scope.filter = {};
+		$scope.filteredListOfOrders = [];
+	}	
+	$scope.resetFilter();
+	$scope.updateFilter = function() {
+		$scope.filteredListOfOrders = $scope.originListOfOrders.filter(function(item) {
+			if ($scope.filter.userId !== undefined) return (item.client.objectId === $scope.filter.userId); else return true;
+		}).filter(function(item) {
+			if ($scope.filter.roomId !== undefined) return (item.room.objectId === $scope.filter.roomId); else return true;
+		}).filter(function(item) {
+			if ($scope.filter.roomTypeId !== undefined) return (item.room.roomType.objectId === $scope.filter.roomTypeId); else return true;
+		}).filter(function(item) {
+			if ($scope.filter.categoryId !== undefined) return (item.category.objectId === $scope.filter.categoryId); else return true;
+		});
+	}
+
+
 	/* Для листания страниц с объектами */
 	$scope.nextOrders = function() {
-		$scope.pager.startPaging = util.nextEntities($scope.listOfOrders.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
+		$scope.pager.startPaging = util.nextEntities($scope.originListOfOrders.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
 	}
 	$scope.previousOrders = function() {
 		$scope.pager.startPaging = util.previousEntities($scope.pager.startPaging, $scope.pager.objectsOnPage);

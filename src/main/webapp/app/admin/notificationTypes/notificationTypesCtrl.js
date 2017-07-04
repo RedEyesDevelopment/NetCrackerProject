@@ -9,7 +9,7 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
-            $scope.listOfNotificationTypes = data.data;
+            $scope.originListOfNotificationTypes = data.data;
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
@@ -128,7 +128,7 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
-            $scope.listOfNotificationTypes.push({
+            $scope.originListOfNotificationTypes.push({
                 objectId : data.data.objectId,
                 notificationTypeTitle :  $scope.notificationType.notificationTypeTitle,
                 orientedRole : util.getObjectInArrayById($scope.listOfRoles, $scope.notificationType.orientedRole)
@@ -160,9 +160,9 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
             console.log(data);
             console.log($scope.notificationType);
             console.log($scope.indexForOperation);
-            $scope.listOfNotificationTypes[$scope.indexForOperation].notificationTypeTitle = $scope.notificationType.notificationTypeTitle;
-            $scope.listOfNotificationTypes[$scope.indexForOperation].orientedRole = util.getObjectInArrayById($scope.listOfRoles, $scope.notificationType.orientedRole);
-            console.log($scope.listOfNotificationTypes);
+            $scope.originListOfNotificationTypes[$scope.indexForOperation].notificationTypeTitle = $scope.notificationType.notificationTypeTitle;
+            $scope.originListOfNotificationTypes[$scope.indexForOperation].orientedRole = util.getObjectInArrayById($scope.listOfRoles, $scope.notificationType.orientedRole);
+            console.log($scope.originListOfNotificationTypes);
             $scope.updated = true;
         }, function(response) {
             console.log("Smth wrong!!");
@@ -179,7 +179,7 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
             headers: { 'Content-Type': 'application/json' }
         }).then(function(data) {
             console.log(data);
-            $scope.listOfNotificationTypes.splice($scope.indexForOperation, 1);
+            $scope.originListOfNotificationTypes.splice($scope.indexForOperation, 1);
             $scope.deleted = true;
         }, function(response) {
             console.log("Smth wrong!!");
@@ -189,9 +189,22 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
     }
 
 
+    /* Filters */
+    $scope.resetFilter = function() {
+        $scope.filter = {};
+        $scope.filteredListOfNotificationTypes = [];
+    }   
+    $scope.resetFilter();
+    $scope.updateFilter = function() {
+        $scope.filteredListOfNotificationTypes = $scope.originListOfNotificationTypes.filter(function(item) {
+            if ($scope.filter.roleId !== undefined) return (item.orientedRole.objectId === $scope.filter.roleId); else return true;
+        });
+    }
+
+
 	/* Для листания страниц с объектами */
     $scope.nextNotificationTypes = function() {
-        $scope.pager.startPaging = util.nextEntities($scope.listOfNotificationTypes.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
+        $scope.pager.startPaging = util.nextEntities($scope.originListOfNotificationTypes.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
     }
     $scope.previousNotificationTypes = function() {
         $scope.pager.startPaging = util.previousEntities($scope.pager.startPaging, $scope.pager.objectsOnPage);
