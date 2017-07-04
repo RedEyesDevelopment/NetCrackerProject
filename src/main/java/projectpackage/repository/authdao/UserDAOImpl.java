@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
@@ -44,7 +43,6 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public User getUser(Integer id) {
         if (id == null) {
             return null;
@@ -56,14 +54,12 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<User> getAllUsers() {
         return manager.createReactEAV(User.class).fetchRootChild(Phone.class).closeAllFetches()
                 .fetchRootReference(Role.class, "RoleToUser").closeAllFetches()
                 .getEntityCollection();
     }
 
-    @Transactional
     @Override
     public Integer insertUser(User user) {
         if (user == null) {
@@ -83,7 +79,6 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         return objectId;
     }
 
-    @Transactional
     @Override
     public Integer updateUser(User newUser, User oldUser) {
         if (newUser == null || oldUser == null) {
@@ -108,7 +103,6 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         return newUser.getObjectId();
     }
 
-    @Transactional
     @Override
     public void deleteUser(Integer id) {
         if (id == null) {
@@ -127,7 +121,6 @@ public class UserDAOImpl extends AbstractDAO implements UserDAO {
         jdbcTemplate.update(UPDATE_ATTRIBUTE, "false", null, id, 3);
     }
 
-    @Transactional
     @Override
     public void restoreUser(Integer id) {
         if (id == null) {
