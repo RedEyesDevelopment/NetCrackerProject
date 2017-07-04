@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.rates.Price;
 import projectpackage.model.rates.Rate;
 import projectpackage.model.rooms.Room;
@@ -32,7 +31,6 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    @Transactional(readOnly = true)
     public Room getRoom(Integer id) {
         if (null==id) {
             return null;
@@ -45,7 +43,6 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Room getSimpleRoom(Integer id) {
         if (null==id) {
             return null;
@@ -56,7 +53,6 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Room> getAllRooms() {
         return manager.createReactEAV(Room.class).addCondition(new PriceEqualsToRoomCondition(), ConditionExecutionMoment.AFTER_QUERY)
                 .fetchRootReference(RoomType.class, "RoomTypeToRoom")
@@ -64,13 +60,11 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Room> getSimpleRoomsList() {
         return manager.createReactEAV(Room.class).fetchRootReference(RoomType.class, "RoomTypeToRoom").closeAllFetches().getEntityCollection();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Room getFreeRoom(int roomTypeId, int numberOfResidents, Date start, Date finish) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("room_type_id", roomTypeId);
@@ -87,7 +81,6 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Room> getFreeRooms(int roomTypeId, int numberOfResidents, Date start, Date finish) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("room_type_id", roomTypeId);
@@ -110,7 +103,6 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Room> getBookedRooms(int roomTypeId, int numberOfResidents, Date start, Date finish) {
         List<Room> freeRooms = getFreeRooms(roomTypeId, numberOfResidents, start, finish);
         List<Room> allRooms = getAllRooms();
@@ -126,7 +118,6 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
         return result;
     }
 
-    @Transactional
     @Override
     public Integer insertRoom(Room room) {
         if (room == null) {
@@ -142,7 +133,6 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
         return objectId;
     }
 
-    @Transactional
     @Override
     public Integer updateRoom(Room newRoom, Room oldRoom) {
         if (oldRoom == null || newRoom == null) {
@@ -156,7 +146,6 @@ public class RoomDAOImpl extends AbstractDAO implements RoomDAO{
         return newRoom.getObjectId();
     }
 
-    @Transactional
     @Override
     public void deleteRoom(Integer id) throws ReferenceBreakException, WrongEntityIdException, DeletedObjectNotExistsException {
         if (id == null) {
