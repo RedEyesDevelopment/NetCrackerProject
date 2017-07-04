@@ -13,7 +13,7 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 @Data
 @ReactEntity(entityTypeId = 15)
 @ReactChild(outerEntityClass = Category.class, outerFieldName = "complimentaries", innerFieldKey = "categoryId")
-public class Complimentary implements ReactEntityWithId, Cloneable {
+public class Complimentary implements ReactEntityWithId {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%PARENT_ID")
@@ -21,13 +21,4 @@ public class Complimentary implements ReactEntityWithId, Cloneable {
 
     private Maintenance maintenance;
 
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

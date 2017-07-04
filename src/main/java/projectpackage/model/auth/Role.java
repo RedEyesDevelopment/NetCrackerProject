@@ -12,20 +12,11 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 @ReactEntity(entityTypeId = 10)
 @ReactReference(referenceName = "RoleToUser", outerEntityClass = User.class, outerFieldName = "role", attrIdField = "20")
 @ReactReference(referenceName = "RoleToNotificationType", outerEntityClass = NotificationType.class, outerFieldName = "orientedRole")
-public class Role implements ReactEntityWithId, Cloneable {
+public class Role implements ReactEntityWithId {
 
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 39)
     private String roleName;
 
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

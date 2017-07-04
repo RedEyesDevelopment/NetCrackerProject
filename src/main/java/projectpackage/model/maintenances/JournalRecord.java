@@ -16,7 +16,7 @@ import java.util.Date;
 @Data
 @ReactEntity(entityTypeId = 16)
 @ReactChild(outerEntityClass = Order.class, outerFieldName = "journalRecords", innerFieldKey = "orderId")
-public class JournalRecord implements ReactEntityWithId, Cloneable {
+public class JournalRecord implements ReactEntityWithId {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%PARENT_ID")
@@ -30,13 +30,4 @@ public class JournalRecord implements ReactEntityWithId, Cloneable {
 
     private Maintenance maintenance;
 
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

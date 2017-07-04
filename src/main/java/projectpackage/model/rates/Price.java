@@ -10,7 +10,7 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 @Data
 @ReactEntity(entityTypeId = 7)
 @ReactChild(outerEntityClass = Rate.class, outerFieldName = "prices", innerFieldKey = "rateId")
-public class Price implements ReactEntityWithId, Cloneable {
+public class Price implements ReactEntityWithId {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactAttrField(valueObjectClass = Integer.class, databaseAttrtypeIdValue = 32)
@@ -20,13 +20,4 @@ public class Price implements ReactEntityWithId, Cloneable {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%PARENT_ID")
     private int rateId;
 
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

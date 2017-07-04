@@ -19,7 +19,7 @@ import java.util.Set;
 @ReactReference(referenceName = "UserToModificationHistory", outerEntityClass = ModificationHistory.class, outerFieldName = "modifAuthor")
 @ReactReference(referenceName = "UserToOrderAsClient", outerEntityClass = Order.class, outerFieldName = "client", attrIdField = "7")
 @ReactReference(referenceName = "UserToOrderAsLastModificator", outerEntityClass = Order.class, outerFieldName = "lastModificator", attrIdField = "44")
-public class User implements ReactEntityWithId, Cloneable {
+public class User implements ReactEntityWithId {
 
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
@@ -39,13 +39,4 @@ public class User implements ReactEntityWithId, Cloneable {
     private Role role;
     private Set<Phone> phones;
 
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

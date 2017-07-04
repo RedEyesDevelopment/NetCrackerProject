@@ -11,7 +11,7 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 @Data
 @ReactEntity(entityTypeId = 11)
 @ReactReference(referenceName = "NotificationTypeToNotification", outerEntityClass = Notification.class, outerFieldName = "notificationType")
-public class NotificationType implements ReactEntityWithId, Cloneable {
+public class NotificationType implements ReactEntityWithId {
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 40)
@@ -19,13 +19,4 @@ public class NotificationType implements ReactEntityWithId, Cloneable {
 
     private Role orientedRole;
 
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

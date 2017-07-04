@@ -34,7 +34,7 @@ public class PriceEqualsToRoomCondition implements ReactConditionAfterExecution 
             RoomType roomType = room.getRoomType();
             Set<Rate> rates = new HashSet<>();
             for (Rate rate : roomType.getRates()) {
-                Rate newRate = (Rate) rate.clone();
+                Rate newRate = rate.clone();
                 Set<Price> prices = new HashSet<>();
                 for (Price price : rate.getPrices()) {
                     if (price.getNumberOfPeople().equals(roomQuantityNumber)) {
@@ -54,7 +54,7 @@ public class PriceEqualsToRoomCondition implements ReactConditionAfterExecution 
             Room room = (Room) obj;
             for (Map.Entry<Integer, Set<Rate>> entry:newRates.entrySet()){
                 if (entry.getKey().equals(room.getObjectId())){
-                    RoomType newRoomType = (RoomType) room.getRoomType().clone();
+                    RoomType newRoomType = room.getRoomType().clone();
                     newRoomType.setRates(entry.getValue());
                     room.setRoomType(newRoomType);
                 }

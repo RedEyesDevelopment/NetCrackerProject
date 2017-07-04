@@ -10,11 +10,15 @@ import projectpackage.repository.reacteav.modelinterface.ReactEntityWithId;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Data
 @ReactEntity(entityTypeId = 6)
 @ReactChild(outerEntityClass = RoomType.class, outerFieldName = "rates", innerFieldKey = "roomTypeId")
 public class Rate implements ReactEntityWithId, Cloneable{
+    private static final Logger LOGGER = Logger.getLogger(Rate.class.getName());
+
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
     @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = 30)
@@ -27,11 +31,11 @@ public class Rate implements ReactEntityWithId, Cloneable{
     private Set<Price> prices;
 
     @Override
-    public Object clone() {
+    public Rate clone() {
         try {
-            return super.clone();
+            return (Rate) super.clone();
         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Cannot clone due to unknown reason, check the model class!", e);
         }
         return null;
     }
