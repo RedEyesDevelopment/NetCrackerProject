@@ -9,6 +9,7 @@
         <div class="done" ng-if="stage == 'done'">
             Changes successfully accepted! <i class="fa fa-check" aria-hidden="true"></i>              
         </div>
+        <ng-include src="'app/admin/template/serverError.html'"></ng-include>
         <div class="diffPasswords" ng-if="stage == 'diffPasswords'">
             <i class="fa fa-times" aria-hidden="true"></i> Passwords do not match!          
         </div>
@@ -20,7 +21,7 @@
 	                    	<label for="firstNameInput">First name:</label>
 	                    </div>
 	                    <div class="col-sm-6">
-	                    	<input type="text" id="firstNameInput"
+	                    	<input type="text" id="firstNameInput" ng-pattern="/^[a-zA-Z]{20}$/"
 	                    		ng-model="getMyself().firstName">
 	                	</div>
 	                </div>
@@ -29,7 +30,7 @@
 	                    	<label for="lastNameInput">Last name:</label>
 	                    </div>
 	                    <div class="col-sm-6">
-	                    	<input type="text" id="lastNameInput"
+	                    	<input type="text" id="lastNameInput" ng-pattern="/^[a-zA-Z]{40}$/"
 	                    		ng-model="getMyself().lastName">
 	                	</div>
 	                </div>
@@ -105,7 +106,7 @@
 	                	</div>
 	                	<button class="btn btn-default" ng-click="prepareToEditPhone(phone.objectId, getMyself().phones.indexOf(phone))"
 	                			data-toggle="modal" data-target="#editConfirmModal">
-							Edit
+							OK
 						</button>
 						<button class="btn btn-default"
 								ng-click="prepareToDeletePhone(phone.objectId, getMyself().phones.indexOf(phone))"

@@ -113,7 +113,7 @@
                     <input type="email" id="resetEmail" ng-model="auth.resetEmail" ng-required="true" placeholder="Enter your email">
                 </p>
                 <div class="formFooter">
-                    <button class="btn btn-success" ng-disabled="authorizeform.$invalid" ng-click='resetPassword()'>Reset</button>
+                    <button class="btn btn-success" ng-disabled="authorizeform.$invalid" data-dismiss="modal" ng-click='resetPassword()'>Reset</button>
                     <button type="button" id="loginFormClose" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </form>

@@ -5,6 +5,7 @@ app.controller('headerCtrl', ['$scope', '$rootScope', '$http', '$location', '$ro
     $scope.registrationData = {}
 
     var setRoleFromSever = function() {
+        $scope.errMessage = false;
         $http({
             url: 'http://localhost:8080/auth/isauthorized',
             method: 'GET',
@@ -15,10 +16,12 @@ app.controller('headerCtrl', ['$scope', '$rootScope', '$http', '$location', '$ro
         }, function (response) {
             console.log("Smth wrong!!")
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     };
 
     var setLinksFromServer = function() {
+        $scope.errMessage = false;
         $http({
             url: 'http://localhost:8080/auth/links',
             method: 'GET',
@@ -29,10 +32,12 @@ app.controller('headerCtrl', ['$scope', '$rootScope', '$http', '$location', '$ro
         }, function (response) {
             console.log("Smth wrong!!")
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     };
 
     var setMyselfDataFromServer = function() {
+        $scope.errMessage = false;
         $http({
             url: 'http://localhost:8080/users/myself',
             method: 'GET',
@@ -43,10 +48,12 @@ app.controller('headerCtrl', ['$scope', '$rootScope', '$http', '$location', '$ro
         }, function (response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     };
 
     var setAuthDataFromServer = function() {
+        $scope.errMessage = false;
         // Заменить на вызов функции получение ссылок в случае запуска реального сервера
         // setLinksFromServer();
         $scope.auth.links = { https : "http://localhost:8080" };
@@ -84,6 +91,7 @@ app.controller('headerCtrl', ['$scope', '$rootScope', '$http', '$location', '$ro
     });
 
     $scope.login = function() {
+        $scope.errMessage = false;
         $scope.hideFailAuthMessage();
         $http({
             url: 'http://localhost:8080/auth/login',
@@ -112,6 +120,7 @@ app.controller('headerCtrl', ['$scope', '$rootScope', '$http', '$location', '$ro
     };
 
     $scope.resetPassword = function() {
+        $scope.errMessage = false;
         $http({
             url: 'http://localhost:8080/cpass/for',
             method: 'POST',
@@ -124,6 +133,7 @@ app.controller('headerCtrl', ['$scope', '$rootScope', '$http', '$location', '$ro
         }, function (response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }
 
@@ -136,6 +146,7 @@ app.controller('headerCtrl', ['$scope', '$rootScope', '$http', '$location', '$ro
     };
 
     $scope.logout = function() {
+        $scope.errMessage = false;
         $http({
             url: 'http://localhost:8080/logout',
             method: 'GET',
@@ -150,6 +161,7 @@ app.controller('headerCtrl', ['$scope', '$rootScope', '$http', '$location', '$ro
     };
 
     $scope.registration = function() {
+        $scope.errMessage = false;
         $scope.hideNotTheSamePasswordsMessage();
         if ($scope.registrationData.userPasswordRepeat === $scope.registrationData.userPassword) {
             $http({
@@ -186,7 +198,7 @@ app.controller('headerCtrl', ['$scope', '$rootScope', '$http', '$location', '$ro
             }, function (response) {
                 console.log(response);
                 console.log("Smth wrong!!");
-                // тут отобразить отказ от сервера
+                $scope.errMessage = response.data.message;
             });
         } else {
             $scope.registrationData.passwordsNotTheSame = true;
@@ -194,6 +206,7 @@ app.controller('headerCtrl', ['$scope', '$rootScope', '$http', '$location', '$ro
     }
 
     $scope.getStatistic = function() {
+        $scope.errMessage = false;
         $location.path('/admin/statistic');
     }
 

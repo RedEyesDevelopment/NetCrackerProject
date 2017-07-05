@@ -3,7 +3,6 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	
 	// All executed notifications
 	var getExecNotifications = function() {
-		console.log("getExecNotifications");
 		$http({
 			url: sharedData.getLinks().https + '/notifications',
 			method: 'GET',
@@ -21,16 +20,14 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	    		});
 			}
 			$scope.originListOfNotifications = list;
-			console.log("--------------");
-			console.log($scope.originListOfNotifications);
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	};
 	// All current notifications
 	var getCurrentNotifications = function() {
-		console.log("getCurrentNotifications");
         $http({
             url: sharedData.getLinks().https + '/notifications/current',
             method: 'GET',
@@ -48,11 +45,10 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	    		});
 			}
 			$scope.originListOfNotifications = list;
-			console.log("--------------");
-			console.log($scope.originListOfNotifications);
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     };
 
@@ -63,12 +59,12 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 			method: 'GET',
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
-			console.log("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU");
 			console.log(data);
 			$scope.listOfUsers = data.data;
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}());
 	// All notification type
@@ -83,6 +79,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}());
 	// All orders
@@ -97,6 +94,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}());
 	/* редирект на главную если не админ и не рецепция */
@@ -108,11 +106,13 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 
 	/* Возврат на просмотр */
 	$scope.back = function() {
+		$scope.errMessage = false;
 		$scope.stage = "looking";
 		$scope.modificationMode = false;
 	}
 
 	$scope.query = function() {
+		$scope.errMessage = false;
 		switch ($scope.stage) {
 			case 'markAsDone': markAsDone();
 				break;
@@ -135,27 +135,31 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	}
 
 	$scope.prepareToMarkAsDone = function(notifId) {
+		$scope.errMessage = false;
 		$scope.idForOperation = notifId;
 		$scope.stage = "markAsDone";
 	}
 
 	var markAsDone = function() {
-		console.log($scope.idForOperation);
+		$scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/notifications/execute/' + $scope.idForOperation,
 			method: 'PUT'
 		}).then(function(data) {
 			console.log(data);
-			getCurrentNotifications();
+			$scope.updateList();
+			$scope.resetFilter();
 			$scope.stage = "marked";
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}
 
 
 	$scope.prepareToAddNotification = function() {
+		$scope.errMessage = false;
 		$scope.idForOperation = "";
 		$scope.indexForOperation = "";
 		$scope.notification = {};
@@ -177,7 +181,8 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			getCurrentNotifications();
+			$scope.updateList();
+			$scope.resetFilter();
 			$scope.prepareToAddNotification();
 			$scope.stage = "added";
 		}, function(response) {
@@ -189,6 +194,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 
 
 	$scope.prepareToEditNotification = function(notificationId, index) {
+		$scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/notifications/notexecuted/' + notificationId,
 			method: 'GET',
@@ -206,6 +212,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}
 
@@ -223,7 +230,8 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			getCurrentNotifications();
+			$scope.updateList();
+			$scope.resetFilter();
 			$scope.stage = "edited";
 		}, function(response) {
 			console.log("Smth wrong!!");
@@ -234,6 +242,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 
 
 	$scope.prepareToDeleteNotification = function(notificationId, index) {
+		$scope.errMessage = false;
         $scope.idForOperation = notificationId;
 		$scope.indexForOperation = index;
 		$scope.stage = "deleting";
@@ -247,7 +256,8 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			getCurrentNotifications();
+			$scope.updateList();
+			$scope.resetFilter();
 			$scope.stage = "deleted";
 		}, function(response) {
 			console.log("Smth wrong!!");
@@ -259,14 +269,12 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 
 	// Filters
 	$scope.resetFilter = function() {
-		console.log("in resetFilter");
 		$scope.filter = {};
 		$scope.filteredListOfNotifications = [];
 	}	
 	$scope.resetFilter();
 
 	$scope.updateList = function() {
-		console.log("in updateList" + $scope.doesExecuted);
 		if ($scope.doesExecuted) {
 			getExecNotifications();
 		} else {
@@ -275,13 +283,11 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	}
 
 	$scope.$watch('doesExecuted', function(newStatus) {
-		console.log("in watcher");
 		$scope.resetFilter();
 		$scope.updateList();
 	});
 
 	$scope.updateFilter = function() {
-		console.log("in updateFilter");
 		if ($scope.originListOfNotifications) {
 			$scope.filteredListOfNotifications = $scope.originListOfNotifications.filter(function(item) {
 				return $scope.filter.typeId ? (item.notificationType.objectId === $scope.filter.typeId) : true;

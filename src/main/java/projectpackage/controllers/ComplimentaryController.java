@@ -88,9 +88,11 @@ public class ComplimentaryController {
             return new ResponseEntity<IUDAnswer>(iudAnswer, HttpStatus.BAD_REQUEST);
         }
         Category category = categoryService.getSingleCategoryById(complimentaryDTO.getCategoryId());
-        for (Complimentary complimentary : category.getComplimentaries()) {
-            if (complimentary.getMaintenance().getObjectId() == complimentaryDTO.getMaintenanceId()) {
-                return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, CANNOT_HAVE_DUPLICATE_COMPLIMENTARY), HttpStatus.BAD_REQUEST);
+        if (category.getComplimentaries() != null && !category.getComplimentaries().isEmpty()){
+            for (Complimentary complimentary : category.getComplimentaries()) {
+                if (complimentary.getMaintenance().getObjectId() == complimentaryDTO.getMaintenanceId()) {
+                    return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, CANNOT_HAVE_DUPLICATE_COMPLIMENTARY), HttpStatus.BAD_REQUEST);
+                }
             }
         }
         Complimentary complimentary = new Complimentary();

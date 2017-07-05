@@ -22,6 +22,7 @@ app.controller('checklistCtrl', ['$scope', '$http', 'sharedData', 'util',
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }());
 
@@ -45,12 +46,14 @@ app.controller('checklistCtrl', ['$scope', '$http', 'sharedData', 'util',
     }
 
     $scope.prepareToEditComment = function(orderId, index) {
+        $scope.errMessage = false;
         $scope.idForOperation = orderId;
         $scope.indexForOperation = index;
         $scope.stage = "updateComment";
     }
 
     var editComment = function() {
+        $scope.errMessage = false;
         $http({
             url: sharedData.getLinks().https + '/orders/user/update/' + $scope.idForOperation,
             method: 'PUT',
@@ -64,6 +67,7 @@ app.controller('checklistCtrl', ['$scope', '$http', 'sharedData', 'util',
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }
 

@@ -27,7 +27,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
 
     $scope.pager = {
         startPaging : 0,
-        objectsOnPage : 6
+        objectsOnPage : 4
     }
 
     /* Функции подготовки запросов */

@@ -47,7 +47,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
 
     $scope.pager = {
         startPaging : 0,
-        objectsOnPage : 6
+        objectsOnPage : 4
     }
 
     /* Возврат на просмотр */

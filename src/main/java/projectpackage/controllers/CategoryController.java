@@ -21,6 +21,7 @@ import projectpackage.service.support.ServiceUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -48,6 +49,9 @@ public class CategoryController {
         List<Category> categorys = categoryService.getAllCategories();
         List<Resource<Category>> resources = new ArrayList<>();
         for (Category category:categorys){
+            if (category.getComplimentaries() == null) {
+                category.setComplimentaries(new HashSet<>());
+            }
             Resource<Category> categoryResource = new Resource<Category>(category);
             categoryResource.add(linkTo(methodOn(CategoryController.class).getCategory(category.getObjectId(), null)).withSelfRel());
             resources.add(categoryResource);

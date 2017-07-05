@@ -59,7 +59,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	/* Функции подготовки запросов */
     $scope.prepareToAddBlock = function() {
         $scope.indexForOperation = "";
-        $scope.block.idForOperation = "";
+        $scope.idForOperation = "";
         $scope.block.blockStartDate = "";
         $scope.block.blockFinishDate = "";
         $scope.block.reason = "";
@@ -77,7 +77,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
         }).then(function(data) {
             console.log(data);
             $scope.indexForOperation = index;
-            $scope.block.idForOperation = blockId;
+            $scope.idForOperation = blockId;
             $scope.block.blockStartDate = new Date(data.data.blockStartDate);
             $scope.block.blockFinishDate = new Date(data.data.blockFinishDate);
             $scope.block.reason = data.data.reason;
@@ -94,7 +94,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 
     $scope.prepareToDeleteBlock = function(blockId, index) {
         $scope.indexForOperation = index;
-        $scope.block.idForOperation = blockId;
+        $scope.idForOperation = blockId;
         resetFlags();
         $scope.stage = "deleting";
     }
@@ -137,7 +137,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
             }).then(function (data) {
                 console.log(data);
                 $scope.originListOfBlocks.push({
-                    idForOperation: data.data.objectId,
+                    objectId: data.data.objectId,
                     blockStartDate: new Date($scope.block.blockStartDate),
                     blockFinishDate: new Date($scope.block.blockFinishDate),
                     reason: $scope.block.reason,
@@ -164,7 +164,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
             && $scope.block.blockStartDate.getTime() >= new Date().getTime()
             && $scope.block.blockFinishDate.getTime() <= $scope.maxDate.getTime()) {
             $http({
-                url: sharedData.getLinks().https + '/blocks/' + $scope.block.idForOperation,
+                url: sharedData.getLinks().https + '/blocks/' + $scope.idForOperation,
                 method: 'PUT',
                 data: {
                     blockStartDate: $scope.block.blockStartDate.getTime(),
@@ -194,7 +194,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
         $scope.errMessage = false;
         resetFlags();
         $http({
-            url: sharedData.getLinks().https + '/blocks/' + $scope.block.idForOperation,
+            url: sharedData.getLinks().https + '/blocks/' + $scope.idForOperation,
             method: 'DELETE',
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {

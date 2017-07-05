@@ -51,10 +51,12 @@ app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 
 
 	$scope.cancelPhone = function() {
+		$scope.errMessage = false;
 		$scope.stage = "looking";
 	}
 
 	var editBasicInfo = function() {
+		$scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/users/update/basic/' + $scope.getMyself().objectId,
 			method: 'PUT',
@@ -71,10 +73,12 @@ app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}
 
 	var changePassword = function() {
+		$scope.errMessage = false;
 		if ($scope.getMyself().newPassword === $scope.getMyself().newPasswordRep) {			
 			$http({
 				url: sharedData.getLinks().https + '/users/update/password/' + $scope.getMyself().objectId,
@@ -90,6 +94,7 @@ app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 			}, function(response) {
 				console.log("Smth wrong!!");
 				console.log(response);
+				$scope.errMessage = response.data.message;
 			});
 		} else {
 			$scope.stage = "diffPasswords";
@@ -97,6 +102,7 @@ app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 	}
 
 	var addPhone = function() {
+		$scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/phones',
 			method: 'POST',
@@ -114,10 +120,12 @@ app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}
 
 	var editPhone = function() {
+		$scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/phones/' + $scope.phoneObjIdForOperation,
 			method: 'PUT',
@@ -132,10 +140,12 @@ app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}
 
 	var deletePhone = function() {
+		$scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/phones/' + $scope.phoneObjIdForOperation,
 			method: 'DELETE',
@@ -147,6 +157,7 @@ app.controller('settingsCtrl', ['$scope', '$http', '$location', 'sharedData',
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}
 

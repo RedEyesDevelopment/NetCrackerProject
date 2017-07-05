@@ -6,6 +6,7 @@ app.controller('messageToAdminCtrl', ['$scope', '$http', '$location', 'sharedDat
 	$scope.stage = "looking";
 
 	$scope.prepareToSend = function() {
+		$scope.errMessage = false;
 		$scope.stage = "sending"
 	}
 
@@ -17,6 +18,7 @@ app.controller('messageToAdminCtrl', ['$scope', '$http', '$location', 'sharedDat
 	}
 
 	var sendMessage = function() {
+		$scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/clients/sendMessage',
 			method: 'POST',
@@ -31,6 +33,7 @@ app.controller('messageToAdminCtrl', ['$scope', '$http', '$location', 'sharedDat
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}
 

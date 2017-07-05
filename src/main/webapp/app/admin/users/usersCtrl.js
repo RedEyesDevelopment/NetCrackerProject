@@ -50,7 +50,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 	$scope.pager = {
 		startPaging : 0,
-		objectsOnPage : 6
+		objectsOnPage : 4
 	}
 
 	$scope.myObjectId = function() {

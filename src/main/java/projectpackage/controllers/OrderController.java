@@ -339,7 +339,7 @@ public class OrderController {
         }
         Order order = orderService.getSingleOrderById(id);
         Date validDate = new DateTime().plusDays(1).toDate();
-        if (order.getLivingStartDate().after(validDate)) {
+        if (order.getLivingStartDate().before(validDate)) {
             return new ResponseEntity<IUDAnswer>(new IUDAnswer(false, ORDER_STARTED), HttpStatus.FORBIDDEN);
         }
 

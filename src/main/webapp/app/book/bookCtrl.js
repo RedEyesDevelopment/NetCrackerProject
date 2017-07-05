@@ -15,12 +15,12 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }());
 
     $scope.book = {}
     $scope.stage = "booking";
-    $scope.errMessage = "none";
     $scope.doesNeedToShowBookForm = true;
 
     $scope.checkIsAuthorized = function() {
@@ -28,12 +28,10 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
     }
 
     $scope.searchRoomTypes = function() {
-        $scope.errMessage = "none";
+        $scope.errMessage = false;
         if (Object.keys($scope.book).length !== 0) {
             var maxDate = new Date();
             maxDate.setFullYear(new Date().getFullYear() + 1);
-            console.log(maxDate);
-
             if ($scope.book.from.getTime() < $scope.book.till.getTime()
                 && $scope.book.from.getTime() >= new Date().getTime() && $scope.book.till.getTime() <= maxDate.getTime()) {
                 $http({
@@ -58,10 +56,10 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
                 }, function(response) {
                     console.log("Smth wrong!!");
                     console.log(response);
-                    $scope.errMessage = "serverErr";
+                    $scope.errMessage = response.data.message;
                 });
             } else {
-                $scope.errMessage = "invalidInputData";
+                $scope.errMessage = "Invalid dates! Pls fix and try again!";
             }
         }
     }
@@ -69,10 +67,12 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
     sharedData.setSearchRoomTypes($scope.searchRoomTypes);
 
     $scope.bookFormChange = function() {
+        $scope.errMessage = false;
         $scope.stage = "booking";
     }
 
     $scope.issueOrder = function (roomTypeId) {
+        $scope.errMessage = false;
         var userId;
         /* Проверяем на кого оформлять заказ,
             пробуем на того, чей id лежит в общих данных,
@@ -104,6 +104,7 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
             }, function(response) {
                 console.log("Smth wrong!!");
                 console.log(response);
+                $scope.errMessage = response.data.message;
             });
         } else {
             $('#signupLink').trigger('click');
@@ -111,6 +112,7 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
     }
 
     $scope.acceptOrder = function() {
+        $scope.errMessage = false;
         $http({
             url: 'http://localhost:8080/orders/accept',
             method: 'GET',
@@ -124,10 +126,12 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }
 
     var sendOrderPdf = function(orderId) {
+        $scope.errMessage = false;
         $http({
             url: 'http://localhost:8080/pdf/order/' + orderId,
             method: 'GET',
@@ -139,10 +143,12 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }
 
     $scope.cancelOrder = function() {
+        $scope.errMessage = false;
         $http({
             url: 'http://localhost:8080/orders/cancel',
             method: 'GET',
@@ -157,10 +163,12 @@ app.controller('bookCrtl', ['$scope', '$http', '$location', 'sharedData',
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }
 
     $scope.thanks = function() {
+        $scope.errMessage = false;
         $scope.book = {};
         $scope.stage = "booking";
         $scope.doesNeedToShowBookForm = true;
