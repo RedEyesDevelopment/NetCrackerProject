@@ -76,6 +76,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     }
 
     var addRoomType = function() {
+        $scope.errMessage = false;
         $http({
             url: sharedData.getLinks().https + '/roomTypes',
             method: 'POST',
@@ -96,7 +97,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
         });
     }
 
@@ -119,6 +120,8 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     }
 
     var editRoomType = function() {
+        $scope.errMessage = false;
+
         console.log({
             roomTypeTitle :     $scope.roomType.roomTypeTitle,
             roomTypeContent :   $scope.roomType.content
@@ -139,7 +142,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
         });
     }
 
@@ -151,6 +154,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     }
 
     var deleteRoomType = function() {
+        $scope.errMessage = false;
         $http({
             url: sharedData.getLinks().https + '/roomTypes/' + $scope.idForOperation,
             method: 'DELETE',
@@ -162,7 +166,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
         });
     }
 
@@ -182,6 +186,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     }
 
     var addRate = function() {
+        $scope.errMessage = false;
         if ($scope.rate.rateFromDate.getTime() != $scope.rate.rateToDate.getTime()
             && $scope.rate.rateToDate.getTime() > $scope.rate.rateFromDate.getTime()
             && $scope.rate.rateToDate.getTime() < $scope.maxDate.getTime()
@@ -206,10 +211,10 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
             }, function(response) {
                 console.log("Smth wrong!!");
                 console.log(response);
-                $scope.errMessage = "serverErr";
+                $scope.errMessage = response.data.message;
             });
         } else {
-            $scope.errMessage = "invalidInputData";
+            $scope.errMessage = "Invalid dates! Pls fix and try again!";
         }
     }
 

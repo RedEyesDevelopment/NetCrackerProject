@@ -192,6 +192,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	}	
 
 	$scope.addMaintenance = function() {
+        $scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/journalRecords',
 			method: 'POST',
@@ -217,7 +218,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			$scope.stage = "looking";
 		}, function(response) {
 			console.log("Smth wrong!!");
-			console.log(response);
+            $scope.errMessage = response.data.message;
 		});
 	}
 
@@ -229,6 +230,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	}
 
 	var deleteJournalRecord = function() {
+        $scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/journalRecords/' + $scope.idForOperation,
 			method: 'DELETE',
@@ -239,6 +241,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+            $scope.errMessage = response.data.message;
 		});
 	}
 
@@ -283,6 +286,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	}
 
 	$scope.searchForEdit = function() {
+        $scope.errMessage = false;
         if ($scope.order.livingStartDate.getTime() < $scope.order.livingFinishDate.getTime()
             && $scope.order.livingStartDate.getTime() >= new Date().getTime()
             && $scope.order.livingFinishDate.getTime() <= $scope.maxDate.getTime()) {
@@ -310,9 +314,10 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
             }, function(response) {
                 console.log("Smth wrong!!");
                 console.log(response);
+                $scope.errMessage = response.data.message;
             });
         } else {
-            $scope.errMessage = "invalidInputData";
+            $scope.errMessage = "Invalid dates! Pls fix and try again!";
         }
 	}
 
@@ -321,6 +326,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	}
 
 	var editOrder = function() {
+        $scope.errMessage = false;
         if ($scope.order.livingStartDate.getTime() < $scope.order.livingFinishDate.getTime()
             && $scope.order.livingStartDate.getTime() >= new Date().getTime()
             && $scope.order.livingFinishDate.getTime() <= $scope.maxDate.getTime()) {
@@ -356,10 +362,10 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
             }, function (response) {
                 console.log("Smth wrong!!");
                 console.log(response);
-                $scope.errMessage = "serverErr";
+                $scope.errMessage = response.data.message;
             });
         } else {
-            $scope.errMessage = "invalidInputData";
+            $scope.errMessage = "Invalid dates! Pls fix and try again!";
         }
 	}
 
@@ -370,6 +376,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	}
 
 	var deleteOrder = function() {
+        $scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/orders/' + $scope.idForOperation,
 			method: 'DELETE',
@@ -381,7 +388,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
 		});
 	}
 

@@ -117,6 +117,7 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
 
 	/* Функции, выполняющие запросы */
     var addNotificationType  = function() {
+        $scope.errMessage = false;
         resetFlags();
         $http({
             url: sharedData.getLinks().https + '/notificationtypes/',
@@ -138,11 +139,12 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
         });
     }
 
     var editNotificationType  = function() {
+        $scope.errMessage = false;
         console.log($scope.notificationType.orientedRole.objectId);
         console.log($scope.notificationType.orientedRole);
         console.log($scope.notificationType);
@@ -167,11 +169,12 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
         });
     }
 
     var deleteNotificationType  = function() {
+        $scope.errMessage = false;
         resetFlags();
         $http({
             url: sharedData.getLinks().https + '/notificationtypes/' + $scope.notificationType.idForOperation,
@@ -184,7 +187,7 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
         });
     }
 

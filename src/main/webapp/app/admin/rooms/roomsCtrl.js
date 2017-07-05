@@ -115,6 +115,7 @@ app.controller('roomsCtrl', ['$scope', '$rootScope', '$http', '$location', 'shar
 
 	/* Функции, выполняющие запросы */
 	var addRoom = function() {
+        $scope.errMessage = false;
 		resetFlags();
 		$http({
 			url: sharedData.getLinks().https + '/rooms',
@@ -138,11 +139,12 @@ app.controller('roomsCtrl', ['$scope', '$rootScope', '$http', '$location', 'shar
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
 		});
 	}
 
 	var editRoom = function() {
+        $scope.errMessage = false;
 		resetFlags();
 		$http({
 			url: sharedData.getLinks().https + '/rooms/' + $scope.room.idForOperation,
@@ -162,11 +164,12 @@ app.controller('roomsCtrl', ['$scope', '$rootScope', '$http', '$location', 'shar
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
 		});
 	}
 
 	var deleteRoom = function() {
+        $scope.errMessage = false;
 		resetFlags();
 		$http({
 			url: sharedData.getLinks().https + '/rooms/' + $scope.room.idForOperation,
@@ -179,7 +182,7 @@ app.controller('roomsCtrl', ['$scope', '$rootScope', '$http', '$location', 'shar
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
 		});
 	}
 

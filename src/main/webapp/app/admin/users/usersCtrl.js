@@ -105,6 +105,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}
 
 	var addUser = function() {
+        $scope.errMessage = false;
         if ($scope.user.confirm == $scope.user.password) {
             $http({
                 url: sharedData.getLinks().https + '/users',
@@ -137,14 +138,15 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
             }, function (response) {
                 console.log("Smth wrong!!");
                 console.log(response);
-                $scope.errMessage = "serverErr";
+                $scope.errMessage = response.data.message;
             });
         } else {
-            $scope.errMessage = "'invalidInputData'";
+            $scope.errMessage = "Passwords not equals!";
         }
 	}
 
 	var registration = function() {
+        $scope.errMessage = false;
         if ($scope.user.password === $scope.user.confirm) {
             $http({
                 url: sharedData.getLinks().https + '/users/registration',
@@ -185,10 +187,11 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
             }, function (response) {
                 console.log(response);
                 console.log("Smth wrong!!");
+                $scope.errMessage = response.data.message;
                 // тут отобразить отказ от сервера
             });
         } else {
-            $scope.errMessage = "'invalidInputData'";
+            $scope.errMessage = "Passwords not equals!";
         }
     }
 
@@ -200,6 +203,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}
 
 	var deleteUser = function() {
+        $scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/users/delete/' + $scope.userIdForOperation,
 			method: 'PUT',
@@ -211,7 +215,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
 		});
 	}
 
@@ -223,6 +227,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}
 
 	var reestablishUser = function() {
+        $scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/users/restore/' + $scope.userIdForOperation,
 			method: 'PUT',
@@ -234,7 +239,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
 		});
 	}
 
@@ -264,6 +269,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}
 
 	var changeRole = function() {
+        $scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/users/admin/update/role/' + $scope.userIdForOperation,
 			method: 'PUT',
@@ -278,6 +284,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+            $scope.errMessage = response.data.message;
 		});
 	}
 
@@ -287,6 +294,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}
 
 	var editBasicInfo = function() {
+        $scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/users/admin/update/basic/' + $scope.userIdForOperation,
 			method: 'PUT',
@@ -307,6 +315,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+            $scope.errMessage = response.data.message;
 		});
 	}
 
@@ -317,6 +326,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}
 
 	var changePassword = function() {
+        $scope.errMessage = false;
 		if ($scope.user.newPassword === $scope.user.newPasswordRep) {			
 			$http({
 				url: sharedData.getLinks().https + '/users/admin/update/password/' + $scope.userIdForOperation,
@@ -332,9 +342,10 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			}, function(response) {
 				console.log("Smth wrong!!");
 				console.log(response);
+                $scope.errMessage = response.data.message;
 			});
 		} else {
-			$scope.stage = "diffPasswords";
+			$scope.errMessage = "Different passwords!";
 		}
 	}
 
@@ -349,6 +360,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}
 
 	var addPhone = function() {
+        $scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/phones',
 			method: 'POST',
@@ -369,6 +381,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+            $scope.errMessage = response.data.message;
 		});
 	}
 
@@ -381,6 +394,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}
 
 	var editPhone = function() {
+        $scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/phones/' + $scope.phoneObjIdForOperation,
 			method: 'PUT',
@@ -396,6 +410,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+            $scope.errMessage = response.data.message;
 		});
 	}
 

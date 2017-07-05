@@ -77,6 +77,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
     }   
 
     $scope.addComplimentary = function() {
+        $scope.errMessage = false;
         var currCategory = util.getObjectInArrayById($scope.originListOfCategories, $scope.newComplimentary.categoryId);
         currCategory.complimentaries.forEach(function(complimentary) {
             if (complimentary.maintenance.objectId == $scope.newComplimentary.maintenanceId) {
@@ -110,6 +111,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }
 
@@ -121,6 +123,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
     }
 
     var deleteComplimentary = function() {
+        $scope.errMessage = false;
         $http({
             url: sharedData.getLinks().https + '/complimentaries/' + $scope.idForOperation,
             method: 'DELETE',
@@ -131,6 +134,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }
 

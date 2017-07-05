@@ -119,6 +119,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 
 	/* Функции, выполняющие запросы */
     var addBlock = function() {
+        $scope.errMessage = false;
         resetFlags();
         if ($scope.block.blockStartDate.getTime() < $scope.block.blockFinishDate.getTime()
             && $scope.block.blockStartDate.getTime() >= new Date().getTime()
@@ -147,14 +148,15 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
             }, function (response) {
                 console.log("Smth wrong!!");
                 console.log(response);
-                $scope.errMessage = "serverErr";
+                $scope.errMessage = response.data.message;
             });
         } else {
-            $scope.errMessage = "invalidInputData";
+            $scope.errMessage = "Invalid dates! Pls fix and try again!";
         }
     }
 
     var editBlock = function() {
+        $scope.errMessage = false;
         resetFlags();
         console.log($scope.maxDate);
 
@@ -184,11 +186,12 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
                 $scope.errMessage = response.data.message;
             });
         } else {
-            $scope.errMessage = "invalidInputData";
+            $scope.errMessage = "Invalid dates! Pls fix and try again!";
         }
     }
 
     var deleteBlock = function() {
+        $scope.errMessage = false;
         resetFlags();
         $http({
             url: sharedData.getLinks().https + '/blocks/' + $scope.block.idForOperation,
@@ -201,7 +204,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
         });
     }
 

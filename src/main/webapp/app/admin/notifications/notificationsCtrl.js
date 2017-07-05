@@ -163,6 +163,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	}
 
 	var addNotification = function() {
+        $scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/notifications',
 			method: 'POST',
@@ -181,7 +182,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
 		});
 	}
 
@@ -208,6 +209,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	}
 
 	var editNotification = function() {
+        $scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/notifications/' + $scope.idForOperation,
 			method: 'PUT',
@@ -225,7 +227,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
 		});
 	}
 
@@ -237,6 +239,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	}
 
 	var deleteNotification = function() {
+        $scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/notifications/' + $scope.idForOperation,
 			method: 'DELETE',
@@ -248,7 +251,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
 		});
 	}
 

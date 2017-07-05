@@ -90,6 +90,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
 
     /* Функции, выполняющие запросы */
     var addMaintenance = function() {
+        $scope.errMessage = false;
         if (        $scope.maintenance.dollars >= 0
                 &&  $scope.maintenance.cents >= 0
                 &&  $scope.maintenance.cents <= 99) {
@@ -115,12 +116,13 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
             }, function(response) {
                 console.log("Smth wrong!!");
                 console.log(response);
-                $scope.errMessage = "serverErr";
+                $scope.errMessage = response.data.message;
             });
         }
     }
 
     var editMaintenance = function() {
+        $scope.errMessage = false;
         $http({
             url: sharedData.getLinks().https + '/maintenances/' + $scope.maintenance.idForOperation,
             method: 'PUT',
@@ -139,11 +141,12 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
         });
     }
 
     var deleteMaintenance = function() {
+        $scope.errMessage = false;
         $http({
             url: sharedData.getLinks().https + '/maintenances/' + $scope.maintenance.idForOperation,
             method: 'DELETE',
@@ -155,7 +158,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
         });
     }
 
