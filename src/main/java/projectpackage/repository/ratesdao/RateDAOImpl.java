@@ -43,7 +43,7 @@ public class RateDAOImpl extends AbstractDAO implements RateDAO{
     @Override
     public Integer insertRate(Rate rate) {
         if (rate == null) {
-            return null;
+            throw new IllegalArgumentException();
         }
 
         DateTime rateFromDate = new DateTime(rate.getRateFromDate()).withHourOfDay(12);
