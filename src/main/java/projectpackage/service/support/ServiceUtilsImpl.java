@@ -16,7 +16,7 @@ import java.util.Date;
 @Service
 public class ServiceUtilsImpl implements ServiceUtils{
     private static final Logger LOGGER = Logger.getLogger(ServiceUtilsImpl.class);
-    private static final long MAX_VALID_TIME = 31536000000L;
+    private static final long MAX_VALID_TIME = 70036000000L;
 
     @Override
     public boolean checkDates(Date startDate, Date finishDate) {

@@ -38,7 +38,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     $scope.mode = "look";
 
      $scope.maxDate = new Date();
-     $scope.maxDate.setFullYear(new Date().getFullYear() + 2);
+     $scope.maxDate.setFullYear(new Date().getFullYear() + 3);
      $scope.minDate = new Date();
      $scope.minDate.setFullYear(new Date().getFullYear() - 1);
 
@@ -196,10 +196,10 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
 
     var addRate = function() {
         $scope.errMessage = false;
-        if ($scope.rate.rateFromDate.getTime() != $scope.rate.rateToDate.getTime()
-            && $scope.rate.rateToDate.getTime() > $scope.rate.rateFromDate.getTime()
-            && $scope.rate.rateToDate.getTime() < $scope.maxDate.getTime()
-            && $scope.rate.rateFromDate.getTime() > $scope.minDate.getTime()) {
+        // if ($scope.rate.rateFromDate.getTime() != $scope.rate.rateToDate.getTime()
+        //     && $scope.rate.rateToDate.getTime() > $scope.rate.rateFromDate.getTime()
+        //     && $scope.rate.rateToDate.getTime() < $scope.maxDate.getTime()
+        //     && $scope.rate.rateFromDate.getTime() > $scope.minDate.getTime()) {
 
             $http({
                 url: sharedData.getLinks().https + '/rates',
@@ -222,9 +222,9 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
                 console.log(response);
                 $scope.errMessage = response.data.message;
             });
-        } else {
-            $scope.errMessage = "Invalid dates! Pls fix and try again!";
-        }
+        // } else {
+        //     $scope.errMessage = "Invalid dates! Pls fix and try again!";
+        // }
     }
 
     $scope.prepareToEditRate = function(roomTypeId, rateId) {

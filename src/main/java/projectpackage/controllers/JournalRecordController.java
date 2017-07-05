@@ -54,9 +54,10 @@ public class JournalRecordController {
         List<JournalRecord> JournalRecords = journalRecordService.getAllJournalRecords();
         List<Resource<JournalRecord>> resources = new ArrayList<>(JournalRecords.size());
 
-        for (JournalRecord JournalRecord : JournalRecords) {
-            Resource<JournalRecord> resource = new Resource<>(JournalRecord);
-            resource.add(linkTo(methodOn(JournalRecordController.class).getJournalRecord(JournalRecord.getObjectId(), null)).withSelfRel());
+        for (JournalRecord journalRecord : JournalRecords) {
+
+            Resource<JournalRecord> resource = new Resource<>(journalRecord);
+            resource.add(linkTo(methodOn(JournalRecordController.class).getJournalRecord(journalRecord.getObjectId(), null)).withSelfRel());
             resources.add(resource);
         }
 

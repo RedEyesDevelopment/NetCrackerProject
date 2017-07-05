@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,6 +62,9 @@ public class OrderController {
         List<Order> orders = orderService.getAllOrders();
         List<Resource<Order>> resources = new ArrayList<>();
         for (Order order:orders){
+            if (order.getJournalRecords() == null ) {
+                order.setJournalRecords(new ArrayList<>());
+            }
             Resource<Order> orderResource = new Resource<Order>(order);
             orderResource.add(linkTo(methodOn(OrderController.class).getOrder(order.getObjectId(), null)).withSelfRel());
             resources.add(orderResource);
