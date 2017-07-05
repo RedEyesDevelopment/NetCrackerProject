@@ -71,18 +71,19 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Login</h4>
             </div>
-            <form id="authorizeform" novalidate>
-                <p>  
-                    <label for="loginform">Email:</label>
-                    <input type="text" id="loginform" ng-model="auth.incoming.login"
+            <form id="authorizeform" class="form-inline" novalidate>
+                <div>  
+                    <label for="loginform" class="col-sm-4">Email:</label>
+                    <input type="text" id="loginform" ng-model="auth.incoming.login" class="form-control input-sm col-sm-8"
                            ng-change="hideFailAuthMessage()" placeholder="Enter login"
                            ng-pattern = '/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i'>
-                </p>
-                <p>
-                    <label for="passform">Password:</label>
+                </div>
+                <div>
+                    <label for="passform" class="col-sm-4 top-mrgn bottom-mrgn">Password:</label>
                     <input type="password" id="passform" ng-model="auth.incoming.password"
-                            ng-change="hideFailAuthMessage()" placeholder="Enter password">
-                </p>
+                           class="form-control input-sm col-sm-8 top-mrgn bottom-mrgn"
+                           ng-change="hideFailAuthMessage()" placeholder="Enter password">
+                </div>
                 <p class="resetPassword" data-dismiss="modal" data-toggle="modal" data-target="#resetPasswordModal">
                     Reset the password
                 </p>
@@ -107,11 +108,12 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Reset the password</h4>
             </div>
-            <form id="authorizeform" novalidate>
-                <p>  
-                    <label for="resetEmail">Email:</label>
-                    <input type="email" id="resetEmail" ng-model="auth.resetEmail" ng-required="true" placeholder="Enter your email">
-                </p>
+            <form id="authorizeform" class="form-inline" novalidate>
+                <div>  
+                    <label for="resetEmail" class="col-sm-4 bottom-mrgn">Email:</label>
+                    <input type="email" id="resetEmail" class="form-control input-sm col-sm-8 bottom-mrgn"
+                           ng-model="auth.resetEmail" ng-required="true" placeholder="Enter your email">
+                </div>
                 <div class="formFooter">
                     <button class="btn btn-success" ng-disabled="authorizeform.$invalid" data-dismiss="modal" ng-click='resetPassword()'>Reset</button>
                     <button type="button" id="loginFormClose" class="btn btn-danger" data-dismiss="modal">Close</button>
@@ -130,43 +132,60 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Register</h4>
             </div>
-            <form novalidate id="registrationForm" name="registrationForm">
-                <p>
-                    <label for="logincform" class="emailLabel">Email:</label>
-                    <input type="text" id="logincform" placeholder="Enter email"
+            <form novalidate id="registrationForm" name="registrationForm" class="form-inline">
+                <div ng-class="{ 'has-error' : registrationForm.email.$invalid && !registrationForm.email.$pristine }">
+                    <label for="logincform" class="emailLabel col-sm-4">Email:</label>
+                    <input type="text" id="logincform" placeholder="Enter email" name="email" class="form-control input-sm col-sm-8"
                            ng-model="registrationData.userEmail"
                            ng-pattern = '/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i'
                            ng-required="true">
-                </p>
-                <p>
-                    <label for="passcform" class="passwordLabel">Password:</label>
-                    <input type="password" id="passcform" placeholder="Enter password"
+                    <p ng-show="registrationForm.email.$invalid && !registrationForm.email.$pristine"
+                       class="help-block col-sm-offset-4">Enter a valid email.</p>
+                </div>
+                <div ng-class="{ 'has-error' : registrationForm.password.$invalid && !registrationForm.password.$pristine }">
+                    <label for="passcform" class="passwordLabel col-sm-4 top-mrgn">Password:</label>
+                    <input type="password" id="passcform" placeholder="Enter password" name="password"
+                           class="form-control input-sm col-sm-8 top-mrgn"
                            ng-model="registrationData.userPassword" ng-required="true"
                            ng-change="hideNotTheSamePasswordsMessage()"
                            ng-pattern="/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/">
-                </p>
-                <p>
-                    <label for="passcrform" class="passwordLabel">Repeat:</label>
-                    <input type="password" id="passcrform" placeholder="Password confirmation"
+                    <p ng-show="registrationForm.password.$invalid && !registrationForm.password.$pristine"
+                       class="help-block col-sm-offset-4">Enter a valid password.</p>
+                </div>
+                <div ng-class="{ 'has-error' : registrationForm.passwordConfirm.$invalid && !registrationForm.passwordConfirm.$pristine }">
+                    <label for="passcrform" class="passwordLabel col-sm-4 top-mrgn">Repeat:</label>
+                    <input type="password" id="passcrform" placeholder="Password confirmation" name="passwordConfirm"
+                           class="form-control input-sm col-sm-8 top-mrgn"
                            ng-model="registrationData.userPasswordRepeat" ng-required="true"
                            ng-change="hideNotTheSamePasswordsMessage()">
-                </p>
-                <p>
-                    <label for="nameform">Name:</label>
-                    <input type="text" id="nameform" placeholder="Enter your name"
+                    <p ng-show="registrationForm.passwordConfirm.$invalid && !registrationForm.passwordConfirm.$pristine"
+                       class="help-block col-sm-offset-4">Repeat your password.</p>
+                </div>
+                <div ng-class="{ 'has-error' : registrationForm.name.$invalid && !registrationForm.name.$pristine }">
+                    <label for="nameform" class="col-sm-4 top-mrgn">Name:</label>
+                    <input type="text" id="nameform" placeholder="Enter your name" name="name"
+                           class="form-control input-sm col-sm-8 top-mrgn"
                            ng-model="registrationData.userName" ng-required="true">
-                </p>
-                <p>
-                    <label for="surnameform">Surname:</label>
-                    <input type="text" id="surnameform" placeholder="Enter your surname"
+                    <p ng-show="registrationForm.name.$invalid && !registrationForm.name.$pristine"
+                       class="help-block col-sm-offset-4">You name is required.</p>
+                </div>
+                <div ng-class="{ 'has-error' : registrationForm.surname.$invalid && !registrationForm.surname.$pristine }">
+                    <label for="surnameform" class="col-sm-4 top-mrgn">Surname:</label>
+                    <input type="text" id="surnameform" placeholder="Enter your surname" name="surname"
+                           class="form-control input-sm col-sm-8 top-mrgn"
                            ng-model="registrationData.userSurname" ng-required="true">
-                </p>
-                <p>
-                    <label for="teleform">Phone:</label>
-                    <input type="text" id="teleform" placeholder="Enter your phone"
+                    <p ng-show="registrationForm.surname.$invalid && !registrationForm.surname.$pristine"
+                       class="help-block col-sm-offset-4">You surname is required.</p>
+                </div>
+                <div ng-class="{ 'has-error' : registrationForm.phone.$invalid && !registrationForm.phone.$pristine }">
+                    <label for="teleform" class="col-sm-4 top-mrgn bottom-mrgn">Phone:</label>
+                    <input type="text" id="teleform" placeholder="Enter your phone" name="phone"
+                           class="form-control input-sm col-sm-8 top-mrgn bottom-mrgn"
                            ng-model="registrationData.userPhone" ng-required="true"
                            ng-pattern="/^\+\d{1,2}\(\d{3}\)\d{2}\-\d{2}\-\d{3}$|^\+\d{12}$|^\d{7}$|^[0]\d{9}$/">
-                </p>
+                    <p ng-show="registrationForm.phone.$invalid && !registrationForm.phone.$pristine"
+                       class="help-block col-sm-offset-4">Enter a valid phone number.</p>
+                </div>
                 <div class="description">
                     <p class="phoneExample">
                         e.g. +123456789012 or&nbsp;0501234567 or&nbsp;1234567 or&nbsp;+1(000)12-34-567

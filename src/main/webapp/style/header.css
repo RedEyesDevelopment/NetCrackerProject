@@ -103,6 +103,14 @@ body {
 	color: red;
 	margin-bottom: 10px;
 }
+
+.top-mrgn {
+    margin-top: 10px;
+}
+
+.bottom-mrgn {
+    margin-bottom: 10px;
+}
 /* ---------------------- */
 
 /* ------- Profile -------- */
