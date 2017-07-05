@@ -50,7 +50,7 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
 
     @Override
     public List<Order> getSimpleOrderList() {
-        return null;
+        return manager.createReactEAV(Order.class).getEntityCollection();
     }
 
     @Override

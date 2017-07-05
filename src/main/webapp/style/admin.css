@@ -23,6 +23,14 @@
 .workspace .radio-btn {
     display: none;
 }
+
+.workspace h2 label {
+    font-weight: normal;
+}
+
+.workspace h2 .toggleExec i {
+    font-size: 24px;
+}
 /* --------------------------------- */
 
 

@@ -46,7 +46,7 @@ public class UserController {
 
 	//Get User List
 	@ResponseStatus(HttpStatus.OK)
-    @JsonView(JacksonMappingMarker.List.class)
+//    @JsonView(JacksonMappingMarker.List.class)
 	@GetMapping(produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	public List<Resource<User>> getUserList() {
 		List<User> users = userService.getAllUsers();

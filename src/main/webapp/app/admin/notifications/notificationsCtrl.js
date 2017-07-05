@@ -63,6 +63,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 			method: 'GET',
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
+			console.log("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU");
 			console.log(data);
 			$scope.listOfUsers = data.data;
 		}, function(response) {
@@ -87,7 +88,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	// All orders
 	(function() {
 		$http({
-			url: sharedData.getLinks().https + '/orders',
+			url: sharedData.getLinks().https + '/orders/simpleList',
 			method: 'GET',
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
@@ -266,11 +267,10 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 
 	$scope.updateList = function() {
 		console.log("in updateList" + $scope.doesExecuted);
-		switch ($scope.doesExecuted) {
-			case '0': getCurrentNotifications();
-				break;
-			case '1': getExecNotifications();
-				break;
+		if ($scope.doesExecuted) {
+			getExecNotifications();
+		} else {
+			getCurrentNotifications();
 		}
 	}
 
@@ -293,7 +293,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 		}
 	}
 
-	$scope.doesExecuted = '0';
+	$scope.doesExecuted = false;
 
 
 	/* Для листания страниц с объектами */
