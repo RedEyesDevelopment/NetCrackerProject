@@ -408,6 +408,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	}
 
 	var deletePhone = function() {
+		$scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/phones/' + $scope.phoneObjIdForOperation,
 			method: 'DELETE',
@@ -420,6 +421,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}
 

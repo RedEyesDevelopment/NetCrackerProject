@@ -3,6 +3,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	
 	// All executed notifications
 	var getExecNotifications = function() {
+		console.log("getExecNotifications");
 		$http({
 			url: sharedData.getLinks().https + '/notifications',
 			method: 'GET',
@@ -19,7 +20,9 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	    			return item.notificationType.orientedRole.objectId == 2;
 	    		});
 			}
-			return list;
+			$scope.originListOfNotifications = list;
+			console.log("--------------");
+			console.log($scope.originListOfNotifications);
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
@@ -27,6 +30,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	};
 	// All current notifications
 	var getCurrentNotifications = function() {
+		console.log("getCurrentNotifications");
         $http({
             url: sharedData.getLinks().https + '/notifications/current',
             method: 'GET',
@@ -43,61 +47,14 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	    			return item.notificationType.orientedRole.objectId == 2;
 	    		});
 			}
-			return list;
+			$scope.originListOfNotifications = list;
+			console.log("--------------");
+			console.log($scope.originListOfNotifications);
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
         });
     };
-
-	// Как только приходят с запроса текущие уведомления - записать их в $scope.originListOfNotifications
-	$scope.$watch('originListOfCurrNotifications', function(newList) {
-		$scope.originListOfNotifications = $scope.originListOfCurrNotifications;
-	});
-
-	$scope.resetFilter = function() {
-		$scope.filter = { doesExecuted : 0 };
-		$scope.filteredListOfNotifications = [];
-	}	
-	$scope.resetFilter();
-
-	$scope.updateList = function() {
-		console.log("olololo");
-		switch ($scope.filter.doesExecuted) {
-			case 0: console.log(getCurrentNotifications());
-			// case 0: $scope.originListOfNotifications = getCurrentNotifications();
-				break;
-			case 1: $scope.originListOfNotifications = getExecNotifications();
-				break;
-		}
-		console.log("olololo");
-	}
-
-	$scope.$watch('filter.doesExecuted', function(newStatus) {
-		$scope.updateList();
-	});
-
-
-
-
-
-
-
-
-	$scope.updateFilter = function() {
-		// $scope.filteredListOfNotifications = $scope.originListOfRooms.filter(function(item) {
-		// 	return $scope.filter.roomTypeId ? (item.roomType.objectId === $scope.filter.roomTypeId) : true;
-		// }).filter(function(item) {
-		// 	return $scope.filter.residents ? (item.numberOfResidents === $scope.filter.residents) : true;
-		// });
-	}
-
-
-
-
-
-
-
 
     // All users
 	(function() {
@@ -294,6 +251,46 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
             $scope.errMessage = "serverErr";
 		});
 	}
+
+
+	// Filters
+	$scope.resetFilter = function() {
+		console.log("in resetFilter");
+		$scope.filter = {};
+		$scope.filteredListOfNotifications = [];
+	}	
+	$scope.resetFilter();
+
+	$scope.updateList = function() {
+		console.log("in updateList" + $scope.doesExecuted);
+		switch ($scope.doesExecuted) {
+			case '0': getCurrentNotifications();
+				break;
+			case '1': getExecNotifications();
+				break;
+		}
+	}
+
+	$scope.$watch('doesExecuted', function(newStatus) {
+		console.log("in watcher");
+		$scope.resetFilter();
+		$scope.updateList();
+	});
+
+	$scope.updateFilter = function() {
+		console.log("in updateFilter");
+		if ($scope.originListOfNotifications) {
+			$scope.filteredListOfNotifications = $scope.originListOfNotifications.filter(function(item) {
+				return $scope.filter.typeId ? (item.notificationType.objectId === $scope.filter.typeId) : true;
+			}).filter(function(item) {
+				return $scope.filter.authorId ? (item.author.objectId === $scope.filter.authorId) : true;
+			}).filter(function(item) {
+				return $scope.filter.orderId ? (item.order.objectId === $scope.filter.orderId) : true;
+			});
+		}
+	}
+
+	$scope.doesExecuted = '0';
 
 
 	/* Для листания страниц с объектами */

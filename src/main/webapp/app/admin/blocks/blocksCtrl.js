@@ -181,7 +181,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
             }, function (response) {
                 console.log("Smth wrong!!");
                 console.log(response);
-                $scope.errMessage = "serverErr";
+                $scope.errMessage = response.data.message;
             });
         } else {
             $scope.errMessage = "invalidInputData";

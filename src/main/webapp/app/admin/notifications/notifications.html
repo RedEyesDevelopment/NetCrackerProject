@@ -6,7 +6,22 @@
 
         <!-- Top of workspace -->
         <div class="top col-sm-12">
-            <h2>Notifications</h2>
+            <h2>
+                <span ng-if="doesExecuted == '0'">
+                    Current notifications
+                </span>
+                <span ng-if="doesExecuted == '1'">
+                    Executed notifications <i class="fa fa-check" aria-hidden="true"></i>
+                </span>
+
+                <label for="execDone" class="btn btn-default">Yes</label>
+                <input type="radio" id="execDone" name="executed" value="1" class="radio-btn"
+                    ng-model="doesExecuted">
+
+                <label for="execNotDone" class="btn btn-default">No</label>
+                <input type="radio" id="execNotDone" name="executed" value="0" class="radio-btn"
+                    checked ng-model="doesExecuted">
+            </h2>
             <button class="btn btn-primary btn-md newEntity" ng-click="prepareToAddNotification()">New notification</button>
             <button class="btn btn-primary btn-md updateList" ng-click="updateList()">Update list</button>
         </div>
@@ -125,11 +140,6 @@
 <div class="filter-panel">
     <h4>Filtered {{ filteredListOfNotifications.length }} records</h4>
     <p>
-        Executed:
-        <input type="radio" name="executed" value="1" class="radio-pay" ng-model="filter.doesExecuted" ng-change="updateFilter()"> yes |
-        <input type="radio" name="executed" value="0" class="radio-pay" checked ng-model="filter.doesExecuted" ng-change="updateFilter()"> no
-    </p>
-    <p>
         Type
         <select class="form-control" ng-model="filter.typeId" ng-change="updateFilter()"
             ng-options="type.objectId as (type.notificationTypeTitle + ' for ' + type.orientedRole.roleName) for type in listOfNotificationTypes | orderBy: 'notificationTypeTitle'">
@@ -138,13 +148,13 @@
     <p>
         Author
         <select class="form-control" ng-model="filter.authorId" ng-change="updateFilter()"
-            ng-options="user.objectId as (user.firstName + ' ' + user.lastName + ' | ' + user.email) for user in listOfUsers | orderBy: 'lastName'">
+            ng-options="user.objectId as (user.lastName + ' ' + user.firstName + ' | ' + user.email) for user in listOfUsers | orderBy: 'lastName'">
         </select>
     </p>
     <p>
         Order
         <select class="form-control" ng-model="filter.orderId" ng-change="updateFilter()"
-            ng-options="order.objectId for order in listOfOrders | orderBy: 'objectId'">
+            ng-options="order.objectId as order.objectId for order in listOfOrders | orderBy: 'objectId'">
         </select>
     </p>
     <button class="btn btn-default" ng-click="resetFilter()">Reset filters</button>
