@@ -51,6 +51,11 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
     }
 
     @Override
+    public List<Order> getSimpleOrderList() {
+        return manager.createReactEAV(Order.class).getEntityCollection();
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Order getOrderForAdmin(Integer id) {
         if (id == null) {

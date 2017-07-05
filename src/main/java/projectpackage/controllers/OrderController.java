@@ -1,5 +1,6 @@
 package projectpackage.controllers;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
@@ -58,6 +59,14 @@ public class OrderController {
             resources.add(orderResource);
         }
         return resources;
+    }
+
+    //Get Simple Order List
+    @ResponseStatus(HttpStatus.OK)
+    @JsonView(JacksonMappingMarker.Data.class)
+    @GetMapping(value = "/simpleList", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public List<Order> getSimpleOrderList(){
+        return orderService.getSimpleOrderList();
     }
 
     @ResponseStatus(HttpStatus.OK)

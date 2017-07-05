@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface OrderDAO extends Commitable, Rollbackable{
     List<Order> getAllOrderForAdmin();
+    List<Order> getSimpleOrderList();
     Order getOrderForAdmin(Integer id);
     Order getOrder(Integer id);
     List<Order> getAllOrder();

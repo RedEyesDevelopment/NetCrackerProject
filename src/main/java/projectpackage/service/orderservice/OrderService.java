@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface OrderService extends MessageBook{
+    public List<Order> getSimpleOrderList();
     List<Order> getOrdersByRoom(Room room);
     List<Order> getOrdersByClient(User user);
     List<Order> getOrdersByRegistrationDate(Date date);

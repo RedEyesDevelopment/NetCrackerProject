@@ -56,6 +56,11 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
+    public List<Order> getSimpleOrderList() {
+        return orderDAO.getSimpleOrderList();
+    }
+
+    @Override
     public List<Order> getOrdersByRoom(Room room) {
         List<Order> answer = new ArrayList<>();
         List<Order> allOrders = getAllOrders();

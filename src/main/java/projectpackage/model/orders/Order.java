@@ -1,6 +1,8 @@
 package projectpackage.model.orders;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import projectpackage.dto.JacksonMappingMarker;
 import projectpackage.model.auth.User;
 import projectpackage.model.maintenances.JournalRecord;
 import projectpackage.model.notifications.Notification;
@@ -19,20 +21,28 @@ import java.util.List;
 @ReactReference(referenceName = "OrderToNotification", outerEntityClass = Notification.class, outerFieldName =
         "order")
 public class Order implements ReactEntityWithId {
+    @JsonView(JacksonMappingMarker.List.class)
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
+    @JsonView(JacksonMappingMarker.Data.class)
     @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = 8)
     private Date registrationDate;
+    @JsonView(JacksonMappingMarker.Data.class)
     @ReactAttrField(valueObjectClass = Boolean.class, databaseAttrtypeIdValue = 9)
     private Boolean isPaidFor;
+    @JsonView(JacksonMappingMarker.Data.class)
     @ReactAttrField(valueObjectClass = Boolean.class, databaseAttrtypeIdValue = 10)
     private Boolean isConfirmed;
+    @JsonView(JacksonMappingMarker.Data.class)
     @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = 11)
     private Date livingStartDate;
+    @JsonView(JacksonMappingMarker.Data.class)
     @ReactAttrField(valueObjectClass = Date.class, databaseAttrtypeIdValue = 12)
     private Date livingFinishDate;
+    @JsonView(JacksonMappingMarker.Data.class)
     @ReactAttrField(valueObjectClass = Long.class, databaseAttrtypeIdValue = 13)
     private Long sum;
+    @JsonView(JacksonMappingMarker.Data.class)
     @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 14)
     private String comment;
 
