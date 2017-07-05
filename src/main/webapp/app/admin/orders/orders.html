@@ -423,14 +423,48 @@
         </select>
     </p>
     <p>
-        Paid:
-        <input type="radio" name="paid" value="1" class="radio-pay" ng-model="filter.isPaidFor" ng-change="updateFilter()"> yes |
-        <input type="radio" name="paid" value="0" class="radio-pay" ng-model="filter.isPaidFor" ng-change="updateFilter()"> no
+        Paid
+        <label for="paidYes">
+            <span ng-if="filter.isPaidFor == 1" class="btn btn-primary">
+                <i class="fa fa-check" aria-hidden="true"></i>
+            </span>
+            <span ng-if="!filter.isPaidFor || filter.isPaidFor == 0" class="btn btn-default">
+                <i class="fa fa-check" aria-hidden="true"></i>
+            </span>
+        </label>
+        <input type="radio" id="paidYes" name="paid" value="1" class="radio-pay" ng-model="filter.isPaidFor" ng-change="updateFilter()">
+        
+        <label for="paidNo">
+            <span ng-if="filter.isPaidFor == 0" class="btn btn-primary">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </span>
+            <span ng-if="!filter.isPaidFor || filter.isPaidFor == 1" class="btn btn-default">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </span>
+        </label>
+        <input type="radio" id="paidNo" name="paid" value="0" class="radio-pay" ng-model="filter.isPaidFor" ng-change="updateFilter()">
     </p>
     <p>
-        Confirmed:
-        <input type="radio" name="confirmed" value="1" class="radio-pay" ng-model="filter.isConfirmed" ng-change="updateFilter()"> yes |
-        <input type="radio" name="confirmed" value="0" class="radio-pay" ng-model="filter.isConfirmed" ng-change="updateFilter()"> no
+        Confirmed
+        <label for="confirmedYes">
+            <span ng-if="filter.isConfirmed == 1" class="btn btn-primary">
+                <i class="fa fa-check" aria-hidden="true"></i>
+            </span>
+            <span ng-if="!filter.isConfirmed || filter.isConfirmed == 0" class="btn btn-default">
+                <i class="fa fa-check" aria-hidden="true"></i>
+            </span>
+        </label>
+        <input type="radio" id="confirmedYes" name="confirmed" value="1" class="radio-pay" ng-model="filter.isConfirmed" ng-change="updateFilter()">
+        
+        <label for="confirmedNo">
+            <span ng-if="filter.isConfirmed == 0" class="btn btn-primary">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </span>
+            <span ng-if="!filter.isConfirmed || filter.isConfirmed == 1" class="btn btn-default">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </span>
+        </label>
+        <input type="radio" id="confirmedNo" name="confirmed" value="0" class="radio-pay" ng-model="filter.isConfirmed" ng-change="updateFilter()">
     </p>
     <button class="btn btn-default" ng-click="resetFilter()">Reset filters</button>
 </div>

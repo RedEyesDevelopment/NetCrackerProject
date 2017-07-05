@@ -12,7 +12,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
             $scope.originListOfCategories = data.data;
         }, function(response) {
             console.log("Smth wrong!!");
-            console.log(response);
+            console.log(response);$scope.errMessage = response.data.message;
         });
     }());
     /* All maintenances */
@@ -26,7 +26,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
             $scope.listOfMaintenances = data.data;
         }, function(response) {
             console.log("Smth wrong!!");
-            console.log(response);
+            console.log(response);$scope.errMessage = response.data.message;
         });
     }());
     /* редирект на главную если не админ и не рецепция */
@@ -52,6 +52,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
 
     /* Возврат на просмотр */
     $scope.back = function() {
+        $scope.errMessage = false;
         $scope.stage = "looking";
         $scope.modificationMode = false;
     }
@@ -72,6 +73,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
 
     /* Для добавления complimentary */
     $scope.prepareToAddComplimentary = function(categoryId, index) {
+        $scope.errMessage = false;
         $scope.newComplimentary.categoryId = categoryId;
         $scope.indexForOperation = index;
     }   
@@ -104,7 +106,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
                 $scope.originListOfCategories[$scope.indexForOperation].complimentaries.push(data.data);
             }, function(response) {
                 console.log("Smth wrong!!");
-                console.log(response);
+                console.log(response);$scope.errMessage = response.data.message;
             });
             $scope.newMaintenance = { count: 1 };
             $scope.stage = "looking";
@@ -116,6 +118,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
     }
 
     $scope.prepareToDeleteComplimentary = function(complimentaryId, categoryIndex, complimentaryIndex) {
+        $scope.errMessage = false;
         $scope.idForOperation = complimentaryId;
         $scope.indexForOperation = categoryIndex;
         $scope.indexComplimentaryForOperation = complimentaryIndex;
@@ -146,6 +149,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
 
     /* Функции подготовки запросов */
     $scope.prepareToAddCategory = function() {
+        $scope.errMessage = false;
         $scope.indexForOperation = undefined;
         $scope.category = {};
         $scope.category.dollars = 0;
@@ -155,6 +159,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
     }
 
     var addCategory = function() {
+        $scope.errMessage = false;
         if (        $scope.category.dollars >= 0
                 &&  $scope.category.cents >= 0
                 &&  $scope.category.cents <= 99) {
@@ -176,16 +181,18 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
                 });
                 $scope.prepareToAddCategory();
                 $scope.stage = 'added';
+                $scope.resetFilter();
             }, function(response) {
                 console.log("Smth wrong!!");
                 console.log(response);
-                $scope.errMessage = "serverErr";
+                $scope.errMessage = response.data.message;
             });
         }
     }
 
 
     $scope.prepareToEditCategory = function(categoryId, index) {
+        $scope.errMessage = false;
         $http({
             url: sharedData.getLinks().https + '/categories/' + categoryId,
             method: 'GET',
@@ -202,11 +209,12 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
             $scope.modificationMode = true;
         }, function(response) {
             console.log("Smth wrong!!");
-            console.log(response);
+            console.log(response);$scope.errMessage = response.data.message;
         });
     }
 
     var editCategory = function() {
+        $scope.errMessage = false;
         $http({
             url: sharedData.getLinks().https + '/categories/' + $scope.idForOperation,
             method: 'PUT',
@@ -220,21 +228,24 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
             $scope.originListOfCategories[$scope.indexForOperation].categoryTitle = $scope.category.title;
             $scope.originListOfCategories[$scope.indexForOperation].categoryPrice = ($scope.category.dollars * 100) + $scope.category.cents;
             $scope.stage = "updated";
+            $scope.resetFilter();
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
         });
     }
 
 
     $scope.prepareToDeleteCategory = function(categoryId, index) {
+        $scope.errMessage = false;
         $scope.indexForOperation = index;
         $scope.idForOperation = categoryId;
         $scope.stage = "deleting"
     }
 
     var deleteCategory = function() {
+        $scope.errMessage = false;
         $http({
             url: sharedData.getLinks().https + '/categories/' + $scope.idForOperation,
             method: 'DELETE',
@@ -243,10 +254,11 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
             console.log(data);
             $scope.originListOfCategories.splice($scope.indexForOperation, 1);
             $scope.deleted = true;
+            $scope.resetFilter();
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
-            $scope.errMessage = "serverErr";
+            $scope.errMessage = response.data.message;
         });
     }
 

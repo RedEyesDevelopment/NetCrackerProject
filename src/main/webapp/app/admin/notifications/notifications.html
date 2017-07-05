@@ -37,6 +37,22 @@
                 <li><input type="number" min="1" max="999" ng-model="pager.objectsOnPage"></li>
                 <li><a ng-click="nextNotifications()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
+    
+            <div class="answer">
+                <div ng-if="stage == 'added'">
+                    Successfully added! <i class="fa fa-check" aria-hidden="true"></i>
+                </div>
+                <div ng-if="stage == 'updated'">
+                    Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
+                </div>
+                <div ng-if="stage == 'deleted'">
+                    Successfully deleted! <i class="fa fa-check" aria-hidden="true"></i>
+                </div>
+                <div ng-if="stage == 'marked'">
+                    Done! <i class="fa fa-check" aria-hidden="true"></i>
+                </div>
+            </div>
+
             <div class="row">
                 <div ng-repeat-start="notification in filteredListOfNotifications.length && filteredListOfNotifications || originListOfNotifications | orderBy : 'sendDate' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-6">
                     <div class="block-border admin-notes clearfix">
@@ -91,16 +107,6 @@
                 <button ng-click="back()" class="btn btn-info btn-sm back">
                     <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back to notifications
                 </button>
-
-                <div class="answer">
-                    <div ng-if="added">
-                        Successfully added! <i class="fa fa-check" aria-hidden="true"></i>
-                    </div>
-                    <div ng-if="updated">
-                        Successfully updated! <i class="fa fa-check" aria-hidden="true"></i>
-                    </div>
-                </div>
-
             </div>
             <div class="col-sm-offset-3 col-sm-5 createUpdateForm">
                 <form class="form-horizontal" name="createUpdateForm">

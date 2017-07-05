@@ -13,6 +13,7 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }());
     // All roles, except client
@@ -32,6 +33,7 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }());
     /* редирект на главную если не админ и не рецепция */
@@ -60,6 +62,7 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
 
 	/* Функции подготовки запросов */
     $scope.prepareToAddNotificationType = function() {
+        $scope.errMessage = false;
         $scope.indexForOperation = "";
         $scope.notificationType.idForOperation = "";
         $scope.notificationType.notificationTypeTitle = "";
@@ -70,6 +73,7 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
     }
 
     $scope.prepareToEditNotificationType  = function(notificationTypeId, index) {
+        $scope.errMessage = false;
         $http({
             url: sharedData.getLinks().https + '/notificationtypes/' + notificationTypeId,
             method: 'GET',
@@ -87,10 +91,12 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }
 
     $scope.prepareToDeleteNotificationType = function(notificationTypeId, index) {
+        $scope.errMessage = false;
         $scope.indexForOperation = index;
         $scope.notificationType.idForOperation = notificationTypeId;
         resetFlags();
@@ -99,6 +105,7 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
 
 	/* Возврат на просмотр */
     $scope.back = function() {
+        $scope.errMessage = false;
         $scope.stage = "looking";
         $scope.modificationMode = false;
     }
@@ -133,9 +140,10 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
                 objectId : data.data.objectId,
                 notificationTypeTitle :  $scope.notificationType.notificationTypeTitle,
                 orientedRole : util.getObjectInArrayById($scope.listOfRoles, $scope.notificationType.orientedRole)
-        });
+            });
             $scope.prepareToAddNotificationType();
             $scope.added = true;
+            $scope.resetFilter();
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
@@ -145,10 +153,6 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
 
     var editNotificationType  = function() {
         $scope.errMessage = false;
-        console.log($scope.notificationType.orientedRole.objectId);
-        console.log($scope.notificationType.orientedRole);
-        console.log($scope.notificationType);
-
         resetFlags();
         $http({
             url: sharedData.getLinks().https + '/notificationtypes/' + $scope.notificationType.idForOperation,
@@ -159,13 +163,11 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
             },
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
-            console.log(data);
-            console.log($scope.notificationType);
-            console.log($scope.indexForOperation);
+            $scope.errMessage = false;
             $scope.originListOfNotificationTypes[$scope.indexForOperation].notificationTypeTitle = $scope.notificationType.notificationTypeTitle;
             $scope.originListOfNotificationTypes[$scope.indexForOperation].orientedRole = util.getObjectInArrayById($scope.listOfRoles, $scope.notificationType.orientedRole);
-            console.log($scope.originListOfNotificationTypes);
             $scope.updated = true;
+            $scope.resetFilter();
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
@@ -184,6 +186,7 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
             console.log(data);
             $scope.originListOfNotificationTypes.splice($scope.indexForOperation, 1);
             $scope.deleted = true;
+            $scope.resetFilter();
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);

@@ -13,6 +13,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     };
     getAllRoomTypes();
@@ -48,6 +49,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
 
     /* Возврат на просмотр */
     $scope.back = function() {
+        $scope.errMessage = false;
         $scope.stage = "looking";
         $scope.mode = "look";
     }
@@ -70,6 +72,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
 
 
     $scope.prepareToAddRoomType = function() {
+        $scope.errMessage = false;
         $scope.roomType= {};
         $scope.stage = "addingRoomType";
         $scope.mode = "addOrEditRoomType";
@@ -87,10 +90,17 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
-            $scope.listOfRoomTypes.push({
-                objectId :          data.data.objectId,
-                roomTypeTitle :     $scope.roomType.roomTypeTitle,
-                content :   $scope.roomType.content
+            $http({
+                url: sharedData.getLinks().https + '/roomTypes/' + data.data.objectId,
+                method: 'GET',
+                headers: {'Content-Type': 'application/json'}
+            }).then(function(data) {
+                console.log(data);
+                $scope.listOfRoomTypes.push(data.data);
+            }, function(response) {
+                console.log("Smth wrong!!");
+                console.log(response);
+                $scope.errMessage = response.data.message;
             });
             $scope.prepareToAddRoomType();
             $scope.stage = "added";
@@ -102,6 +112,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     }
 
     $scope.prepareToEditRoomType = function(roomTypeId, index) {
+        $scope.errMessage = false;
         $http({
             url: sharedData.getLinks().https + '/roomTypes/' + roomTypeId,
             method: 'GET',
@@ -116,16 +127,12 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }
 
     var editRoomType = function() {
         $scope.errMessage = false;
-
-        console.log({
-            roomTypeTitle :     $scope.roomType.roomTypeTitle,
-            roomTypeContent :   $scope.roomType.content
-        });
         $http({
             url: sharedData.getLinks().https + '/roomTypes/' + $scope.idForOperation,
             method: 'PUT',
@@ -148,6 +155,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
 
 
     $scope.prepareToDeleteRoomType = function(roomTypeId, index) {
+        $scope.errMessage = false;
         $scope.indexForOperation = index;
         $scope.idForOperation = roomTypeId;
         $scope.stage = "deletingRoomType"
@@ -172,6 +180,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
 
 
     $scope.prepareToAddRate = function(roomTypeId) {
+        $scope.errMessage = false;
         $scope.idForOperation = roomTypeId;
         $scope.rate= {
             priceForOneDlr: 0,
@@ -219,6 +228,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
     }
 
     $scope.prepareToEditRate = function(roomTypeId, rateId) {
+        $scope.errMessage = false;
         $http({
             url: sharedData.getLinks().https + '/rates/' + rateId,
             method: 'GET',
@@ -249,6 +259,7 @@ app.controller('roomTypesCtrl', ['$scope', '$http', '$location', 'sharedData', '
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }
 

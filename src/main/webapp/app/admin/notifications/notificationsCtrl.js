@@ -232,7 +232,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 			console.log(data);
 			$scope.updateList();
 			$scope.resetFilter();
-			$scope.stage = "edited";
+			$scope.stage = "updated";
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);

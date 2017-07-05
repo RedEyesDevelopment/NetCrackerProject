@@ -243,6 +243,10 @@
     font-size: 18px;
     margin-top: 0;
 }
+
+.filter-panel .radio-pay {
+    display: none;
+}
 /* ------------------------------- */
 
 

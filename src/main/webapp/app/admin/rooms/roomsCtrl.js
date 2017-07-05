@@ -13,6 +13,7 @@ app.controller('roomsCtrl', ['$scope', '$rootScope', '$http', '$location', 'shar
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}());
 
@@ -27,6 +28,7 @@ app.controller('roomsCtrl', ['$scope', '$rootScope', '$http', '$location', 'shar
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}());
 	/* редирект на главную если не админ и не рецепция */
@@ -57,6 +59,7 @@ app.controller('roomsCtrl', ['$scope', '$rootScope', '$http', '$location', 'shar
 
 	/* Функции подготовки запросов */
 	$scope.prepareToAddRoom = function() {
+		$scope.errMessage = false;
 		$scope.indexForOperation = "";
 		$scope.room.idForOperation = "";
 		$scope.room.number = "";
@@ -68,6 +71,7 @@ app.controller('roomsCtrl', ['$scope', '$rootScope', '$http', '$location', 'shar
 	}
 
 	$scope.prepareToEditRoom = function(roomId, index) {
+		$scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/rooms/simple/' + roomId,
 			method: 'GET',
@@ -85,10 +89,12 @@ app.controller('roomsCtrl', ['$scope', '$rootScope', '$http', '$location', 'shar
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}
 
 	$scope.prepareToDeleteRoom = function(roomId, index) {
+		$scope.errMessage = false;
 		$scope.indexForOperation = index;
 		$scope.room.idForOperation = roomId;
 		resetFlags();
@@ -97,6 +103,7 @@ app.controller('roomsCtrl', ['$scope', '$rootScope', '$http', '$location', 'shar
 
 	/* Возврат на просмотр */
 	$scope.back = function() {
+		$scope.errMessage = false;
 		$scope.stage = "looking";
 		$scope.modificationMode = false;
 	}
@@ -136,6 +143,7 @@ app.controller('roomsCtrl', ['$scope', '$rootScope', '$http', '$location', 'shar
 			});
 			$scope.prepareToAddRoom();
 			$scope.added = true;
+			$scope.resetFilter();
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
@@ -161,6 +169,7 @@ app.controller('roomsCtrl', ['$scope', '$rootScope', '$http', '$location', 'shar
 			$scope.originListOfRooms[$scope.indexForOperation].numberOfResidents = $scope.room.numberOfResidents;
 			$scope.originListOfRooms[$scope.indexForOperation].roomType = util.getObjectInArrayById($scope.listOfRoomTypes, $scope.room.type);
 			$scope.updated = true;
+			$scope.resetFilter();
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
@@ -179,6 +188,7 @@ app.controller('roomsCtrl', ['$scope', '$rootScope', '$http', '$location', 'shar
 			console.log(data);
 			$scope.originListOfRooms.splice($scope.indexForOperation, 1);
 			$scope.deleted = true;
+			$scope.resetFilter();
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);

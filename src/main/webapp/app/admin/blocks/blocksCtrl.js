@@ -13,6 +13,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }());
     // All rooms
@@ -27,6 +28,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }());
     /* редирект на главную если не админ и не рецепция */
@@ -58,6 +60,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 
 	/* Функции подготовки запросов */
     $scope.prepareToAddBlock = function() {
+        $scope.errMessage = false;
         $scope.indexForOperation = "";
         $scope.idForOperation = "";
         $scope.block.blockStartDate = "";
@@ -70,6 +73,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
     }
 
     $scope.prepareToEditBlock = function(blockId, index) {
+        $scope.errMessage = false;
         $http({
             url: sharedData.getLinks().https + '/blocks/' + blockId,
             method: 'GET',
@@ -89,10 +93,12 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }
 
     $scope.prepareToDeleteBlock = function(blockId, index) {
+        $scope.errMessage = false;
         $scope.indexForOperation = index;
         $scope.idForOperation = blockId;
         resetFlags();
@@ -101,6 +107,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 
 	/* Возврат на просмотр */
     $scope.back = function() {
+        $scope.errMessage = false;
         $scope.stage = "looking";
         $scope.modificationMode = false;
     }
@@ -144,6 +151,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
                     room: util.getObjectInArrayById($scope.listOfRooms, $scope.block.roomId)
                 });
                 $scope.prepareToAddBlock();
+                $scope.resetFilter();
                 $scope.added = true;
             }, function (response) {
                 console.log("Smth wrong!!");
@@ -180,6 +188,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
                 $scope.originListOfBlocks[$scope.indexForOperation].reason = $scope.block.reason;
                 $scope.originListOfBlocks[$scope.indexForOperation].room = util.getObjectInArrayById($scope.listOfRooms, $scope.block.roomId);
                 $scope.updated = true;
+                $scope.resetFilter();
             }, function (response) {
                 console.log("Smth wrong!!");
                 console.log(response);
@@ -201,6 +210,7 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
             console.log(data);
             $scope.originListOfBlocks.splice($scope.indexForOperation, 1);
             $scope.deleted = true;
+            $scope.resetFilter();
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);

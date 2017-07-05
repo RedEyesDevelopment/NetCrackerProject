@@ -13,6 +13,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }());
     /* редирект на главную если не админ и не рецепция */
@@ -32,6 +33,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
 
     /* Функции подготовки запросов */
     $scope.prepareToAddMaintenance = function() {
+        $scope.errMessage = false;
         $scope.indexForOperation = "";
         $scope.maintenance.idForOperation = "";
         $scope.maintenance.title = "";
@@ -44,6 +46,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
     }
 
     $scope.prepareToEditMaintenance = function(maintenanceId, index) {
+        $scope.errMessage = false;
         $http({
             url: sharedData.getLinks().https + '/maintenances/' + maintenanceId,
             method: 'GET',
@@ -61,10 +64,12 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
+            $scope.errMessage = response.data.message;
         });
     }
 
     $scope.prepareToDeleteMaintenance = function(maintenanceId, index) {
+        $scope.errMessage = false;
         $scope.indexForOperation = index;
         $scope.maintenance.idForOperation = maintenanceId;
         $scope.stage = "deleting";
@@ -72,6 +77,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
 
     /* Возврат на просмотр */
     $scope.back = function() {
+        $scope.errMessage = false;
         $scope.stage = "looking";
         $scope.modificationMode = false;
     }
@@ -113,6 +119,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
                 });
                 $scope.prepareToAddMaintenance();
                 $scope.stage = 'added';
+                $scope.resetFilter();
             }, function(response) {
                 console.log("Smth wrong!!");
                 console.log(response);
@@ -138,6 +145,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
             $scope.originListOfMaintenances[$scope.indexForOperation].maintenanceType = $scope.maintenance.type;
             $scope.originListOfMaintenances[$scope.indexForOperation].maintenancePrice = ($scope.maintenance.dollars * 100) + $scope.maintenance.cents;
             $scope.stage = 'updated';
+            $scope.resetFilter();
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
@@ -155,6 +163,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
             console.log(data);
             $scope.originListOfMaintenances.splice($scope.indexForOperation, 1);
             $scope.stage = 'deleted';
+            $scope.resetFilter();
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);

@@ -58,14 +58,14 @@
             <div class="col-sm-offset-3 col-sm-5 createUpdateForm">
                 <form class="form-horizontal" name="createUpdateForm">
                     <div class="form-group">
-                        <label for="notificationTypeTtl" class="col-sm-4 control-label">Title</label>
-                        <div class="col-sm-6 wrapInput">
-                            <input type="text" id="notificationTypeTtl" ng-required="true" ng-model="notificationType.notificationTypeTitle">
+                        <label for="notificationTypeTtl" class="col-sm-3 control-label">Title</label>
+                        <div class="col-sm-9 wrapInput">
+                            <input type="text" id="notificationTypeTtl" class="form-control" ng-required="true" ng-model="notificationType.notificationTypeTitle">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="notificationTypeRole" class="col-sm-6 control-label">Role</label>
-                        <div class="col-sm-6">
+                        <label for="notificationTypeRole" class="col-sm-3 control-label">Role</label>
+                        <div class="col-sm-9">
                             <select id="notificationTypeRole" class="form-control" ng-required="true" ng-model="notificationType.orientedRole"
                                     ng-options="role.objectId as role.roleName for role in listOfRoles">
                             </select>

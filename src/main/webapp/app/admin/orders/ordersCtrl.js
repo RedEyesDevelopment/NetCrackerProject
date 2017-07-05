@@ -23,6 +23,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}());
 	/* All catefories */
@@ -37,6 +38,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}());
 	/* All rooms */
@@ -51,6 +53,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}());
 	/* All room types */
@@ -65,6 +68,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}());
     /* All users */
@@ -79,6 +83,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}());
 	/* All maintenances */
@@ -93,6 +98,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}());
 	/* Residents */
@@ -129,6 +135,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 
 	/* Возврат на просмотр */
 	$scope.back = function() {
+		$scope.errMessage = false;
 		$scope.stage = "looking";
 		$scope.mode = "look";
 	}
@@ -136,6 +143,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 
 	/* Вызывает нужный запрос в зависимости от типа операции */
 	$scope.query = function() {
+		$scope.errMessage = false;
 		switch ($scope.stage) {
 			case 'switch': switchPaidConfirmed();
 				break;
@@ -153,6 +161,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 
 	/* Изменение состояний paid | confirmed */
 	$scope.prepareToSwitch = function(orderId, index, isPaidFor, isConfirmed) {
+		$scope.errMessage = false;
 		$scope.idForOperation = orderId;
 		$scope.indexForOperation = index;
 		$scope.confirmed.isPaidFor = isPaidFor;
@@ -161,6 +170,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	}
 
 	var switchPaidConfirmed = function() {
+		$scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/orders/admin/confirm/' + $scope.idForOperation,
 			method: 'PUT',
@@ -181,12 +191,14 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}
 
 
 	/* Для навешивания услуг на заказ */
 	$scope.prepareToAddMaintenance = function(orderId, index) {
+		$scope.errMessage = false;
 		$scope.newMaintenance.orderId = orderId;
 		$scope.indexForOperation = index;
 	}	
@@ -213,6 +225,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			}, function(response) {
 				console.log("Smth wrong!!");
 				console.log(response);
+				$scope.errMessage = response.data.message;
 			});
 			$scope.newMaintenance = { count: 1 };
 			$scope.stage = "looking";
@@ -223,6 +236,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	}
 
 	$scope.prepareToDeleteJournalRecord = function(journalRecordId, orderIndex, journalRecordIndex) {
+		$scope.errMessage = false;
 		$scope.idForOperation = journalRecordId;
 		$scope.indexForOperation = orderIndex;
 		$scope.indexJournalForOperation = journalRecordIndex;
@@ -248,6 +262,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 
 	/* Добавление заказа */
 	$scope.prepareToAddOrder = function() {
+		$scope.errMessage = false;
 		$scope.idForOperation = undefined;
 		$scope.indexForOperation = undefined;
 		$scope.order = {}
@@ -256,12 +271,14 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	}
 
 	var addOrder = function() {
+		$scope.errMessage = false;
 		sharedData.setUserIdForOrderFromAdmin($scope.order.clientId);
 		$location.path('/book');
 	}
 
 	/* Изменение заказа */
 	$scope.prepareToEditOrder = function(orderId, index) {
+		$scope.errMessage = false;
 		$http({
 			url: sharedData.getLinks().https + '/orders/' + orderId,
 			method: 'GET',
@@ -282,6 +299,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}
 
@@ -322,6 +340,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 	}
 
 	$scope.backTochoosingAnotherVariants = function() {
+		$scope.errMessage = false;
 		$scope.stage = "searchForEdit";
 	}
 
@@ -359,6 +378,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
                 $scope.originListOfOrders[$scope.indexForOperation].lastModificator = util.getObjectInArrayById($scope.listOfUsers, sharedData.getMyself().objectId);
                 $scope.stage = "updated";
                 $scope.mode = "look";
+                $scope.resetFilter();
             }, function (response) {
                 console.log("Smth wrong!!");
                 console.log(response);
@@ -385,6 +405,7 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 			console.log(data);
 			$scope.originListOfOrders.splice($scope.indexForOperation, 1);
 			$scope.stage = "deleted";
+			$scope.resetFilter();
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);

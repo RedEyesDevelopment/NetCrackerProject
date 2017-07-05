@@ -13,6 +13,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}());
 	// All roles
@@ -31,6 +32,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}());
 	/* редирект на главную если не админ и не рецепция */
@@ -59,6 +61,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 	/* Возврат на просмотр */
 	$scope.back = function() {
+		$scope.errMessage = false;
 		$scope.mode = "look";
 		$scope.modificationMode = false;
 	}
@@ -90,6 +93,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 
 	$scope.prepareToAddUser = function() {
+		$scope.errMessage = false;
 		$scope.userIdForOperation = "";
 		$scope.userIndexForOperation = "";
 		$scope.user = {
@@ -128,10 +132,12 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
                     headers: {'Content-Type': 'application/json'}
                 }).then(function(data) {
                     console.log(data);
+                    $scope.resetFilter();
                     $scope.originListOfUsers.push(data.data);
                 }, function(response) {
                     console.log("Smth wrong!!");
                     console.log(response);
+                    $scope.errMessage = response.data.message;
                 });
                 $scope.prepareToAddUser();
                 $scope.stage = "added";
@@ -177,10 +183,12 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
                     headers: {'Content-Type': 'application/json'}
                 }).then(function(data) {
                     console.log(data);
+                    $scope.resetFilter();
                     $scope.originListOfUsers.push(data.data);
                 }, function(response) {
                     console.log("Smth wrong!!");
                     console.log(response);
+                    $scope.errMessage = response.data.message;
                 });
                 $scope.prepareToAddUser();
                 $scope.stage = "added";
@@ -188,7 +196,6 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
                 console.log(response);
                 console.log("Smth wrong!!");
                 $scope.errMessage = response.data.message;
-                // тут отобразить отказ от сервера
             });
         } else {
             $scope.errMessage = "Passwords not equals!";
@@ -197,6 +204,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 
 	$scope.prepareToDeleteUser = function(userId, index) {
+		$scope.errMessage = false;
 		$scope.userIndexForOperation = index;
 		$scope.userIdForOperation = userId;
 		$scope.stage = "deleting";
@@ -210,6 +218,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
+			$scope.resetFilter();
 			$scope.originListOfUsers[$scope.userIndexForOperation].enabled = false;
 			$scope.stage = "deleted";
 		}, function(response) {
@@ -221,6 +230,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 
 	$scope.prepareToReestablishUser = function(userId, index) {
+		$scope.errMessage = false;
 		$scope.userIdForOperation = userId;
 		$scope.userIndexForOperation = index;
 		$scope.stage = "reestablishing";
@@ -234,6 +244,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
+			$scope.resetFilter();
 			$scope.originListOfUsers[$scope.userIndexForOperation].enabled = true;
 			$scope.stage = "reestablished";
 		}, function(response) {
@@ -246,6 +257,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 
 	$scope.prepareToEditUser = function(userId, index) {
+		$scope.errMessage = false;
 		$scope.userIdForOperation = userId;
 		$scope.userIndexForOperation = index;
 		$http({
@@ -260,11 +272,13 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
+			$scope.errMessage = response.data.message;
 		});
 	}
 
 
 	$scope.prepareToChangeRole = function() {
+		$scope.errMessage = false;
 		$scope.stage = "changeRole";
 	}
 
@@ -279,6 +293,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
+			$scope.resetFilter();
 			$scope.originListOfUsers[$scope.userIndexForOperation].role = util.getObjectInArrayById($scope.listOfRoles, $scope.user.role.objectId);
 			$scope.stage = "edited";
 		}, function(response) {
@@ -290,6 +305,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 
 	$scope.prepareToEditBasicInfo = function() {
+		$scope.errMessage = false;
 		$scope.stage = "editBasicInfo";
 	}
 
@@ -307,6 +323,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
+			$scope.resetFilter();
 			$scope.originListOfUsers[$scope.userIndexForOperation].firstName = $scope.user.firstName;
 			$scope.originListOfUsers[$scope.userIndexForOperation].lastName = $scope.user.lastName;
 			$scope.originListOfUsers[$scope.userIndexForOperation].email = $scope.user.email;
@@ -322,6 +339,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 
 	$scope.prepareToChangePassword = function() {
+		$scope.errMessage = false;
 		$scope.stage = "changePassword";
 	}
 
@@ -338,6 +356,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 				headers: { 'Content-Type' : 'application/json' }
 			}).then(function(data) {
 				console.log(data);
+				$scope.resetFilter();
 				$scope.stage = "edited";
 			}, function(response) {
 				console.log("Smth wrong!!");
@@ -352,6 +371,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 
 	$scope.prepareToAddPhone = function() {
+		$scope.errMessage = false;
 		$scope.stage = "addPhone";
 	}
 
@@ -376,6 +396,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 				userId: $scope.userIdForOperation
 			};
 			$scope.user.phones.push(newPhone);
+			$scope.resetFilter();
 			$scope.originListOfUsers[$scope.userIndexForOperation].phones.push(newPhone);
 			$scope.stage = "edited";
 		}, function(response) {
@@ -388,6 +409,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 	
 	$scope.prepareToEditPhone = function(objId, index) {
+		$scope.errMessage = false;
 		$scope.phoneObjIdForOperation = objId;
 		$scope.phoneIndexForOperation = index;
 		$scope.stage = "editPhone";
@@ -405,6 +427,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
+			$scope.resetFilter();
 			$scope.originListOfUsers[$scope.userIndexForOperation].phones[$scope.phoneIndexForOperation].phoneNumber = $scope.user.phones[$scope.phoneIndexForOperation].phoneNumber
 			$scope.stage = "edited";
 		}, function(response) {
@@ -417,6 +440,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 
 
 	$scope.prepareToDeletePhone = function(objId, index) {
+		$scope.errMessage = false;
 		$scope.phoneObjIdForOperation = objId;
 		$scope.phoneIndexForOperation = index;
 		$scope.stage = "deletePhone";
@@ -430,6 +454,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
+			$scope.resetFilter();
 			$scope.user.phones.splice($scope.phoneIndexForOperation, 1);
 			$scope.originListOfUsers[$scope.userIndexForOperation].phones.splice($scope.phoneIndexForOperation, 1);
 			$scope.stage = "edited";
@@ -450,6 +475,8 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	$scope.updateFilter = function() {
 		$scope.filteredListOfUsers = $scope.originListOfUsers.filter(function(item) {
 			return $scope.filter.roleId ? (item.role.objectId === $scope.filter.roleId) : true;
+		}).filter(function(item) {
+			return ($scope.filter.isEnabled !== undefined) ? (item.enabled == $scope.filter.isEnabled) : true;
 		});
 	}
 
