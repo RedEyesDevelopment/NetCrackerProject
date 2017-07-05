@@ -1,6 +1,8 @@
 package projectpackage.model.auth;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import projectpackage.dto.JacksonMappingMarker;
 import projectpackage.model.notifications.Notification;
 import projectpackage.model.orders.ModificationHistory;
 import projectpackage.model.orders.Order;
@@ -21,18 +23,25 @@ import java.util.Set;
 @ReactReference(referenceName = "UserToOrderAsLastModificator", outerEntityClass = Order.class, outerFieldName = "lastModificator", attrIdField = "44")
 public class User implements ReactEntityWithId {
 
+    @JsonView(JacksonMappingMarker.List.class)
     @ReactNativeField(valueObjectClass = Integer.class, databaseObjectCodeValue = "%OBJECT_ID")
     private int objectId;
+    @JsonView(JacksonMappingMarker.List.class)
     @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 15)
     private String email;
+    @JsonView(JacksonMappingMarker.Data.class)
     @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 16)
     private String password;
+    @JsonView(JacksonMappingMarker.List.class)
     @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 17)
     private String firstName;
+    @JsonView(JacksonMappingMarker.List.class)
     @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 18)
     private String lastName;
+    @JsonView(JacksonMappingMarker.List.class)
     @ReactAttrField(valueObjectClass = String.class, databaseAttrtypeIdValue = 19)
     private String additionalInfo;
+    @JsonView(JacksonMappingMarker.List.class)
     @ReactAttrField(valueObjectClass = Boolean.class, databaseAttrtypeIdValue = 3)
     private Boolean enabled;
 
