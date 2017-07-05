@@ -1,22 +1,31 @@
 app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util',
     function($scope, $http, $location, sharedData, util) {
 	
-	var getExecutedNotifications = function() {
+	// All executed notifications
+	var getExecNotifications = function() {
 		$http({
 			url: sharedData.getLinks().https + '/notifications',
 			method: 'GET',
 			headers: { 'Content-Type' : 'application/json' }
 		}).then(function(data) {
 			console.log(data);
-			$scope.listOfExecNotifications = data.data;
+			var list = [];
+			if (sharedData.getIsAdmin()) {
+				list = data.data.filter(function(item) {
+					return item.notificationType.orientedRole.objectId == 1;
+				})
+			} else if (sharedData.getIsReception()) {
+				list = data.data.filter(function(item) {
+	    			return item.notificationType.orientedRole.objectId == 2;
+	    		});
+			}
+			return list;
 		}, function(response) {
 			console.log("Smth wrong!!");
 			console.log(response);
 		});
 	};
-	// Получаем все выполненные
-	getExecutedNotifications();
-
+	// All current notifications
 	var getCurrentNotifications = function() {
         $http({
             url: sharedData.getLinks().https + '/notifications/current',
@@ -24,14 +33,71 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
-            $scope.listOfCurrNotifications = data.data;
+			var list = [];
+			if (sharedData.getIsAdmin()) {
+				list = data.data.filter(function(item) {
+					return item.notificationType.orientedRole.objectId == 1;
+				})
+			} else if (sharedData.getIsReception()) {
+				list = data.data.filter(function(item) {
+	    			return item.notificationType.orientedRole.objectId == 2;
+	    		});
+			}
+			return list;
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
         });
     };
-	// Получаем все НЕЕЕЕЕЕЕ выполненные
-    getCurrentNotifications();
+
+	// Как только приходят с запроса текущие уведомления - записать их в $scope.originListOfNotifications
+	$scope.$watch('originListOfCurrNotifications', function(newList) {
+		$scope.originListOfNotifications = $scope.originListOfCurrNotifications;
+	});
+
+	$scope.resetFilter = function() {
+		$scope.filter = { doesExecuted : 0 };
+		$scope.filteredListOfNotifications = [];
+	}	
+	$scope.resetFilter();
+
+	$scope.updateList = function() {
+		console.log("olololo");
+		switch ($scope.filter.doesExecuted) {
+			case 0: console.log(getCurrentNotifications());
+			// case 0: $scope.originListOfNotifications = getCurrentNotifications();
+				break;
+			case 1: $scope.originListOfNotifications = getExecNotifications();
+				break;
+		}
+		console.log("olololo");
+	}
+
+	$scope.$watch('filter.doesExecuted', function(newStatus) {
+		$scope.updateList();
+	});
+
+
+
+
+
+
+
+
+	$scope.updateFilter = function() {
+		// $scope.filteredListOfNotifications = $scope.originListOfRooms.filter(function(item) {
+		// 	return $scope.filter.roomTypeId ? (item.roomType.objectId === $scope.filter.roomTypeId) : true;
+		// }).filter(function(item) {
+		// 	return $scope.filter.residents ? (item.numberOfResidents === $scope.filter.residents) : true;
+		// });
+	}
+
+
+
+
+
+
+
 
     // All users
 	(function() {
@@ -86,10 +152,6 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 	$scope.back = function() {
 		$scope.stage = "looking";
 		$scope.modificationMode = false;
-	}
-
-	$scope.updateList = function() {
-		getCurrentNotifications();
 	}
 
 	$scope.query = function() {
@@ -236,7 +298,7 @@ app.controller('notificationsCtrl', ['$scope', '$http', '$location', 'sharedData
 
 	/* Для листания страниц с объектами */
 	$scope.nextNotifications = function() {
-		$scope.pager.startPaging = util.nextEntities($scope.listOfCurrNotifications.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
+		$scope.pager.startPaging = util.nextEntities($scope.originListOfNotifications.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
 	}
 	$scope.previousNotifications = function() {
 		$scope.pager.startPaging = util.previousEntities($scope.pager.startPaging, $scope.pager.objectsOnPage);

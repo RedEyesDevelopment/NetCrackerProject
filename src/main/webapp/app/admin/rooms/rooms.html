@@ -99,7 +99,7 @@
 
 <!-- Filters, position fixed -->
 <div class="filter-panel">
-    <h4>Filters</h4>
+    <h4>Filtered {{ filteredListOfRooms.length }} records</h4>
     <p>
         Room type
         <select class="form-control" ng-model="filter.roomTypeId" ng-change="updateFilter()"
@@ -107,7 +107,7 @@
         </select>
     </p>
     <p>
-        Number of residents
+        Residents
         <select class="form-control" ng-model="filter.residents" ng-change="updateFilter()"
             ng-options="res for res in residents | orderBy: 'res'">
         </select>

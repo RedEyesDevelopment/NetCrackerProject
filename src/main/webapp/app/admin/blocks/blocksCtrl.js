@@ -214,7 +214,9 @@ app.controller('blocksCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
     $scope.resetFilter();
     $scope.updateFilter = function() {
         $scope.filteredListOfBlocks = $scope.originListOfBlocks.filter(function(item) {
-            if ($scope.filter.roomId !== undefined) return (item.room.objectId === $scope.filter.roomId); else return true;
+            return $scope.filter.roomId ? (item.room.objectId === $scope.filter.roomId) : true;
+        }).filter(function(item) {
+            return $scope.filter.onDate ? (item.blockStartDate <= $scope.filter.onDate && $scope.filter.onDate <= item.blockFinishDate) : true;
         });
     }
 

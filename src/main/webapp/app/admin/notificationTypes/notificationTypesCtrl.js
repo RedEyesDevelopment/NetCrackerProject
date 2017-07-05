@@ -197,7 +197,7 @@ app.controller('notificationTypesCtrl', ['$scope', '$http', '$location', 'shared
     $scope.resetFilter();
     $scope.updateFilter = function() {
         $scope.filteredListOfNotificationTypes = $scope.originListOfNotificationTypes.filter(function(item) {
-            if ($scope.filter.roleId !== undefined) return (item.orientedRole.objectId === $scope.filter.roleId); else return true;
+            return $scope.filter.roleId ? (item.orientedRole.objectId === $scope.filter.roleId) : true;
         });
     }
 

@@ -104,12 +104,16 @@
 
 <!-- Filters, position fixed -->
 <div class="filter-panel">
-    <h4>Filters</h4>
+    <h4>Filtered {{ filteredListOfBlocks.length }} records</h4>
     <p>
         Room number
         <select class="form-control" ng-model="filter.roomId" ng-change="updateFilter()"
             ng-options="room.objectId as room.roomNumber for room in listOfRooms | orderBy: 'roomNumber'">
         </select>
+    </p>
+    <p>
+        By date
+        <input type="date" class="form-control" ng-model="filter.onDate" ng-change="updateFilter()">
     </p>
     <button class="btn btn-default" ng-click="resetFilter()">Reset filters</button>
 </div>

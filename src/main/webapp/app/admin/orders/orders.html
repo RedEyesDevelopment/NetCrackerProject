@@ -389,7 +389,15 @@
 
 <!-- Filters, position fixed -->
 <div class="filter-panel">
-    <h4>Filters</h4>
+    <h4>Filtered {{ filteredListOfOrders.length }} records</h4>
+    <p>
+        Time status
+        <select class="form-control" ng-model="filter.status" ng-change="updateFilter()">
+            <option value="future">Future</option>
+            <option value="current">Current</option>
+            <option value="past">Past</option>
+        </select>
+    </p>
     <p>
         Client
         <select class="form-control" ng-model="filter.userId" ng-change="updateFilter()"
@@ -413,6 +421,16 @@
         <select class="form-control" ng-model="filter.categoryId" ng-change="updateFilter()"
             ng-options="category.objectId as category.categoryTitle for category in listOfCategories | orderBy: 'categoryTitle'">
         </select>
+    </p>
+    <p>
+        Paid:
+        <input type="radio" name="paid" value="1" class="radio-pay" ng-model="filter.isPaidFor" ng-change="updateFilter()"> yes |
+        <input type="radio" name="paid" value="0" class="radio-pay" ng-model="filter.isPaidFor" ng-change="updateFilter()"> no
+    </p>
+    <p>
+        Confirmed:
+        <input type="radio" name="confirmed" value="1" class="radio-pay" ng-model="filter.isConfirmed" ng-change="updateFilter()"> yes |
+        <input type="radio" name="confirmed" value="0" class="radio-pay" ng-model="filter.isConfirmed" ng-change="updateFilter()"> no
     </p>
     <button class="btn btn-default" ng-click="resetFilter()">Reset filters</button>
 </div>

@@ -9,7 +9,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
-            $scope.listOfCategories = data.data;
+            $scope.originListOfCategories = data.data;
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
@@ -77,7 +77,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
     }   
 
     $scope.addComplimentary = function() {
-        var currCategory = util.getObjectInArrayById($scope.listOfCategories, $scope.newComplimentary.categoryId);
+        var currCategory = util.getObjectInArrayById($scope.originListOfCategories, $scope.newComplimentary.categoryId);
         currCategory.complimentaries.forEach(function(complimentary) {
             if (complimentary.maintenance.objectId == $scope.newComplimentary.maintenanceId) {
                 $scope.errMessage = "existMaintenance";
@@ -100,7 +100,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
                 method: 'GET',
                 headers: { 'Content-Type' : 'application/json' }
             }).then(function(data) {
-                $scope.listOfCategories[$scope.indexForOperation].complimentaries.push(data.data);
+                $scope.originListOfCategories[$scope.indexForOperation].complimentaries.push(data.data);
             }, function(response) {
                 console.log("Smth wrong!!");
                 console.log(response);
@@ -127,7 +127,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
-            $scope.listOfCategories[$scope.indexForOperation].complimentaries.splice($scope.indexComplimentaryForOperation, 1);
+            $scope.originListOfCategories[$scope.indexForOperation].complimentaries.splice($scope.indexComplimentaryForOperation, 1);
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
@@ -164,7 +164,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
                 headers: { 'Content-Type' : 'application/json' }
             }).then(function(data) {
                 console.log(data);
-                $scope.listOfCategories.push({
+                $scope.originListOfCategories.push({
                     objectId :          data.data.objectId,
                     categoryTitle :     $scope.category.title,
                     categoryPrice :     ($scope.category.dollars * 100) + $scope.category.cents,
@@ -213,8 +213,8 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
-            $scope.listOfCategories[$scope.indexForOperation].categoryTitle = $scope.category.title;
-            $scope.listOfCategories[$scope.indexForOperation].categoryPrice = ($scope.category.dollars * 100) + $scope.category.cents;
+            $scope.originListOfCategories[$scope.indexForOperation].categoryTitle = $scope.category.title;
+            $scope.originListOfCategories[$scope.indexForOperation].categoryPrice = ($scope.category.dollars * 100) + $scope.category.cents;
             $scope.stage = "updated";
         }, function(response) {
             console.log("Smth wrong!!");
@@ -237,7 +237,7 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
             headers: { 'Content-Type': 'application/json' }
         }).then(function(data) {
             console.log(data);
-            $scope.listOfCategories.splice($scope.indexForOperation, 1);
+            $scope.originListOfCategories.splice($scope.indexForOperation, 1);
             $scope.deleted = true;
         }, function(response) {
             console.log("Smth wrong!!");
@@ -247,9 +247,24 @@ app.controller('categoriesCtrl', ['$scope', '$http', '$location', 'sharedData', 
     }
 
 
+    /* Filters */
+    $scope.resetFilter = function() {
+        $scope.filter = {};
+        $scope.filteredListOfCategories = [];
+    }   
+    $scope.resetFilter();
+    $scope.updateFilter = function() {
+        $scope.filteredListOfCategories = $scope.originListOfCategories.filter(function(item) {
+            return $scope.filter.priceTop ? (Math.round(item.categoryPrice/100) <= $scope.filter.priceTop) : true;
+        }).filter(function(item) {
+            return $scope.filter.priceBottom ? ($scope.filter.priceBottom <= Math.round(item.categoryPrice/100)) : true;
+        });
+    }
+
+
     /* Для листания страниц с объектами */
     $scope.nextCategories = function() {
-        $scope.pager.startPaging = util.nextEntities($scope.listOfCategories.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
+        $scope.pager.startPaging = util.nextEntities($scope.originListOfCategories.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
     }
     $scope.previousCategories = function() {
         $scope.pager.startPaging = util.previousEntities($scope.pager.startPaging, $scope.pager.objectsOnPage);

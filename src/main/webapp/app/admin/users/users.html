@@ -320,7 +320,7 @@
 
 <!-- Filters, position fixed -->
 <div class="filter-panel">
-    <h4>Filters</h4>
+    <h4>Filtered {{ filteredListOfUsers.length }} records</h4>
     <p>
         Role
         <select class="form-control" ng-model="filter.roleId" ng-change="updateFilter()"

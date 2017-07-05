@@ -25,18 +25,18 @@
                 <li><input type="number" min="1" max="999" ng-model="pager.objectsOnPage"></li>
                 <li><a ng-click="nextMaintenances()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
-            <div ng-repeat="maintenance in listOfMaintenances | orderBy : 'maintenanceTitle' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-5 col-sm-offset-1">
+            <div ng-repeat="maintenance in filteredListOfMaintenances.length && filteredListOfMaintenances || originListOfMaintenances | orderBy : 'maintenanceTitle' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-5 col-sm-offset-1">
                 <div class="block-border clearfix">
                     <p class="admin-notes"> Title: {{ maintenance.maintenanceTitle }} </p>
                     <p class="admin-notes top-bottom-border"> Type: {{ maintenance.maintenanceType }} </p>
                     <p class="admin-notes"> Price: {{ (maintenance.maintenancePrice / 100).toFixed(2) }} $ </p>
                     <div class="text-right" ng-if="isAdmin">
                         <button type="button" class="btn btn-primary btn-md"
-                                ng-click="prepareToEditMaintenance(maintenance.objectId, listOfMaintenances.indexOf(maintenance))">
+                                ng-click="prepareToEditMaintenance(maintenance.objectId, originListOfMaintenances.indexOf(maintenance))">
                             Edit
                         </button>
                         <button type="button" class="btn btn-warning btn-md"
-                                ng-click="prepareToDeleteMaintenance(maintenance.objectId, listOfMaintenances.indexOf(maintenance))"
+                                ng-click="prepareToDeleteMaintenance(maintenance.objectId, originListOfMaintenances.indexOf(maintenance))"
                                 data-toggle="modal" data-target="#deleteConfirmModal">
                             Delete
                         </button>
@@ -101,6 +101,21 @@
             </div>
         </div>
     </div>
+</div>
+
+
+<!-- Filters, position fixed -->
+<div class="filter-panel">
+    <h4>Filtered {{ filteredListOfMaintenances.length }} records</h4>
+    <p>
+        price ceiling
+        <input type="number" min="0" class="form-control" ng-model="filter.priceTop" ng-change="updateFilter()">
+    </p>
+    <p>
+        lower price limit
+        <input type="number" min="0" class="form-control" ng-model="filter.priceBottom" ng-change="updateFilter()">
+    </p>
+    <button class="btn btn-default" ng-click="resetFilter()">Reset filters</button>
 </div>
 
 

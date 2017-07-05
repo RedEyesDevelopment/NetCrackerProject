@@ -9,7 +9,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
-            $scope.listOfMaintenances = data.data;
+            $scope.originListOfMaintenances = data.data;
         }, function(response) {
             console.log("Smth wrong!!");
             console.log(response);
@@ -104,7 +104,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
                 headers: { 'Content-Type' : 'application/json' }
             }).then(function(data) {
                 console.log(data);
-                $scope.listOfMaintenances.push({
+                $scope.originListOfMaintenances.push({
                     objectId : data.data.objectId,
                     maintenanceTitle :  $scope.maintenance.title,
                     maintenanceType :   $scope.maintenance.type,
@@ -132,9 +132,9 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
             headers: { 'Content-Type' : 'application/json' }
         }).then(function(data) {
             console.log(data);
-            $scope.listOfMaintenances[$scope.indexForOperation].maintenanceTitle = $scope.maintenance.title;
-            $scope.listOfMaintenances[$scope.indexForOperation].maintenanceType = $scope.maintenance.type;
-            $scope.listOfMaintenances[$scope.indexForOperation].maintenancePrice = ($scope.maintenance.dollars * 100) + $scope.maintenance.cents;
+            $scope.originListOfMaintenances[$scope.indexForOperation].maintenanceTitle = $scope.maintenance.title;
+            $scope.originListOfMaintenances[$scope.indexForOperation].maintenanceType = $scope.maintenance.type;
+            $scope.originListOfMaintenances[$scope.indexForOperation].maintenancePrice = ($scope.maintenance.dollars * 100) + $scope.maintenance.cents;
             $scope.stage = 'updated';
         }, function(response) {
             console.log("Smth wrong!!");
@@ -150,7 +150,7 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
             headers: { 'Content-Type': 'application/json' }
         }).then(function(data) {
             console.log(data);
-            $scope.listOfMaintenances.splice($scope.indexForOperation, 1);
+            $scope.originListOfMaintenances.splice($scope.indexForOperation, 1);
             $scope.stage = 'deleted';
         }, function(response) {
             console.log("Smth wrong!!");
@@ -160,9 +160,24 @@ app.controller('maintenancesCtrl', ['$scope', '$http', '$location', 'sharedData'
     }
 
 
+    /* Filters */
+    $scope.resetFilter = function() {
+        $scope.filter = {};
+        $scope.filteredListOfMaintenances = [];
+    }   
+    $scope.resetFilter();
+    $scope.updateFilter = function() {
+        $scope.filteredListOfMaintenances = $scope.originListOfMaintenances.filter(function(item) {
+            return $scope.filter.priceTop ? (Math.round(item.maintenancePrice/100) <= $scope.filter.priceTop) : true;
+        }).filter(function(item) {
+            return $scope.filter.priceBottom ? ($scope.filter.priceBottom <= Math.round(item.maintenancePrice/100)) : true;
+        });
+    }
+
+
     /* Для листания страниц с объектами */
     $scope.nextMaintenances = function() {
-        $scope.pager.startPaging = util.nextEntities($scope.listOfMaintenances.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
+        $scope.pager.startPaging = util.nextEntities($scope.originListOfMaintenances.length, $scope.pager.startPaging, $scope.pager.objectsOnPage);
     }
     $scope.previousMaintenances = function() {
         $scope.pager.startPaging = util.previousEntities($scope.pager.startPaging, $scope.pager.objectsOnPage);

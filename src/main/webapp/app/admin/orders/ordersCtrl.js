@@ -388,19 +388,39 @@ app.controller('ordersCtrl', ['$scope', '$http', '$location', 'sharedData', 'uti
 
 	/* Filters */
 	$scope.resetFilter = function() {
-		$scope.filter = {};
 		$scope.filteredListOfOrders = [];
+		$scope.filter = {};
 	}	
 	$scope.resetFilter();
 	$scope.updateFilter = function() {
 		$scope.filteredListOfOrders = $scope.originListOfOrders.filter(function(item) {
-			if ($scope.filter.userId !== undefined) return (item.client.objectId === $scope.filter.userId); else return true;
+			if ($scope.filter.status !== undefined) {
+				var today = Date.now();
+				var start = item.livingStartDate;
+				var finish = item.livingFinishDate;
+				var day = 24 * 60 * 60 * 1000;
+				switch ($scope.filter.status) {
+					case 'future': if(today < start) return true
+						break;
+					case 'current': if(start-day < today && today < finish+day) return true
+						break;
+					case 'past': if(finish < today) return true
+						break;
+					default: return false;
+				}
+			} else return true;
 		}).filter(function(item) {
-			if ($scope.filter.roomId !== undefined) return (item.room.objectId === $scope.filter.roomId); else return true;
+			return $scope.filter.userId ? (item.client.objectId === $scope.filter.userId) : true;
 		}).filter(function(item) {
-			if ($scope.filter.roomTypeId !== undefined) return (item.room.roomType.objectId === $scope.filter.roomTypeId); else return true;
+			return $scope.filter.roomId ? (item.room.objectId === $scope.filter.roomId) : true;
 		}).filter(function(item) {
-			if ($scope.filter.categoryId !== undefined) return (item.category.objectId === $scope.filter.categoryId); else return true;
+			return $scope.filter.roomTypeId ? (item.room.roomType.objectId === $scope.filter.roomTypeId) : true;
+		}).filter(function(item) {
+			return $scope.filter.categoryId ? (item.category.objectId === $scope.filter.categoryId) : true;
+		}).filter(function(item) {
+			return ($scope.filter.isPaidFor !== undefined) ? (item.isPaidFor == $scope.filter.isPaidFor) : true;
+		}).filter(function(item) {
+			return ($scope.filter.isConfirmed !== undefined) ? (item.isConfirmed == $scope.filter.isConfirmed) : true;
 		});
 	}
 

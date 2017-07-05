@@ -1,5 +1,5 @@
-app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util',
-	function($scope, $http, $location, sharedData, util) {
+app.controller('roomsCtrl', ['$scope', '$rootScope', '$http', '$location', 'sharedData', 'util',
+	function($scope, $rootScope, $http, $location, sharedData, util) {
 
 	/* Функция на получения всех комнат и типов комнат, вызываются сразу */
 	(function() {
@@ -192,9 +192,9 @@ app.controller('roomsCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	$scope.resetFilter();
 	$scope.updateFilter = function() {
 		$scope.filteredListOfRooms = $scope.originListOfRooms.filter(function(item) {
-			if ($scope.filter.roomTypeId !== undefined) return (item.roomType.objectId === $scope.filter.roomTypeId); else return true;
+			return $scope.filter.roomTypeId ? (item.roomType.objectId === $scope.filter.roomTypeId) : true;
 		}).filter(function(item) {
-			if ($scope.filter.residents !== undefined) return (item.numberOfResidents === $scope.filter.residents); else return true;
+			return $scope.filter.residents ? (item.numberOfResidents === $scope.filter.residents) : true;
 		});
 	}
 

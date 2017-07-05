@@ -432,7 +432,7 @@ app.controller('usersCtrl', ['$scope', '$http', '$location', 'sharedData', 'util
 	$scope.resetFilter();
 	$scope.updateFilter = function() {
 		$scope.filteredListOfUsers = $scope.originListOfUsers.filter(function(item) {
-			if ($scope.filter.roleId !== undefined) return (item.role.objectId === $scope.filter.roleId); else return true;
+			return $scope.filter.roleId ? (item.role.objectId === $scope.filter.roleId) : true;
 		});
 	}
 

@@ -1,5 +1,5 @@
-app.controller('headerCtrl', ['$scope', '$http', '$location', '$rootScope', 'sharedData', 'ROLE',
-    function ($scope, $http, $location, $rootScope, sharedData, ROLE) {
+app.controller('headerCtrl', ['$scope', '$rootScope', '$http', '$location', '$rootScope', 'sharedData', 'ROLE',
+    function ($scope, $rootScope, $http, $location, $rootScope, sharedData, ROLE) {
 
     $scope.auth = {};
     $scope.registrationData = {}

@@ -21,7 +21,7 @@
                 <li><a ng-click="nextNotifications()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
             </ul>
             <div class="row">
-                <div ng-repeat-start="notification in listOfCurrNotifications | orderBy : 'sendDate' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-6">
+                <div ng-repeat-start="notification in filteredListOfNotifications.length && filteredListOfNotifications || originListOfNotifications | orderBy : 'sendDate' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-6">
                     <div class="block-border admin-notes clearfix">
                         <p> Author: {{ notification.author.firstName }} {{ notification.author.lastName }} </p>
 
@@ -51,11 +51,11 @@
                             </div>
 
                             <button type="button" class="btn btn-primary btn-md" ng-if="notification.executedBy === null"
-                                    ng-click="prepareToEditNotification(notification.objectId, listOfCurrNotifications.indexOf(notification))">
+                                    ng-click="prepareToEditNotification(notification.objectId, originListOfNotifications.indexOf(notification))">
                                 Edit
                             </button>
                             <button type="button" class="btn btn-warning btn-md"
-                                    ng-click="prepareToDeleteNotification(notification.objectId, listOfCurrNotifications.indexOf(notification))"
+                                    ng-click="prepareToDeleteNotification(notification.objectId, originListOfNotifications.indexOf(notification))"
                                     data-toggle="modal" data-target="#deleteConfirmModal">
                                 Delete
                             </button>
@@ -91,7 +91,7 @@
                         <label for="notificationType" class="col-sm-6 control-label">Type</label>
                         <div class="col-sm-6">
                             <select id="notificationType" class="form-control" ng-required="true" ng-model="notification.typeId"
-                                    ng-options="type.objectId as type.notificationTypeTitle for type in listOfNotificationTypes">
+                                    ng-options="type.objectId as (type.notificationTypeTitle + ' for ' + type.orientedRole.roleName) for type in listOfNotificationTypes">
                             </select>
                         </div>
                     </div>
@@ -118,6 +118,36 @@
             </div>
         </div>
     </div>
+</div>
+
+
+<!-- Filters, position fixed -->
+<div class="filter-panel">
+    <h4>Filtered {{ filteredListOfNotifications.length }} records</h4>
+    <p>
+        Executed:
+        <input type="radio" name="executed" value="1" class="radio-pay" ng-model="filter.doesExecuted" ng-change="updateFilter()"> yes |
+        <input type="radio" name="executed" value="0" class="radio-pay" checked ng-model="filter.doesExecuted" ng-change="updateFilter()"> no
+    </p>
+    <p>
+        Type
+        <select class="form-control" ng-model="filter.typeId" ng-change="updateFilter()"
+            ng-options="type.objectId as (type.notificationTypeTitle + ' for ' + type.orientedRole.roleName) for type in listOfNotificationTypes | orderBy: 'notificationTypeTitle'">
+        </select>
+    </p>
+    <p>
+        Author
+        <select class="form-control" ng-model="filter.authorId" ng-change="updateFilter()"
+            ng-options="user.objectId as (user.firstName + ' ' + user.lastName + ' | ' + user.email) for user in listOfUsers | orderBy: 'lastName'">
+        </select>
+    </p>
+    <p>
+        Order
+        <select class="form-control" ng-model="filter.orderId" ng-change="updateFilter()"
+            ng-options="order.objectId for order in listOfOrders | orderBy: 'objectId'">
+        </select>
+    </p>
+    <button class="btn btn-default" ng-click="resetFilter()">Reset filters</button>
 </div>
 
 

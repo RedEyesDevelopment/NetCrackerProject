@@ -24,7 +24,7 @@
                 Complimentary is already exist in this category! <i class="fa fa-times" aria-hidden="true"></i>              
             </div>
 
-            <div ng-repeat="category in listOfCategories | orderBy : 'categoryTitle' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-6">
+            <div ng-repeat="category in filteredListOfCategories.length && filteredListOfCategories || originListOfCategories | orderBy : 'categoryTitle' | limitTo : pager.objectsOnPage : pager.startPaging" class="col-sm-6">
                 <div class="block-border clearfix">
                     <div class="admin-notes">
                         <p> Title: {{ category.categoryTitle }} </p>
@@ -54,7 +54,7 @@
                                     <th>{{ complimentary.maintenance.maintenanceType }}</th>
                                     <th ng-if="isAdmin">
                                         <button class="deleteMaintenance" data-toggle="modal" data-target="#deleteConfirmModal"
-                                        ng-click="prepareToDeleteComplimentary(complimentary.objectId, listOfCategories.indexOf(category), category.complimentaries.indexOf(complimentary))">
+                                        ng-click="prepareToDeleteComplimentary(complimentary.objectId, originListOfCategories.indexOf(category), category.complimentaries.indexOf(complimentary))">
                                             delete
                                         </button>
                                     </th>
@@ -66,15 +66,15 @@
                     <div class="text-right" ng-if="isAdmin">
                         <button type="button" class="btn btn-success btn-md"
                                 data-toggle="modal" data-target="#addComplimentary"
-                                ng-click="prepareToAddComplimentary(category.objectId, listOfCategories.indexOf(category))">
+                                ng-click="prepareToAddComplimentary(category.objectId, originListOfCategories.indexOf(category))">
                             Add complimentary
                         </button>
                         <button type="button" class="btn btn-primary btn-md"
-                                ng-click="prepareToEditCategory(category.objectId, listOfCategories.indexOf(category))">
+                                ng-click="prepareToEditCategory(category.objectId, originListOfCategories.indexOf(category))">
                             Edit
                         </button>
                         <button type="button" class="btn btn-warning btn-md"
-                                ng-click="prepareToDeleteCategory(category.objectId, listOfCategories.indexOf(category))"
+                                ng-click="prepareToDeleteCategory(category.objectId, originListOfCategories.indexOf(category))"
                                 data-toggle="modal" data-target="#deleteConfirmModal">
                             Delete
                         </button>
@@ -161,6 +161,21 @@
             </div>
         </div>
     </div>
+</div>
+
+
+<!-- Filters, position fixed -->
+<div class="filter-panel">
+    <h4>Filtered {{ filteredListOfCategories.length }} records</h4>
+    <p>
+        price ceiling
+        <input type="number" min="0" class="form-control" ng-model="filter.priceTop" ng-change="updateFilter()">
+    </p>
+    <p>
+        lower price limit
+        <input type="number" min="0" class="form-control" ng-model="filter.priceBottom" ng-change="updateFilter()">
+    </p>
+    <button class="btn btn-default" ng-click="resetFilter()">Reset filters</button>
 </div>
 
 
