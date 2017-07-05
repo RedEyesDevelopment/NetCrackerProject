@@ -23,7 +23,6 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     JdbcTemplate jdbcTemplate;
 
     @Override
-    @Transactional(readOnly = true)
     public Block getBlock(Integer id) {
         if (id == null) {
             return null;
@@ -34,13 +33,11 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Block> getAllBlocks() {
         return manager.createReactEAV(Block.class).fetchRootReference(Room.class, "RoomToBlock")
                 .closeAllFetches().getEntityCollection();
     }
 
-    @Transactional
     @Override
     public Integer insertBlock(Block block) {
         if (block == null) {
@@ -55,7 +52,6 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
         return objectId;
     }
 
-    @Transactional
     @Override
     public Integer updateBlock(Block newBlock, Block oldBlock) {
         if (oldBlock == null || newBlock == null) {
@@ -69,7 +65,6 @@ public class BlockDAOImpl extends AbstractDAO implements BlockDAO{
         return newBlock.getObjectId();
     }
 
-    @Transactional
     @Override
     public void deleteBlock(Integer id) {
         if (id == null) {

@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import projectpackage.model.auth.Phone;
 import projectpackage.model.auth.Role;
 import projectpackage.model.auth.User;
@@ -47,6 +46,11 @@ public class OrderDAOImpl extends AbstractDAO implements OrderDAO{
                 .fetchRootReference(Category.class, "CategoryToOrder")
                 .closeAllFetches()
                 .getEntityCollection();
+    }
+
+    @Override
+    public List<Order> getSimpleOrderList() {
+        return null;
     }
 
     @Override
